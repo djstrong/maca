@@ -1,3 +1,4 @@
+PROJECT(Tagger)
 cmake_minimum_required(VERSION 2.6.0)
 
 # use some of our own Find* scripts
