@@ -7,6 +7,9 @@ set(ver_minor "1")
 
 set(LIBS "")
 
+include_directories("/usr/include/sfst-1.0")
+set(LIBS ${LIBS} "sfst1")
+
 find_package(Toki REQUIRED)
 set(LIBS ${LIBS} ${Toki_LIBRARY})
 
@@ -39,6 +42,9 @@ SET(libpltagger_STAT_SRC
     debug.cpp
     lexeme.cpp
     main.cpp
+    morph/constanalyser.cpp
+    morph/morphanalyser.cpp
+    morph/sfstanalyser.cpp
     token.cpp
 )
 
