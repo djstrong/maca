@@ -5,7 +5,7 @@
 
 #include <unicode/unistr.h>
 #include <string>
-#include <libtoki/whitespace.h>
+#include <libtoki/token.h>
 #include <libtoki/util.h>
 #include <vector>
 
@@ -23,6 +23,9 @@ namespace PlTagger {
 
 		/// Create a Token with the given orth and whitespace amount
 		Token(const UnicodeString& orth, Toki::Whitespace::Enum wa);
+
+		/// Toki::Token conversion
+		explicit Token(const Toki::Token& tok);
 
 		/// Orth getter
 		const UnicodeString& orth() const {

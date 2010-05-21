@@ -13,4 +13,9 @@ namespace PlTagger {
 	{
 	}
 
+	Token::Token(const Toki::Token &tok)
+		: orth_(tok.orth()), wa_(tok.preceeding_whitespace()), lexemes_()
+	{
+	}
+
 } /* end ns PlTagger */
