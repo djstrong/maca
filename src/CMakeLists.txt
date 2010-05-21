@@ -37,6 +37,7 @@ add_definitions(-DHAVE_CONFIG_D_H)
 
 SET(libpltagger_STAT_SRC
     debug.cpp
+    lexeme.cpp
     main.cpp
     token.cpp
 )
