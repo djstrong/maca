@@ -7,6 +7,9 @@ set(ver_minor "1")
 
 set(LIBS "")
 
+find_package(Toki REQUIRED)
+set(LIBS ${LIBS} ${Toki_LIBRARY})
+
 find_package(ICU REQUIRED)
 include_directories(${ICU_INCLUDE_DIR})
 link_directories(${ICU_LIBRARY_DIRS})
@@ -64,6 +67,6 @@ if(UNIX)
                 PATTERN "bin" EXCLUDE
                 PATTERN "build" EXCLUDE 
                 PATTERN "CMake*" EXCLUDE
-        )        
+        )
 endif(UNIX)
 
