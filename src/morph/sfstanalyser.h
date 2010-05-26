@@ -13,6 +13,8 @@ namespace PlTagger {
 		SfstAnalyser(const std::string& filename);
 
 		~SfstAnalyser();
+
+		Token* process(const Toki::Token& t);
 	private:
 		CompactTransducer* ct_;
 	};
