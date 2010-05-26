@@ -14,7 +14,7 @@ namespace PlTagger {
 
 		Token* process(const Toki::Token &t);
 	private:
-		std::string tag_;
+		Tag tag_;
 	};
 
 } /* end ns PlTagger */

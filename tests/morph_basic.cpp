@@ -12,6 +12,6 @@ BOOST_AUTO_TEST_CASE( morph_const )
 	BOOST_REQUIRE_EQUAL(tt->lexemes().size(), 1);
 	const PlTagger::Lexeme& lex = tt->lexemes()[0];
 	BOOST_CHECK(lex.lemma() == t.orth());
-	BOOST_CHECK_EQUAL(lex.tag(), "tag");
+	BOOST_CHECK_EQUAL(lex.tag().to_string(), "tag");
 }
 

@@ -2,7 +2,7 @@
 
 namespace PlTagger {
 
-	Lexeme::Lexeme(const UnicodeString &lemma, const std::string &tag)
+	Lexeme::Lexeme(const UnicodeString &lemma, const Tag &tag)
 		: lemma_(lemma), tag_(tag)
 	{
 	}

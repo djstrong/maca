@@ -45,6 +45,7 @@ SET(libpltagger_STAT_SRC
     morph/constanalyser.cpp
     morph/morphanalyser.cpp
     morph/sfstanalyser.cpp
+    tag.cpp
     token.cpp
 )
 
