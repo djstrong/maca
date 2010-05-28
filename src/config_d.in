@@ -3,4 +3,7 @@
 
 #define LIBPLTAGGER_VERSION "@LIBPLTAGGER_VERSION@"
 
+
+#cmakedefine HAVE_SFST
+
 #endif

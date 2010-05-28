@@ -1,4 +1,4 @@
-########## libtokenizer ###############
+########## libpltagger ###############
 
 PROJECT(pltagger)
 
@@ -7,11 +7,19 @@ set(ver_minor "1")
 
 set(LIBS "")
 
-include_directories("/usr/include/sfst-1.0")
-set(LIBS ${LIBS} "sfst1")
+#include_directories("/usr/include/sfst-1.0")
+#set(LIBS ${LIBS} "sfst1")
 
 find_package(Toki REQUIRED)
 set(LIBS ${LIBS} ${Toki_LIBRARY})
+
+find_package(SFST)
+if (SFST_FOUND)
+	set(LIBS ${LIBS} ${SFST_LIBRARY})
+	include_directories(${SFST_INCLUDE_DIR})
+	link_directories(${SFST_LIBRARY_DIRS})
+	set(HAVE_SFST)
+endif(SFST_FOUND)
 
 find_package(ICU REQUIRED)
 include_directories(${ICU_INCLUDE_DIR})
@@ -44,10 +52,13 @@ SET(libpltagger_STAT_SRC
     main.cpp
     morph/constanalyser.cpp
     morph/morphanalyser.cpp
-    morph/sfstanalyser.cpp
     tag.cpp
     token.cpp
 )
+
+if (SFST_FOUND)
+SET(libpltagger_STAT_SRC ${libpltagger_STAT_SRC} morph/sfstanalyser.cpp)
+endif (SFST_FOUND)
 
 add_library(pltagger SHARED ${libpltagger_STAT_SRC})
 target_link_libraries ( pltagger ${LIBS} )
@@ -69,7 +80,7 @@ if(UNIX)
 
         install(
                 DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                DESTINATION include
+                DESTINATION include/pltagger
                 FILES_MATCHING PATTERN "*.h"
                 PATTERN ".svn" EXCLUDE
                 PATTERN "bin" EXCLUDE
