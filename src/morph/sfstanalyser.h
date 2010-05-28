@@ -15,6 +15,13 @@ namespace PlTagger {
 		~SfstAnalyser();
 
 		Token* process(const Toki::Token& t);
+
+		static std::string unescape_analysis(const std::string& sfst_analysis);
+
+		static Lexeme split_analysis(const std::string& sfst_analysis);
+
+		static void split_analysis_into(const std::string &sfst_analysis, std::vector<Lexeme>& lv);
+
 	private:
 		CompactTransducer* ct_;
 	};
