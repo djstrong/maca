@@ -4,7 +4,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/src/ )
 
 add_definitions(-DLIBTOKI_TEST_DATA_DIR="${PROJECT_SOURCE_DIR}/")
 
-add_executable( tests main.cpp basic.cpp morph_basic.cpp )
+add_executable( tests main.cpp basic.cpp morph_basic.cpp tag_split.cpp)
 
 target_link_libraries ( tests pltagger ${Boost_LIBRARIES})
 
