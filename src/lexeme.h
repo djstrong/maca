@@ -4,16 +4,23 @@
 #include <unicode/unistr.h>
 
 #include "tag.h"
+#include <libtoki/util.h>
 
 namespace PlTagger {
 
 	class Lexeme
 	{
 	public:
+		Lexeme();
+
 		Lexeme(const UnicodeString& lemma, const Tag& tag);
 
 		const UnicodeString& lemma() const {
 			return lemma_;
+		}
+
+		const std::string lemma_utf8() const {
+			return Toki::Util::to_utf8(lemma_);
 		}
 
 		const Tag& tag() const {
