@@ -51,6 +51,7 @@ SET(libpltagger_STAT_SRC
     lexeme.cpp
     main.cpp
     morph/constanalyser.cpp
+    morph/dispatchanalyser.cpp
     morph/morphanalyser.cpp
     tag.cpp
     token.cpp
