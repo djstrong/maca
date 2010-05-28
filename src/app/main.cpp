@@ -1,4 +1,6 @@
+#ifdef HAVE_SFST
 #include "morph/sfstanalyser.h"
+#endif
 
 #include <iostream>
 #include <boost/algorithm/string.hpp>
@@ -12,8 +14,10 @@ int main(int argc, char** argv)
 	using boost::program_options::value;
 	boost::program_options::options_description desc("Allowed options");
 	desc.add_options()
+#ifdef HAVE_SFST
 			("sfst-transducer,t", value(&sfst)->default_value("/home/ilor/semantic/tagger/fst/M.cfst"),
 			 "SFST transducer file to use (compact format)")
+#endif
 			("help,h", "Show help")
 			;
 	boost::program_options::variables_map vm;
@@ -31,13 +35,17 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	PlTagger::SfstAnalyser fst(sfst);
-	while (std::cin.good()) {
-		std::string s;
-		std::cin >> s;
-		Toki::Token t(s.c_str(), "t", Toki::Whitespace::None);
-		PlTagger::Token* tt = fst.process(t);
-		std::cout << PlTagger::token_string(*tt) << "\n";
-		delete tt;
+#ifdef HAVE_SFST
+	if (!sfst.empty()) {
+		PlTagger::SfstAnalyser fst(sfst);
+		while (std::cin.good()) {
+			std::string s;
+			std::cin >> s;
+			Toki::Token t(s.c_str(), "t", Toki::Whitespace::None);
+			PlTagger::Token* tt = fst.process(t);
+			std::cout << PlTagger::token_string(*tt) << "\n";
+			delete tt;
+		}
 	}
+#endif
 }

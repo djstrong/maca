@@ -9,6 +9,11 @@ target_link_libraries ( tagger-app pltagger ${Boost_LIBRARIES})
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
+find_package(SFST)
+if (SFST_FOUND)
+	add_definitions(HAVE_SFST)
+ENDIF()
+
 if(UNIX)
 
         install(TARGETS tagger-app
