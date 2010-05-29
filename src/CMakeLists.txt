@@ -21,15 +21,15 @@ if (SFST_FOUND)
 	set(HAVE_SFST)
 endif(SFST_FOUND)
 
-find_package(ICU REQUIRED)
+find_package(ICU REQUIRED QUIET)
 include_directories(${ICU_INCLUDE_DIR})
 link_directories(${ICU_LIBRARY_DIRS})
 set(LIBS ${LIBS} icuuc icuio)
 
-find_package(Loki REQUIRED)
+find_package(Loki REQUIRED QUIET)
 set(LIBS ${LIBS} loki)
 
-find_package(LibXML++ REQUIRED)
+find_package(LibXML++ REQUIRED QUIET)
 include_directories(${LibXML++_INCLUDE_DIRS})
 link_directories(${LibXML++_LIBRARY_DIRS})
 set(LIBS ${LIBS} ${LibXML++_LIBRARIES})
