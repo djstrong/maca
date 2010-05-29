@@ -1,12 +1,26 @@
 #include <boost/test/unit_test.hpp>
 #include <set>
+#include <libtoki/foreach.h>
+#include "morph/sfstanalyser.h"
 
 BOOST_AUTO_TEST_SUITE( tag_split )
+
+
 
 void check_split(const char* orig, const std::set<std::string> expect)
 {
 	std::set<std::string> actual;
-	//
+	std::vector<PlTagger::Lexeme> lex;
+
+	std::string c = orig;
+	c = "<" + c + ">";
+
+	PlTagger::SfstAnalyser::split_analysis_into(c, lex);
+
+	foreach (const PlTagger::Lexeme& l, lex) {
+		actual.insert(l.tag().to_string());
+	}
+
 	BOOST_CHECK_EQUAL_COLLECTIONS(actual.begin(), actual.end(), expect.begin(), expect.end());
 }
 
@@ -33,7 +47,7 @@ BOOST_AUTO_TEST_CASE( dot )
 	const char tag[] = "some:tag.tog:data";
 	std::set<std::string> result;
 	result.insert("some:tag:data");
-	result.insert("some:tog:tag");
+	result.insert("some:tog:data");
 	check_split(tag, result);
 }
 
