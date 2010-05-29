@@ -1,4 +1,4 @@
-FIND_PATH(SFST_INCLUDE_DIR sfst/compact.h /usr/include/ /usr/local/include/ )
+FIND_PATH(SFST_INCLUDE_DIR compact.h /usr/include/sfst/ /usr/local/include/sfst/ )
 
 FIND_LIBRARY(SFST_LIBRARY NAMES sfst PATH /usr/lib /usr/local/lib) 
 
