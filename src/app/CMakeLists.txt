@@ -11,7 +11,7 @@ link_directories(${Boost_LIBRARY_DIRS})
 
 find_package(SFST)
 if (SFST_FOUND)
-	add_definitions(HAVE_SFST)
+	add_definitions(-DHAVE_SFST)
 ENDIF()
 
 if(UNIX)
