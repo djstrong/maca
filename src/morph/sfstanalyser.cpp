@@ -16,6 +16,9 @@ namespace PlTagger {
 	SfstAnalyser::SfstAnalyser(const std::string &filename)
 	{
 		FILE* f = fopen(filename.c_str(), "rb");
+		if (!f) {
+			throw PlTaggerError("File open error");
+		}
 		try {
 			ct_ = new CompactTransducer(f);
 		} catch (const char* e) {
