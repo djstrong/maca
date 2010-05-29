@@ -15,6 +15,12 @@ namespace PlTagger {
 		}
 	}
 
+	void DispatchAnalyser::add_type_handler(const std::string &type, MorphAnalyser *a)
+	{
+		analysers_.insert(a);
+		type_handlers_.insert(std::make_pair(type, a));
+	}
+
 	Token* DispatchAnalyser::process(const Toki::Token &t)
 	{
 		std::map<std::string, MorphAnalyser*>::const_iterator i;

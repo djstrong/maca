@@ -4,6 +4,7 @@
 #include "morphanalyser.h"
 
 #include <map>
+#include <set>
 
 namespace PlTagger {
 
@@ -16,9 +17,11 @@ namespace PlTagger {
 
 		Token* process(const Toki::Token &t);
 
+		void add_type_handler(const std::string& type,  MorphAnalyser* a);
+
 	private:
 		std::map<std::string, MorphAnalyser*> type_handlers_;
-		std::vector<MorphAnalyser*> analysers_;
+		std::set<MorphAnalyser*> analysers_;
 		MorphAnalyser* default_;
 	};
 
