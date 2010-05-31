@@ -2,6 +2,8 @@
 #include "morph/sfstanalyser.h"
 #endif
 
+#include "morph/mapanalyser.h"
+
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>
@@ -10,7 +12,7 @@
 
 int main(int argc, char** argv)
 {
-	std::string sfst;
+	std::string sfst, mdict;
 	using boost::program_options::value;
 	boost::program_options::options_description desc("Allowed options");
 	desc.add_options()
@@ -18,6 +20,8 @@ int main(int argc, char** argv)
 			("sfst-transducer,t", value(&sfst)->default_value("/home/ilor/semantic/tagger/fst/M.cfst"),
 			 "SFST transducer file to use (compact format)")
 #endif
+			("m-dict-file,m", value(&mdict),
+			 "M-style dictionary file to use (orth\\tlemma\\ttag)\n")
 			("help,h", "Show help")
 			;
 	boost::program_options::variables_map vm;
@@ -43,9 +47,26 @@ int main(int argc, char** argv)
 			std::cin >> s;
 			Toki::Token t(s.c_str(), "t", Toki::Whitespace::None);
 			PlTagger::Token* tt = fst.process(t);
-			std::cout << PlTagger::token_string(*tt) << "\n";
+			if (tt != NULL) {
+				std::cout << PlTagger::token_string(*tt) << "\n";
+			}
+			delete tt;
+		}
+	} else
+#endif
+	if (!mdict.empty()) {
+		PlTagger::HashMapAnalyser a;
+		a.load_m_dictionary(mdict);
+		std::cout << "loading done\n";
+		while (std::cin.good()) {
+			std::string s;
+			std::cin >> s;
+			Toki::Token t(s.c_str(), "t", Toki::Whitespace::None);
+			PlTagger::Token* tt = a.process(t);
+			if (tt != NULL) {
+				std::cout << PlTagger::token_string(*tt) << "\n";
+			}
 			delete tt;
 		}
 	}
-#endif
 }

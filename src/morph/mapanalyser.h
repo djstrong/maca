@@ -5,6 +5,8 @@
 
 #include <map>
 #include <boost/unordered_map.hpp>
+#include <fstream>
+#include <boost/algorithm/string.hpp>
 
 namespace PlTagger {
 
@@ -21,11 +23,32 @@ namespace PlTagger {
 		{
 		}
 
+		void load_m_dictionary(const std::string& fn);
+
 		Token* process(const Toki::Token &t);
 
 	private:
 		MapT map_;
 	};
+
+	template<typename MapT>
+	void MapAnalyser<MapT>::load_m_dictionary(const std::string &fn)
+	{
+		std::ifstream ifs(fn.c_str());
+		char buf[201];
+		while (ifs.good()) {
+			ifs.getline(buf, 200);
+			//std::vector< boost::iterator_range<const char*> > v;
+			//std::string b(buf);
+			std::vector< std::string > v;
+			boost::iterator_range<const char*> r(buf, buf + ifs.gcount());
+			boost::algorithm::split(v, r, boost::is_any_of("\t"));
+			if (v.size() == 3) {
+				Lexeme lex(UnicodeString::fromUTF8(v[1]), Tag(v[2]));
+				map_.insert(std::make_pair(v[0], lex));
+			}
+		}
+	}
 
 	template<typename MapT>
 	Token* MapAnalyser<MapT>::process(const Toki::Token &t)
