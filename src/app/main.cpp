@@ -39,30 +39,26 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
+	boost::shared_ptr<PlTagger::MorphAnalyser> ma;
+
 #ifdef HAVE_SFST
 	if (!sfst.empty()) {
-		PlTagger::SfstAnalyser fst(sfst);
-		while (std::cin.good()) {
-			std::string s;
-			std::cin >> s;
-			Toki::Token t(s.c_str(), "t", Toki::Whitespace::None);
-			PlTagger::Token* tt = fst.process(t);
-			if (tt != NULL) {
-				std::cout << PlTagger::token_string(*tt) << "\n";
-			}
-			delete tt;
-		}
+		ma.reset(new PlTagger::SfstAnalyser(sfst));
 	} else
 #endif
 	if (!mdict.empty()) {
-		PlTagger::HashMapAnalyser a;
-		a.load_m_dictionary(mdict);
+		PlTagger::HashMapAnalyser* hma = new PlTagger::HashMapAnalyser;
+		ma.reset(hma);
+		hma->load_m_dictionary(mdict);
 		std::cout << "loading done\n";
+	}
+
+	if (ma) {
 		while (std::cin.good()) {
 			std::string s;
 			std::cin >> s;
 			Toki::Token t(s.c_str(), "t", Toki::Whitespace::None);
-			PlTagger::Token* tt = a.process(t);
+			PlTagger::Token* tt = ma->process(t);
 			if (tt != NULL) {
 				std::cout << PlTagger::token_string(*tt) << "\n";
 			}
