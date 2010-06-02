@@ -54,7 +54,9 @@ SET(libpltagger_STAT_SRC
     morph/dispatchanalyser.cpp
     morph/mapanalyser.cpp
     morph/morphanalyser.cpp
+    symboldictionary.cpp
     tag.cpp
+    tagset.cpp
     token.cpp
 )
 
