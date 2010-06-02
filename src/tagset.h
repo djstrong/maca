@@ -14,6 +14,24 @@
 
 namespace PlTagger {
 
+	class TagsetParseError : public PlTaggerError
+	{
+	public:
+		TagsetParseError(const std::string& w, int line, const std::string& data)
+			: PlTaggerError("Tagset parse error: " + w), line(line), data(data)
+		{
+		}
+
+		~TagsetParseError() throw()
+		{
+		}
+
+		virtual std::string info() const;
+
+		int line;
+		std::string data;
+	};
+
 	class TagParseError : public PlTaggerError
 	{
 	public:

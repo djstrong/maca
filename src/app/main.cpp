@@ -8,11 +8,15 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>
 
+#include "tagset.h"
+
 #include "debug.h"
+#include <fstream>
 
 int main(int argc, char** argv)
 {
 	std::string sfst, mdict;
+	std::string tagset_load, tagset_save;
 	using boost::program_options::value;
 	boost::program_options::options_description desc("Allowed options");
 	desc.add_options()
@@ -22,6 +26,10 @@ int main(int argc, char** argv)
 #endif
 			("m-dict-file,m", value(&mdict),
 			 "M-style dictionary file to use (orth\\tlemma\\ttag)\n")
+			("tagset-load,", value(&tagset_load),
+			 "Path to tagset ini file to load\n")
+			("tagset-save,", value(&tagset_save),
+			 "Path to tagset ini file to save\n")
 			("help,h", "Show help")
 			;
 	boost::program_options::variables_map vm;
@@ -37,6 +45,22 @@ int main(int argc, char** argv)
 	if (vm.count("help")) {
 		std::cout << desc << "\n";
 		return 1;
+	}
+
+	if (!tagset_load.empty()) {
+		PlTagger::Tagset tagset;
+		std::ifstream ifs(tagset_load.c_str());
+		try {
+			tagset.load_from_stream(ifs);
+		} catch (PlTagger::TagsetParseError& e) {
+			std::cerr << e.info() << "\n";
+			exit(1);
+		}
+		if (!tagset_save.empty()) {
+			std::ofstream ofs(tagset_save.c_str());
+			tagset.save_to_stream(ofs);
+		}
+		return 0;
 	}
 
 	boost::shared_ptr<PlTagger::MorphAnalyser> ma;
