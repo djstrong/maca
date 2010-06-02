@@ -1,6 +1,10 @@
-FIND_PATH(SFST_INCLUDE_DIR compact.h /usr/include/sfst/ /usr/local/include/sfst/ )
+FIND_PATH(SFST_INCLUDE_DIR
+	NAMES sfst/compact.h
+	PATHS /usr/include /usr/include/sfst-1.0 /usr/local/include
+	PATH_SUFFIXES /sfst
+)
 
-FIND_LIBRARY(SFST_LIBRARY NAMES sfst PATH /usr/lib /usr/local/lib) 
+FIND_LIBRARY(SFST_LIBRARY NAMES sfst sfst1 PATH /usr/lib /usr/local/lib)
 
 MARK_AS_ADVANCED(SFST_LIBRARY)
 MARK_AS_ADVANCED(SFST_INCLUDE_DIR)
@@ -13,7 +17,7 @@ ENDIF (SFST_INCLUDE_DIR AND SFST_LIBRARY)
 
 IF (SFST_FOUND)
    IF (NOT SFST_FIND_QUIETLY)
-      MESSAGE(STATUS "Found libsfst: ${SFST_LIBRARY}")
+      MESSAGE(STATUS "Found libsfst: ${SFST_LIBRARY} -- ${SFST_INCLUDE_DIR}")
    ENDIF (NOT SFST_FIND_QUIETLY)
 ELSE (SFST_FOUND)
    IF (SFST_FIND_REQUIRED)
