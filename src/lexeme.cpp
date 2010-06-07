@@ -12,4 +12,9 @@ namespace PlTagger {
 	{
 	}
 
+	Lexeme Lexeme::create(const UnicodeString& lemma, const Tag& tag)
+	{
+		return Lexeme(lemma, tag);
+	}
+
 } /* end ns PlTagger */

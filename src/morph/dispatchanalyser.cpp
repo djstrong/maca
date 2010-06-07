@@ -3,8 +3,8 @@
 
 namespace PlTagger {
 
-	DispatchAnalyser::DispatchAnalyser()
-		: type_handlers_(), analysers_(), default_(NULL)
+	DispatchAnalyser::DispatchAnalyser(const Tagset* tagset)
+		: MorphAnalyser(tagset), type_handlers_(), analysers_(), default_(NULL)
 	{
 	}
 

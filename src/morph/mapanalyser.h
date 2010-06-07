@@ -14,8 +14,8 @@ namespace PlTagger {
 	class MapAnalyser : public MorphAnalyser
 	{
 	public:
-		MapAnalyser()
-			: map_()
+		explicit MapAnalyser(const Tagset* tagset)
+			: MorphAnalyser(tagset), map_()
 		{
 		}
 

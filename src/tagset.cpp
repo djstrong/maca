@@ -1,10 +1,12 @@
 #include "tagset.h"
+#include "lexeme.h"
 
 #include <libtoki/foreach.h>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/strong_typedef.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/bind.hpp>
 
 #include <sstream>
 #include <iostream>
@@ -15,167 +17,59 @@ namespace PlTagger {
 	{
 	}
 
-	std::string TagsetParseError::info() const
+	void Tagset::parse_tag(const string_range &s, bool allow_extra,
+			boost::function<void(const Tag &)> sink) const
 	{
-		std::stringstream ss;
-		ss << "Line " << line << ": " << what() << " " << data;
-		return ss.str();
+		string_range_vector fields;
+		boost::algorithm::split(fields, s, boost::is_any_of(":"));
+		parse_tag(fields, allow_extra, sink);
 	}
 
-
-	void Tagset::load_from_stream(std::istream &is)
+	void Tagset::parse_tag(const string_range_vector &fields, bool allow_extra,
+			boost::function<void(const Tag &)>sink) const
 	{
-		int line_no = 0;
-		std::string line;
-		std::string sep(" \t=");
-		std::set<std::string> values;
-		values.insert("@null");
-		std::set<std::string> symbols(values);
-		typedef std::map< std::string, std::deque<std::string> > vmap_t;
-		vmap_t vmap;
-		typedef std::map< std::string, std::vector<attribute_idx_t> > pmap_t;
-		pmap_t pmap;
-		typedef std::map< std::string, std::vector<bool> > reqmap_t;
-		reqmap_t reqmap;
-
-		while (is.good() && line != "[ATTR]") {
-			std::getline(is, line);
-			boost::algorithm::trim(line);
-			++line_no;
-		}
-		std::getline(is, line);
-		boost::algorithm::trim(line);
-		++line_no;
-
-		//attribute-value defs
-		while (is.good() && line != "[POS]") {
-			if (!line.empty() && line[0] != '#') {
-				std::deque<std::string> v;
-				boost::algorithm::split(v, line, boost::is_any_of(sep),
-						boost::algorithm::token_compress_on);
-				if (v.size() < 3) {
-					throw TagsetParseError("Attribute with less than 2 values", line_no, v[0]);
-				}
-				if (!symbols.insert(v[0]).second) {
-					throw TagsetParseError("Duplicate symbol", line_no, v[0]);
-				}
-				std::deque<std::string>& avalues = vmap[v[0]];
-				v.pop_front();
-				avalues = v;
-				foreach (const std::string& s, v) {
-					if (!values.insert(s).second) {
-						throw TagsetParseError("Duplicate symbol", line_no, s);
-					}
+		std::vector< string_range_vector > opts(1);
+		foreach (const string_range& r, fields) {
+			string_range_vector dots;
+			boost::algorithm::split(dots, r, boost::is_any_of("."));
+			foreach (string_range_vector& o, opts) {
+				o.push_back(dots.front());
+			}
+			size_t opts_size = opts.size();
+			for (size_t di = 1; di < dots.size(); ++di) {
+				for (size_t oi = 0; oi < opts_size; ++oi) {
+					opts.push_back(opts[oi]);
+					opts.back().back() = dots[di];
 				}
 			}
-			std::getline(is, line);
-			boost::algorithm::trim(line);
-			++line_no;
 		}
-		std::getline(is, line);
-		boost::algorithm::trim(line);
-		++line_no;
-
-		std::vector<std::string> vec;
-		std::copy(values.begin(), values.end(), std::inserter(vec, vec.begin()));
-		if (vec[0] != "@null") {
-			throw TagsetParseError("First value is not '@null'", line_no, vec[0]);
+		foreach (string_range_vector& opt, opts) {
+			sink(parse_simple_tag(opt, allow_extra));
 		}
-		value_dict_.load_sorted_data(vec);
-
-		vec.clear();
-		foreach (const vmap_t::value_type v, vmap) {
-			vec.push_back(v.first);
-			attribute_values_.resize(attribute_values_.size() + 1);
-			foreach (const std::string& s, v.second) {
-				attribute_values_.back().push_back(value_dict_.get_id(s));
-			}
-		}
-		attribute_dict_.load_sorted_data(vec);
-
-		while (is.good()) {
-			if (!line.empty() && line[0] != '#') {
-				std::deque<std::string> v;
-				boost::algorithm::split(v, line, boost::is_any_of(sep),
-						boost::algorithm::token_compress_on);
-				if (!symbols.insert(v[0]).second) {
-					throw TagsetParseError("Duplicate symbol", line_no, v[0]);
-				}
-				std::vector<attribute_idx_t>& pattrs = pmap[v[0]];
-				std::vector<bool>& req_mask = reqmap[v[0]];
-				req_mask.resize(attribute_dict_.size());
-				v.pop_front();
-				foreach (std::string s, v) {
-					if (s.empty()) continue;
-					bool required = true;
-					if (s[0] == '[' && s[s.size() - 1] == ']') {
-						required = false;
-						s = s.substr(1, s.size() - 2);
-					}
-					attribute_idx_t a = attribute_dict_.get_id(s);
-					if (!attribute_dict_.is_id_valid(a)) {
-						throw TagsetParseError("Attribute name invalid", line_no, s);
-					}
-					pattrs.push_back(a);
-					req_mask[a] = required;
-				}
-			}
-			std::getline(is, line);
-			boost::algorithm::trim(line);
-			++line_no;
-		}
-
-		vec.clear();
-		foreach (const pmap_t::value_type v, pmap) {
-			vec.push_back(v.first);
-			pos_attributes_.push_back(v.second);
-			pos_valid_attributes_.push_back(std::vector<bool>(attribute_values_.size(), false));
-			foreach (attribute_idx_t a, v.second) {
-				pos_valid_attributes_.back()[a] = true;
-			}
-			pos_required_attributes_.push_back(reqmap[v.first]);
-		}
-		pos_dict_.load_sorted_data(vec);
 	}
 
-	void Tagset::save_to_stream(std::ostream &os)
+	std::vector<Tag> Tagset::parse_tag(const string_range& sr, bool allow_extra) const
 	{
-		os << "# Autogenerated by PlTagger\n\n";
-		os << "[ATTR]\n";
-		attribute_idx_t a(0);
-		while (attribute_dict_.is_id_valid(a)) {
-			os << attribute_dict_.get_string(a) << "\t= ";
-			foreach (value_idx_t v, get_attribute_values(a)) {
-				os << value_dict_.get_string(v) << " ";
-			}
-			os << "\n";
-			++a;
-		}
-		os << "\n[POS]\n";
-		pos_idx_t p(0);
-		while (pos_dict_.is_id_valid(p)) {
-			os << pos_dict_.get_string(p) << "\t= ";
-			foreach (attribute_idx_t a, get_pos_attributes(p)) {
-				if (pos_required_attributes_[p][a]) {
-					os << attribute_dict_.get_string(a) << " ";
-				} else {
-					os << '[' << attribute_dict_.get_string(a) << "] ";
-				}
-			}
-			os << "\n";
-			++p;
-		}
-		os << "# End autogenerated file\n";
-	}
-
-	Tag Tagset::parse_tag(const std::string &s, bool allow_extra) const
-	{
-		tstring_ranges fields;
-		boost::algorithm::split(fields, s, boost::is_any_of(std::string(":")));
+		string_range_vector fields;
+		boost::algorithm::split(fields, sr, boost::is_any_of(":"));
 		return parse_tag(fields, allow_extra);
 	}
 
-	Tag Tagset::parse_tag(const tstring_ranges &ts, bool allow_extra) const
+	std::vector<Tag> Tagset::parse_tag(const string_range_vector &fields, bool allow_extra) const
+	{
+		std::vector<Tag> tags;
+		parse_tag(fields, allow_extra, boost::bind(&std::vector<Tag>::push_back, boost::ref(tags), _1));
+		return tags;
+	}
+
+	Tag Tagset::parse_simple_tag(const string_range &s, bool allow_extra) const
+	{
+		string_range_vector fields;
+		boost::algorithm::split(fields, s, boost::is_any_of(std::string(":")));
+		return parse_simple_tag(fields, allow_extra);
+	}
+
+	Tag Tagset::parse_simple_tag(const string_range_vector &ts, bool allow_extra) const
 	{
 		if (ts.empty()) throw TagParseError("Empty POS+attribute list");
 		//const std::string& pos_str = boost::copy_range<std::string>(ts[0]);

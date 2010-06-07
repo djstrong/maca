@@ -8,29 +8,13 @@
 #include <vector>
 
 #include <boost/range.hpp>
+#include <boost/function.hpp>
 
 #include "exception.h"
 #include "symboldictionary.h"
+#include "typedefs.h"
 
 namespace PlTagger {
-
-	class TagsetParseError : public PlTaggerError
-	{
-	public:
-		TagsetParseError(const std::string& w, int line, const std::string& data)
-			: PlTaggerError("Tagset parse error: " + w), line(line), data(data)
-		{
-		}
-
-		~TagsetParseError() throw()
-		{
-		}
-
-		virtual std::string info() const;
-
-		int line;
-		std::string data;
-	};
 
 	class TagParseError : public PlTaggerError
 	{
@@ -45,23 +29,44 @@ namespace PlTagger {
 		}
 	};
 
+	class TagsetParser;
+
 	class Tagset
 	{
 	public:
 		Tagset();
 
-		void load_from_stream(std::istream& is);
 
-		void save_to_stream(std::ostream& os);
+		void parse_tag(const std::string& s, bool allow_extra, boost::function<void (const Tag&)> sink) const {
+			string_range sr(s.begin(), s.end());
+			parse_tag(sr, allow_extra, sink);
+		}
+
+		void parse_tag(const string_range& s, bool allow_extra, boost::function<void (const Tag&)> sink) const;
+
+		void parse_tag(const string_range_vector& ts, bool allow_extra, boost::function<void (const Tag&)> sink) const;
 
 
-		typedef boost::iterator_range<std::string::const_iterator> tstr_range;
+		std::vector<Tag> parse_tag(const std::string& s, bool allow_extra) const {
+			string_range sr(s.begin(), s.end());
+			return parse_tag(sr, allow_extra);
+		}
 
-		typedef std::vector< boost::iterator_range<std::string::const_iterator> > tstring_ranges;
+		std::vector<Tag> parse_tag(const string_range& s, bool allow_extra) const;
 
-		Tag parse_tag(const std::string& s, bool allow_extra) const;
+		std::vector<Tag> parse_tag(const string_range_vector& ts, bool allow_extra) const;
 
-		Tag parse_tag(const tstring_ranges& ts, bool allow_extra) const;
+
+		Tag parse_simple_tag(const std::string& s, bool allow_extra) const {
+			string_range sr(s.begin(), s.end());
+			return parse_simple_tag(sr, allow_extra);
+		}
+
+		Tag parse_simple_tag(const string_range& s, bool allow_extra) const;
+
+		Tag parse_simple_tag(const string_range_vector& ts, bool allow_extra) const;
+
+
 
 		bool validate_tag(const Tag& t, bool allow_extra);
 
@@ -79,6 +84,8 @@ namespace PlTagger {
 		const std::vector<bool>& get_pos_required_attributes(pos_idx_t pos) const;
 
 	private:
+		friend class TagsetParser;
+
 		std::string id_string_;
 
 		tagset_idx_t id_;

@@ -11,7 +11,7 @@ namespace PlTagger {
 	class DispatchAnalyser : public MorphAnalyser
 	{
 	public:
-		DispatchAnalyser();
+		DispatchAnalyser(const Tagset* tagset);
 
 		~DispatchAnalyser();
 

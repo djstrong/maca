@@ -8,7 +8,7 @@ namespace PlTagger {
 	class ConstAnalyser : public MorphAnalyser
 	{
 	public:
-		ConstAnalyser(const std::string& tag);
+		ConstAnalyser(const Tagset* tagset, const std::string& tag);
 
 		~ConstAnalyser();
 

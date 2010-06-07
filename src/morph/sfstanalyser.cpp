@@ -9,11 +9,13 @@
 #include <iostream>
 
 #include <boost/range.hpp>
+#include <boost/bind.hpp>
 #include <boost/algorithm/string.hpp>
 
 namespace PlTagger {
 
-	SfstAnalyser::SfstAnalyser(const std::string &filename)
+	SfstAnalyser::SfstAnalyser(const Tagset* tagset, const std::string &filename)
+		: MorphAnalyser(tagset)
 	{
 		FILE* f = fopen(filename.c_str(), "rb");
 		if (!f) {
@@ -68,54 +70,31 @@ namespace PlTagger {
 		return Lexeme(lemma, Tag(tag_string));
 	}
 
-	void split_tag_into(const boost::iterator_range<std::string::const_iterator>& sr, const UnicodeString& lemma, std::vector<Lexeme>& lv)
-	{
-		typedef std::vector< boost::iterator_range<std::string::const_iterator> > find_vector_type;
-		find_vector_type fields;
-		boost::algorithm::split(fields, sr, boost::is_any_of(":"));
-		std::vector< find_vector_type > opts(1);
-		foreach (const boost::iterator_range<std::string::const_iterator>& r, fields) {
-			find_vector_type dots;
-			boost::algorithm::split(dots, r, boost::is_any_of("."));
-			foreach (find_vector_type& o, opts) {
-				o.push_back(dots.front());
-			}
-			size_t opts_size = opts.size();
-			for (size_t di = 1; di < dots.size(); ++di) {
-				for (size_t oi = 0; oi < opts_size; ++oi) {
-					opts.push_back(opts[oi]);
-					opts.back().back() = dots[di];
-				}
-			}
-		}
-		foreach (const find_vector_type& o, opts) {
-			std::stringstream ss;
-			if (!o.empty()) {
-				ss << o.front();
-				for (size_t i = 1; i < o.size(); ++i) {
-					ss << ":";
-					ss << o[i];
-				}
-			}
-			std::string tag_string = ss.str();
-			lv.push_back(Lexeme(lemma, Tag(tag_string)));
-		}
-	}
-
 	void SfstAnalyser::split_analysis_into(const std::string &sfst_analysis, std::vector<Lexeme>& lv)
 	{
+		// this function assumes the SFST analyses are returned in one of the
+		// following formats:
+		// LEMMA_STRING<TAG_STRING>
+		// LEMMA_STRING<TAG_STRING1+TAG_STRING_2+TAG_STRING3+...>
 		size_t pos = sfst_analysis.find('<');
 		if (pos != std::string::npos) {
 			UnicodeString lemma(sfst_analysis.c_str(), pos);
-			boost::sub_range<const std::string> sr(sfst_analysis.begin() + pos + 1, sfst_analysis.end() - 1);
-			//lv.push_back(Lexeme(lemma, Tag(boost::copy_range<std::string>(sr))));
-			typedef std::vector< boost::iterator_range<std::string::const_iterator> > find_vector_type;
-			find_vector_type options;
+
+			string_range sr(sfst_analysis.begin() + pos + 1, sfst_analysis.end() - 1);
+			string_range_vector options;
 			boost::algorithm::split(options, sr, boost::is_any_of("+"));
-			foreach (const boost::iterator_range<std::string::const_iterator>& o, options) {
-				split_tag_into(o, lemma, lv);
+
+			boost::function<Lexeme (const Tag&)> lex;
+			lex = boost::bind(&Lexeme::create, boost::cref(lemma), _1);
+
+			boost::function<void (const Tag&)> func;
+			func = boost::bind(&std::vector<Lexeme>::push_back, &lv, boost::bind(lex, _1));
+
+			foreach (const string_range& o, options) {
+				tagset().parse_tag(o, true, func);
 			}
 		}
 	}
+
 
 } /* end ns PlTagger */

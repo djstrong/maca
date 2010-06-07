@@ -2,8 +2,8 @@
 
 namespace PlTagger {
 
-	ConstAnalyser::ConstAnalyser(const std::string &tag)
-		: tag_(tag)
+	ConstAnalyser::ConstAnalyser(const Tagset *tagset, const std::string &tag)
+		: MorphAnalyser(tagset), tag_(tag)
 	{
 	}
 

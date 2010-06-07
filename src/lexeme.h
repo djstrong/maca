@@ -15,6 +15,8 @@ namespace PlTagger {
 
 		Lexeme(const UnicodeString& lemma, const Tag& tag);
 
+		static Lexeme create(const UnicodeString& lemma, const Tag& tag);
+
 		const UnicodeString& lemma() const {
 			return lemma_;
 		}
@@ -32,6 +34,7 @@ namespace PlTagger {
 
 		Tag tag_;
 	};
+
 } /* end ns PlTagger */
 
 #endif // LIBPLTAGGER_LEXEME_H

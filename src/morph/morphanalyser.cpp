@@ -2,7 +2,8 @@
 
 namespace PlTagger {
 
-	MorphAnalyser::MorphAnalyser()
+	MorphAnalyser::MorphAnalyser(const Tagset *tagset)
+		: tagset_(tagset)
 	{
 	}
 

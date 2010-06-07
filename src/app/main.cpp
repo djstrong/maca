@@ -8,7 +8,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>
 
-#include "tagset.h"
+#include "tagsetparser.h"
 
 #include "debug.h"
 #include <fstream>
@@ -46,32 +46,36 @@ int main(int argc, char** argv)
 		std::cout << desc << "\n";
 		return 1;
 	}
+	boost::shared_ptr<PlTagger::Tagset> tagset(new PlTagger::Tagset);
 
 	if (!tagset_load.empty()) {
-		PlTagger::Tagset tagset;
 		std::ifstream ifs(tagset_load.c_str());
-		try {
-			tagset.load_from_stream(ifs);
-		} catch (PlTagger::TagsetParseError& e) {
-			std::cerr << e.info() << "\n";
-			exit(1);
+		if (ifs.good()) {
+			try {
+				*tagset = PlTagger::TagsetParser::load_ini(ifs);
+			} catch (PlTagger::TagsetParseError& e) {
+				std::cerr << e.info() << "\n";
+				exit(1);
+			}
+			if (!tagset_save.empty()) {
+				std::ofstream ofs(tagset_save.c_str());
+				PlTagger::TagsetParser::save_ini(*tagset, ofs);
+			}
+		} else {
+			std::cerr << "File open error\n";
+			return 7;
 		}
-		if (!tagset_save.empty()) {
-			std::ofstream ofs(tagset_save.c_str());
-			tagset.save_to_stream(ofs);
-		}
-		return 0;
 	}
 
 	boost::shared_ptr<PlTagger::MorphAnalyser> ma;
 
 #ifdef HAVE_SFST
 	if (!sfst.empty()) {
-		ma.reset(new PlTagger::SfstAnalyser(sfst));
+		ma.reset(new PlTagger::SfstAnalyser(tagset.get(), sfst));
 	} else
 #endif
 	if (!mdict.empty()) {
-		PlTagger::HashMapAnalyser* hma = new PlTagger::HashMapAnalyser;
+		PlTagger::HashMapAnalyser* hma = new PlTagger::HashMapAnalyser(tagset.get());
 		ma.reset(hma);
 		hma->load_m_dictionary(mdict);
 		std::cout << "loading done\n";
