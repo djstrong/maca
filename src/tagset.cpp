@@ -35,6 +35,8 @@ namespace PlTagger {
 		vmap_t vmap;
 		typedef std::map< std::string, std::vector<attribute_idx_t> > pmap_t;
 		pmap_t pmap;
+		typedef std::map< std::string, std::vector<bool> > reqmap_t;
+		reqmap_t reqmap;
 
 		while (is.good() && line != "[ATTR]") {
 			std::getline(is, line);
@@ -100,14 +102,21 @@ namespace PlTagger {
 					throw TagsetParseError("Duplicate symbol", line_no, v[0]);
 				}
 				std::vector<attribute_idx_t>& pattrs = pmap[v[0]];
+				std::vector<bool>& req_mask = reqmap[v[0]];
 				v.pop_front();
-				foreach (const std::string& s, v) {
+				foreach (std::string s, v) {
 					if (s.empty()) continue;
+					bool required = true;
+					if (s[0] == '[' && s[s.size() - 1] == ']') {
+						required = false;
+						s = s.substr(1, s.size() - 2);
+					}
 					attribute_idx_t a = attribute_dict_.get_id(s);
 					if (!attribute_dict_.is_id_valid(a)) {
 						throw TagsetParseError("Attribute name invalid", line_no, s);
 					}
 					pattrs.push_back(a);
+					req_mask[a] = required;
 				}
 			}
 			std::getline(is, line);
@@ -119,10 +128,11 @@ namespace PlTagger {
 		foreach (const pmap_t::value_type v, pmap) {
 			vec.push_back(v.first);
 			pos_attributes_.push_back(v.second);
-			pos_attributes_mask_.push_back(std::vector<bool>(attribute_values_.size(), false));
+			pos_valid_attributes_.push_back(std::vector<bool>(attribute_values_.size(), false));
 			foreach (attribute_idx_t a, v.second) {
-				pos_attributes_mask_.back()[a] = true;
+				pos_valid_attributes_.back()[a] = true;
 			}
+			pos_required_attributes_.push_back(reqmap[v.first]);
 		}
 		pos_dict_.load_sorted_data(vec);
 	}
@@ -145,7 +155,11 @@ namespace PlTagger {
 		while (pos_dict_.is_id_valid(p)) {
 			os << pos_dict_.get_string(p) << "\t= ";
 			foreach (attribute_idx_t a, get_pos_attributes(p)) {
-				os << attribute_dict_.get_string(a) << " ";
+				if (pos_required_attributes_[p][a]) {
+					os << attribute_dict_.get_string(a) << " ";
+				} else {
+					os << '[' << attribute_dict_.get_string(a) << "] ";
+				}
 			}
 			os << "\n";
 			++p;
@@ -171,7 +185,7 @@ namespace PlTagger {
 			throw TagParseError("Invalid POS");
 		}
 
-		const std::vector<bool>& valid_attrs_mask = get_pos_attributes_mask(pos_id);
+		const std::vector<bool>& valid_attrs_mask = get_pos_valid_attributes(pos_id);
 
 		Tag tag(id_, pos_id);
 
@@ -189,6 +203,27 @@ namespace PlTagger {
 		}
 
 		return tag;
+	}
+
+	bool Tagset::validate_tag(const Tag &t, bool allow_extra)
+	{
+		if (pos_dict_.is_id_valid(t.pos_id())) return false;
+		std::vector<bool> valid = get_pos_valid_attributes(t.pos_id());
+		std::vector<bool> required = get_pos_required_attributes(t.pos_id());
+		if (t.values().size() < attribute_dict_.size()) return false;
+		if (!allow_extra && t.values().size() > attribute_dict_.size()) return false;
+		for (size_t i = 0; i < t.values().size(); ++i) {
+			value_idx_t v = t.values()[i];
+			if (v == 0) {
+				if (required[i]) return false;
+			} else {
+				if (!valid[i] && !allow_extra) return false;
+				if (!value_dict_.is_id_valid(v)) return false;
+				attribute_idx_t a = value_attribute_[v];
+				if (a != static_cast<attribute_idx_t>(i)) return false;
+			}
+		}
+		return true;
 	}
 
 	std::string Tagset::tag_to_string(const Tag &tag) const
@@ -222,10 +257,16 @@ namespace PlTagger {
 		return pos_attributes_[pos];
 	}
 
-	const std::vector<bool>& Tagset::get_pos_attributes_mask(pos_idx_t pos) const
+	const std::vector<bool>& Tagset::get_pos_valid_attributes(pos_idx_t pos) const
 	{
 		assert(pos_dict_.is_id_valid(pos));
-		return pos_attributes_mask_[pos];
+		return pos_valid_attributes_[pos];
+	}
+
+	const std::vector<bool>& Tagset::get_pos_required_attributes(pos_idx_t pos) const
+	{
+		assert(pos_dict_.is_id_valid(pos));
+		return pos_required_attributes_[pos];
 	}
 
 } /* end ns PlTagger */

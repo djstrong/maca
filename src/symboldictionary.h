@@ -20,6 +20,8 @@ namespace PlTagger {
 
 		bool is_id_valid(IndexT idx) const;
 
+		size_t  size() const;
+
 		IndexT get_id(const boost::iterator_range<std::string::const_iterator>& r) const;
 
 		IndexT get_id(const std::string& s) const;
@@ -57,6 +59,12 @@ namespace PlTagger {
 	bool SymbolDictionary<IndexT>::is_id_valid(IndexT idx) const
 	{
 		return static_cast<size_t>(idx) < data_.size();
+	}
+
+	template <typename IndexT>
+	size_t SymbolDictionary<IndexT>::size() const
+	{
+		return data_.size();
 	}
 
 	template <typename IndexT>

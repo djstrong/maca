@@ -63,6 +63,7 @@ namespace PlTagger {
 
 		Tag parse_tag(const tstring_ranges& ts, bool allow_extra) const;
 
+		bool validate_tag(const Tag& t, bool allow_extra);
 
 		std::string tag_to_string(const Tag& tag) const;
 
@@ -73,7 +74,9 @@ namespace PlTagger {
 
 		const std::vector<attribute_idx_t>& get_pos_attributes(pos_idx_t pos) const;
 
-		const std::vector<bool>& get_pos_attributes_mask(pos_idx_t pos) const;
+		const std::vector<bool>& get_pos_valid_attributes(pos_idx_t pos) const;
+
+		const std::vector<bool>& get_pos_required_attributes(pos_idx_t pos) const;
 
 	private:
 		std::string id_string_;
@@ -90,7 +93,9 @@ namespace PlTagger {
 
 		std::vector< std::vector<attribute_idx_t> > pos_attributes_;
 
-		std::vector< std::vector<bool> > pos_attributes_mask_;
+		std::vector< std::vector<bool> > pos_valid_attributes_;
+
+		std::vector< std::vector<bool> > pos_required_attributes_;
 
 	};
 
