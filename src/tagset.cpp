@@ -103,6 +103,7 @@ namespace PlTagger {
 				}
 				std::vector<attribute_idx_t>& pattrs = pmap[v[0]];
 				std::vector<bool>& req_mask = reqmap[v[0]];
+				req_mask.resize(attribute_dict_.size());
 				v.pop_front();
 				foreach (std::string s, v) {
 					if (s.empty()) continue;
