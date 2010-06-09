@@ -16,9 +16,10 @@ struct F {
 	}
 	boost::shared_ptr<PlTagger::Tagset> tagset;
 
-	void check_split(const char* orig, const std::set<std::string> expect)
+	std::vector<PlTagger::Tag> check_split(const char* orig, const std::set<std::string> expect)
 	{
 		std::set<std::string> actual;
+		std::vector<PlTagger::Tag> tags;
 		std::vector<PlTagger::Lexeme> lex;
 		//try {
 		std::string s = orig;
@@ -31,9 +32,11 @@ struct F {
 		foreach (const PlTagger::Lexeme& l, lex) {
 			BOOST_WARN(tagset->validate_tag(l.tag(), false));
 			actual.insert(tagset->tag_to_string(l.tag()));
+			tags.push_back(l.tag());
 		}
 
 		BOOST_CHECK_EQUAL_COLLECTIONS(actual.begin(), actual.end(), expect.begin(), expect.end());
+		return tags;
 	}
 };
 
@@ -90,5 +93,75 @@ BOOST_FIXTURE_TEST_CASE( dots_plus, F )
 	check_split(tag, result);
 }
 
+BOOST_FIXTURE_TEST_CASE( missing, F )
+{
+	const char tag[] = "some:data";
+	std::set<std::string> r;
+	r.insert("some::data");
+	check_split(tag, r);
+}
 
+BOOST_FIXTURE_TEST_CASE( bad_value, F )
+{
+	const char tag[] = "some:bad:data";
+	std::set<std::string> r;
+	BOOST_CHECK_THROW(
+			check_split(tag, r), PlTagger::TagParseError
+	);
+}
+
+BOOST_FIXTURE_TEST_CASE( bad_pos, F )
+{
+	const char tag[] = "something:data";
+	std::set<std::string> r;
+	BOOST_CHECK_THROW(
+			check_split(tag, r), PlTagger::TagParseError
+	);
+}
+
+BOOST_FIXTURE_TEST_CASE( underscore, F )
+{
+	const char tag[] = "some:_:data";
+	std::set<std::string> r;
+	r.insert("some:tag:data");
+	r.insert("some:tog:data");
+	r.insert("some:other:data");
+	r.insert("some:a3:data");
+	check_split(tag, r);
+}
+
+BOOST_FIXTURE_TEST_CASE( underscores, F )
+{
+	const char tag[] = "some:_:data:_";
+	std::set<std::string> r0;
+	r0.insert("some:tag:data");
+	r0.insert("some:tog:data");
+	r0.insert("some:other:data");
+	r0.insert("some:a3:data");
+	std::set<std::string> r;
+	foreach (const std::string& s, r0) {
+		r.insert(s + ":a");
+		r.insert(s + ":b");
+		r.insert(s + ":c");
+	}
+
+	check_split(tag, r);
+}
+
+BOOST_FIXTURE_TEST_CASE( underscore_dots, F )
+{
+	const char tag[] = "some:_:data:c.a";
+	std::set<std::string> r0;
+	r0.insert("some:tag:data");
+	r0.insert("some:tog:data");
+	r0.insert("some:other:data");
+	r0.insert("some:a3:data");
+	std::set<std::string> r;
+	foreach (const std::string& s, r0) {
+		r.insert(s + ":a");
+		r.insert(s + ":c");
+	}
+
+	check_split(tag, r);
+}
 BOOST_AUTO_TEST_SUITE_END()

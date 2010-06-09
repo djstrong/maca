@@ -73,6 +73,7 @@ namespace PlTagger {
 
 		Tag parse_simple_tag(const string_range_vector& ts, bool allow_extra) const;
 
+		Tag make_tag(pos_idx_t pos, const std::vector<value_idx_t>& values, bool allow_extra) const;
 
 
 		bool validate_tag(const Tag& t, bool allow_extra);
