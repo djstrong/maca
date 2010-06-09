@@ -43,7 +43,8 @@ namespace PlTagger {
 		Token* tt = new Token(t);
 		foreach (CAnalysis& ca, a) {
 			//std::cout << s << "\t" <<<  unescape_analysis(ct_->print_analysis(ca)) << "\n";
-			split_analysis_into(unescape_analysis((ct_->print_analysis(ca))), tt->lexemes());
+			split_analysis_into(unescape_analysis((ct_->print_analysis(ca))),
+				tt->lexemes(), tagset());
 		}
 		return tt;
 	}
@@ -70,7 +71,8 @@ namespace PlTagger {
 		return Lexeme(lemma, Tag(tag_string));
 	}
 
-	void SfstAnalyser::split_analysis_into(const std::string &sfst_analysis, std::vector<Lexeme>& lv)
+	void SfstAnalyser::split_analysis_into(const std::string &sfst_analysis,
+			std::vector<Lexeme>& lv, const Tagset& tagset)
 	{
 		// this function assumes the SFST analyses are returned in one of the
 		// following formats:
@@ -91,8 +93,10 @@ namespace PlTagger {
 			func = boost::bind(&std::vector<Lexeme>::push_back, &lv, boost::bind(lex, _1));
 
 			foreach (const string_range& o, options) {
-				tagset().parse_tag(o, true, func);
+				tagset.parse_tag(o, true, func);
 			}
+		} else {
+			throw TagParseError("SFST format: < missing");
 		}
 	}
 

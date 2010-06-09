@@ -36,20 +36,27 @@ namespace PlTagger {
 	public:
 		Tagset();
 
+		explicit Tagset(const char*);
+
 
 		void parse_tag(const std::string& s, bool allow_extra, boost::function<void (const Tag&)> sink) const {
-			string_range sr(s.begin(), s.end());
-			parse_tag(sr, allow_extra, sink);
+			parse_tag(string_range(s.begin(), s.end()), allow_extra, sink);
+		}
+
+		void parse_tag(const char* s, bool allow_extra, boost::function<void (const Tag&)> sink) const {
+			parse_tag(string_range(s, s + strlen(s)), allow_extra, sink);
 		}
 
 		void parse_tag(const string_range& s, bool allow_extra, boost::function<void (const Tag&)> sink) const;
 
 		void parse_tag(const string_range_vector& ts, bool allow_extra, boost::function<void (const Tag&)> sink) const;
 
-
 		std::vector<Tag> parse_tag(const std::string& s, bool allow_extra) const {
-			string_range sr(s.begin(), s.end());
-			return parse_tag(sr, allow_extra);
+			return parse_tag(string_range(s.begin(), s.end()), allow_extra);
+		}
+
+		std::vector<Tag> parse_tag(const char* s, bool allow_extra) const {
+			return parse_tag(string_range(s, s + strlen(s)), allow_extra);
 		}
 
 		std::vector<Tag> parse_tag(const string_range& s, bool allow_extra) const;

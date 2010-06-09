@@ -9,7 +9,7 @@ namespace PlTagger {
 	std::string TagsetParseError::info() const
 	{
 		std::stringstream ss;
-		ss << "Line " << line << ": " << what() << " " << data;
+		ss << "Line " << line << ": " << what() << " `" << data << "`";
 		return ss.str();
 	}
 
@@ -41,23 +41,23 @@ namespace PlTagger {
 		reqmap_t reqmap;
 		Tagset tagset;
 
-		while (is.good() && line != "[ATTR]") {
-			std::getline(is, line);
+		while (std::getline(is, line)) {
 			boost::algorithm::trim(line);
 			++line_no;
+			if (line == "[ATTR]") break;
 		}
-		std::getline(is, line);
-		boost::algorithm::trim(line);
-		++line_no;
 
 		//attribute-value defs
-		while (is.good() && line != "[POS]") {
+		while (std::getline(is, line)) {
+			boost::algorithm::trim(line);
+			++line_no;
+			if (line == "[POS]") break;
 			if (!line.empty() && line[0] != '#') {
 				std::deque<std::string> v;
 				boost::algorithm::split(v, line, boost::is_any_of(sep),
 						boost::algorithm::token_compress_on);
 				if (v.size() < 3) {
-					throw TagsetParseError("Attribute with less than 2 values", line_no, v[0]);
+					throw TagsetParseError("Attribute with less than 2 values", line_no, line);
 				}
 				if (!symbols.insert(v[0]).second) {
 					throw TagsetParseError("Duplicate symbol", line_no, v[0]);
@@ -66,18 +66,13 @@ namespace PlTagger {
 				v.pop_front();
 				avalues = v;
 				foreach (const std::string& s, v) {
-					if (!values.insert(s).second) {
+					if (!symbols.insert(s).second) {
 						throw TagsetParseError("Duplicate symbol", line_no, s);
 					}
+					values.insert(s);
 				}
 			}
-			std::getline(is, line);
-			boost::algorithm::trim(line);
-			++line_no;
 		}
-		std::getline(is, line);
-		boost::algorithm::trim(line);
-		++line_no;
 
 		std::vector<std::string> vec;
 		std::copy(values.begin(), values.end(), std::inserter(vec, vec.begin()));
@@ -87,16 +82,20 @@ namespace PlTagger {
 		tagset.value_dict_.load_sorted_data(vec);
 
 		vec.clear();
+		tagset.value_attribute_.resize(values.size());
 		foreach (const vmap_t::value_type v, vmap) {
 			vec.push_back(v.first);
 			tagset.attribute_values_.resize(tagset.attribute_values_.size() + 1);
 			foreach (const std::string& s, v.second) {
 				tagset.attribute_values_.back().push_back(tagset.value_dict_.get_id(s));
+				tagset.value_attribute_[tagset.value_dict_.get_id(s)] = vec.size() - 1;
 			}
 		}
 		tagset.attribute_dict_.load_sorted_data(vec);
 
-		while (is.good()) {
+		while (std::getline(is, line)) {
+			boost::algorithm::trim(line);
+			++line_no;
 			if (!line.empty() && line[0] != '#') {
 				std::deque<std::string> v;
 				boost::algorithm::split(v, line, boost::is_any_of(sep),
@@ -123,9 +122,7 @@ namespace PlTagger {
 					req_mask[a] = required;
 				}
 			}
-			std::getline(is, line);
-			boost::algorithm::trim(line);
-			++line_no;
+
 		}
 
 		vec.clear();
@@ -139,6 +136,9 @@ namespace PlTagger {
 			tagset.pos_required_attributes_.push_back(reqmap[v.first]);
 		}
 		tagset.pos_dict_.load_sorted_data(vec);
+		if (tagset.pos_dict_.size() == 0) {
+			throw TagsetParseError("No POS in tagset", 0, "");
+		}
 		return tagset;
 	}
 

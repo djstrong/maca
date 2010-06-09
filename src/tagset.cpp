@@ -1,5 +1,6 @@
 #include "tagset.h"
 #include "lexeme.h"
+#include "tagsetparser.h"
 
 #include <libtoki/foreach.h>
 
@@ -15,6 +16,13 @@ namespace PlTagger {
 
 	Tagset::Tagset()
 	{
+	}
+
+	Tagset::Tagset(const char *s)
+	{
+		std::stringstream ss;
+		ss << s;
+		*this = TagsetParser::load_ini(ss);
 	}
 
 	void Tagset::parse_tag(const string_range &s, bool allow_extra,
@@ -77,17 +85,19 @@ namespace PlTagger {
 		pos_idx_t pos_id = pos_dict_.get_id(ts[0]);
 
 		if (!pos_dict_.is_id_valid(pos_id)) {
-			throw TagParseError("Invalid POS");
+			throw TagParseError("Invalid POS: " + boost::copy_range<std::string>(ts[0]));
 		}
 
 		const std::vector<bool>& valid_attrs_mask = get_pos_valid_attributes(pos_id);
 
 		Tag tag(id_, pos_id);
+		std::vector<value_idx_t> vvv(attribute_dict_.size(), static_cast<value_idx_t>(0));
+		tag.values().swap(vvv);
 
 		for (size_t i = 1; i < ts.size(); ++i) {
 			value_idx_t val_id = value_dict_.get_id(ts[i]);
 			if (!value_dict_.is_id_valid(val_id)) {
-				throw TagParseError("Unknown attribute value");
+				throw TagParseError("Unknown attribute value: " + boost::copy_range<std::string>(ts[i]));
 			}
 
 			attribute_idx_t attr_id = get_value_attribute(val_id);
@@ -127,8 +137,12 @@ namespace PlTagger {
 		ss << pos_dict_.get_string(tag.pos_id());
 		const std::vector<attribute_idx_t>& attrs = get_pos_attributes(tag.pos_id());
 		foreach (const attribute_idx_t& a, attrs) {
-			ss << ":";
-			ss << value_dict_.get_string(tag.values()[a]);
+			if (pos_required_attributes_[tag.pos_id()][a] || tag.values()[a] > 0) {
+				ss << ":";
+				if (tag.values()[a] > 0) {
+					ss << value_dict_.get_string(tag.values()[a]);
+				}
+			}
 		}
 		return ss.str();
 	}

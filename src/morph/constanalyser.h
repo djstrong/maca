@@ -10,6 +10,8 @@ namespace PlTagger {
 	public:
 		ConstAnalyser(const Tagset* tagset, const std::string& tag);
 
+		ConstAnalyser(const Tagset* tagset, const Tag& tag);
+
 		~ConstAnalyser();
 
 		Token* process(const Toki::Token &t);
