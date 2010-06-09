@@ -11,6 +11,7 @@ namespace PlTagger {
 
 	class Tagset;
 
+	/// Typedefs for the string -> index mappings
 	BOOST_STRONG_TYPEDEF(boost::uint8_t, pos_idx_t);
 	BOOST_STRONG_TYPEDEF(boost::uint8_t, attribute_idx_t);
 	BOOST_STRONG_TYPEDEF(boost::uint8_t, value_idx_t);
