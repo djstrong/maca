@@ -33,6 +33,24 @@ namespace PlTagger {
 		parse_tag(fields, allow_extra, sink);
 	}
 
+	namespace {
+		void append_to_multi_tag(std::vector< std::vector<value_idx_t> > & current,
+				const std::vector<value_idx_t> & to_add)
+		{
+			foreach (std::vector<value_idx_t>& o, current) {
+				o.push_back(to_add[0]);
+			}
+			size_t current_size = current.size();
+			for (size_t ai = 1; ai < to_add.size(); ++ai) {
+				for (size_t oi = 0; oi < current_size; ++oi) {
+					current.push_back(current[oi]);
+					current.back().back() = to_add[ai];
+				}
+			}
+		}
+
+	}
+
 	void Tagset::parse_tag(const string_range_vector &fields, bool allow_extra,
 			boost::function<void(const Tag &)>sink) const
 	{
@@ -46,42 +64,24 @@ namespace PlTagger {
 		std::vector< std::vector<value_idx_t> > opts(1);
 		for (size_t fi = 1; fi < fields.size(); ++fi) {
 			const string_range& r = fields[fi];
-			if (r.size() == 1 && *r.begin() == '_') {
+			if (r.size() != 1 || *r.begin() != '_') {
+				string_range_vector dots;
+				boost::algorithm::split(dots, r, boost::is_any_of("."));
+				std::vector<value_idx_t> values;
+				foreach (string_range& dot, dots) {
+					value_idx_t v = value_dict_.get_id(dot);
+					if (!value_dict_.is_id_valid(v)) {
+						throw TagParseError("Unknown attribute value: " + boost::copy_range<std::string>(r));
+					}
+					values.push_back(v);
+				}
+				append_to_multi_tag(opts, values);
+			} else {
 				if (fi - 1 >= pos_attributes_[pos_id].size()) {
 					throw TagParseError("Underscore beyond the last attribute for this POS");
 				}
 				attribute_idx_t attr = pos_attributes_[pos_id][fi - 1];
-				foreach (std::vector<value_idx_t>& o, opts) {
-					o.push_back(attribute_values_[attr][0]);
-				}
-				size_t opts_size = opts.size();
-				for (size_t ai = 1; ai < attribute_values_[attr].size(); ++ai) {
-					for (size_t oi = 0; oi < opts_size; ++oi) {
-						opts.push_back(opts[oi]);
-						opts.back().back() = attribute_values_[attr][ai];
-					}
-				}
-			} else {
-				string_range_vector dots;
-				boost::algorithm::split(dots, r, boost::is_any_of("."));
-				value_idx_t v = value_dict_.get_id(dots[0]);
-				if (!value_dict_.is_id_valid(v)) {
-					throw TagParseError("Unknown attribute value: " + boost::copy_range<std::string>(r));
-				}
-				foreach (std::vector<value_idx_t>& o, opts) {
-					o.push_back(v);
-				}
-				size_t opts_size = opts.size();
-				for (size_t di = 1; di < dots.size(); ++di) {
-					for (size_t oi = 0; oi < opts_size; ++oi) {
-						value_idx_t vv = value_dict_.get_id(dots[di]);
-						if (!value_dict_.is_id_valid(vv)) {
-							throw TagParseError("Unknown attribute value: " + boost::copy_range<std::string>(r));
-						}
-						opts.push_back(opts[oi]);
-						opts.back().back() = vv;
-					}
-				}
+				append_to_multi_tag(opts, attribute_values_[attr]);
 			}
 		}
 		foreach (std::vector<value_idx_t>& opt, opts) {
