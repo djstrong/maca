@@ -15,7 +15,7 @@ namespace PlTagger {
 
 		~SfstAnalyser();
 
-		Token* process(const Toki::Token& t);
+		std::vector<Token*> process(const Toki::Token& t);
 
 		static std::string unescape_analysis(const std::string& sfst_analysis);
 

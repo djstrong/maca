@@ -8,6 +8,8 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>
 
+#include <libtoki/foreach.h>
+
 #include "tagsetparser.h"
 
 #include "debug.h"
@@ -92,11 +94,11 @@ int main(int argc, char** argv)
 			std::string s;
 			std::cin >> s;
 			Toki::Token t(s.c_str(), "t", Toki::Whitespace::None);
-			PlTagger::Token* tt = ma->process(t);
-			if (tt != NULL) {
-				std::cout << PlTagger::token_string(*tt) << "\n";
+			std::vector<PlTagger::Token*> tv = ma->process(t);
+			foreach (PlTagger::Token* tt, tv) {
+				std::cout << tagset->tag_to_string(tt->lexemes()[0].tag()) << "\n";
+				delete tt;
 			}
-			delete tt;
 		}
 	}
 }

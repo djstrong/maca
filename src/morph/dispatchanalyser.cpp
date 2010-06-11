@@ -21,7 +21,7 @@ namespace PlTagger {
 		type_handlers_.insert(std::make_pair(type, a));
 	}
 
-	Token* DispatchAnalyser::process(const Toki::Token &t)
+	std::vector<Token*> DispatchAnalyser::process(const Toki::Token &t)
 	{
 		std::map<std::string, MorphAnalyser*>::const_iterator i;
 		i = type_handlers_.find(t.type());
@@ -31,7 +31,7 @@ namespace PlTagger {
 			if (default_) {
 				return default_->process(t);
 			} else {
-				return NULL;
+				return  std::vector<Token*>();
 			}
 		}
 	}

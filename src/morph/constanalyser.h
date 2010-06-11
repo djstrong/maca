@@ -14,7 +14,7 @@ namespace PlTagger {
 
 		~ConstAnalyser();
 
-		Token* process(const Toki::Token &t);
+		 std::vector<Token*> process(const Toki::Token &t);
 	private:
 		Tag tag_;
 	};

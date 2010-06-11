@@ -35,7 +35,7 @@ namespace PlTagger {
 		delete ct_;
 	}
 
-	Token* SfstAnalyser::process(const Toki::Token &t)
+	std::vector<Token*> SfstAnalyser::process(const Toki::Token &t)
 	{
 		std::vector< CAnalysis > a;
 		std::string s = t.orth_utf8();
@@ -46,7 +46,7 @@ namespace PlTagger {
 			split_analysis_into(unescape_analysis((ct_->print_analysis(ca))),
 				tt->lexemes(), tagset());
 		}
-		return tt;
+		return std::vector<Token*>(1, tt);
 	}
 
 	std::string SfstAnalyser::unescape_analysis(const std::string &sfst_analysis)

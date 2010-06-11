@@ -25,7 +25,7 @@ namespace PlTagger {
 
 		void load_m_dictionary(const std::string& fn);
 
-		Token* process(const Toki::Token &t);
+		 std::vector<Token*> process(const Toki::Token &t);
 
 	private:
 		MapT map_;
@@ -51,16 +51,16 @@ namespace PlTagger {
 	}
 
 	template<typename MapT>
-	Token* MapAnalyser<MapT>::process(const Toki::Token &t)
+	std::vector<Token*> MapAnalyser<MapT>::process(const Toki::Token &t)
 	{
 		typename MapT::const_iterator i;
 		i = map_.find(t.orth_utf8());
 		if (i != map_.end()) {
 			Token* tt = new Token(t);
 			tt->add_lexeme(i->second);
-			return tt;
+			return std::vector<Token*>(1, tt);
 		} else {
-			return NULL;
+			return std::vector<Token*>();
 		}
 	}
 

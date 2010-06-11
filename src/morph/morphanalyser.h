@@ -14,7 +14,7 @@ namespace PlTagger {
 
 		virtual ~MorphAnalyser();
 
-		virtual Token* process(const Toki::Token& t) = 0;
+		virtual std::vector<Token*> process(const Toki::Token& t) = 0;
 
 		const Tagset& tagset() {
 			return *tagset_;

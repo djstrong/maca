@@ -15,7 +15,7 @@ namespace PlTagger {
 
 		~DispatchAnalyser();
 
-		Token* process(const Toki::Token &t);
+		std::vector<Token*> process(const Toki::Token &t);
 
 		void add_type_handler(const std::string& type,  MorphAnalyser* a);
 

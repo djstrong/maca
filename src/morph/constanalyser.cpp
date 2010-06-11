@@ -17,11 +17,11 @@ namespace PlTagger {
 	{
 	}
 
-	Token* ConstAnalyser::process(const Toki::Token &t)
+	std::vector<Token*> ConstAnalyser::process(const Toki::Token &t)
 	{
 		Token* tt = new Token(t);
 		tt->add_lexeme(Lexeme(tt->orth(), tag_));
-		return tt;
+		return std::vector<Token*>(1, tt);
 	}
 
 } /* end ns PlTagger */
