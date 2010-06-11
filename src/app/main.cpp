@@ -57,6 +57,12 @@ int main(int argc, char** argv)
 				std::cerr << e.info() << "\n";
 				exit(1);
 			}
+			std::cerr << "Tagset loaded: "
+				<< tagset->pos_dictionary().size() << " POSes, "
+				<< tagset->attribute_dictionary().size() << " attributes, "
+				<< tagset->value_dictionary().size() << " values\n";
+			std::cerr << "Size is " << tagset->size()
+				<< " (extra size is " << tagset->size_extra() << ")\n";
 			if (!tagset_save.empty()) {
 				std::ofstream ofs(tagset_save.c_str());
 				PlTagger::TagsetParser::save_ini(*tagset, ofs);

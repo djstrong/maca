@@ -28,6 +28,29 @@ namespace PlTagger {
 
 		const std::string& get_string(IndexT id) const;
 
+
+		typedef typename std::vector<std::string>::iterator iterator;
+
+		typedef typename std::vector<std::string>::const_iterator const_iterator;
+
+		typedef typename std::vector<std::string>::value_type value_type;
+
+		iterator begin() {
+			return data_.begin();
+		}
+
+		const_iterator begin() const {
+			return data_.begin();
+		}
+
+		iterator end() {
+			return data_.begin();
+		}
+
+		const_iterator end() const {
+			return data_.begin();
+		}
+
 	private:
 		std::vector<std::string> data_;
 		static std::string nullstr;

@@ -234,4 +234,32 @@ namespace PlTagger {
 		return pos_required_attributes_[pos];
 	}
 
+	size_t Tagset::size() const
+	{
+		size_t sum = 0;
+		for (size_t p = 0; p < pos_dict_.size(); ++p) {
+			size_t pos_size = 1;
+			for (size_t i = 0; i < pos_attributes_[p].size(); ++i) {
+				attribute_idx_t a = pos_attributes_[p][i];
+				if (pos_required_attributes_[p][a]) {
+					pos_size *= attribute_values_[a].size();
+				} else {
+					pos_size *= (attribute_values_[a].size() + 1);
+				}
+			}
+			sum += pos_size;
+		}
+		return sum;
+	}
+
+	double Tagset::size_extra() const
+	{
+		double vs = 1;
+		for (size_t a = 0; a < attribute_dict_.size(); ++a) {
+			vs *= (attribute_values_[a].size() + 1);
+		}
+		vs *= pos_dict_.size();
+		return vs;
+	}
+
 } /* end ns PlTagger */

@@ -133,6 +133,21 @@ namespace PlTagger {
 		 */
 		std::string tag_to_string(const Tag& tag) const;
 
+		/// POS name <-> index dictionary getter
+		const SymbolDictionary<pos_idx_t>& pos_dictionary() const {
+			return pos_dict_;
+		}
+
+		/// attribute name <-> index dictionary getter
+		const SymbolDictionary<attribute_idx_t>& attribute_dictionary() const {
+			return attribute_dict_;
+		}
+
+		/// value name <-> index dictionary getter
+		const SymbolDictionary<value_idx_t>& value_dictionary() const {
+			return value_dict_;
+		}
+
 		/// Getter for the value -> attribute mapping
 		attribute_idx_t get_value_attribute(value_idx_t id) const;
 
@@ -147,6 +162,20 @@ namespace PlTagger {
 
 		/// Getter for the pos -> required attributes flag vector
 		const std::vector<bool>& get_pos_required_attributes(pos_idx_t pos) const;
+
+		/**
+		 * Tagset cardinality counter -- the number of different valid tags
+		 * this tagset represents.
+		 */
+		size_t size() const;
+
+		/**
+		 * Tagset cardinality counter -- the number of all the different tags
+		 * this tagset represents, both valid and invalid.
+		 *
+		 * Return type is double since this can easily become huge.
+		 */
+		double size_extra() const;
 
 	private:
 		friend class TagsetParser;

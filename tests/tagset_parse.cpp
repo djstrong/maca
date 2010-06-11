@@ -94,4 +94,33 @@ BOOST_AUTO_TEST_CASE( bad_value_name )
 		parse(PRE "@@ a b\n" POSA "P1 A\n P2"), PlTagger::TagsetParseError
 	);
 }
+
+BOOST_AUTO_TEST_CASE( size1 )
+{
+	PlTagger::Tagset t = parse(PRE POSA);
+	BOOST_CHECK_EQUAL(t.size(), 1);
+	BOOST_CHECK_EQUAL(t.size_extra(), 1);
+}
+
+BOOST_AUTO_TEST_CASE( size2 )
+{
+	PlTagger::Tagset t = parse(PRE POSA " POS2\n");
+	BOOST_CHECK_EQUAL(t.size(), 2);
+	BOOST_CHECK_EQUAL(t.size_extra(), 2);
+}
+
+BOOST_AUTO_TEST_CASE( size3 )
+{
+	PlTagger::Tagset t = parse(PRE "A a b\n" POSA "POS2 A");
+	BOOST_CHECK_EQUAL(t.size(), 3);
+	BOOST_CHECK_EQUAL(t.size_extra(), 6);
+}
+
+BOOST_AUTO_TEST_CASE( size6 )
+{
+	PlTagger::Tagset t = parse(PRE "A a b \n B c d\n" POSA "POS2 A\n POS3 [A]\n");
+	BOOST_CHECK_EQUAL(t.size(), 6);
+	BOOST_CHECK_EQUAL(t.size_extra(), 27);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
