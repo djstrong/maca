@@ -21,6 +21,14 @@ if (SFST_FOUND)
 	set(HAVE_SFST)
 endif(SFST_FOUND)
 
+find_package(Morfeusz)
+if (MORFEUSZ_FOUND)
+	set(LIBS ${LIBS} ${MORFEUSZ_LIBRARY})
+	include_directories(${MORFEUSZ_INCLUDE_DIR})
+	link_directories(${MORFEUSZ_LIBRARY_DIRS})
+	set(HAVE_MORFEUSZ)
+endif(MORFEUSZ_FOUND)
+
 find_package(ICU REQUIRED QUIET)
 include_directories(${ICU_INCLUDE_DIR})
 link_directories(${ICU_LIBRARY_DIRS})
@@ -62,8 +70,12 @@ SET(libpltagger_STAT_SRC
 )
 
 if (SFST_FOUND)
-SET(libpltagger_STAT_SRC ${libpltagger_STAT_SRC} morph/sfstanalyser.cpp)
+    SET(libpltagger_STAT_SRC ${libpltagger_STAT_SRC} morph/sfstanalyser.cpp)
 endif (SFST_FOUND)
+
+if (MORFEUSZ_FOUND)
+    SET(libpltagger_STAT_SRC ${libpltagger_STAT_SRC} morph/morfeuszanalyser.cpp)
+endif (MORFEUSZ_FOUND)
 
 add_library(pltagger SHARED ${libpltagger_STAT_SRC})
 target_link_libraries ( pltagger ${LIBS} )
