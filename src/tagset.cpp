@@ -194,6 +194,12 @@ namespace PlTagger {
 				}
 			}
 		}
+		// print extra attributes
+		for (size_t i = 0; i < attribute_dict_.size(); ++i) {
+			if (tag.values()[i] > 0 && !pos_valid_attributes_[tag.pos_id()][i]) {
+				ss << ":" << ss << value_dict_.get_string(tag.values()[i]);
+			}
+		}
 		return ss.str();
 	}
 
