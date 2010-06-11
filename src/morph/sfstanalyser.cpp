@@ -35,7 +35,7 @@ namespace PlTagger {
 		delete ct_;
 	}
 
-	std::vector<Token*> SfstAnalyser::process(const Toki::Token &t)
+	void SfstAnalyser::process_functional(const Toki::Token &t, boost::function<void (Token*)> sink)
 	{
 		std::vector< CAnalysis > a;
 		std::string s = t.orth_utf8();
@@ -46,7 +46,7 @@ namespace PlTagger {
 			split_analysis_into(unescape_analysis((ct_->print_analysis(ca))),
 				tt->lexemes(), tagset());
 		}
-		return std::vector<Token*>(1, tt);
+		sink(tt);
 	}
 
 	std::string SfstAnalyser::unescape_analysis(const std::string &sfst_analysis)
@@ -84,7 +84,7 @@ namespace PlTagger {
 
 			string_range sr(sfst_analysis.begin() + pos + 1, sfst_analysis.end() - 1);
 			string_range_vector options;
-			boost::algorithm::split(options, sr, boost::is_any_of("+"));
+			boost::algorithm::split(options, sr, boost::is_any_of("+|"));
 
 			boost::function<Lexeme (const Tag&)> lex;
 			lex = boost::bind(&Lexeme::create, boost::cref(lemma), _1);

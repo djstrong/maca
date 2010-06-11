@@ -21,17 +21,15 @@ namespace PlTagger {
 		type_handlers_.insert(std::make_pair(type, a));
 	}
 
-	std::vector<Token*> DispatchAnalyser::process(const Toki::Token &t)
+	void DispatchAnalyser::process_functional(const Toki::Token &t, boost::function<void (Token*)> sink)
 	{
 		std::map<std::string, MorphAnalyser*>::const_iterator i;
 		i = type_handlers_.find(t.type());
 		if (i != type_handlers_.end()) {
-			return i->second->process(t);
+			i->second->process_functional(t, sink);
 		} else {
 			if (default_) {
-				return default_->process(t);
-			} else {
-				return  std::vector<Token*>();
+				default_->process_functional(t, sink);
 			}
 		}
 	}

@@ -5,6 +5,8 @@
 #include "token.h"
 #include "tagset.h"
 
+#include <boost/function.hpp>
+
 namespace PlTagger {
 
 	class MorphAnalyser
@@ -14,9 +16,13 @@ namespace PlTagger {
 
 		virtual ~MorphAnalyser();
 
-		virtual std::vector<Token*> process(const Toki::Token& t) = 0;
+		std::vector<Token*> process(const Toki::Token& t);
 
-		const Tagset& tagset() {
+		void process(const Toki::Token &t, std::vector<Token*>& vec);
+
+		virtual void process_functional(const Toki::Token &t, boost::function<void (Token*)> sink) = 0;
+
+		const Tagset& tagset() const {
 			return *tagset_;
 		}
 
