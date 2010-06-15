@@ -22,9 +22,9 @@ namespace PlTagger {
 
 		size_t  size() const;
 
-		IndexT get_id(const boost::iterator_range<std::string::const_iterator>& r) const;
+		IndexT get_id(const char* c) const;
 
-		IndexT get_id(const std::string& s) const;
+		IndexT get_id(const boost::iterator_range<std::string::const_iterator>& r) const;
 
 		const std::string& get_string(IndexT id) const;
 
@@ -44,11 +44,11 @@ namespace PlTagger {
 		}
 
 		iterator end() {
-			return data_.begin();
+			return data_.end();
 		}
 
 		const_iterator end() const {
-			return data_.begin();
+			return data_.end();
 		}
 
 	private:
@@ -91,8 +91,15 @@ namespace PlTagger {
 	}
 
 	template <typename IndexT>
+	IndexT SymbolDictionary<IndexT>::get_id(const char *c) const
+	{
+		return get_id(std::make_pair(c, c + strlen(c)));
+	}
+
+		template <typename IndexT>
 	IndexT SymbolDictionary<IndexT>::get_id(const boost::iterator_range<std::string::const_iterator>& r) const
 	{
+		//std::cerr << "get_id called with '" << r << "' (" << r.size() << ")\n";
 		boost::sub_range< const std::vector<std::string> > sr =
 				std::equal_range(data_.begin(), data_.end(), r);
 		if (!sr.empty()) {
@@ -101,14 +108,6 @@ namespace PlTagger {
 			return static_cast<IndexT>(data_.size());
 		}
 	}
-
-	template <typename IndexT>
-	IndexT SymbolDictionary<IndexT>::get_id(const std::string& s) const
-	{
-		boost::iterator_range<std::string::const_iterator> r(s.begin(), s.end());
-		return SymbolDictionary<IndexT>::get_id(r);
-	}
-
 
 	template <typename IndexT>
 	const std::string& SymbolDictionary<IndexT>::get_string(IndexT id) const
