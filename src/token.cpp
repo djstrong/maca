@@ -18,4 +18,11 @@ namespace PlTagger {
 	{
 	}
 
+	void Token::make_ign(const Tagset& tagset)
+	{
+		lexemes_.clear();
+		Lexeme lex(orth_, tagset.make_ign_tag());
+		lexemes_.push_back(lex);
+	}
+
 } /* end ns PlTagger */

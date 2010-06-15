@@ -2,6 +2,7 @@
 #define LIBPLTAGGER_TOKEN_H
 
 #include "lexeme.h"
+#include "tagset.h"
 
 #include <unicode/unistr.h>
 #include <string>
@@ -66,6 +67,8 @@ namespace PlTagger {
 		void add_lexeme(const Lexeme& lex) {
 			lexemes_.push_back(lex);
 		}
+
+		void make_ign(const Tagset& tagset);
 
 	private:
 		/// The orth (actual encountered form)

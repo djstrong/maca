@@ -160,6 +160,15 @@ namespace PlTagger {
 		return tag;
 	}
 
+	Tag Tagset::make_ign_tag() const
+	{
+		pos_idx_t ign_pos = pos_dictionary().get_id("ign");
+		assert(pos_dictionary().is_id_valid(ign_pos));
+		Tag tag(id_, ign_pos);
+		tag.values().resize(attribute_dict_.size(), static_cast<value_idx_t>(0));
+		return tag;
+	}
+
 	bool Tagset::validate_tag(const Tag &t, bool allow_extra)
 	{
 		if (pos_dict_.is_id_valid(t.pos_id())) return false;

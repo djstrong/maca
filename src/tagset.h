@@ -111,6 +111,8 @@ namespace PlTagger {
 		 */
 		Tag make_tag(pos_idx_t pos, const std::vector<value_idx_t>& values, bool allow_extra) const;
 
+		Tag make_ign_tag() const;
+
 
 		/**
 		 * Check if the tag is valid, that is:
