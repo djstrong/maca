@@ -1,5 +1,7 @@
 #include "morfeuszanalyser.h"
 #include "token.h"
+#include "morfeuszcompat.h"
+#include <libtoki/foreach.h>
 
 #include <morfeusz.h>
 
@@ -22,8 +24,15 @@ namespace PlTagger {
 		} else if (pmorf[1].p == -1) { // only one analysis
 			sink(make_token(t, pmorf));
 		} else { // token was split
-			std::vector< std::vector< int > > next;
-			std::vector< std::vector< int > > prev;
+			std::vector<Token*> tv;
+			MorfeuszCompat::Analyse(tv, s, *this);
+			foreach (Token* t, tv) {
+				sink(t);
+			}
+			return;
+
+			std::vector< std::vector< int > > succ;
+			std::vector< std::vector< int > > prec;
 			int node_count = 0;
 			int edge_count = 0;
 			while (pmorf[edge_count].p != -1) {
@@ -32,8 +41,13 @@ namespace PlTagger {
 			}
 			std::vector< std::vector<int> > adj(node_count, std::vector<int>());
 			for (int i = 0; i < edge_count; ++i) {
-				next[pmorf[i].p].push_back(i);
-				prev[pmorf[i].k].push_back(i);
+				succ[pmorf[i].p].push_back(i);
+				prec[pmorf[i].k].push_back(i);
+			}
+			for (int i = 0; i < node_count; ++i) {
+				if (prec[i].size() < 2 && succ[i].size() < 2) {
+
+				}
 			}
 
 		}
@@ -49,14 +63,11 @@ namespace PlTagger {
 		} else {
 			tt->set_wa(Toki::Whitespace::None);
 		}
-
-		boost::function<Lexeme (const Tag&)> lex;
-		lex = boost::bind(&Lexeme::create, boost::cref(lemma), _1);
-
-		boost::function<void (const Tag&)> func;
-		func = boost::bind(&std::vector<Lexeme>::push_back, &tt->lexemes(), boost::bind(lex, _1));
-
-		tagset().parse_tag(std::string(im->interp), false, func);
+		if (im->interp) {
+			parse_tag_into_token(tt, lemma, im->interp);
+		} else {
+			tt->make_ign(tagset());
+		}
 		return tt;
 	}
 

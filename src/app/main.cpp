@@ -1,5 +1,10 @@
+#include "config_d.h"
 #ifdef HAVE_SFST
 #include "morph/sfstanalyser.h"
+#endif
+
+#ifdef HAVE_MORFEUSZ
+#include "morph/morfeuszanalyser.h"
 #endif
 
 #include "morph/mapanalyser.h"
@@ -20,6 +25,7 @@ int main(int argc, char** argv)
 	std::string sfst, mdict;
 	std::string tagset_load, tagset_save;
 	using boost::program_options::value;
+	bool morfeusz;
 	boost::program_options::options_description desc("Allowed options");
 	desc.add_options()
 #ifdef HAVE_SFST
@@ -28,6 +34,10 @@ int main(int argc, char** argv)
 #endif
 			("m-dict-file,m", value(&mdict),
 			 "M-style dictionary file to use (orth\\tlemma\\ttag)\n")
+#ifdef HAVE_MORFEUSZ
+			("morfeusz,M", value(&morfeusz),
+			 "Morfeusz\n")
+#endif
 			("tagset-load,", value(&tagset_load),
 			 "Path to tagset ini file to load\n")
 			("tagset-save,", value(&tagset_save),
@@ -65,6 +75,11 @@ int main(int argc, char** argv)
 				<< tagset->value_dictionary().size() << " values\n";
 			std::cerr << "Size is " << tagset->size()
 				<< " (extra size is " << tagset->size_extra() << ")\n";
+			std::cerr << "POSes: ";
+			//foreach (const std::string& s, tagset->pos_dictionary()) {
+			//	std::cerr << s << " ";
+			//}
+
 			if (!tagset_save.empty()) {
 				std::ofstream ofs(tagset_save.c_str());
 				PlTagger::TagsetParser::save_ini(*tagset, ofs);
@@ -76,7 +91,11 @@ int main(int argc, char** argv)
 	}
 
 	boost::shared_ptr<PlTagger::MorphAnalyser> ma;
-
+#ifdef HAVE_MORFEUSZ
+	if (morfeusz) {
+		ma.reset(new PlTagger::MorfeuszAnalyser(tagset.get()));
+	} else
+#endif
 #ifdef HAVE_SFST
 	if (!sfst.empty()) {
 		ma.reset(new PlTagger::SfstAnalyser(tagset.get(), sfst));
@@ -96,7 +115,10 @@ int main(int argc, char** argv)
 			Toki::Token t(s.c_str(), "t", Toki::Whitespace::None);
 			std::vector<PlTagger::Token*> tv = ma->process(t);
 			foreach (PlTagger::Token* tt, tv) {
-				std::cout << tagset->tag_to_string(tt->lexemes()[0].tag()) << "\n";
+				foreach (const PlTagger::Lexeme& lex, tt->lexemes()) {
+					std::cout << tt->orth_utf8() << "\t" << lex.lemma_utf8() << "\t"
+						<< tagset->tag_to_string(lex.tag()) << "\n";
+				}
 				delete tt;
 			}
 		}

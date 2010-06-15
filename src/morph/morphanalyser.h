@@ -30,6 +30,9 @@ namespace PlTagger {
 			tagset_ = tagset;
 		}
 
+		void parse_tag_into_token(Token* tok, const UnicodeString& lemma,
+				const std::string& tag) const;
+
 	private:
 		const Tagset* tagset_;
 	};

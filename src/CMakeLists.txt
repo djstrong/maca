@@ -51,7 +51,10 @@ if (SFST_FOUND)
 endif (SFST_FOUND)
 
 if (MORFEUSZ_FOUND)
-    SET(libpltagger_STAT_SRC ${libpltagger_STAT_SRC} morph/morfeuszanalyser.cpp)
+    SET(libpltagger_STAT_SRC ${libpltagger_STAT_SRC}
+    morph/morfeuszanalyser.cpp
+    morph/morfeuszcompat.cpp
+    )
 endif (MORFEUSZ_FOUND)
 
 add_library(pltagger SHARED ${libpltagger_STAT_SRC})
