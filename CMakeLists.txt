@@ -38,6 +38,28 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
+set(LIBS "")
+
+find_package(SFST)
+if (SFST_FOUND)
+	set(LIBS ${LIBS} ${SFST_LIBRARY})
+	include_directories(${SFST_INCLUDE_DIR})
+	link_directories(${SFST_LIBRARY_DIRS})
+	set(HAVE_SFST 1)
+endif(SFST_FOUND)
+
+find_package(Morfeusz)
+if (MORFEUSZ_FOUND)
+	set(LIBS ${LIBS} ${MORFEUSZ_LIBRARY})
+	include_directories(${MORFEUSZ_INCLUDE_DIR})
+	link_directories(${MORFEUSZ_LIBRARY_DIRS})
+	set(HAVE_MORFEUSZ 1)
+endif(MORFEUSZ_FOUND)
+
+configure_file(src/config_d.in include/config_d.h)
+include_directories( ${CMAKE_CURRENT_BINARY_DIR}/include/ )
+add_definitions(-DHAVE_CONFIG_D_H)
+
 find_package(Boost 1.41 REQUIRED COMPONENTS program_options filesystem regex)
 
 add_subdirectory(src)

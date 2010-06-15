@@ -4,15 +4,10 @@ include_directories( ${CMAKE_SOURCE_DIR}/src/ )
 
 add_executable( tagger-app main.cpp )
 
-target_link_libraries ( tagger-app pltagger ${Boost_LIBRARIES})
+target_link_libraries ( tagger-app pltagger ${Boost_LIBRARIES} ${LIBS})
 
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
-
-find_package(SFST)
-if (SFST_FOUND)
-	add_definitions(-DHAVE_SFST)
-ENDIF()
 
 if(UNIX)
 

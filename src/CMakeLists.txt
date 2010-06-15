@@ -5,29 +5,11 @@ PROJECT(pltagger)
 set(ver_major "0")
 set(ver_minor "1")
 
-set(LIBS "")
-
 #include_directories("/usr/include/sfst-1.0")
 #set(LIBS ${LIBS} "sfst1")
 
 find_package(Toki REQUIRED)
 set(LIBS ${LIBS} ${Toki_LIBRARY})
-
-find_package(SFST)
-if (SFST_FOUND)
-	set(LIBS ${LIBS} ${SFST_LIBRARY})
-	include_directories(${SFST_INCLUDE_DIR})
-	link_directories(${SFST_LIBRARY_DIRS})
-	set(HAVE_SFST)
-endif(SFST_FOUND)
-
-find_package(Morfeusz)
-if (MORFEUSZ_FOUND)
-	set(LIBS ${LIBS} ${MORFEUSZ_LIBRARY})
-	include_directories(${MORFEUSZ_INCLUDE_DIR})
-	link_directories(${MORFEUSZ_LIBRARY_DIRS})
-	set(HAVE_MORFEUSZ)
-endif(MORFEUSZ_FOUND)
 
 find_package(ICU REQUIRED QUIET)
 include_directories(${ICU_INCLUDE_DIR})
@@ -48,11 +30,6 @@ set(LIBS ${LIBS} ${Boost_LIBRARIES})
 include_directories( ${CMAKE_SOURCE_DIR}/src/ )
 
 set(LIBPLTAGGER_VERSION "${ver_major}.${ver_minor}")
-
-
-configure_file(config_d.in include/config_d.h)
-include_directories( ${CMAKE_CURRENT_BINARY_DIR}/include/ )
-add_definitions(-DHAVE_CONFIG_D_H)
 
 SET(libpltagger_STAT_SRC
     debug.cpp
