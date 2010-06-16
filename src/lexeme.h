@@ -29,6 +29,8 @@ namespace PlTagger {
 			return tag_;
 		}
 
+		bool operator<(const Lexeme& other) const;
+
 	private:
 		UnicodeString lemma_;
 

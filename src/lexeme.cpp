@@ -17,4 +17,9 @@ namespace PlTagger {
 		return Lexeme(lemma, tag);
 	}
 
+	bool Lexeme::operator<(const Lexeme& other) const
+	{
+		return lemma_ < other.lemma_ || (lemma_ == other.lemma_ && tag_ < other.tag_);
+	}
+
 } /* end ns PlTagger */
