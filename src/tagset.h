@@ -179,6 +179,10 @@ namespace PlTagger {
 		 */
 		double size_extra() const;
 
+		tagset_idx_t id() const {
+			return id_;
+		}
+
 	private:
 		friend class TagsetParser;
 
