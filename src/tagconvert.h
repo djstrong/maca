@@ -13,11 +13,11 @@ namespace PlTagger {
 		Tag cast(const Tag& from) const;
 
 	protected:
-		const Tagset& tagset_from;
-		const Tagset& tagset_to;
+		const Tagset& tagset_from_;
+		const Tagset& tagset_to_;
 
 		typedef std::map<value_idx_t, value_idx_t> value_map_t;
-		value_map_t value_mapping;
+		value_map_t value_mapping_;
 		typedef std::map<attribute_idx_t, attribute_idx_t> attribute_map_t;
 		attribute_map_t attribute_mapping_;
 		typedef std::map<pos_idx_t, pos_idx_t> pos_map_t;

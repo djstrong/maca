@@ -2,30 +2,27 @@
 
 namespace PlTagger
 {
-	TagConverter(const Tagset& from, const Tagset& to)
+	TagConverter::TagConverter(const Tagset& from, const Tagset& to)
+		: tagset_from_(from), tagset_to_(to)
 	{
-		attr_idx_from_ = from.attribute_dictionary().get_id(attr);
-		attr_idx_to_ = to.attribute_dictionary().get_id(attr);
-		foreach (value_idx_t v, from.get_attribute_values(attr_idx_from_)) {
-			std::string value_name = from.value_dictionary().get_string(v);
-			value_idx_t v_to = to.value_dictionary().get_id(value_name);
-			mapping_[v] = v_to;
-		}
+		from.pos_dictionary().create_mapping_to(to.pos_dictionary(), pos_mapping_);
+		from.attribute_dictionary().create_mapping_to(to.attribute_dictionary(), attribute_mapping_);
+		from.value_dictionary().create_mapping_to(to.value_dictionary(), value_mapping_);
 	}
 
-	Tag convert(const Tag& from) const
+	Tag TagConverter::cast(const Tag& from) const
 	{
 		pos_map_t::const_iterator pi = pos_mapping_.find(from.pos_id());
 		assert(pi != pos_mapping_.end());
-		Tag to(tagset_to.id(), pi->second);
-		to.values().resize(tagset_to.attribute_dictionary().size());
+		Tag to(tagset_to_.id(), pi->second);
+		to.values().resize(tagset_to_.attribute_dictionary().size());
 
 		foreach (value_idx_t v, from.values()) {
 			if (v > 0) {
 				std::map<value_idx_t, value_idx_t>::const_iterator i;
-				i = mapping_.find(v);
-				if (i != mapping_.end()) {
-					attribute_idx_t a = tagset_to.get_value_attribute(i->second);
+				i = value_mapping_.find(v);
+				if (i != value_mapping_.end()) {
+					attribute_idx_t a = tagset_to_.get_value_attribute(i->second);
 					to.values()[a] = i->second;
 				}
 			}
