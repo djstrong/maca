@@ -42,6 +42,7 @@ SET(libpltagger_STAT_SRC
     symboldictionary.cpp
     tag.cpp
     tagset.cpp
+    tagsetconverter.cpp
     tagsetparser.cpp
     token.cpp
 )

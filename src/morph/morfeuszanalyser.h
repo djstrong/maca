@@ -2,6 +2,7 @@
 #define LIBPLTAGGER_MORFEUSZANALYSER_H
 
 #include "morphanalyser.h"
+#include "tagsetconverter.h"
 
 #include <morfeusz.h>
 
@@ -17,6 +18,13 @@ namespace PlTagger {
 		Token* make_token(const Toki::Token& t, InterpMorf* im) const;
 
 		void pmorf_into_token(Token* tt,  InterpMorf* im) const;
+
+		void flush_convert(std::vector<Token*>& vec, boost::function<void(Token *)>sink);
+
+		void flush_convert(std::vector< std::vector<Token*> >& vec, boost::function<void(Token *)>sink);
+
+	private:
+		TagsetConverter conv_;
 	};
 
 } /* end ns Pltagger */

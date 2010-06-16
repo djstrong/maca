@@ -6,24 +6,14 @@
 #include <morfeusz.h>
 
 #include <boost/bind.hpp>
-#include <boost/graph/edge_list.hpp>
 
 namespace PlTagger {
 
 	MorfeuszAnalyser::MorfeuszAnalyser(const Tagset *tagset)
-		: MorphAnalyser(tagset)
+		: MorphAnalyser(tagset), conv_(*tagset, *tagset)
 	{
 		morfeusz_set_option(MORFOPT_ENCODING, MORFEUSZ_UTF_8);
 	}
-
-	struct morf_edge
-	{
-		typedef int value_type;
-		typedef int first_type;
-		typedef int second_type;
-		int first, second;
-		char* forma, haslo, interp;
-	};
 
 	void MorfeuszAnalyser::process_functional(const Toki::Token &t, boost::function<void(Token *)>sink)
 	{
@@ -32,7 +22,9 @@ namespace PlTagger {
 		if (pmorf[0].p == -1) { // no analyses
 			return;
 		} else if (pmorf[1].p == -1) { // only one analysis
-			sink(make_token(t, pmorf));
+			std::vector<Token*> vec;
+			vec.push_back(make_token(t, pmorf));
+			flush_convert(vec, sink);
 		} else { // token was split, or there are multiple analyses (lemmas)
 			int node_count = 0, edge_count = 0;
 			while (pmorf[edge_count].p != -1) {
@@ -47,8 +39,14 @@ namespace PlTagger {
 				prec[pmorf[i].k].push_back(i);
 			}
 
+			std::vector<Token*> unambiguous;
+
 			for (int i = 0; i < node_count; ++i) {
 				if (succ[i].size() > 1) { // complex case, many interps or segmentation ambiguity
+					if (!unambiguous.empty()) {
+						flush_convert(unambiguous, sink);
+						unambiguous.clear();
+					}
 					int merge = -1;
 					std::vector< std::vector< int > > paths;
 					// follow all paths to the merge point
@@ -63,43 +61,45 @@ namespace PlTagger {
 							paths.back().push_back(tse);
 							v = pmorf[tse].k;
 						}
-						//assume this is the merge node
+						//assume this is the merge node, check for consistency
 						assert(merge == -1 || merge == v);
 						merge = v;
 					}
 
-					// find shortest path
-					size_t min_len = paths[0].size();
-					size_t min_len_path = 0;
+					std::vector< std::vector<Token*> > token_paths;
+
+					typedef std::map< std::pair<int,int>, Token*> alt_map_t;
+					alt_map_t alt_map;
 					for (size_t pi = 0; pi < paths.size(); ++pi) {
-						if (paths[pi].size() < min_len) {
-							min_len = paths[pi].size();
-							min_len_path = pi;
+						bool new_path_added = false;
+						foreach (int ei, paths[pi]) {
+							InterpMorf* im = pmorf + ei;
+							std::pair<int, int> idx = std::make_pair(im->p, im->k);
+							alt_map_t::iterator it = alt_map.find(idx);
+							if (it == alt_map.end()) {
+								if (!new_path_added) {
+									token_paths.push_back(std::vector<Token*>());
+									new_path_added = true;
+								}
+								token_paths.back().push_back(make_token(t, pmorf + ei));
+								alt_map.insert(std::make_pair(idx, token_paths.back().back()));
+							} else {
+								pmorf_into_token(it->second, im);
+							}
 						}
 					}
-					if (min_len > 1) { // output shortest path only
-						std::cerr << "minlen>1\n";
-						foreach (int ei, paths[min_len_path]) {
-							sink(make_token(t, pmorf + ei));
-						}
-					} else { // merge all length-1 paths as lexemes
-						int e = paths[min_len_path][0];
-						Token* tt = make_token(t, pmorf + e);
-						for (size_t pi = 0; pi < paths.size(); ++pi) {
-							if (pi == min_len_path) continue;
-							if (paths[pi].size() != min_len) continue;
-							pmorf_into_token(tt, pmorf + paths[pi][0]);
-						}
-						sink(tt);
-					}
+					flush_convert(token_paths, sink);
 					i = merge;
 				} else if (!succ[i].empty()) { //simple case, only one interp
 					int edge = succ[i][0];
-					sink(make_token(t, pmorf + edge));
+					unambiguous.push_back(make_token(t, pmorf + edge));
 					assert(pmorf[edge].k == i + 1);
 				} else { //only the last node should have no succesors
 					assert(i == node_count - 1);
 				}
+			}
+			if (!unambiguous.empty()) {
+				flush_convert(unambiguous, sink);
 			}
 		}
 	}
@@ -125,6 +125,16 @@ namespace PlTagger {
 		} else {
 			tt->add_ign(tagset());
 		}
+	}
+
+	void MorfeuszAnalyser::flush_convert(std::vector<Token *> &vec, boost::function<void(Token *)>sink)
+	{
+		conv_.convert_simple(vec, sink);
+	}
+
+	void MorfeuszAnalyser::flush_convert(std::vector<std::vector<Token *> > &vec, boost::function<void(Token *)>sink)
+	{
+		conv_.convert_ambiguous(vec, sink);
 	}
 
 } /* end ns PlTagger */
