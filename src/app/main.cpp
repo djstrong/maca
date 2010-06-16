@@ -25,7 +25,9 @@ int main(int argc, char** argv)
 	std::string sfst, mdict;
 	std::string tagset_load, tagset_save;
 	using boost::program_options::value;
+#ifdef HAVE_MORFEUSZ
 	bool morfeusz;
+#endif
 	boost::program_options::options_description desc("Allowed options");
 	desc.add_options()
 #ifdef HAVE_SFST
