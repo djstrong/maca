@@ -41,6 +41,7 @@ SET(libpltagger_STAT_SRC
     morph/morphanalyser.cpp
     symboldictionary.cpp
     tag.cpp
+    tagconvert.cpp
     tagset.cpp
     tagsetconverter.cpp
     tagsetparser.cpp
