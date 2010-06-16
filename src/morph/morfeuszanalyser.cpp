@@ -47,8 +47,9 @@ namespace PlTagger {
 						flush_convert(unambiguous, sink);
 						unambiguous.clear();
 					}
-					int merge = -1;
+					int merge_node = -1;
 					std::vector< std::vector< int > > paths;
+
 					// follow all paths to the merge point
 					for (size_t n = 0; n < succ[i].size(); ++n) {
 						paths.push_back(std::vector<int>());
@@ -62,12 +63,14 @@ namespace PlTagger {
 							v = pmorf[tse].k;
 						}
 						//assume this is the merge node, check for consistency
-						assert(merge == -1 || merge == v);
-						merge = v;
+						assert(merge_node == -1 || merge_node == v);
+						merge_node = v;
 					}
 
+					// the possible paths as token vectors
 					std::vector< std::vector<Token*> > token_paths;
 
+					// fill token paths, fold simple lemma ambiguities
 					typedef std::map< std::pair<int,int>, Token*> alt_map_t;
 					alt_map_t alt_map;
 					for (size_t pi = 0; pi < paths.size(); ++pi) {
@@ -88,8 +91,9 @@ namespace PlTagger {
 							}
 						}
 					}
+
 					flush_convert(token_paths, sink);
-					i = merge;
+					i = merge_node;
 				} else if (!succ[i].empty()) { //simple case, only one interp
 					int edge = succ[i][0];
 					unambiguous.push_back(make_token(t, pmorf + edge));
