@@ -1,6 +1,8 @@
 #include "morphanalyser.h"
 
 #include <boost/bind.hpp>
+#include <boost/algorithm/string.hpp>
+#include <libtoki/foreach.h>
 
 namespace PlTagger {
 
@@ -34,7 +36,13 @@ namespace PlTagger {
 		boost::function<void (const Tag&)> func;
 		func = boost::bind(&std::vector<Lexeme>::push_back, &tok->lexemes(), boost::bind(lex, _1));
 
-		tagset().parse_tag(tag, false, func);
+		string_range_vector options;
+		boost::algorithm::split(options, tag, boost::is_any_of("+|"));
+
+		foreach (string_range& sr, options) {
+			tagset().parse_tag(sr, false, func);
+		}
+		//tagset().parse_tag(tag, false, func);
 	}
 
 } /* end ns PlTagger */
