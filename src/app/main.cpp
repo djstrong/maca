@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 	boost::program_options::options_description desc("Allowed options");
 	desc.add_options()
 #ifdef HAVE_SFST
-			("sfst-transducer,t", value(&sfst)->default_value("/home/ilor/semantic/tagger/fst/M.cfst"),
+			("sfst-transducer,s", value(&sfst)->default_value("/home/ilor/semantic/tagger/fst/M.cfst"),
 			 "SFST transducer file to use (compact format)")
 #endif
 			("m-dict-file,m", value(&mdict),
@@ -40,9 +40,9 @@ int main(int argc, char** argv)
 			("morfeusz,M", value(&morfeusz),
 			 "Morfeusz\n")
 #endif
-			("tagset-load,", value(&tagset_load),
+			("tagset,t", value(&tagset_load),
 			 "Path to tagset ini file to load\n")
-			("tagset-save,", value(&tagset_save),
+			("save-tagset", value(&tagset_save),
 			 "Path to tagset ini file to save\n")
 			("help,h", "Show help")
 			;
@@ -77,7 +77,7 @@ int main(int argc, char** argv)
 				<< tagset->value_dictionary().size() << " values\n";
 			std::cerr << "Size is " << tagset->size()
 				<< " (extra size is " << tagset->size_extra() << ")\n";
-			std::cerr << "POSes: ";
+			//std::cerr << "POSes: ";
 			//foreach (const std::string& s, tagset->pos_dictionary()) {
 			//	std::cerr << s << " ";
 			//}
@@ -117,6 +117,9 @@ int main(int argc, char** argv)
 			Toki::Token t(s.c_str(), "t", Toki::Whitespace::None);
 			std::vector<PlTagger::Token*> tv = ma->process(t);
 			foreach (PlTagger::Token* tt, tv) {
+				if (tt != tv[0]) {
+					std::cout << "---\n";
+				}
 				foreach (const PlTagger::Lexeme& lex, tt->lexemes()) {
 					std::cout << tt->orth_utf8() << "\t" << lex.lemma_utf8() << "\t"
 						<< tagset->tag_to_string(lex.tag()) << "\n";
