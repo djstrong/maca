@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <set>
 #include <libtoki/foreach.h>
-#include "morph/sfstanalyser.h"
+#include <libpltagger/morph/sfstanalyser.h>
 
 BOOST_AUTO_TEST_SUITE( tag_split )
 

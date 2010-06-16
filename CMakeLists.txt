@@ -56,12 +56,12 @@ if (MORFEUSZ_FOUND)
 	set(HAVE_MORFEUSZ 1)
 endif(MORFEUSZ_FOUND)
 
-configure_file(src/config_d.in include/config_d.h)
+configure_file(libpltagger/config_d.in include/libpltagger/config_d.h)
 include_directories( ${CMAKE_CURRENT_BINARY_DIR}/include/ )
 add_definitions(-DHAVE_CONFIG_D_H)
 
 find_package(Boost 1.41 REQUIRED COMPONENTS program_options filesystem regex)
 
-add_subdirectory(src)
-add_subdirectory(src/app)
+add_subdirectory(libpltagger)
+add_subdirectory(libpltagger/app)
 add_subdirectory(tests)

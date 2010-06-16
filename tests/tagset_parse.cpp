@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <set>
 #include <libtoki/foreach.h>
-#include "tagsetparser.h"
+#include <libpltagger/tagsetparser.h>
 
 BOOST_AUTO_TEST_SUITE( tagset_parse );
 

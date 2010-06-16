@@ -1,8 +1,8 @@
 #include <boost/test/unit_test.hpp>
 
-#include "morph/constanalyser.h"
-#include "morph/dispatchanalyser.h"
-#include "tagsetparser.h"
+#include <libpltagger/morph/constanalyser.h>
+#include <libpltagger/morph/dispatchanalyser.h>
+#include <libpltagger/tagsetparser.h>
 
 struct F {
 	F() : t(UnicodeString::fromUTF8("aaa"), "t", Toki::Whitespace::ManySpaces)

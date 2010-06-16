@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 
-#include "token.h"
+#include <libpltagger/token.h>
 
 BOOST_AUTO_TEST_CASE( token )
 {
