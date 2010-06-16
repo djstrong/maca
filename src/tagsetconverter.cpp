@@ -15,14 +15,17 @@ namespace PlTagger {
 	void TagsetConverter::convert_simple(const std::vector<Token *>& v, boost::function<void(Token *)>sink)
 	{
 		foreach (Token* t, v) {
+			std::set<Lexeme> new_lex;
 			foreach (Lexeme& lex, t->lexemes()) {
 				Tag tag2 = lex.tag();
 				attribute_idx_t g_idx = tagset_from().attribute_dictionary().get_id("gnd");
 				if (tag2.values()[g_idx] > 0) {
 					tag2.values()[g_idx] = tagset_from().value_dictionary().get_id("m1");
 				}
-				lex = Lexeme(lex.lemma(), tag2);
+				new_lex.insert(Lexeme(lex.lemma(), tag2));
 			}
+			t->lexemes().clear();
+			std::copy(new_lex.begin(), new_lex.end(), std::back_inserter(t->lexemes()));
 			sink(t);
 		}
 	}
