@@ -70,6 +70,8 @@ namespace PlTagger {
 
 		void make_ign(const Tagset& tagset);
 
+		void add_ign(const Tagset& tagset);
+
 	private:
 		/// The orth (actual encountered form)
 		UnicodeString orth_;

@@ -21,6 +21,11 @@ namespace PlTagger {
 	void Token::make_ign(const Tagset& tagset)
 	{
 		lexemes_.clear();
+		add_ign(tagset);
+	}
+
+	void Token::add_ign(const Tagset &tagset)
+	{
 		Lexeme lex(orth_, tagset.make_ign_tag());
 		lexemes_.push_back(lex);
 	}

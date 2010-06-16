@@ -15,6 +15,8 @@ namespace PlTagger {
 		void process_functional(const Toki::Token &t, boost::function<void(Token *)>sink);
 
 		Token* make_token(const Toki::Token& t, InterpMorf* im) const;
+
+		void pmorf_into_token(Token* tt,  InterpMorf* im) const;
 	};
 
 } /* end ns Pltagger */
