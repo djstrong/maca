@@ -33,7 +33,8 @@ namespace PlTagger {
 	void TagsetConverter::convert_ambiguous(const std::vector<std::vector<Token *> >& v, boost::function<void(Token *)>sink)
 	{
 		size_t min_len_path;
-		size_t min_len = find_shortest(v, min_len_path);
+		//size_t min_len =
+		find_shortest(v, min_len_path);
 		convert_simple(v[min_len_path], sink);
 	}
 
