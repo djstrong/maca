@@ -6,6 +6,7 @@
 
 #include <boost/cstdint.hpp>
 #include <boost/strong_typedef.hpp>
+#include <boost/operators.hpp>
 
 namespace PlTagger {
 
@@ -19,6 +20,7 @@ namespace PlTagger {
 	BOOST_STRONG_TYPEDEF(idx_t, tagset_idx_t);
 
 	class Tag
+		: boost::equality_comparable<Tag>, boost::less_than_comparable<Tag>
 	{
 	public:
 		Tag();

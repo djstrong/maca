@@ -9,6 +9,7 @@
 namespace PlTagger {
 
 	class Lexeme
+		: boost::equality_comparable<Lexeme>, boost::less_than_comparable<Lexeme>
 	{
 	public:
 		Lexeme();

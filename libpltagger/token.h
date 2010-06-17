@@ -17,6 +17,7 @@ namespace PlTagger {
 	 * The orth is stored as an ICU UnicodeString.
 	 */
 	class Token
+		: boost::equality_comparable<Token>, boost::less_than_comparable<Token>
 	{
 	public:
 		/// Creates an empty Token

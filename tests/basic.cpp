@@ -33,6 +33,7 @@ BOOST_AUTO_TEST_CASE( token_dup_lexemes )
 	BOOST_CHECK(!t.remove_duplicate_lexemes());
 	PlTagger::Token tt(t);
 	t.add_lexeme(l1);
+	BOOST_CHECK(t != tt);
 	BOOST_CHECK(t.check_duplicate_lexemes());
 	BOOST_CHECK(t.remove_duplicate_lexemes());
 	BOOST_CHECK(!t.check_duplicate_lexemes());
