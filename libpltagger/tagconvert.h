@@ -2,6 +2,7 @@
 #define LIBPLTAGGER_TAGCONVERT_H
 
 #include <libpltagger/tagset.h>
+#include <libpltagger/tag.h>
 
 namespace PlTagger {
 
@@ -23,6 +24,18 @@ namespace PlTagger {
 		typedef std::map<pos_idx_t, pos_idx_t> pos_map_t;
 		pos_map_t pos_mapping_;
 	};
+
+	class TagPredicate : public std::pair<idx_t, idx_t>
+	{
+	public:
+		TagPredicate(const std::string& name, const Tagset& tagset);
+		~TagPredicate();
+
+		bool check(const Tag& tag) const;
+		void apply(Tag& tag) const;
+
+	};
+
 
 } /* end ns PlTagger */
 
