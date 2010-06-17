@@ -72,6 +72,32 @@ namespace PlTagger {
 
 		void add_ign(const Tagset& tagset);
 
+		/**
+		 * Check for duplicate lexemes.
+		 *
+		 * Returns true if there are duplicate lexemes, false otherwise.
+		 */
+		bool check_duplicate_lexemes() const;
+
+		/**
+		 * Remove duplicate lexemes.
+		 *
+		 * Removes any duplicate lexemes and returns true if there were any.
+		 * Ordering of the lexemes can change.
+		 */
+		bool remove_duplicate_lexemes();
+
+		/**
+		 * Check if all the lexemes of the token have the given POS, and and the
+		 * token orth caselessly matches the given orth.
+		 *
+		 * If the given orth is empty, it is not checked.
+		 * If the given pos idx is -1, it is not checked.
+		 *
+		 * @returns true if the orth and lexemes pass the check, false otherwise
+		 */
+		bool orth_pos_match(pos_idx_t pos, const UnicodeString& orth);
+
 	private:
 		/// The orth (actual encountered form)
 		UnicodeString orth_;

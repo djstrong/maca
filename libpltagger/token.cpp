@@ -1,5 +1,6 @@
 #include <libpltagger/token.h>
 #include <sstream>
+#include <libtoki/foreach.h>
 
 namespace PlTagger {
 
@@ -28,6 +29,33 @@ namespace PlTagger {
 	{
 		Lexeme lex(orth_, tagset.make_ign_tag());
 		lexemes_.push_back(lex);
+	}
+
+	bool Token::check_duplicate_lexemes() const
+	{
+		std::set<Lexeme> s(lexemes_.begin(), lexemes_.end());
+		return s.size() != lexemes_.size();
+	}
+
+	bool Token::remove_duplicate_lexemes()
+	{
+		size_t old_size = lexemes_.size();
+		std::sort(lexemes_.begin(), lexemes_.end());
+		lexemes_.erase(std::unique(lexemes_.begin(), lexemes_.end()), lexemes_.end());
+		return old_size != lexemes_.size();
+	}
+
+	bool Token::orth_pos_match(pos_idx_t pos, const UnicodeString &orth)
+	{
+		if (orth.length() > 0) {
+			if (orth.caseCompare(orth_, 0) != 0) return false;
+		}
+		if (pos != static_cast<pos_idx_t>(-1)) {
+			foreach (const Lexeme& lex, lexemes_) {
+				if (lex.tag().pos_id() != pos) return false;
+			}
+		}
+		return true;
 	}
 
 } /* end ns PlTagger */
