@@ -12,10 +12,11 @@ namespace PlTagger {
 	class Tagset;
 
 	/// Typedefs for the string -> index mappings
-	BOOST_STRONG_TYPEDEF(boost::uint8_t, pos_idx_t);
-	BOOST_STRONG_TYPEDEF(boost::uint8_t, attribute_idx_t);
-	BOOST_STRONG_TYPEDEF(boost::uint8_t, value_idx_t);
-	BOOST_STRONG_TYPEDEF(boost::uint8_t, tagset_idx_t);
+	typedef boost::uint8_t idx_t;
+	BOOST_STRONG_TYPEDEF(idx_t, pos_idx_t);
+	BOOST_STRONG_TYPEDEF(idx_t, attribute_idx_t);
+	BOOST_STRONG_TYPEDEF(idx_t, value_idx_t);
+	BOOST_STRONG_TYPEDEF(idx_t, tagset_idx_t);
 
 	class Tag
 	{
