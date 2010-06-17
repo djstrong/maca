@@ -40,7 +40,7 @@ namespace PlTagger {
 		Tagset();
 
 		/**
-		 * Tagset convenience constructor, parse a atring as if it were the
+		 * Tagset convenience constructor, parse a string as if it were the
 		 * contents of a tagset ini file
 		 */
 		explicit Tagset(const char*);
