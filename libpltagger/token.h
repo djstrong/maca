@@ -72,6 +72,8 @@ namespace PlTagger {
 
 		void add_ign(const Tagset& tagset);
 
+		bool operator==(const Token& other) const;
+
 		/**
 		 * Check for duplicate lexemes.
 		 *

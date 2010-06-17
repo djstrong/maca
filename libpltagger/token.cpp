@@ -31,6 +31,12 @@ namespace PlTagger {
 		lexemes_.push_back(lex);
 	}
 
+	bool Token::operator ==(const Token& other) const
+	{
+		return orth_ == other.orth_ && wa_ == other.wa_
+				&& lexemes_ == other.lexemes_;
+	}
+
 	bool Token::check_duplicate_lexemes() const
 	{
 		std::set<Lexeme> s(lexemes_.begin(), lexemes_.end());
