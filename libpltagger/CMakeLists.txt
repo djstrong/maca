@@ -32,6 +32,9 @@ set(LIBS ${LIBS} ${Boost_LIBRARIES})
 set(LIBPLTAGGER_VERSION "${ver_major}.${ver_minor}")
 
 SET(libpltagger_STAT_SRC
+    conv/rule.cpp
+    conv/tagconvert.cpp
+    conv/tagsetconverter.cpp
     debug.cpp
     lexeme.cpp
     main.cpp
@@ -41,9 +44,7 @@ SET(libpltagger_STAT_SRC
     morph/morphanalyser.cpp
     symboldictionary.cpp
     tag.cpp
-    tagconvert.cpp
     tagset.cpp
-    tagsetconverter.cpp
     tagsetparser.cpp
     token.cpp
 )

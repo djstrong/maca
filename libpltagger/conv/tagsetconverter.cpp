@@ -1,4 +1,4 @@
-#include <libpltagger/tagsetconverter.h>
+#include <libpltagger/conv/tagsetconverter.h>
 #include <libtoki/foreach.h>
 
 namespace PlTagger {
