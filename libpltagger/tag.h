@@ -35,6 +35,10 @@ namespace PlTagger {
 			return pos_id_;
 		}
 
+		void set_pos_id(pos_idx_t v) {
+			pos_id_ = v;
+		}
+
 		const std::string& pos_string() const;
 
 
