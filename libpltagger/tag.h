@@ -56,6 +56,8 @@ namespace PlTagger {
 
 		bool operator<(const Tag& other) const;
 
+		bool operator==(const Tag& other) const;
+
 	private:
 		pos_idx_t pos_id_;
 

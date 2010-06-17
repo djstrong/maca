@@ -31,6 +31,8 @@ namespace PlTagger {
 
 		bool operator<(const Lexeme& other) const;
 
+		bool operator==(const Lexeme& other) const;
+
 	private:
 		UnicodeString lemma_;
 
