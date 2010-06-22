@@ -22,12 +22,20 @@ namespace PlTagger {
 			return lemma_;
 		}
 
+		void set_lemma(const UnicodeString& l) {
+			lemma_ = l;
+		}
+
 		const std::string lemma_utf8() const {
 			return Toki::Util::to_utf8(lemma_);
 		}
 
 		const Tag& tag() const {
 			return tag_;
+		}
+
+		void set_tag(const Tag& t) {
+			tag_ = t;
 		}
 
 		bool operator<(const Lexeme& other) const;
