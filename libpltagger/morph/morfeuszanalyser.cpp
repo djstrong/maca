@@ -10,7 +10,7 @@
 namespace PlTagger {
 
 	MorfeuszAnalyser::MorfeuszAnalyser(const Tagset *tagset)
-		: MorphAnalyser(tagset), conv_(*tagset, *tagset)
+		: MorphAnalyser(tagset), conv_()
 	{
 		morfeusz_set_option(MORFOPT_ENCODING, MORFEUSZ_UTF_8);
 	}

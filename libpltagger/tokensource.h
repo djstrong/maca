@@ -2,6 +2,7 @@
 #define LIBPLTAGGER_TOKEN_SOURCE_H
 
 #include <boost/range.hpp>
+#include <iostream>
 
 namespace PlTagger {
 
@@ -39,6 +40,7 @@ namespace PlTagger {
 
 		Token* get_next_token()
 		{
+			std::cerr << "Range get next";
 			if (ptr_ != end_) {
 				return *ptr_++;
 			} else {

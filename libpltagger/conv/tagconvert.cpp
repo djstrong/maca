@@ -18,6 +18,7 @@ namespace PlTagger { namespace Conversion {
 		assert(pi != pos_mapping_.end());
 		Tag to(tagset_to_.id(), pi->second);
 		to.values().resize(tagset_to_.attribute_dictionary().size());
+		memset(&to.values()[0], 0, to.values().size());
 
 		foreach (value_idx_t v, from.values()) {
 			if (v > 0) {
@@ -42,9 +43,20 @@ namespace PlTagger { namespace Conversion {
 		Token* t = source()->get_next_token();
 		if (t != NULL) {
 			foreach (Lexeme& lex, t->lexemes()) {
-				lex.set_tag(tc_.cast(lex.tag()));
+				lex.tag() = (tc_.cast(lex.tag()));
 			}
 		}
 		return t;
 	}
+
+	const Tagset& TagConvertLayer::tagset_from() const
+	{
+		return tc_.tagset_from();
+	}
+
+	const Tagset& TagConvertLayer::tagset_to() const
+	{
+		return tc_.tagset_to();
+	}
+
 } /* end ns Conversion */ } /* end ns PlTagger */

@@ -14,6 +14,14 @@ namespace PlTagger { namespace Conversion {
 
 		Tag cast(const Tag& from) const;
 
+		const Tagset& tagset_from() const {
+			return tagset_from_;
+		}
+
+		const Tagset& tagset_to() const {
+			return tagset_to_;
+		}
+
 	protected:
 		const Tagset& tagset_from_;
 		const Tagset& tagset_to_;
@@ -32,6 +40,10 @@ namespace PlTagger { namespace Conversion {
 		TagConvertLayer(const TagConverter& tc);
 
 		Token* get_next_token();
+
+		const Tagset& tagset_from() const;
+
+		const Tagset& tagset_to() const;
 
 	private:
 		TagConverter tc_;

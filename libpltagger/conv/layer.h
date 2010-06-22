@@ -2,6 +2,7 @@
 #define LIBPLTAGGER_TOKEN_LAYER_H
 
 #include <libpltagger/tokensource.h>
+#include <libpltagger/tagset.h>
 #include <boost/function.hpp>
 #include <vector>
 
@@ -12,33 +13,31 @@ namespace PlTagger { namespace Conversion {
 	public:
 		Layer();
 
+		virtual ~Layer();
+
 		void set_source(TokenSource* src);
 
 		TokenSource* source();
+
+		virtual const Tagset& tagset_from() const = 0;
+
+		virtual const Tagset& tagset_to() const = 0;
 
 	private:
 		TokenSource* source_;
 	};
 
-	class TagsetConverter
+	class OneTagsetLayer : public Layer
 	{
 	public:
-		TagsetConverter();
+		OneTagsetLayer(const Tagset& tagset);
 
-		~TagsetConverter();
+		const Tagset& tagset_from() const;
 
-		void add_layer(Layer* cl);
+		const Tagset& tagset_to() const;
 
-		void convert(TokenSource* src, boost::function<void (Token*)> sink);
-
-		template<class T>
-		void convert_container(const T& container, boost::function<void (Token*)> sink)
-		{
-			TokenSource& src = make_range_source(container);
-			convert(&src, sink);
-		}
 	private:
-		std::vector<Layer*> layers_;
+		const Tagset& tagset_;
 	};
 
 } /* end ns Conversion */ } /* end ns PlTagger */

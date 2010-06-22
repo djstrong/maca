@@ -34,8 +34,8 @@ namespace PlTagger {
 			return tag_;
 		}
 
-		void set_tag(const Tag& t) {
-			tag_ = t;
+		Tag& tag() {
+			return tag_;
 		}
 
 		bool operator<(const Lexeme& other) const;

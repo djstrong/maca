@@ -27,6 +27,7 @@ link_directories(${Boost_LIBRARY_DIRS})
 set(LIBS ${LIBS} ${Boost_LIBRARIES})
 
 SET(libpltagger_STAT_SRC
+    conv/fold.cpp
     conv/joinlayer.cpp
     conv/joinrule.cpp
     conv/layer.cpp
@@ -34,6 +35,7 @@ SET(libpltagger_STAT_SRC
     conv/splitlayer.cpp
     conv/tagconvert.cpp
     conv/tagrule.cpp
+    conv/tagrulelayer.cpp
     conv/tagsetconverter.cpp
     debug.cpp
     lexeme.cpp

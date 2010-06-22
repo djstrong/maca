@@ -7,6 +7,10 @@ namespace PlTagger { namespace Conversion {
 	{
 	}
 
+	Layer::~Layer()
+	{
+	}
+
 	void Layer::set_source(TokenSource *src)
 	{
 		source_ = src;
@@ -17,15 +21,19 @@ namespace PlTagger { namespace Conversion {
 		return source_;
 	}
 
-	void TagsetConverter::convert(TokenSource* src, boost::function<void (Token*)> sink)
+	OneTagsetLayer::OneTagsetLayer(const Tagset& tagset)
+		: tagset_(tagset)
 	{
-		assert(!layers_.empty());
-		assert(layers_.back()->get_next_token() == NULL);
-		layers_.front()->set_source(src);
-		Token* t;
-		while ((t = layers_.back()->get_next_token())) {
-			sink(t);
-		}
+	}
+
+	const Tagset& OneTagsetLayer::tagset_from() const
+	{
+		return tagset_;
+	}
+
+	const Tagset& OneTagsetLayer::tagset_to() const
+	{
+		return tagset_;
 	}
 
 } /* end ns Conversion */ } /* end ns PlTagger */

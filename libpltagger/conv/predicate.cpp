@@ -37,6 +37,9 @@ namespace PlTagger { namespace Conversion {
 		}
 	}
 
+	PosOrthPredicate::PosOrthPredicate()
+	{
+	}
 
 	PosOrthPredicate::PosOrthPredicate(pos_idx_t pos, const UnicodeString &orth)
 		: std::pair<pos_idx_t, UnicodeString>(pos, orth)

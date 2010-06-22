@@ -1,33 +1,61 @@
+#include <libpltagger/conv/fold.h>
 #include <libpltagger/conv/tagsetconverter.h>
+#include <libpltagger/conv/layer.h>
 #include <libtoki/foreach.h>
 
-namespace PlTagger {
+namespace PlTagger { namespace Conversion {
 
-	TagsetConverter::TagsetConverter(const Tagset &from, const Tagset &to)
-		: from_(from), to_(to)
+	TagsetConverter::TagsetConverter()
+		: layers_()
 	{
 	}
 
 	TagsetConverter::~TagsetConverter()
 	{
+		foreach (Layer* l, layers_) {
+			delete l;
+		}
+	}
+
+	void TagsetConverter::add_layer(Layer* l)
+	{
+		if (!layers_.empty()) {
+			if (l->tagset_from().id() != layers_.back()->tagset_to().id()) {
+				throw PlTaggerError("Conversion layer tagset mismatch");
+			}
+		}
+		layers_.push_back(l);
+	}
+
+	const Tagset& TagsetConverter::tagset_from() const
+	{
+		assert(!layers_.empty());
+		return layers_.front()->tagset_from();
+	}
+
+	const Tagset& TagsetConverter::tagset_to() const
+	{
+		assert(!layers_.empty());
+		return layers_.back()->tagset_to();
+	}
+
+	void TagsetConverter::convert(TokenSource* src, boost::function<void (Token*)> sink)
+	{
+		std::cerr << "CCC3";
+		assert(!layers_.empty());
+		std::cerr << "CCC2";
+		assert(layers_.back()->source() == NULL || layers_.back()->get_next_token() == NULL);
+		std::cerr << "CCC1";
+		layers_.front()->set_source(src);
+		Token* t;
+		while ((t = layers_.back()->get_next_token())) {
+			sink(t);
+		}
 	}
 
 	void TagsetConverter::convert_simple(const std::vector<Token *>& v, boost::function<void(Token *)>sink)
 	{
-		foreach (Token* t, v) {
-			std::set<Lexeme> new_lex;
-			foreach (Lexeme& lex, t->lexemes()) {
-				Tag tag2 = lex.tag();
-				attribute_idx_t g_idx = tagset_from().attribute_dictionary().get_id("gnd");
-				if (tag2.values()[g_idx] > 0) {
-					tag2.values()[g_idx] = tagset_from().value_dictionary().get_id("m1");
-				}
-				new_lex.insert(Lexeme(lex.lemma(), tag2));
-			}
-			t->lexemes().clear();
-			std::copy(new_lex.begin(), new_lex.end(), std::back_inserter(t->lexemes()));
-			sink(t);
-		}
+		convert_container(v, sink);
 	}
 
 	void TagsetConverter::convert_ambiguous(const std::vector<std::vector<Token *> >& v, boost::function<void(Token *)>sink)
@@ -38,17 +66,4 @@ namespace PlTagger {
 		convert_simple(v[min_len_path], sink);
 	}
 
-	size_t TagsetConverter::find_shortest(const std::vector<std::vector<Token *> >& v, size_t& min_len_path)
-	{
-		size_t min_len = v[0].size();
-		min_len_path = 0;
-		for (size_t pi = 0; pi < v.size(); ++pi) {
-			if (v[pi].size() < min_len) {
-				min_len = v[pi].size();
-				min_len_path = pi;
-			}
-		}
-		return min_len;
-	}
-
-} /* end ns PlTagger */
+} /* end ns Conversion */ } /* end ns PlTagger */

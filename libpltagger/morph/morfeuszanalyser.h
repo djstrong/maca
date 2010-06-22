@@ -24,7 +24,7 @@ namespace PlTagger {
 		void flush_convert(std::vector< std::vector<Token*> >& vec, boost::function<void(Token *)>sink);
 
 	private:
-		TagsetConverter conv_;
+		Conversion::TagsetConverter conv_;
 	};
 
 } /* end ns Pltagger */

@@ -19,6 +19,9 @@ namespace PlTagger { namespace Conversion {
 
 	class PosOrthPredicate : public std::pair<pos_idx_t, UnicodeString>
 	{
+	public:
+		PosOrthPredicate();
+
 		PosOrthPredicate(pos_idx_t pos, const UnicodeString& orth);
 
 		bool check(const Token& token) const;

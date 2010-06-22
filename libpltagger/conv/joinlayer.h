@@ -6,10 +6,10 @@
 
 namespace PlTagger { namespace Conversion {
 
-	class JoinLayer : public Layer
+	class JoinLayer : public OneTagsetLayer
 	{
 	public:
-		JoinLayer();
+		JoinLayer(const Tagset& tagset);
 
 		void append_rule(const JoinRule& rule);
 
@@ -18,7 +18,7 @@ namespace PlTagger { namespace Conversion {
 	private:
 		std::vector<JoinRule> rules_;
 
-		Token* next_;
+		Token* buf_;
 	};
 
 } /* end ns Conversion */ } /* end ns PlTagger */

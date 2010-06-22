@@ -15,7 +15,7 @@ namespace PlTagger { namespace Conversion {
 
 		~JoinRule();
 
-		Token* try_join(const Token& t1, const Token& t2) const;
+		Token* try_join(Token* t1, Token* t2) const;
 
 		void set_preconditions(const PosOrthPredicate& pre1, const PosOrthPredicate& pre2);
 
