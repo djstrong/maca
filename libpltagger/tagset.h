@@ -53,6 +53,15 @@ namespace PlTagger {
 		void parse_tag(const string_range& s, bool allow_extra, boost::function<void (const Tag&)> sink) const;
 
 		/**
+		 * Tag parsing -- functional version, whole tag string, char* overload.
+		 *
+		 * A simple wrapper for string split and a call to the split string version.
+		 */
+		void parse_tag(const char* c, bool allow_extra, boost::function<void (const Tag&)> sink) const {
+			parse_tag(std::make_pair(c, c + strlen(c)), allow_extra, sink);
+		}
+
+		/**
 		 * Tag parsing -- functional version, split tag string.
 		 *
 		 * This is the main tag parsing function, other variants end up calling
@@ -79,6 +88,15 @@ namespace PlTagger {
 		std::vector<Tag> parse_tag(const string_range& s, bool allow_extra) const;
 
 		/**
+		 * Tag parsing -- plain version, whole string, char* overload.
+		 *
+		 * A simple wrapper for string split and a call to the split string version.
+		 */
+		std::vector<Tag> parse_tag(const char* c, bool allow_extra) const {
+			return parse_tag(std::make_pair(c, c + strlen(c)), allow_extra);
+		}
+
+		/**
 		 * Tag parsing -- plain version, split string.
 		 *
 		 * A wrapper to the functional version that sets up parameters so that
@@ -92,6 +110,15 @@ namespace PlTagger {
 		 A simple wrapper for string split and a call to the split string version.
 		 */
 		Tag parse_simple_tag(const string_range& s, bool allow_extra) const;
+
+		/**
+		 * Simple tag parsing -- whole string version, char* overload.
+		 *
+		 A simple wrapper for string split and a call to the split string version.
+		 */
+		Tag parse_simple_tag(const char* c, bool allow_extra) const {
+			return parse_simple_tag(std::make_pair(c, c + strlen(c)), allow_extra);
+		}
 
 		/**
 		 * Simple tag parsing -- split string version.
