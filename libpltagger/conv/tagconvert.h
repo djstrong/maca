@@ -2,9 +2,10 @@
 #define LIBPLTAGGER_TAGCONVERT_H
 
 #include <libpltagger/tagset.h>
-#include <libpltagger/tag.h>
+#include <libpltagger/conv/layer.h>
 
-namespace PlTagger {
+
+namespace PlTagger { namespace Conversion {
 
 	class TagConverter
 	{
@@ -25,18 +26,17 @@ namespace PlTagger {
 		pos_map_t pos_mapping_;
 	};
 
-	class TagPredicate : public std::pair<idx_t, idx_t>
+	class TagConvertLayer : public Layer
 	{
 	public:
-		TagPredicate(const std::string& name, const Tagset& tagset);
-		~TagPredicate();
+		TagConvertLayer(const TagConverter& tc);
 
-		bool check(const Tag& tag) const;
-		void apply(Tag& tag) const;
+		Token* get_next_token();
 
+	private:
+		TagConverter tc_;
 	};
 
-
-} /* end ns PlTagger */
+} /* end ns Conversion */ } /* end ns PlTagger */
 
 #endif // LIBPLTAGGER_TAGCONVERT_H

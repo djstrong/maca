@@ -2,7 +2,7 @@
 #define LIBPLTAGGER_MORFEUSZANALYSER_H
 
 #include <libpltagger/morph/morphanalyser.h>
-#include <libpltagger/tagsetconverter.h>
+#include <libpltagger/conv/tagsetconverter.h>
 
 #include <morfeusz.h>
 

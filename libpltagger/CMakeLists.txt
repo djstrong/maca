@@ -27,8 +27,13 @@ link_directories(${Boost_LIBRARY_DIRS})
 set(LIBS ${LIBS} ${Boost_LIBRARIES})
 
 SET(libpltagger_STAT_SRC
-    conv/rule.cpp
+    conv/joinlayer.cpp
+    conv/joinrule.cpp
+    conv/layer.cpp
+    conv/predicate.cpp
+    conv/splitlayer.cpp
     conv/tagconvert.cpp
+    conv/tagrule.cpp
     conv/tagsetconverter.cpp
     debug.cpp
     lexeme.cpp
@@ -44,6 +49,7 @@ SET(libpltagger_STAT_SRC
     tagsetmanager.cpp
     tagsetparser.cpp
     token.cpp
+    tokensource.cpp
 )
 
 if (SFST_FOUND)
