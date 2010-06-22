@@ -1,5 +1,7 @@
+#include <libpltagger/exception.h>
 #include <libpltagger/tagset.h>
 #include <libpltagger/lexeme.h>
+#include <libpltagger/settings.h>
 #include <libpltagger/tagsetparser.h>
 
 #include <libtoki/foreach.h>
@@ -11,6 +13,7 @@
 
 #include <sstream>
 #include <iostream>
+#include <fstream>
 
 namespace PlTagger {
 

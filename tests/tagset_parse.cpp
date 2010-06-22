@@ -2,6 +2,8 @@
 #include <set>
 #include <libtoki/foreach.h>
 #include <libpltagger/tagsetparser.h>
+#include <libpltagger/tagsetmanager.h>
+#include <iostream>
 
 BOOST_AUTO_TEST_SUITE( tagset_parse );
 
@@ -121,6 +123,21 @@ BOOST_AUTO_TEST_CASE( size6 )
 	PlTagger::Tagset t = parse(PRE "A a b \n B c d\n" POSA "POS2 A\n POS3 [A]\n");
 	BOOST_CHECK_EQUAL(t.size(), 6);
 	BOOST_CHECK_EQUAL(t.size_extra(), 27);
+}
+
+BOOST_AUTO_TEST_CASE( load_named )
+{
+//	BOOST_CHECK_NO_THROW(
+	try {
+			PlTagger::get_named_tagset("test");
+		}catch(PlTagger::PlTaggerError& e) {
+			std::cerr << e.info();
+		}
+
+//	);
+	BOOST_CHECK_THROW(
+		PlTagger::get_named_tagset("__nonexistant_9867s8t"),
+		PlTagger::TagsetNotFound);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

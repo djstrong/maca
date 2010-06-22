@@ -2,9 +2,6 @@
 
 PROJECT(pltagger)
 
-set(ver_major "0")
-set(ver_minor "1")
-
 include_directories( ${CMAKE_SOURCE_DIR} ) 
 
 #include_directories("/usr/include/sfst-1.0")
@@ -29,8 +26,6 @@ set(LIBS ${LIBS} ${LibXML++_LIBRARIES})
 link_directories(${Boost_LIBRARY_DIRS})
 set(LIBS ${LIBS} ${Boost_LIBRARIES})
 
-set(LIBPLTAGGER_VERSION "${ver_major}.${ver_minor}")
-
 SET(libpltagger_STAT_SRC
     conv/rule.cpp
     conv/tagconvert.cpp
@@ -42,9 +37,11 @@ SET(libpltagger_STAT_SRC
     morph/dispatchanalyser.cpp
     morph/mapanalyser.cpp
     morph/morphanalyser.cpp
+    settings.cpp
     symboldictionary.cpp
     tag.cpp
     tagset.cpp
+    tagsetmanager.cpp
     tagsetparser.cpp
     token.cpp
 )
@@ -86,6 +83,16 @@ if(UNIX)
                 PATTERN "bin" EXCLUDE
                 PATTERN "build" EXCLUDE 
                 PATTERN "CMake*" EXCLUDE
+        )
+        install(
+                DIRECTORY ${LIBPLTAGGER_SRC_DATA_DIR}/
+                DESTINATION ${LIBPLTAGGER_INSTALL_DATA_DIR}
+                FILES_MATCHING PATTERN "*.ini"
+                 PATTERN "*.tagset"
+                 PATTERN "*.ini"
+                 PATTERN "*.xml"
+                 PATTERN "*.txt"
+                PATTERN ".svn" EXCLUDE
         )
 endif(UNIX)
 

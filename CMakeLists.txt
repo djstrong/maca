@@ -1,6 +1,9 @@
 PROJECT(Tagger)
 cmake_minimum_required(VERSION 2.8.0)
 
+set(ver_major "0")
+set(ver_minor "1")
+
 # use some of our own Find* scripts
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeScripts)
 
@@ -55,6 +58,15 @@ if (MORFEUSZ_FOUND)
 	link_directories(${MORFEUSZ_LIBRARY_DIRS})
 	set(HAVE_MORFEUSZ 1)
 endif(MORFEUSZ_FOUND)
+
+set(LIBPLTAGGER_INSTALL_DATA_DIR lib/pltagger)
+set(LIBPLTAGGER_DATA_DIR "${CMAKE_INSTALL_PREFIX}/${LIBPLTAGGER_INSTALL_DATA_DIR};.")
+set(LIBPLTAGGER_VERSION "${ver_major}.${ver_minor}")
+FIND_PATH(LIBPLTAGGER_SRC_DATA_DIR
+    test.tagset
+    ${CMAKE_SOURCE_DIR}/data
+)
+MARK_AS_ADVANCED(LIBPLTAGGER_SRC_DATA_DIR)
 
 configure_file(libpltagger/config_d.in include/libpltagger/config_d.h)
 include_directories( ${CMAKE_CURRENT_BINARY_DIR}/include/ )
