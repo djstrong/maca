@@ -1,0 +1,8 @@
+#ifndef LIBPLTAGGER_$UN_H
+#define LIBPLTAGGER_$UN_H
+
+namespace PlTagger {
+
+} /* end ns PlTagger */
+
+#endif // LIBPLTAGGER_$UN_H

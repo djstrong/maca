@@ -1,0 +1,5 @@
+#include <libpltagger/$LN.h>
+
+namespace PlTagger {
+
+} /* end ns PlTagger */
