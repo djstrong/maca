@@ -51,7 +51,7 @@ namespace PlTagger {
 		return old_size != lexemes_.size();
 	}
 
-	bool Token::orth_pos_match(pos_idx_t pos, const UnicodeString &orth)
+	bool Token::orth_pos_match(pos_idx_t pos, const UnicodeString &orth) const
 	{
 		if (orth.length() > 0) {
 			if (orth.caseCompare(orth_, 0) != 0) return false;

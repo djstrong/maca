@@ -99,7 +99,7 @@ namespace PlTagger {
 		 *
 		 * @returns true if the orth and lexemes pass the check, false otherwise
 		 */
-		bool orth_pos_match(pos_idx_t pos, const UnicodeString& orth);
+		bool orth_pos_match(pos_idx_t pos, const UnicodeString& orth) const;
 
 	private:
 		/// The orth (actual encountered form)
