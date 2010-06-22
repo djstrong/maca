@@ -25,6 +25,11 @@ namespace PlTagger {
 		~PlTaggerError() throw()
 		{
 		}
+
+		virtual std::string info() const
+		{
+			return what();
+		}
 	};
 
 } /* end ns PlTagger */
