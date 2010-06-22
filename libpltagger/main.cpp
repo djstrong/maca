@@ -31,6 +31,17 @@ extern "C"
 int LIBPLTAGGER_entry_()
 {
 	std::cout << "This is libpltagger-" LIBPLTAGGER_VERSION ", a configurable tagger library.\n";
+	std::cout << "Data dir configured as: " << LIBPLTAGGER_DATA_DIR << "\n";
+#ifdef HAVE_MORFEUSZ
+	std::cout << "Built with Morfeusz support.\n";
+#else
+	std::cout << "Built without Morfeusz support.\n";
+#endif
+#ifdef HAVE_SFST
+	std::cout << "Built with SFST support.\n";
+#else
+	std::cout << "Built without SFST support.\n";
+#endif
 	exit(0);
 }
 
