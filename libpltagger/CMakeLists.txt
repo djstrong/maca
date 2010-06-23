@@ -2,8 +2,6 @@
 
 PROJECT(pltagger)
 
-include_directories( ${CMAKE_SOURCE_DIR} ) 
-
 #include_directories("/usr/include/sfst-1.0")
 #set(LIBS ${LIBS} "sfst1")
 

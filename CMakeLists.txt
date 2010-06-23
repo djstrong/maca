@@ -42,6 +42,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 set(LIBS "")
+include_directories( ${CMAKE_SOURCE_DIR} )
 
 find_package(SFST)
 if (SFST_FOUND)
