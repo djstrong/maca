@@ -9,7 +9,7 @@ namespace PlTagger {
 	std::string lexeme_string(const Lexeme& l)
 	{
 		std::stringstream ss;
-		ss << l.lemma_utf8() << "\t" << l.tag().to_string();
+		ss << l.lemma_utf8() << "\t" << l.tag().raw_dump();
 		return ss.str();
 	}
 

@@ -40,7 +40,6 @@ namespace PlTagger {
 
 		Token* get_next_token()
 		{
-			std::cerr << "Range get next";
 			if (ptr_ != end_) {
 				return *ptr_++;
 			} else {

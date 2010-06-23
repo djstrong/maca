@@ -18,10 +18,12 @@
 namespace PlTagger {
 
 	Tagset::Tagset()
+		: id_(-1)
 	{
 	}
 
 	Tagset::Tagset(const char *s)
+		: id_(-1)
 	{
 		std::stringstream ss;
 		ss << s;

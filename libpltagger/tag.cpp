@@ -1,15 +1,12 @@
 #include <libpltagger/tag.h>
+#include <libtoki/foreach.h>
 #include <cstring>
+#include <sstream>
 
 namespace PlTagger {
 
 	Tag::Tag()
-		: tagset_id_(-1)
-	{
-	}
-
-	Tag::Tag(const std::string &str)
-		: tagset_id_(-1), str_(str)
+		: tagset_id_(-1), pos_id_(-1)
 	{
 	}
 
@@ -23,9 +20,16 @@ namespace PlTagger {
 	{
 	}
 
-	std::string Tag::to_string() const
+	std::string Tag::raw_dump() const
 	{
-		return str_;
+		std::ostringstream ss;
+		ss << "[";
+		ss << static_cast<int>(tagset_id_) << "#" << static_cast<int>(pos_id_);
+		foreach (value_idx_t v, values_) {
+			ss << ":" << static_cast<int>(v) ;
+		}
+		ss << "]";
+		return ss.str();
 	}
 
 	bool Tag::operator<(const Tag& other) const

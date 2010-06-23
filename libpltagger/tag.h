@@ -25,13 +25,9 @@ namespace PlTagger {
 	public:
 		Tag();
 
-		explicit Tag(const std::string& str);
-
 		Tag(tagset_idx_t tagset_id, pos_idx_t pos);
 
 		Tag(tagset_idx_t tagset_id, pos_idx_t pos, const std::vector<value_idx_t>& values);
-
-		std::string to_string() const;
 
 		pos_idx_t pos_id() const {
 			return pos_id_;
@@ -52,7 +48,7 @@ namespace PlTagger {
 			return values_;
 		}
 
-		std::vector<std::string>& values_string_vector() const;
+		std::string raw_dump() const;
 
 
 		tagset_idx_t tagset_id() const {

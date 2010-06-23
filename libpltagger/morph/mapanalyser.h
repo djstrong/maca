@@ -44,7 +44,7 @@ namespace PlTagger {
 			boost::iterator_range<const char*> r(buf, buf + ifs.gcount());
 			boost::algorithm::split(v, r, boost::is_any_of("\t"));
 			if (v.size() == 3) {
-				Lexeme lex(UnicodeString::fromUTF8(v[1]), Tag(v[2]));
+				Lexeme lex(UnicodeString::fromUTF8(v[1]), Tagset().parse_simple_tag(v[2], false));
 				map_.insert(std::make_pair(v[0], lex));
 			}
 		}

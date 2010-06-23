@@ -41,11 +41,8 @@ namespace PlTagger { namespace Conversion {
 
 	void TagsetConverter::convert(TokenSource* src, boost::function<void (Token*)> sink)
 	{
-		std::cerr << "CCC3";
 		assert(!layers_.empty());
-		std::cerr << "CCC2";
 		assert(layers_.back()->source() == NULL || layers_.back()->get_next_token() == NULL);
-		std::cerr << "CCC1";
 		layers_.front()->set_source(src);
 		Token* t;
 		while ((t = layers_.back()->get_next_token())) {

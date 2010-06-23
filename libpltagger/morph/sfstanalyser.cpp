@@ -60,17 +60,6 @@ namespace PlTagger {
 		return rv;
 	}
 
-	Lexeme SfstAnalyser::split_analysis(const std::string &sfst_analysis)
-	{
-		size_t pos = sfst_analysis.find('<');
-		if (pos == std::string::npos) {
-			return Lexeme();
-		}
-		UnicodeString lemma(sfst_analysis.c_str(), pos);
-		std::string tag_string(sfst_analysis.substr(pos + 1, sfst_analysis.length() - pos - 2));
-		return Lexeme(lemma, Tag(tag_string));
-	}
-
 	void SfstAnalyser::split_analysis_into(const std::string &sfst_analysis,
 			std::vector<Lexeme>& lv, const Tagset& tagset)
 	{

@@ -19,8 +19,6 @@ namespace PlTagger {
 
 		static std::string unescape_analysis(const std::string& sfst_analysis);
 
-		static Lexeme split_analysis(const std::string& sfst_analysis);
-
 		static void split_analysis_into(const std::string &sfst_analysis,
 				std::vector<Lexeme>& lv, const Tagset& tagset);
 
