@@ -1,4 +1,5 @@
 #include <libpltagger/conv/predicate.h>
+#include <libtoki/foreach.h>
 
 namespace PlTagger { namespace Conversion {
 
@@ -19,6 +20,29 @@ namespace PlTagger { namespace Conversion {
 		}
 	}
 
+	bool TagPredicate::check(const Tag &tag) const
+	{
+		if (first != static_cast<idx_t>(-1)) {
+			return tag.values()[first] == second;
+		} else {
+			return tag.pos_id() == second;
+		}
+	}
+
+	bool TagPredicate::token_match(const Token& t) const
+	{
+		if (first != static_cast<idx_t>(-1)) {
+			foreach (const Lexeme& lex, t.lexemes()) {
+				if (lex.tag().values()[first] != second) return false;
+			}
+		} else {
+			foreach (const Lexeme& lex, t.lexemes()) {
+				if (lex.tag().pos_id() != second) return false;
+			}
+		}
+		return true;
+	}
+
 	void TagPredicate::apply(Tag &tag) const
 	{
 		if (first != static_cast<idx_t>(-1)) {
@@ -28,12 +52,16 @@ namespace PlTagger { namespace Conversion {
 		}
 	}
 
-	bool TagPredicate::check(const Tag &tag) const
+	void TagPredicate::token_apply(Token& t) const
 	{
 		if (first != static_cast<idx_t>(-1)) {
-			return tag.values()[first] == second;
+			foreach (Lexeme& lex, t.lexemes()) {
+				lex.tag().values()[first] = second;
+			}
 		} else {
-			return tag.pos_id() == second;
+			foreach (Lexeme& lex, t.lexemes()) {
+				lex.tag().pos_id() = second;
+			}
 		}
 	}
 

@@ -11,19 +11,31 @@ namespace PlTagger { namespace Conversion {
 	class JoinRule
 	{
 	public:
-		JoinRule();
+		JoinRule(const Tagset& tagset);
 
 		~JoinRule();
 
 		Token* try_join(Token* t1, Token* t2) const;
 
-		void set_preconditions(const PosOrthPredicate& pre1, const PosOrthPredicate& pre2);
+		void set_token1_preconditions(const PosOrthPredicate& pre);
+
+		void set_token1_preconditions(const std::string& pos, const UnicodeString& orth);
+
+		void set_token2_preconditions(const PosOrthPredicate& pre);
+
+		void set_token2_preconditions(const std::string& pos, const UnicodeString& orth);
 
 		void set_copy_attrs(const std::vector<attribute_idx_t>& v);
 
+		void add_copy_attr(const std::string& name);
+
 		void add_postcondition(const TagPredicate& tp);
 
+		void add_postcondition(const std::string& pred_string);
+
 	private:
+		const Tagset* tagset_;
+
 		PosOrthPredicate pre1_;
 
 		PosOrthPredicate pre2_;

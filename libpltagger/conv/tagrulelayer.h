@@ -3,6 +3,7 @@
 
 #include <libpltagger/conv/layer.h>
 #include <libpltagger/conv/tagrule.h>
+#include <libtoki/confignode.h>
 
 namespace PlTagger { namespace Conversion {
 
@@ -11,7 +12,11 @@ namespace PlTagger { namespace Conversion {
 	public:
 		TagRuleLayer(const Tagset& tagset);
 
+		TagRuleLayer(const Toki::Config::Node& cfg);
+
 		void append_rule(const TagRule& tr);
+
+		void append_rule(const Toki::Config::Node& cfg);
 
 		Token* get_next_token();
 

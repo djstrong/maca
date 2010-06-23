@@ -41,7 +41,7 @@ namespace PlTagger {
 
 	typedef Loki::SingletonHolder< TagsetManager > TagsetManagerSingleton;
 
-	const Tagset& get_named_tagset(const std::string& name) {
+	inline const Tagset& get_named_tagset(const std::string& name) {
 		return TagsetManagerSingleton::Instance().get_tagset(name);
 	}
 

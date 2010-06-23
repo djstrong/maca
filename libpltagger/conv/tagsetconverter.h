@@ -4,6 +4,7 @@
 #include <libpltagger/tagset.h>
 #include <libpltagger/token.h>
 #include <libpltagger/tokensource.h>
+#include <libtoki/confignode.h>
 #include <boost/function.hpp>
 
 namespace PlTagger { namespace Conversion {
@@ -14,6 +15,8 @@ namespace PlTagger { namespace Conversion {
 	{
 	public:
 		TagsetConverter();
+
+		TagsetConverter(const Toki::Config::Node& cfg);
 
 		virtual ~TagsetConverter();
 

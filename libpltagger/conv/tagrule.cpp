@@ -1,9 +1,11 @@
 #include <libpltagger/conv/tagrule.h>
 #include <libtoki/foreach.h>
+#include <iostream>
 
 namespace PlTagger { namespace Conversion {
 
-	TagRule::TagRule()
+	TagRule::TagRule(const Tagset& tagset)
+		: tagset_(&tagset)
 	{
 	}
 
@@ -12,9 +14,19 @@ namespace PlTagger { namespace Conversion {
 		pre_.push_back(tp);
 	}
 
+	void TagRule::add_precondition(const std::string &pred_string)
+	{
+		pre_.push_back(TagPredicate(pred_string, *tagset_));
+	}
+
 	void TagRule::add_postcondition(const TagPredicate &tp)
 	{
 		post_.push_back(tp);
+	}
+
+	void TagRule::add_postcondition(const std::string &pred_string)
+	{
+		post_.push_back(TagPredicate(pred_string, *tagset_));
 	}
 
 	void TagRule::apply(Tag &tag) const

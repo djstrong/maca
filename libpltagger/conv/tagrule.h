@@ -11,17 +11,23 @@ namespace PlTagger { namespace Conversion {
 	class TagRule
 	{
 	public:
-		TagRule();
+		TagRule(const Tagset& tagset);
 
 		void add_precondition(const TagPredicate& tp);
 
+		void add_precondition(const std::string& pred_string);
+
 		void add_postcondition(const TagPredicate& tp);
+
+		void add_postcondition(const std::string& pred_string);
 
 		void apply(Tag& tag) const;
 
 		Tag apply_copy(const Tag& tag) const;
 
 	private:
+		const Tagset* tagset_;
+
 		std::vector<TagPredicate> pre_;
 
 		std::vector<TagPredicate> post_;

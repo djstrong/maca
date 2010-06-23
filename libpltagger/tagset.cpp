@@ -81,13 +81,13 @@ namespace PlTagger {
 					values.push_back(v);
 				}
 				append_to_multi_tag(opts, values);
-			} else {
+			} else if (!r.empty()) { // underscore handling
 				if (fi - 1 >= pos_attributes_[pos_id].size()) {
 					throw TagParseError("Underscore beyond the last attribute for this POS");
 				}
 				attribute_idx_t attr = pos_attributes_[pos_id][fi - 1];
 				append_to_multi_tag(opts, attribute_values_[attr]);
-			}
+			} // else empty, do nothing
 		}
 		foreach (std::vector<value_idx_t>& opt, opts) {
 			sink(make_tag(pos_id, opt, allow_extra));
@@ -129,13 +129,15 @@ namespace PlTagger {
 		tag.values().swap(vvv);
 
 		for (size_t i = 1; i < ts.size(); ++i) {
-			value_idx_t val_id = value_dict_.get_id(ts[i]);
-			if (!value_dict_.is_id_valid(val_id)) {
-				throw TagParseError("Unknown attribute value: " + boost::copy_range<std::string>(ts[i]));
-			}
-			attribute_idx_t attr_id = get_value_attribute(val_id);
-			if (valid_attrs_mask[attr_id] || allow_extra) {
-				tag.values()[attr_id] = val_id;
+			if (!ts[i].empty()) {
+				value_idx_t val_id = value_dict_.get_id(ts[i]);
+				if (!value_dict_.is_id_valid(val_id)) {
+					throw TagParseError("Unknown attribute value: " + boost::copy_range<std::string>(ts[i]));
+				}
+				attribute_idx_t attr_id = get_value_attribute(val_id);
+				if (valid_attrs_mask[attr_id] || allow_extra) {
+					tag.values()[attr_id] = val_id;
+				}
 			}
 		}
 		return tag;
@@ -211,7 +213,7 @@ namespace PlTagger {
 		// print extra attributes
 		for (size_t i = 0; i < attribute_dict_.size(); ++i) {
 			if (tag.values()[i] > 0 && !pos_valid_attributes_[tag.pos_id()][i]) {
-				ss << ":" << ss << value_dict_.get_string(tag.values()[i]);
+				ss << ":" << value_dict_.get_string(tag.values()[i]);
 			}
 		}
 		return ss.str();
