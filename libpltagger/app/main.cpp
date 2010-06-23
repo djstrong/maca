@@ -14,15 +14,16 @@
 #include <boost/program_options.hpp>
 
 #include <libtoki/foreach.h>
-
+#include <libtoki/confignode.h>
 #include <libpltagger/tagsetparser.h>
+#include <libpltagger/conv/tagsetconverter.h>
 
 #include <libpltagger/debug.h>
 #include <fstream>
 
 int main(int argc, char** argv)
 {
-	std::string sfst, mdict;
+	std::string sfst, mdict, conv;
 	std::string tagset_load, tagset_save;
 	using boost::program_options::value;
 #ifdef HAVE_MORFEUSZ
@@ -42,6 +43,8 @@ int main(int argc, char** argv)
 #endif
 			("tagset,t", value(&tagset_load),
 			 "Path to tagset ini file to load\n")
+			("convert,c", value(&conv),
+			 "Tagset conversion testing\n")
 			("save-tagset", value(&tagset_save),
 			 "Path to tagset ini file to save\n")
 			("help,h", "Show help")
@@ -60,6 +63,31 @@ int main(int argc, char** argv)
 		std::cout << desc << "\n";
 		return 1;
 	}
+
+	if (!conv.empty()) {
+		Toki::Config::Node cfg = Toki::Config::from_file(conv);
+		PlTagger::Conversion::TagsetConverter tc(cfg);
+		std::vector<PlTagger::Token*> v;
+		while (std::cin.good()) {
+			std::string orth;
+			std::string intag;
+			std::cin >> orth >> intag;
+			UnicodeString uorth = UnicodeString::fromUTF8(orth);
+			PlTagger::Tag tag;
+			tag = tc.tagset_from().parse_simple_tag(intag, true);
+			std::cout << tc.tagset_from().tag_to_string(tag);
+			PlTagger::Lexeme lex(uorth, tag);
+			PlTagger::Token* tok = new PlTagger::Token(uorth, Toki::Whitespace::None);
+			tok->add_lexeme(lex);
+			v.push_back(tok);
+		}
+		tc.convert_simple(v, boost::bind(
+				PlTagger::token_output,
+				boost::cref(tc.tagset_to()),
+				boost::ref(std::cout),
+				_1));
+	}
+
 	boost::shared_ptr<PlTagger::Tagset> tagset(new PlTagger::Tagset);
 
 	if (!tagset_load.empty()) {

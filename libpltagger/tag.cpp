@@ -6,7 +6,7 @@
 namespace PlTagger {
 
 	Tag::Tag()
-		: tagset_id_(-1), pos_id_(-1)
+		: pos_id_(-1), tagset_id_(-1)
 	{
 	}
 

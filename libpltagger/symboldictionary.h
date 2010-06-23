@@ -5,6 +5,7 @@
 #include <string>
 #include <boost/range.hpp>
 #include <map>
+#include <iostream>
 
 namespace PlTagger {
 
@@ -108,7 +109,7 @@ namespace PlTagger {
 		if (!sr.empty()) {
 			return static_cast<IndexT>(sr.begin() - data_.begin());
 		} else {
-			return static_cast<IndexT>(data_.size());
+			return static_cast<IndexT>(-1);
 		}
 	}
 
@@ -130,6 +131,9 @@ namespace PlTagger {
 		for (IndexT i = static_cast<IndexT>(0); i < size(); ++i) {
 			std::string name = get_string(i);
 			IndexT t = other.get_id(name);
+			if (!other.is_id_valid(t)) {
+				std::cerr << "FAIL " << name << " ";
+			}
 			map.insert(std::make_pair(i, t));
 		}
 	}

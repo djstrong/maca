@@ -25,6 +25,8 @@ namespace PlTagger { namespace Conversion {
 
 		void add_override(const std::string& from, const std::string& to);
 
+		bool is_complete() const;
+
 	protected:
 		const Tagset& tagset_from_;
 		const Tagset& tagset_to_;

@@ -26,6 +26,7 @@ namespace PlTagger { namespace Conversion {
 				std::map<value_idx_t, value_idx_t>::const_iterator i;
 				i = value_mapping_.find(v);
 				if (i != value_mapping_.end()) {
+					std::cerr << (int)v << "->" << (int)i->second << "\n";
 					attribute_idx_t a = tagset_to_.get_value_attribute(i->second);
 					to.values()[a] = i->second;
 				}
@@ -43,21 +44,57 @@ namespace PlTagger { namespace Conversion {
 				pos_mapping_[pos] = pos2;
 			}
 		} else {
-			value_idx_t v = tagset_to_.value_dictionary().get_id(to);
-			if (tagset_to_.value_dictionary().is_id_valid(v)) {
+			value_idx_t vto = tagset_to_.value_dictionary().get_id(to);
+			if (tagset_to_.value_dictionary().is_id_valid(vto)) {
 				attribute_idx_t a = tagset_from_.attribute_dictionary().get_id(from);
 				if (tagset_from_.attribute_dictionary().is_id_valid(a)) {
 					foreach (value_idx_t vfrom, tagset_from_.get_attribute_values(a)) {
-						value_mapping_[vfrom] = v;
+						value_mapping_[vfrom] = vto;
 					}
 				} else {
-					value_idx_t v2 = tagset_from_.value_dictionary().get_id(to);
-					if (tagset_to_.value_dictionary().is_id_valid(v)) {
-						value_mapping_[v2] = v;
+					value_idx_t vfrom = tagset_from_.value_dictionary().get_id(from);
+					if (tagset_to_.value_dictionary().is_id_valid(vfrom)) {
+						value_mapping_[vfrom] = vto;
+						std::cerr << (int)vfrom << "=>" << (int)vto;
 					}
 				}
 			}
 		}
+	}
+
+	bool TagConverter::is_complete() const
+	{
+		std::cerr << "1111";
+		for (pos_idx_t p = static_cast<pos_idx_t>(0); p < tagset_from().pos_dictionary().size(); ++p) {
+			pos_map_t::const_iterator pi = pos_mapping_.find(p);
+			if (pi == pos_mapping_.end()) {
+				std::cerr << tagset_from().pos_dictionary().get_string(p) << "!";
+				return false;
+			}
+			if (!tagset_to().pos_dictionary().is_id_valid(pi->second)){
+				std::cerr << tagset_from().pos_dictionary().get_string(p) << "!!";
+				return false;
+			}
+		}
+		std::cerr << "2222";
+		for (attribute_idx_t p = static_cast<attribute_idx_t>(0); p < tagset_from().attribute_dictionary().size(); ++p) {
+			attribute_map_t::const_iterator pi = attribute_mapping_.find(p);
+			if (pi == attribute_mapping_.end()) return false;
+			if (!tagset_to().attribute_dictionary().is_id_valid(pi->second)) return false;
+		}
+		std::cerr << "????";
+		for (value_idx_t p = static_cast<value_idx_t>(0); p < tagset_from().value_dictionary().size(); ++p) {
+			value_map_t::const_iterator pi = value_mapping_.find(p);
+			if (pi == value_mapping_.end()) {
+				std::cerr << tagset_from().value_dictionary().get_string(p) << "!";
+				return false;
+			}
+			if (!tagset_to().value_dictionary().is_id_valid(pi->second)) {
+				std::cerr << tagset_from().value_dictionary().get_string(p) << "!!";
+				return false;
+			}
+		}
+		return true;
 	}
 
 	TagConvertLayer::TagConvertLayer(const TagConverter &tc)
@@ -74,9 +111,11 @@ namespace PlTagger { namespace Conversion {
 				std::string o = v.second.data();
 				size_t colon = o.find(':');
 				if (colon != std::string::npos) {
-					std::string o_from = o.substr(0, colon - 1);
-					std::string o_to = o.substr(colon);
+					std::string o_from = o.substr(0, colon);
+					std::string o_to = o.substr(colon + 1);
+					std::cerr << "Overriding '" << o_from << "' with '" << o_to << "'\n";
 					tc_.add_override(o_from, o_to);
+					std::cerr << (tc_.is_complete() ? "OK" : "BAD");
 				}
 			}
 		}

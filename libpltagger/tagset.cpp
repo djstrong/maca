@@ -222,7 +222,11 @@ namespace PlTagger {
 
 	attribute_idx_t Tagset::get_value_attribute(value_idx_t id) const
 	{
-		assert(value_dict_.is_id_valid(id));
+		if (!value_dict_.is_id_valid(id)) {
+			std::stringstream ss;
+			ss << "get_value_attribute fail " << (int)id;
+			throw PlTaggerError(ss.str());
+		}
 		return value_attribute_[id];
 	}
 
