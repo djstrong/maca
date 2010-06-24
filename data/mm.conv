@@ -4,3 +4,11 @@ tagset_to=my
 override=n1:n
 override=n2:n
 override=n3:n
+
+[join_rule]
+tagset=my
+t1_pos=praet
+t2_pos=aglt
+t2_orth=em
+copy_attr=per
+copy_attr=vcl

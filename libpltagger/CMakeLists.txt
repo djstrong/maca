@@ -95,6 +95,7 @@ if(UNIX)
                 DESTINATION ${LIBPLTAGGER_INSTALL_DATA_DIR}
                 FILES_MATCHING PATTERN "*.ini"
                  PATTERN "*.tagset"
+                 PATTERN "*.conv"
                  PATTERN "*.ini"
                  PATTERN "*.xml"
                  PATTERN "*.txt"
