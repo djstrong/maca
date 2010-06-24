@@ -17,7 +17,8 @@ namespace PlTagger { namespace Conversion {
 		return min_len;
 	}
 
-	bool try_fold_paths(const std::vector< std::vector<Token*> >& v)
+	bool try_fold_paths(const std::vector< std::vector<Token*> >& v,
+			boost::function<void (Token*)> sink)
 	{
 		size_t min_len = v[0].size();
 		size_t max_len = v[0].size();
@@ -44,8 +45,10 @@ namespace PlTagger { namespace Conversion {
 				foreach (const Lexeme& lex, v[pi][ti]->lexemes()) {
 					t->add_lexeme(lex);
 				}
+				delete v[pi][ti];
 			}
 			t->remove_duplicate_lexemes();
+			sink(t);
 		}
 		return true;
 	}
@@ -63,10 +66,34 @@ namespace PlTagger { namespace Conversion {
 		return v[n];
 	}
 
+	void choose_path(const std::vector< std::vector<Token*> >& v, size_t n,
+			boost::function<void (Token*)> sink)
+	{
+		assert(n < v.size());
+		for (size_t i = 0; i < v.size(); ++i) {
+			if (i != n) {
+				foreach (Token* t, v[i]) {
+					delete t;
+				}
+			}
+		}
+		foreach (Token* t, v[n]) {
+			sink(t);
+		}
+	}
+
 	std::vector<Token*> choose_shortest_path(const std::vector< std::vector<Token*> >& v)
 	{
 		size_t min_len_path;
 		find_shortest(v, min_len_path);
 		return choose_path(v, min_len_path);
+	}
+
+	void choose_shortest_path(const std::vector< std::vector<Token*> >& v,
+			boost::function<void (Token*)> sink)
+	{
+		size_t min_len_path;
+		find_shortest(v, min_len_path);
+		choose_path(v, min_len_path, sink);
 	}
 } /* end ns Conversion */ } /* end ns PlTagger */
