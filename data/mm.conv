@@ -12,3 +12,10 @@ t2_pos=aglt
 t2_orth=em
 copy_attr=per
 copy_attr=vcl
+
+[join]
+tagset=my
+t1_pos=praet
+t2_pos=qub
+t2_orth=by
+post=byagl

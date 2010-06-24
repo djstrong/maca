@@ -12,6 +12,7 @@ acm     congr rec
 agg     nagl agl
 vcl     wok nwok
 tnt     integer frac
+byag	byagl nobyagl
 
 [POS]	
 interp
@@ -28,7 +29,7 @@ siebie  cas
 fin     nmb per asp
 bedzie  nmb per asp
 aglt    nmb per asp vcl
-praet   nmb gnd asp [agg]
+praet   nmb gnd asp [agg] [byag]
 impt    nmb per asp
 imps    asp
 inf     asp
