@@ -64,7 +64,6 @@ namespace PlTagger { namespace Conversion {
 
 	bool TagConverter::is_complete() const
 	{
-		std::cerr << "1111";
 		for (pos_idx_t p = static_cast<pos_idx_t>(0); p < tagset_from().pos_dictionary().size(); ++p) {
 			pos_map_t::const_iterator pi = pos_mapping_.find(p);
 			if (pi == pos_mapping_.end()) {
@@ -76,13 +75,11 @@ namespace PlTagger { namespace Conversion {
 				return false;
 			}
 		}
-		std::cerr << "2222";
 		for (attribute_idx_t p = static_cast<attribute_idx_t>(0); p < tagset_from().attribute_dictionary().size(); ++p) {
 			attribute_map_t::const_iterator pi = attribute_mapping_.find(p);
 			if (pi == attribute_mapping_.end()) return false;
 			if (!tagset_to().attribute_dictionary().is_id_valid(pi->second)) return false;
 		}
-		std::cerr << "????";
 		for (value_idx_t p = static_cast<value_idx_t>(0); p < tagset_from().value_dictionary().size(); ++p) {
 			value_map_t::const_iterator pi = value_mapping_.find(p);
 			if (pi == value_mapping_.end()) {
@@ -115,7 +112,8 @@ namespace PlTagger { namespace Conversion {
 					std::string o_to = o.substr(colon + 1);
 					std::cerr << "Overriding '" << o_from << "' with '" << o_to << "'\n";
 					tc_.add_override(o_from, o_to);
-					std::cerr << (tc_.is_complete() ? "OK" : "BAD");
+					std::cerr << "Converter is "
+							<< (tc_.is_complete() ? "OK\n" : "still BAD\n");
 				}
 			}
 		}
@@ -126,7 +124,12 @@ namespace PlTagger { namespace Conversion {
 		Token* t = source()->get_next_token();
 		if (t != NULL) {
 			foreach (Lexeme& lex, t->lexemes()) {
+				std::cerr << lex.tag().raw_dump();
+				assert(lex.tag().tagset_id() == tagset_from().id());
+				assert(tagset_from().validate_tag(lex.tag(), true, &std::cerr));
 				lex.tag() = (tc_.cast(lex.tag()));
+				assert(lex.tag().tagset_id() == tagset_to().id());
+				assert(tagset_to().validate_tag(lex.tag(), true, &std::cerr));
 			}
 			t->remove_duplicate_lexemes();
 		}

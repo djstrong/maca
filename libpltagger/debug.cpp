@@ -30,7 +30,7 @@ namespace PlTagger {
 
 	void token_output(const Tagset& tagset, std:: ostream& os, Token* t)
 	{
-		os << t->orth_utf8() << "\t";
+		os << (int)tagset.id() << "#" << t->orth_utf8() << "\t";
 		os << "";
 		for (size_t i = 0; i < t->lexemes().size(); ++i) {
 			if (i > 0) {

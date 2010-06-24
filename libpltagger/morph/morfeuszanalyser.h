@@ -11,7 +11,7 @@ namespace PlTagger {
 	class MorfeuszAnalyser : public MorphAnalyser
 	{
 	public:
-		MorfeuszAnalyser(const Tagset* tagset);
+		MorfeuszAnalyser(const Tagset* tagset, Conversion::TagsetConverter* conv);
 
 		void process_functional(const Toki::Token &t, boost::function<void(Token *)>sink);
 
@@ -24,7 +24,7 @@ namespace PlTagger {
 		void flush_convert(std::vector< std::vector<Token*> >& vec, boost::function<void(Token *)>sink);
 
 	private:
-		Conversion::TagsetConverter conv_;
+		Conversion::TagsetConverter* conv_;
 	};
 
 } /* end ns Pltagger */

@@ -38,7 +38,7 @@ int main(int argc, char** argv)
 			("m-dict-file,m", value(&mdict),
 			 "M-style dictionary file to use (orth\\tlemma\\ttag)\n")
 #ifdef HAVE_MORFEUSZ
-			("morfeusz,M", value(&morfeusz),
+			("morfeusz,M", value(&morfeusz)->zero_tokens(),
 			 "Morfeusz\n")
 #endif
 			("tagset,t", value(&tagset_load),
@@ -64,26 +64,31 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
+	boost::shared_ptr<PlTagger::Conversion::TagsetConverter> converter;
 	if (!conv.empty()) {
 		Toki::Config::Node cfg = Toki::Config::from_file(conv);
-		PlTagger::Conversion::TagsetConverter tc(cfg);
+		converter.reset(new PlTagger::Conversion::TagsetConverter(cfg));
+	}
+	if (converter && !morfeusz) {
 		std::vector<PlTagger::Token*> v;
 		while (std::cin.good()) {
 			std::string orth;
 			std::string intag;
 			std::cin >> orth >> intag;
-			UnicodeString uorth = UnicodeString::fromUTF8(orth);
-			PlTagger::Tag tag;
-			tag = tc.tagset_from().parse_simple_tag(intag, true);
-			std::cout << tc.tagset_from().tag_to_string(tag);
-			PlTagger::Lexeme lex(uorth, tag);
-			PlTagger::Token* tok = new PlTagger::Token(uorth, Toki::Whitespace::None);
-			tok->add_lexeme(lex);
-			v.push_back(tok);
+			if (!orth.empty() && ! intag.empty()) {
+				UnicodeString uorth = UnicodeString::fromUTF8(orth);
+				PlTagger::Tag tag;
+				tag = converter->tagset_from().parse_simple_tag(intag, true);
+				std::cout << converter->tagset_from().tag_to_string(tag);
+				PlTagger::Lexeme lex(uorth, tag);
+				PlTagger::Token* tok = new PlTagger::Token(uorth, Toki::Whitespace::None);
+				tok->add_lexeme(lex);
+				v.push_back(tok);
+			}
 		}
-		tc.convert_simple(v, boost::bind(
+		converter->convert_simple(v, boost::bind(
 				PlTagger::token_output,
-				boost::cref(tc.tagset_to()),
+				boost::cref(converter->tagset_to()),
 				boost::ref(std::cout),
 				_1));
 	}
@@ -123,7 +128,7 @@ int main(int argc, char** argv)
 	boost::shared_ptr<PlTagger::MorphAnalyser> ma;
 #ifdef HAVE_MORFEUSZ
 	if (morfeusz) {
-		ma.reset(new PlTagger::MorfeuszAnalyser(tagset.get()));
+		ma.reset(new PlTagger::MorfeuszAnalyser(&converter->tagset_to(), converter.get()));
 	} else
 #endif
 #ifdef HAVE_SFST
@@ -148,11 +153,8 @@ int main(int argc, char** argv)
 				if (tt != tv[0]) {
 					std::cout << "---\n";
 				}
-				foreach (const PlTagger::Lexeme& lex, tt->lexemes()) {
-					std::cout << tt->orth_utf8() << "\t" << lex.lemma_utf8() << "\t"
-						<< tagset->tag_to_string(lex.tag()) << "\n";
-				}
-				delete tt;
+				PlTagger::token_output(ma->tagset(), std::cout, tt);
+				std::cout << "\n";
 			}
 		}
 	}

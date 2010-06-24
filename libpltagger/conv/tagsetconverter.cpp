@@ -18,24 +18,24 @@ namespace PlTagger { namespace Conversion {
 		: layers_()
 	{
 		foreach (const Toki::Config::Node::value_type &v, cfg) {
-			if (v.first == "tag_rule") {
+			if (v.first == "tag_rule" || v.first == "tag") {
 				TagRuleLayer* trl;
 				if (!layers_.empty()
 						&& (trl = dynamic_cast<TagRuleLayer*>(layers_.back()))) {
 					trl->append_rule(v.second);
 				}
-				layers_.push_back(new TagRuleLayer(v.second));
+				add_layer(new TagRuleLayer(v.second));
 			} else if (v.first == "convert") {
-				layers_.push_back(new TagConvertLayer(v.second));
-			} else if (v.first == "join_rule") {
+				add_layer(new TagConvertLayer(v.second));
+			} else if (v.first == "join_rule" || v.first == "join") {
 				JoinLayer* jl;
 				if (!layers_.empty()
 						&& (jl = dynamic_cast<JoinLayer*>(layers_.back()))) {
 					jl->append_rule(v.second);
 				}
-				layers_.push_back(new JoinLayer(v.second));
+				add_layer(new JoinLayer(v.second));
 			} else if (v.first == "split") {
-				layers_.push_back(new TwoSplitLayer(v.second));
+				add_layer(new TwoSplitLayer(v.second));
 			}
 		}
 		if (layers_.empty()) throw 9;
@@ -48,12 +48,14 @@ namespace PlTagger { namespace Conversion {
 		}
 	}
 
+
 	void TagsetConverter::add_layer(Layer* l)
 	{
 		if (!layers_.empty()) {
 			if (l->tagset_from().id() != layers_.back()->tagset_to().id()) {
 				throw PlTaggerError("Conversion layer tagset mismatch");
 			}
+			l->set_source(layers_.back());
 		}
 		layers_.push_back(l);
 	}
@@ -73,12 +75,15 @@ namespace PlTagger { namespace Conversion {
 	void TagsetConverter::convert(TokenSource* src, boost::function<void (Token*)> sink)
 	{
 		assert(!layers_.empty());
-		assert(layers_.back()->source() == NULL || layers_.back()->get_next_token() == NULL);
+		assert((layers_.front()->source() == NULL) || (layers_.back()->get_next_token() == NULL));
 		layers_.front()->set_source(src);
+
 		Token* t;
 		while ((t = layers_.back()->get_next_token())) {
+			assert(t->lexemes()[0].tag().tagset_id() == layers_.back()->tagset_to().id());
 			sink(t);
 		}
+		layers_.front()->set_source(NULL);
 	}
 
 	void TagsetConverter::convert_simple(const std::vector<Token *>& v, boost::function<void(Token *)>sink)
@@ -88,10 +93,17 @@ namespace PlTagger { namespace Conversion {
 
 	void TagsetConverter::convert_ambiguous(const std::vector<std::vector<Token *> >& v, boost::function<void(Token *)>sink)
 	{
-		size_t min_len_path;
-		//size_t min_len =
-		find_shortest(v, min_len_path);
-		convert_simple(v[min_len_path], sink);
+		std::vector< std::vector<Token *> > conv_v;
+		foreach (const std::vector<Token*>& path, v) {
+			conv_v.push_back(std::vector<Token*>());
+			boost::function<void (Token*)> sink;
+			sink = boost::bind(&std::vector<Token*>::push_back, boost::ref(conv_v.back()), _1);
+			convert_container(path, sink);
+		}
+		if (!try_fold_paths(conv_v, sink)) {
+			std::cerr << ">>>Path folding failed, returning shortest\n";
+			choose_shortest_path(conv_v, sink);
+		}
 	}
 
 } /* end ns Conversion */ } /* end ns PlTagger */

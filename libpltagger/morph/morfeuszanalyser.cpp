@@ -6,12 +6,14 @@
 #include <morfeusz.h>
 
 #include <boost/bind.hpp>
+#include <boost/algorithm/string.hpp>
 
 namespace PlTagger {
 
-	MorfeuszAnalyser::MorfeuszAnalyser(const Tagset *tagset)
-		: MorphAnalyser(tagset), conv_()
+	MorfeuszAnalyser::MorfeuszAnalyser(const Tagset* tagset, Conversion::TagsetConverter* conv)
+		: MorphAnalyser(tagset), conv_(conv)
 	{
+		if (tagset->id() != conv_->tagset_to().id()) throw 9;
 		morfeusz_set_option(MORFOPT_ENCODING, MORFEUSZ_UTF_8);
 	}
 
@@ -125,20 +127,39 @@ namespace PlTagger {
 		UnicodeString lemma = UnicodeString::fromUTF8(im->haslo);
 		tt->set_orth(UnicodeString::fromUTF8(im->forma));
 		if (im->interp) {
-			parse_tag_into_token(tt, lemma, im->interp);
+			boost::function<Lexeme (const Tag&)> lex;
+			lex = boost::bind(&Lexeme::create, boost::cref(lemma), _1);
+
+			boost::function<void (const Tag&)> func;
+			func = boost::bind(&std::vector<Lexeme>::push_back, &tt->lexemes(), boost::bind(lex, _1));
+
+			string_range_vector options;
+			boost::algorithm::split(options, im->interp, boost::is_any_of("+|"));
+
+			foreach (string_range& sr, options) {
+				if (!sr.empty()) {
+					conv_->tagset_from().parse_tag(sr, false, func);
+				}
+			}
+			foreach (Lexeme& lex, tt->lexemes()) {
+				std::cerr << im->interp << " -> " << lex.tag().raw_dump() << " ";
+				std::cerr << conv_->tagset_from().tag_to_string(lex.tag());
+				assert(conv_->tagset_from().validate_tag(lex.tag(), true, &std::cerr));
+				std::cerr << "\n";
+			}
 		} else {
-			tt->add_ign(tagset());
+			tt->add_ign(conv_->tagset_from());
 		}
 	}
 
 	void MorfeuszAnalyser::flush_convert(std::vector<Token *> &vec, boost::function<void(Token *)>sink)
 	{
-		conv_.convert_simple(vec, sink);
+		conv_->convert_simple(vec, sink);
 	}
 
 	void MorfeuszAnalyser::flush_convert(std::vector<std::vector<Token *> > &vec, boost::function<void(Token *)>sink)
 	{
-		conv_.convert_ambiguous(vec, sink);
+		conv_->convert_ambiguous(vec, sink);
 	}
 
 } /* end ns PlTagger */
