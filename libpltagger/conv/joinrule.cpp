@@ -1,5 +1,6 @@
 #include <libpltagger/conv/joinrule.h>
 #include <libtoki/foreach.h>
+#include <libpltagger/tagsetmanager.h>
 
 namespace PlTagger { namespace Conversion {
 
@@ -8,8 +9,28 @@ namespace PlTagger { namespace Conversion {
 	{
 	}
 
-	JoinRule::~JoinRule()
+	JoinRule::JoinRule(const Toki::Config::Node& cfg)
+		: tagset_(&get_named_tagset(cfg.get<std::string>("tagset")))
 	{
+		std::string pos1, pos2;
+		UnicodeString orth1, orth2;
+		foreach (const Toki::Config::Node::value_type &v, cfg) {
+			if (v.first == "t1_pos") {
+				pos1 = v.second.data();
+			} else if (v.first == "t2_pos") {
+				pos2 = v.second.data();
+			} else if (v.first == "t1_orth") {
+				orth1 = UnicodeString::fromUTF8(v.second.data());
+			} else if (v.first == "t2_orth") {
+				orth2 = UnicodeString::fromUTF8(v.second.data());
+			} else if (v.first == "post") {
+				add_postcondition(v.second.data());
+			} else if (v.first == "copy_attr") {
+				add_copy_attr(v.second.data());
+			}
+		}
+		set_token1_preconditions(pos1, orth1);
+		set_token2_preconditions(pos2, orth2);
 	}
 
 	void JoinRule::set_token1_preconditions(const PosOrthPredicate &pre)

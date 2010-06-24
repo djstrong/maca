@@ -12,7 +12,9 @@ namespace PlTagger {
 	class TagsetNotFound : public PlTaggerError
 	{
 	public:
-		TagsetNotFound(const std::string& n);
+		explicit TagsetNotFound(const std::string& n);
+
+		explicit TagsetNotFound(const tagset_idx_t id);
 
 		~TagsetNotFound() throw() {}
 
@@ -21,6 +23,8 @@ namespace PlTagger {
 		std::string name;
 
 		std::string paths;
+
+		tagset_idx_t id;
 	};
 
 	class TagsetManager : private boost::noncopyable
@@ -32,11 +36,17 @@ namespace PlTagger {
 
 		const Tagset& get_tagset(const std::string& name);
 
+		const Tagset& get_tagset(tagset_idx_t id);
+
 		boost::shared_ptr<Tagset> get_cache_entry(const std::string& name);
+
+		boost::shared_ptr<Tagset> get_cache_entry(tagset_idx_t id);
 
 	private:
 		typedef std::map<std::string, boost::shared_ptr<Tagset> > cache_t;
 		cache_t cache_;
+		typedef std::map<tagset_idx_t, boost::shared_ptr<Tagset> > id_cache_t;
+		id_cache_t id_cache_;
 	};
 
 	typedef Loki::SingletonHolder< TagsetManager > TagsetManagerSingleton;
@@ -45,6 +55,9 @@ namespace PlTagger {
 		return TagsetManagerSingleton::Instance().get_tagset(name);
 	}
 
+	inline const Tagset& get_named_tagset(tagset_idx_t id) {
+		return TagsetManagerSingleton::Instance().get_tagset(id);
+	}
 
 } /* end ns PlTagger */
 

@@ -7,6 +7,13 @@
 
 namespace PlTagger { namespace Conversion {
 
+	/**
+	 * A layer of JoinRules, each of which is tried on every pair of consecutive
+	 * tokens that appear from the source of the layer. If no rule joins the
+	 * tokens, the first one is output unchanged and the second one retained
+	 * for possible joining with thenext token that will be processed from the
+	 * source.
+	 */
 	class JoinLayer : public OneTagsetLayer
 	{
 	public:

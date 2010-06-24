@@ -27,9 +27,22 @@ namespace PlTagger {
 		{
 		}
 
-		~TagParseError() throw()
-		{
-		}
+		~TagParseError() throw() {}
+	};
+
+	/// Exception class for signalling tagset mismatches in various situations
+	class TagsetMismatch : public PlTaggerError
+	{
+	public:
+		TagsetMismatch(const std::string& where, const Tagset& expected, const Tagset& actual);
+
+		TagsetMismatch(const std::string& where, tagset_idx_t expected, tagset_idx_t actual);
+
+		~TagsetMismatch() throw() {}
+
+		std::string info() const;
+
+		tagset_idx_t expected_id, actual_id;
 	};
 
 	class TagsetParser;
@@ -138,8 +151,11 @@ namespace PlTagger {
 		 */
 		Tag make_tag(pos_idx_t pos, const std::vector<value_idx_t>& values, bool allow_extra) const;
 
+		/**
+		 * Convenience function for creating a 'ign' (ignored) tag within this
+		 * tagset.
+		 */
 		Tag make_ign_tag() const;
-
 
 		/**
 		 * Check if the tag is valid, that is:
@@ -206,17 +222,32 @@ namespace PlTagger {
 		 */
 		double size_extra() const;
 
+		/// Tagset ID accesor
 		tagset_idx_t id() const {
 			return id_;
 		}
 
+		/// Tagset name accesor
+		const std::string name() const {
+			return name_;
+		}
+
+		/// Tagset name setter
+		void set_name(const std::string& name) {
+			name_ = name;
+		}
+
 	private:
+		/// Temporary solution to allow splitting theparser into a separate class
 		friend class TagsetParser;
 
-		std::string id_string_;
+		/// Tagset name
+		std::string name_;
 
+		/// Tagset ID
 		tagset_idx_t id_;
 
+		/// Next ID
 		static tagset_idx_t next_id_;
 
 		/// String - number dictionary for the POS names

@@ -36,6 +36,14 @@ namespace PlTagger { namespace Conversion {
 
 		const Tagset& tagset_to() const;
 
+		/**
+		 * Redundant tagset accesor for consistency and to avoid having to
+		 * choose between _from and _to in derived classes.
+		 */
+		const Tagset& tagset() const {
+			return tagset_;
+		}
+
 	private:
 		const Tagset& tagset_;
 	};

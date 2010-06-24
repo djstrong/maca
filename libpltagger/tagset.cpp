@@ -17,6 +17,26 @@
 
 namespace PlTagger {
 
+	TagsetMismatch::TagsetMismatch(const std::string& where, const Tagset& expected, const Tagset& actual)
+	 : PlTaggerError("Tagset mismatch in " + where), expected_id(expected.id()), actual_id(actual.id())
+	{
+	}
+
+	TagsetMismatch::TagsetMismatch(const std::string& where, tagset_idx_t expected, tagset_idx_t actual)
+	 : PlTaggerError("Tagset mismatch in " + where), expected_id(expected), actual_id(actual)
+	{
+	}
+
+	std::string TagsetMismatch::info() const
+	{
+		std::ostringstream ss;
+		ss << what() << ". Expected tagset id " << (int)expected_id
+			<< ", got id " << actual_id;
+		return ss.str();
+	}
+
+
+
 	tagset_idx_t Tagset::next_id_ = static_cast<tagset_idx_t>(0);
 
 	Tagset::Tagset()
