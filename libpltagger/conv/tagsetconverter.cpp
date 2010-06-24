@@ -38,7 +38,7 @@ namespace PlTagger { namespace Conversion {
 				add_layer(new TwoSplitLayer(v.second));
 			}
 		}
-		if (layers_.empty()) throw 9;
+		if (layers_.empty()) throw PlTaggerError("Empty tagset converter");
 	}
 
 	TagsetConverter::~TagsetConverter()
@@ -53,7 +53,9 @@ namespace PlTagger { namespace Conversion {
 	{
 		if (!layers_.empty()) {
 			if (l->tagset_from().id() != layers_.back()->tagset_to().id()) {
-				throw PlTaggerError("Conversion layer tagset mismatch");
+				throw TagsetMismatch("TagsetConverter::add_layer",
+					layers_.back()->tagset_to().id(),
+					l->tagset_from().id());
 			}
 			l->set_source(layers_.back());
 		}
@@ -77,7 +79,6 @@ namespace PlTagger { namespace Conversion {
 		assert(!layers_.empty());
 		assert((layers_.front()->source() == NULL) || (layers_.back()->get_next_token() == NULL));
 		layers_.front()->set_source(src);
-
 		Token* t;
 		while ((t = layers_.back()->get_next_token())) {
 			assert(t->lexemes()[0].tag().tagset_id() == layers_.back()->tagset_to().id());

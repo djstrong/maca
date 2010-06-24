@@ -26,7 +26,6 @@ namespace PlTagger { namespace Conversion {
 				std::map<value_idx_t, value_idx_t>::const_iterator i;
 				i = value_mapping_.find(v);
 				if (i != value_mapping_.end()) {
-					std::cerr << (int)v << "->" << (int)i->second << "\n";
 					attribute_idx_t a = tagset_to_.get_value_attribute(i->second);
 					to.values()[a] = i->second;
 				}
@@ -55,39 +54,52 @@ namespace PlTagger { namespace Conversion {
 					value_idx_t vfrom = tagset_from_.value_dictionary().get_id(from);
 					if (tagset_to_.value_dictionary().is_id_valid(vfrom)) {
 						value_mapping_[vfrom] = vto;
-						std::cerr << (int)vfrom << "=>" << (int)vto;
 					}
 				}
 			}
 		}
 	}
 
-	bool TagConverter::is_complete() const
+	bool TagConverter::is_complete(std::ostream* os) const
 	{
 		for (pos_idx_t p = static_cast<pos_idx_t>(0); p < tagset_from().pos_dictionary().size(); ++p) {
 			pos_map_t::const_iterator pi = pos_mapping_.find(p);
 			if (pi == pos_mapping_.end()) {
-				std::cerr << tagset_from().pos_dictionary().get_string(p) << "!";
+				if (os) (*os) << "No mapping for POS "
+					<< tagset_from().pos_dictionary().get_string(p) << " ("
+					<< (int)p << ")";
 				return false;
 			}
-			if (!tagset_to().pos_dictionary().is_id_valid(pi->second)){
-				std::cerr << tagset_from().pos_dictionary().get_string(p) << "!!";
+			if (!tagset_to().pos_dictionary().is_id_valid(pi->second)) {
+				if (os) (*os) << "Mapping for POS "
+					<< tagset_from().pos_dictionary().get_string(p) << " ("
+					<< (int)p << ") is invalid (" << (int)pi->second << ")";
 				return false;
 			}
 		}
 		for (attribute_idx_t p = static_cast<attribute_idx_t>(0); p < tagset_from().attribute_dictionary().size(); ++p) {
 			attribute_map_t::const_iterator pi = attribute_mapping_.find(p);
-			if (pi == attribute_mapping_.end()) return false;
-			if (!tagset_to().attribute_dictionary().is_id_valid(pi->second)) return false;
+			if (pi != attribute_mapping_.end()) {
+				if (!tagset_to().attribute_dictionary().is_id_valid(pi->second)) {
+					if (os) (*os) << "Mapping for attribute "
+						<< tagset_from().attribute_dictionary().get_string(p) << " ("
+						<< (int)p << ") is invalid (" << (int)pi->second << ")";
+					return false;
+				}
+			}
 		}
 		for (value_idx_t p = static_cast<value_idx_t>(0); p < tagset_from().value_dictionary().size(); ++p) {
 			value_map_t::const_iterator pi = value_mapping_.find(p);
 			if (pi == value_mapping_.end()) {
-				std::cerr << tagset_from().value_dictionary().get_string(p) << "!";
+				if (os) (*os) << "No mapping for value "
+					<< tagset_from().value_dictionary().get_string(p) << " ("
+					<< (int)p << ")";
 				return false;
 			}
 			if (!tagset_to().value_dictionary().is_id_valid(pi->second)) {
-				std::cerr << tagset_from().value_dictionary().get_string(p) << "!!";
+				if (os) (*os) << "Mapping for value "
+					<< tagset_from().value_dictionary().get_string(p) << " ("
+					<< (int)p << ") is invalid (" << (int)pi->second << ")";
 				return false;
 			}
 		}
@@ -110,10 +122,9 @@ namespace PlTagger { namespace Conversion {
 				if (colon != std::string::npos) {
 					std::string o_from = o.substr(0, colon);
 					std::string o_to = o.substr(colon + 1);
+					tc_.is_complete(&std::cerr);
 					std::cerr << "Overriding '" << o_from << "' with '" << o_to << "'\n";
 					tc_.add_override(o_from, o_to);
-					std::cerr << "Converter is "
-							<< (tc_.is_complete() ? "OK\n" : "still BAD\n");
 				}
 			}
 		}
@@ -124,7 +135,6 @@ namespace PlTagger { namespace Conversion {
 		Token* t = source()->get_next_token();
 		if (t != NULL) {
 			foreach (Lexeme& lex, t->lexemes()) {
-				std::cerr << lex.tag().raw_dump();
 				assert(lex.tag().tagset_id() == tagset_from().id());
 				assert(tagset_from().validate_tag(lex.tag(), true, &std::cerr));
 				lex.tag() = (tc_.cast(lex.tag()));

@@ -30,18 +30,18 @@ namespace PlTagger {
 
 	void token_output(const Tagset& tagset, std:: ostream& os, Token* t)
 	{
-		os << (int)tagset.id() << "#" << t->orth_utf8() << "\t";
+		os << (int)tagset.id() << "#" << t->orth_utf8() << "";
 		os << "";
 		for (size_t i = 0; i < t->lexemes().size(); ++i) {
-			if (i > 0) {
+			//if (i > 0) {
 				os << "\n\t";
-			}
+			//}
 			const Lexeme& lex = t->lexemes()[i];
 			os << lex.lemma_utf8();
 			os << " ";
 			os << tagset.tag_to_string(lex.tag());
 			os << " ";
-			os << lex.tag().raw_dump();
+			//os << lex.tag().raw_dump();
 		}
 	}
 

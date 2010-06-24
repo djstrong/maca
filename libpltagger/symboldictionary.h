@@ -131,10 +131,9 @@ namespace PlTagger {
 		for (IndexT i = static_cast<IndexT>(0); i < size(); ++i) {
 			std::string name = get_string(i);
 			IndexT t = other.get_id(name);
-			if (!other.is_id_valid(t)) {
-				std::cerr << "FAIL " << name << " ";
+			if (other.is_id_valid(t)) {
+				map.insert(std::make_pair(i, t));
 			}
-			map.insert(std::make_pair(i, t));
 		}
 	}
 

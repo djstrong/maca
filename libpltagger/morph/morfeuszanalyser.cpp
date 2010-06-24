@@ -141,12 +141,6 @@ namespace PlTagger {
 					conv_->tagset_from().parse_tag(sr, false, func);
 				}
 			}
-			foreach (Lexeme& lex, tt->lexemes()) {
-				std::cerr << im->interp << " -> " << lex.tag().raw_dump() << " ";
-				std::cerr << conv_->tagset_from().tag_to_string(lex.tag());
-				assert(conv_->tagset_from().validate_tag(lex.tag(), true, &std::cerr));
-				std::cerr << "\n";
-			}
 		} else {
 			tt->add_ign(conv_->tagset_from());
 		}

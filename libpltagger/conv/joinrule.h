@@ -32,7 +32,8 @@ namespace PlTagger { namespace Conversion {
 		explicit JoinRule(const Tagset& tagset);
 
 		/**
-		 * Config node constructor.
+		 * Constructor from a Config::Node.
+		 *
 		 * The recognized keys are:
 		 * - tagset - the tagset name
 		 * - t1_pos - POS string to match in all token 1 tags

@@ -44,7 +44,6 @@ namespace PlTagger { namespace Conversion {
 		if (!tagset_->pos_dictionary().is_id_valid(p)) {
 			p = static_cast<pos_idx_t>(-1);
 		}
-		std::cerr << pos << static_cast<int>(p);
 		pre1_ = PosOrthPredicate(p, orth);
 	}
 
@@ -59,7 +58,6 @@ namespace PlTagger { namespace Conversion {
 		if (!tagset_->pos_dictionary().is_id_valid(p)) {
 			p = static_cast<pos_idx_t>(-1);
 		}
-		std::cerr << pos << static_cast<int>(p);
 		pre2_ = PosOrthPredicate(p, orth);
 	}
 
@@ -92,16 +90,12 @@ namespace PlTagger { namespace Conversion {
 			foreach (const Lexeme& lex1, t1->lexemes()) {
 				foreach (const Lexeme& lex2, t2->lexemes()) {
 					Lexeme lex = lex1;
-					std::cerr << lex.tag().raw_dump() << "\n";
-					std::cerr << lex2.tag().raw_dump() << "\n";
 					foreach (attribute_idx_t a, copy_t2_attrs_) {
 						lex.tag().values()[a] = lex2.tag().values()[a];
 					}
-					std::cerr << lex.tag().raw_dump() << "\n";
 					foreach (const TagPredicate& p, post_) {
 						p.apply(lex.tag());
 					}
-					std::cerr << lex.tag().raw_dump() << "\n";
 					new_lexemes.push_back(lex);
 				}
 			}

@@ -25,7 +25,11 @@ namespace PlTagger { namespace Conversion {
 
 		void add_override(const std::string& from, const std::string& to);
 
-		bool is_complete() const;
+		/**
+		 * Checks if all POS and values are properly mapped
+		 * @returns true if the mapping is complete
+		 */
+		bool is_complete(std::ostream* os = NULL) const;
 
 	protected:
 		const Tagset& tagset_from_;

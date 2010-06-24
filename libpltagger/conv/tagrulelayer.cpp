@@ -38,9 +38,7 @@ namespace PlTagger { namespace Conversion {
 		Token* t = source()->get_next_token();
 		if (t != NULL) {
 			foreach (const TagRule& tr, rules_) {
-				foreach (Lexeme& lex, t->lexemes()) {
-					tr.apply(lex.tag());
-				}
+				tr.apply(*t);
 			}
 		}
 		return t;
