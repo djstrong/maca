@@ -128,6 +128,7 @@ namespace PlTagger { namespace Conversion {
 			foreach (Lexeme& lex, t->lexemes()) {
 				lex.tag() = (tc_.cast(lex.tag()));
 			}
+			t->remove_duplicate_lexemes();
 		}
 		return t;
 	}
