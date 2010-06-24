@@ -17,13 +17,15 @@
 
 namespace PlTagger {
 
+	tagset_idx_t Tagset::next_id_ = static_cast<tagset_idx_t>(0);
+
 	Tagset::Tagset()
-		: id_(-1)
+		: id_(++next_id_)
 	{
 	}
 
 	Tagset::Tagset(const char *s)
-		: id_(-1)
+		: id_(++next_id_)
 	{
 		std::stringstream ss;
 		ss << s;

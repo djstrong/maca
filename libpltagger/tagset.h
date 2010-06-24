@@ -217,6 +217,8 @@ namespace PlTagger {
 
 		tagset_idx_t id_;
 
+		static tagset_idx_t next_id_;
+
 		/// String - number dictionary for the POS names
 		SymbolDictionary<pos_idx_t> pos_dict_;
 

@@ -3,6 +3,7 @@
 #include <libpltagger/settings.h>
 #include <libtoki/foreach.h>
 #include <fstream>
+#include <iostream>
 
 namespace PlTagger {
 
@@ -39,6 +40,7 @@ namespace PlTagger {
 			ptr.reset(new Tagset);
 			*ptr = TagsetParser::load_ini(ifs);
 			cache_.insert(std::make_pair(name, ptr));
+			std::cerr << "Tagset '" << name << "' loaded with id " << (int)ptr->id() << "\n";
 		}
 		return *ptr;
 	}
