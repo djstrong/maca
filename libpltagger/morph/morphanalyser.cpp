@@ -40,7 +40,9 @@ namespace PlTagger {
 		boost::algorithm::split(options, tag, boost::is_any_of("+|"));
 
 		foreach (string_range& sr, options) {
-			tagset().parse_tag(sr, false, func);
+			if (!sr.empty()) {
+				tagset().parse_tag(sr, false, func);
+			}
 		}
 		//tagset().parse_tag(tag, false, func);
 	}
