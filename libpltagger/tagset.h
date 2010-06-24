@@ -150,7 +150,7 @@ namespace PlTagger {
 		 * * no extra attrbutes are set, unless allow_extra is true
 		 * @return true if the tag is valid, false otherwise
 		 */
-		bool validate_tag(const Tag& t, bool allow_extra);
+		bool validate_tag(const Tag& t, bool allow_extra, std::ostream* os = NULL) const;
 
 		/**
 		 * Create the string representation of a tag.
