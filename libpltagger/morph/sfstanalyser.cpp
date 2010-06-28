@@ -17,6 +17,24 @@ namespace PlTagger {
 	SfstAnalyser::SfstAnalyser(const Tagset* tagset, const std::string &filename)
 		: MorphAnalyser(tagset)
 	{
+		open_transducer(filename);
+	}
+
+	SfstAnalyser::SfstAnalyser(const Toki::Config::Node &cfg)
+		: MorphAnalyser(cfg)
+	{
+		std::string filename = cfg.get("file", "");
+		if (filename.empty()) throw 9;
+		open_transducer(filename);
+	}
+
+	SfstAnalyser::~SfstAnalyser()
+	{
+		delete ct_;
+	}
+
+	void SfstAnalyser::open_transducer(const std::string& filename)
+	{
 		FILE* f = fopen(filename.c_str(), "rb");
 		if (!f) {
 			throw PlTaggerError("File open error");
@@ -28,11 +46,6 @@ namespace PlTagger {
 			throw PlTaggerError(e);
 		}
 		fclose(f);
-	}
-
-	SfstAnalyser::~SfstAnalyser()
-	{
-		delete ct_;
 	}
 
 	void SfstAnalyser::process_functional(const Toki::Token &t, boost::function<void (Token*)> sink)

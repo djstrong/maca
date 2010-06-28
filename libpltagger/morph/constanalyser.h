@@ -12,6 +12,8 @@ namespace PlTagger {
 
 		ConstAnalyser(const Tagset* tagset, const Tag& tag);
 
+		explicit ConstAnalyser(const Toki::Config::Node& cfg);
+
 		~ConstAnalyser();
 
 		 void process_functional(const Toki::Token &t, boost::function<void (Token*)> sink);

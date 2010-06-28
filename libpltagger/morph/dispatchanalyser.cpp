@@ -17,6 +17,7 @@ namespace PlTagger {
 
 	void DispatchAnalyser::add_type_handler(const std::string &type, MorphAnalyser *a)
 	{
+		if (a->tagset().id() != tagset().id()) throw TagsetMismatch("dispatch analyser handler", tagset(), a->tagset());
 		analysers_.insert(a);
 		type_handlers_.insert(std::make_pair(type, a));
 	}
@@ -32,6 +33,21 @@ namespace PlTagger {
 				default_->process_functional(t, sink);
 			}
 		}
+	}
+
+	void DispatchAnalyser::set_default_handler(MorphAnalyser* a)
+	{
+		default_ = a;
+	}
+
+	MorphAnalyser* DispatchAnalyser::default_handler()
+	{
+		return default_;
+	}
+
+	size_t DispatchAnalyser::handler_count() const
+	{
+		return type_handlers_.size();
 	}
 
 

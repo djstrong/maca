@@ -19,6 +19,12 @@ namespace PlTagger {
 
 		void add_type_handler(const std::string& type,  MorphAnalyser* a);
 
+		void set_default_handler(MorphAnalyser* a);
+
+		MorphAnalyser* default_handler();
+
+		size_t handler_count() const;
+
 	private:
 		std::map<std::string, MorphAnalyser*> type_handlers_;
 		std::set<MorphAnalyser*> analysers_;

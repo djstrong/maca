@@ -2,6 +2,7 @@
 #define LIBPLTAGGER_MORPHANALYSER_H
 
 #include <libtoki/token.h>
+#include <libtoki/confignode.h>
 #include <libpltagger/token.h>
 #include <libpltagger/tagset.h>
 
@@ -13,6 +14,8 @@ namespace PlTagger {
 	{
 	public:
 		explicit MorphAnalyser(const Tagset* tagset);
+
+		explicit MorphAnalyser(const Toki::Config::Node& cfg);
 
 		virtual ~MorphAnalyser();
 

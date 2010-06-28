@@ -13,6 +13,8 @@ namespace PlTagger {
 	public:
 		SfstAnalyser(const Tagset* tagset, const std::string& filename);
 
+		SfstAnalyser(const Toki::Config::Node& cfg);
+
 		~SfstAnalyser();
 
 		void process_functional(const Toki::Token& t, boost::function<void (Token*)> sink);
@@ -23,6 +25,8 @@ namespace PlTagger {
 				std::vector<Lexeme>& lv, const Tagset& tagset);
 
 	private:
+		void open_transducer(const std::string& filename);
+
 		CompactTransducer* ct_;
 	};
 

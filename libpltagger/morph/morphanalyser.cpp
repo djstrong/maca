@@ -1,4 +1,5 @@
 #include <libpltagger/morph/morphanalyser.h>
+#include <libpltagger/tagsetmanager.h>
 
 #include <boost/bind.hpp>
 #include <boost/algorithm/string.hpp>
@@ -8,6 +9,11 @@ namespace PlTagger {
 
 	MorphAnalyser::MorphAnalyser(const Tagset *tagset)
 		: tagset_(tagset)
+	{
+	}
+
+	MorphAnalyser::MorphAnalyser(const Toki::Config::Node& cfg)
+		: tagset_(&get_named_tagset(cfg.get<std::string>("tagset")))
 	{
 	}
 

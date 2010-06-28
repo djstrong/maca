@@ -2,8 +2,8 @@
 #define LIBPLTAGGER_MAPANALYSER_H
 
 #include <libpltagger/morph/morphanalyser.h>
+#include <libtoki/confignode.h>
 
-#include <map>
 #include <boost/unordered_map.hpp>
 #include <fstream>
 #include <boost/algorithm/string.hpp>
@@ -14,14 +14,9 @@ namespace PlTagger {
 	class MapAnalyser : public MorphAnalyser
 	{
 	public:
-		explicit MapAnalyser(const Tagset* tagset)
-			: MorphAnalyser(tagset), map_()
-		{
-		}
+		explicit MapAnalyser(const Tagset* tagset);
 
-		~MapAnalyser()
-		{
-		}
+		explicit MapAnalyser(const Toki::Config::Node& cfg);
 
 		void load_m_dictionary(const std::string& fn);
 
@@ -30,6 +25,21 @@ namespace PlTagger {
 	private:
 		MapT map_;
 	};
+
+/* implementation */
+
+	template<typename MapT>
+	MapAnalyser<MapT>::MapAnalyser(const Tagset* tagset)
+		: MorphAnalyser(tagset), map_()
+	{
+	}
+
+	template<typename MapT>
+	MapAnalyser<MapT>::MapAnalyser(const Toki::Config::Node &cfg)
+		: MorphAnalyser(cfg), map_()
+	{
+		load_m_dictionary(cfg.get<std::string>("data"));
+	}
 
 	template<typename MapT>
 	void MapAnalyser<MapT>::load_m_dictionary(const std::string &fn)
