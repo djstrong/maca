@@ -1,6 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <set>
 #include <libtoki/foreach.h>
+#ifdef HAVE_SFST
 #include <libpltagger/morph/sfstanalyser.h>
 
 BOOST_AUTO_TEST_SUITE( tag_split )
@@ -165,3 +166,4 @@ BOOST_FIXTURE_TEST_CASE( underscore_dots, F )
 	check_split(tag, r);
 }
 BOOST_AUTO_TEST_SUITE_END()
+#endif
