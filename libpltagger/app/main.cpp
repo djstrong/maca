@@ -1,4 +1,6 @@
+#ifdef HAVE_CONFIG_D_H
 #include <libpltagger/config_d.h>
+#endif
 #ifdef HAVE_SFST
 #include <libpltagger/morph/sfstanalyser.h>
 #endif
@@ -8,6 +10,7 @@
 #endif
 
 #include <libpltagger/morph/mapanalyser.h>
+#include <libpltagger/morph/creator.h>
 
 #include <iostream>
 #include <boost/algorithm/string.hpp>
@@ -15,6 +18,7 @@
 
 #include <libtoki/foreach.h>
 #include <libtoki/confignode.h>
+#include <libpltagger/settings.h>
 #include <libpltagger/tagsetparser.h>
 #include <libpltagger/conv/tagsetconverter.h>
 
@@ -23,7 +27,7 @@
 
 int main(int argc, char** argv)
 {
-	std::string sfst, mdict, conv;
+	std::string sfst, mdict, conv, cfg_analyser;
 	std::string tagset_load, tagset_save;
 	using boost::program_options::value;
 #ifdef HAVE_MORFEUSZ
@@ -45,6 +49,8 @@ int main(int argc, char** argv)
 			 "Path to tagset ini file to load\n")
 			("convert,c", value(&conv),
 			 "Tagset conversion testing\n")
+			("analyser,a", value(&cfg_analyser),
+			 "Analyser config file\n")
 			("save-tagset", value(&tagset_save),
 			 "Path to tagset ini file to save\n")
 			("help,h", "Show help")
@@ -125,7 +131,7 @@ int main(int argc, char** argv)
 				PlTagger::TagsetParser::save_ini(*tagset, ofs);
 			}
 		} else {
-			std::cerr << "File open error\n";
+			std::cerr << "tagset file open error\n";
 			return 7;
 		}
 	}
@@ -147,6 +153,13 @@ int main(int argc, char** argv)
 		hma->load_m_dictionary(mdict);
 		std::cout << "loading done\n";
 	}
+	if (!cfg_analyser.empty()) {
+		std::ifstream ifs;
+		if (PlTagger::open_file_from_search_path(cfg_analyser, ifs)) {
+			Toki::Config::Node cfg = Toki::Config::from_stream(ifs);
+			ma.reset(PlTagger::create_analyser(cfg));
+		}
+	}
 
 	if (ma) {
 		while (std::cin.good()) {
@@ -162,5 +175,7 @@ int main(int argc, char** argv)
 				std::cout << "\n";
 			}
 		}
+	} else {
+		std::cerr << "Nothing to do! Try --help.\n";
 	}
 }
