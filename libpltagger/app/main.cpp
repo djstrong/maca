@@ -69,7 +69,12 @@ int main(int argc, char** argv)
 		Toki::Config::Node cfg = Toki::Config::from_file(conv);
 		converter.reset(new PlTagger::Conversion::TagsetConverter(cfg));
 	}
+#ifdef HAVE_MORFEUSZ
 	if (converter && !morfeusz) {
+#else
+	if (converter) {
+#endif
+
 		std::vector<PlTagger::Token*> v;
 		while (std::cin.good()) {
 			std::string orth;
