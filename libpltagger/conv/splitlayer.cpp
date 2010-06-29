@@ -2,6 +2,7 @@
 #include <libpltagger/tagsetmanager.h>
 #include <libtoki/foreach.h>
 #include <libpltagger/conv/attributecopier.h>
+#include <boost/algorithm/string.hpp>
 
 namespace PlTagger { namespace Conversion {
 
@@ -60,8 +61,13 @@ namespace PlTagger { namespace Conversion {
 
 	void TwoSplitLayer::add_precondition(const std::string& pred_string)
 	{
-		TagPredicate tp(pred_string, tagset_from());
-		pre_.push_back(tp);
+		std::vector<std::string> srv;
+		boost::algorithm::split(srv, pred_string, boost::is_any_of(": "));
+		foreach (const std::string& sr, srv) {
+			if (!sr.empty()) {
+				pre_.push_back(TagPredicate(sr, tagset()));
+			}
+		}
 	}
 
 	void TwoSplitLayer::add_t1_postcondition(const TagPredicate &tp)
@@ -71,8 +77,13 @@ namespace PlTagger { namespace Conversion {
 
 	void TwoSplitLayer::add_t1_postcondition(const std::string& pred_string)
 	{
-		TagPredicate tp(pred_string, tagset_from());
-		t1_post_.push_back(tp);
+		std::vector<std::string> srv;
+		boost::algorithm::split(srv, pred_string, boost::is_any_of(": "));
+		foreach (const std::string& sr, srv) {
+			if (!sr.empty()) {
+				t1_post_.push_back(TagPredicate(sr, tagset()));
+			}
+		}
 	}
 
 	void TwoSplitLayer::set_orth_regexp(const std::string &regexp_string)

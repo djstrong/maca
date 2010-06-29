@@ -40,6 +40,7 @@ namespace PlTagger {
 			*ptr = TagsetParser::load_ini(ifs);
 			cache_.insert(std::make_pair(name, ptr));
 			id_cache_.insert(std::make_pair(ptr->id(), ptr));
+			ptr->set_name(name);
 			std::cerr << "Tagset '" << name << "' loaded with id " << (int)ptr->id() << "\n";
 		}
 		return *ptr;

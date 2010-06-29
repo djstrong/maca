@@ -17,11 +17,11 @@ namespace PlTagger { namespace Conversion {
 
 	void TagRule::add_precondition(const std::string &pred_string)
 	{
-		string_range_vector srv;
+		std::vector<std::string> srv;
 		boost::algorithm::split(srv, pred_string, boost::is_any_of(": "));
-		foreach (const string_range& sr, srv) {
+		foreach (const std::string& sr, srv) {
 			if (!sr.empty()) {
-				pre_.push_back(TagPredicate(pred_string, *tagset_));
+				pre_.push_back(TagPredicate(sr, *tagset_));
 			}
 		}
 	}
@@ -33,11 +33,11 @@ namespace PlTagger { namespace Conversion {
 
 	void TagRule::add_postcondition(const std::string &pred_string)
 	{
-		string_range_vector srv;
+		std::vector<std::string> srv;
 		boost::algorithm::split(srv, pred_string, boost::is_any_of(": "));
-		foreach (const string_range& sr, srv) {
+		foreach (const std::string& sr, srv) {
 			if (!sr.empty()) {
-				post_.push_back(TagPredicate(pred_string, *tagset_));
+				post_.push_back(TagPredicate(sr, *tagset_));
 			}
 		}
 	}

@@ -2,7 +2,7 @@
 #include <libtoki/foreach.h>
 #include <libpltagger/tagsetmanager.h>
 #include <libpltagger/conv/attributecopier.h>
-
+#include <boost/algorithm/string.hpp>
 namespace PlTagger { namespace Conversion {
 
 	JoinRule::JoinRule(const Tagset& tagset)
@@ -79,7 +79,13 @@ namespace PlTagger { namespace Conversion {
 
 	void JoinRule::add_postcondition(const std::string& pred_string)
 	{
-		post_.push_back(TagPredicate(pred_string, *tagset_));
+		std::vector<std::string> srv;
+		boost::algorithm::split(srv, pred_string, boost::is_any_of(": "));
+		foreach (const std::string& sr, srv) {
+			if (!sr.empty()) {
+				post_.push_back(TagPredicate(sr, *tagset_));
+			}
+		}
 	}
 
 	Token* JoinRule::try_join(Token* t1, Token* t2) const
