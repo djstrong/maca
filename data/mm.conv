@@ -19,3 +19,14 @@ t1_pos=praet
 t2_pos=qub
 t2_orth=by
 post=byagl
+
+[3split]
+tagset=my
+pre=subst
+regexp=(sza)(ta)(.*)
+t2_lemma=żźż
+t2_tag=adj:pl
+copy_attrs_to_t2=cas
+t1_post=nmb
+t3_lemma=333
+t3_tag=qub

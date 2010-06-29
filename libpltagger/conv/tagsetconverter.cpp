@@ -36,6 +36,8 @@ namespace PlTagger { namespace Conversion {
 				add_layer(new JoinLayer(v.second));
 			} else if (v.first == "split") {
 				add_layer(new TwoSplitLayer(v.second));
+			} else if (v.first == "3split") {
+				add_layer(new ThreeSplitLayer(v.second));
 			}
 		}
 		if (layers_.empty()) throw PlTaggerError("Empty tagset converter");
