@@ -5,7 +5,7 @@
 #include <libpltagger/token.h>
 #include <libpltagger/conv/predicate.h>
 #include <boost/function.hpp>
-#include <libtoki/confignode.h>
+#include <libpltagger/confignode.h>
 
 namespace PlTagger { namespace Conversion {
 
@@ -46,7 +46,7 @@ namespace PlTagger { namespace Conversion {
 		 * - post - postcondition predicate to apply on the resulting token,
 		 *          can appear multiple times
 		 */
-		explicit JoinRule(const Toki::Config::Node& cfg);
+		explicit JoinRule(const Config::Node& cfg);
 
 		const Tagset& tagset() const {
 			return *tagset_;

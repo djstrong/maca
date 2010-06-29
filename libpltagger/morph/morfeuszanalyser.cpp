@@ -19,14 +19,14 @@ namespace PlTagger {
 		morfeusz_set_option(MORFOPT_ENCODING, MORFEUSZ_UTF_8);
 	}
 
-	MorfeuszAnalyser::MorfeuszAnalyser(const Toki::Config::Node& cfg)
+	MorfeuszAnalyser::MorfeuszAnalyser(const Config::Node& cfg)
 		: MorphAnalyser(cfg), conv_(NULL)
 	{
 		std::string fn = cfg.get("converter", "");
 		std::ifstream ifs;
 		if (!open_file_from_search_path(fn, ifs)) throw 9;
 
-		Toki::Config::Node conv_cfg = Toki::Config::from_stream(ifs);
+		Config::Node conv_cfg = Config::from_stream(ifs);
 		std::auto_ptr<Conversion::TagsetConverter> c(new Conversion::TagsetConverter(conv_cfg));
 
 		if (c->tagset_to().id() != tagset().id()) throw TagsetMismatch("Morfeusz analyser creation", tagset(), c->tagset_to());

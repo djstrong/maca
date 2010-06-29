@@ -3,7 +3,7 @@
 
 #include <libpltagger/conv/layer.h>
 #include <libpltagger/conv/tagrule.h>
-#include <libtoki/confignode.h>
+#include <libpltagger/confignode.h>
 
 namespace PlTagger { namespace Conversion {
 
@@ -22,7 +22,7 @@ namespace PlTagger { namespace Conversion {
 		 * Constructor from a config node. Creates a layer and uses the config
 		 * to create one tag rule.
 		 */
-		TagRuleLayer(const Toki::Config::Node& cfg);
+		TagRuleLayer(const Config::Node& cfg);
 
 		/**
 		 * Rule adder
@@ -35,7 +35,7 @@ namespace PlTagger { namespace Conversion {
 		 * - pre - a precondition predicate string, can appear multiple times
 		 * - post - a postcondition predicate string, can appear multiple times
 		 */
-		void append_rule(const Toki::Config::Node& cfg);
+		void append_rule(const Config::Node& cfg);
 
 		/**
 		 * Layer override -- gar tokens from source, pass them through the

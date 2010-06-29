@@ -12,7 +12,7 @@ namespace PlTagger {
 	{
 	}
 
-	MorphAnalyser::MorphAnalyser(const Toki::Config::Node& cfg)
+	MorphAnalyser::MorphAnalyser(const Config::Node& cfg)
 		: tagset_(&get_named_tagset(cfg.get<std::string>("tagset")))
 	{
 	}

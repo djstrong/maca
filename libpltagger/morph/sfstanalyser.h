@@ -13,7 +13,7 @@ namespace PlTagger {
 	public:
 		SfstAnalyser(const Tagset* tagset, const std::string& filename);
 
-		SfstAnalyser(const Toki::Config::Node& cfg);
+		SfstAnalyser(const Config::Node& cfg);
 
 		~SfstAnalyser();
 

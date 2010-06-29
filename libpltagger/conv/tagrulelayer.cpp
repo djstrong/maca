@@ -9,7 +9,7 @@ namespace PlTagger { namespace Conversion {
 	{
 	}
 
-	TagRuleLayer::TagRuleLayer(const Toki::Config::Node& cfg)
+	TagRuleLayer::TagRuleLayer(const Config::Node& cfg)
 		: OneTagsetLayer(get_named_tagset(cfg.get<std::string>("tagset"))), rules_()
 	{
 		append_rule(cfg);
@@ -20,10 +20,10 @@ namespace PlTagger { namespace Conversion {
 		rules_.push_back(tr);
 	}
 
-	void TagRuleLayer::append_rule(const Toki::Config::Node& cfg)
+	void TagRuleLayer::append_rule(const Config::Node& cfg)
 	{
 		TagRule tr(tagset_from());
-		foreach (const Toki::Config::Node::value_type &v, cfg) {
+		foreach (const Config::Node::value_type &v, cfg) {
 			if (v.first == "pre") {
 				tr.add_precondition(v.second.data());
 			} else if (v.first == "post") {

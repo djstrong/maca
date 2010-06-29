@@ -25,6 +25,7 @@ link_directories(${Boost_LIBRARY_DIRS})
 set(LIBS ${LIBS} ${Boost_LIBRARIES})
 
 SET(libpltagger_STAT_SRC
+    confignode.cpp
     conv/fold.cpp
     conv/joinlayer.cpp
     conv/joinrule.cpp

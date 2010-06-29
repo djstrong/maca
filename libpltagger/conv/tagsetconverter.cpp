@@ -14,10 +14,10 @@ namespace PlTagger { namespace Conversion {
 	{
 	}
 
-	TagsetConverter::TagsetConverter(const Toki::Config::Node& cfg)
+	TagsetConverter::TagsetConverter(const Config::Node& cfg)
 		: layers_()
 	{
-		foreach (const Toki::Config::Node::value_type &v, cfg) {
+		foreach (const Config::Node::value_type &v, cfg) {
 			if (v.first == "tag_rule" || v.first == "tag") {
 				TagRuleLayer* trl;
 				if (!layers_.empty()

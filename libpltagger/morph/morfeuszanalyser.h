@@ -13,7 +13,7 @@ namespace PlTagger {
 	public:
 		MorfeuszAnalyser(const Tagset* tagset, Conversion::TagsetConverter* conv);
 
-		MorfeuszAnalyser(const Toki::Config::Node& cfg);
+		MorfeuszAnalyser(const Config::Node& cfg);
 
 		void process_functional(const Toki::Token &t, boost::function<void(Token *)>sink);
 

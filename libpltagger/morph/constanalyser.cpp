@@ -12,7 +12,7 @@ namespace PlTagger {
 	{
 	}
 
-	ConstAnalyser::ConstAnalyser(const Toki::Config::Node& cfg)
+	ConstAnalyser::ConstAnalyser(const Config::Node& cfg)
 		: MorphAnalyser(cfg), tag_()
 	{
 		std::string tag_string = cfg.get("tag", "");

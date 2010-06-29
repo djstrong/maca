@@ -16,11 +16,11 @@
 
 namespace PlTagger {
 
-	MorphAnalyser* create_analyser(const Toki::Config::Node& cfg)
+	MorphAnalyser* create_analyser(const Config::Node& cfg)
 	{
 		DispatchAnalyser* da(NULL);
 		MorphAnalyser* ma(NULL);
-		foreach (const Toki::Config::Node::value_type &v, cfg) {
+		foreach (const Config::Node::value_type &v, cfg) {
 			if (v.first == "const") {
 				ma = new ConstAnalyser(v.second);
 #ifdef HAVE_SFST

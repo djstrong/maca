@@ -11,7 +11,7 @@ namespace PlTagger { namespace Conversion {
 	{
 	}
 
-	TwoSplitLayer::TwoSplitLayer(const Toki::Config::Node& cfg)
+	TwoSplitLayer::TwoSplitLayer(const Config::Node& cfg)
 		: OneTagsetLayer(get_named_tagset(cfg.get<std::string>("tagset")))
 		, queue_()
 		, orth_matcher_(NULL) , pre_(), t1_post_(), copy_attrs_to_t2_()
@@ -19,7 +19,7 @@ namespace PlTagger { namespace Conversion {
 		std::string re = cfg.get<std::string>("regexp");
 		if (re.empty()) throw 9;
 		set_orth_regexp(re);
-		foreach (const Toki::Config::Node::value_type &v, cfg) {
+		foreach (const Config::Node::value_type &v, cfg) {
 			if (v.first == "pre") {
 				add_precondition(v.second.data());
 			} else if (v.first == "t1_post") {

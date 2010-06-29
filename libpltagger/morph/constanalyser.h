@@ -12,7 +12,7 @@ namespace PlTagger {
 
 		ConstAnalyser(const Tagset* tagset, const Tag& tag);
 
-		explicit ConstAnalyser(const Toki::Config::Node& cfg);
+		explicit ConstAnalyser(const Config::Node& cfg);
 
 		~ConstAnalyser();
 

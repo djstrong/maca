@@ -16,7 +16,7 @@ namespace PlTagger {
 	public:
 		explicit MapAnalyser(const Tagset* tagset);
 
-		explicit MapAnalyser(const Toki::Config::Node& cfg);
+		explicit MapAnalyser(const Config::Node& cfg);
 
 		void load_m_dictionary(const std::string& fn);
 
@@ -35,7 +35,7 @@ namespace PlTagger {
 	}
 
 	template<typename MapT>
-	MapAnalyser<MapT>::MapAnalyser(const Toki::Config::Node &cfg)
+	MapAnalyser<MapT>::MapAnalyser(const Config::Node &cfg)
 		: MorphAnalyser(cfg), map_()
 	{
 		load_m_dictionary(cfg.get<std::string>("data"));

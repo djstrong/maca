@@ -111,11 +111,11 @@ namespace PlTagger { namespace Conversion {
 	{
 	}
 
-	TagConvertLayer::TagConvertLayer(const Toki::Config::Node& cfg)
+	TagConvertLayer::TagConvertLayer(const Config::Node& cfg)
 		: tc_(get_named_tagset(cfg.get<std::string>("tagset_from")),
 			get_named_tagset(cfg.get<std::string>("tagset_to")))
 	{
-		foreach (const Toki::Config::Node::value_type &v, cfg) {
+		foreach (const Config::Node::value_type &v, cfg) {
 			if (v.first == "override") {
 				std::string o = v.second.data();
 				size_t colon = o.find(':');

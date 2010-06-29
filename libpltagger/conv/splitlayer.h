@@ -3,7 +3,7 @@
 
 #include <libpltagger/conv/layer.h>
 #include <libpltagger/conv/predicate.h>
-#include <libtoki/confignode.h>
+#include <libpltagger/confignode.h>
 #include <deque>
 #include <unicode/regex.h>
 
@@ -14,7 +14,7 @@ namespace PlTagger { namespace Conversion {
 	public:
 		TwoSplitLayer(const Tagset& tagset);
 
-		TwoSplitLayer(const Toki::Config::Node& cfg);
+		TwoSplitLayer(const Config::Node& cfg);
 
 		~TwoSplitLayer();
 

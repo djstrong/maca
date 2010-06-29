@@ -9,7 +9,7 @@ namespace PlTagger { namespace Conversion {
 	{
 	}
 
-	JoinLayer::JoinLayer(const Toki::Config::Node& cfg)
+	JoinLayer::JoinLayer(const Config::Node& cfg)
 		: OneTagsetLayer(get_named_tagset(cfg.get<std::string>("tagset"))), buf_(NULL)
 	{
 		append_rule(cfg);
@@ -24,7 +24,7 @@ namespace PlTagger { namespace Conversion {
 		rules_.push_back(rule);
 	}
 
-	void JoinLayer::append_rule(const Toki::Config::Node& cfg)
+	void JoinLayer::append_rule(const Config::Node& cfg)
 	{
 		JoinRule jr(cfg);
 		append_rule(jr);

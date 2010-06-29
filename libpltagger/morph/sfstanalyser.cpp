@@ -20,7 +20,7 @@ namespace PlTagger {
 		open_transducer(filename);
 	}
 
-	SfstAnalyser::SfstAnalyser(const Toki::Config::Node &cfg)
+	SfstAnalyser::SfstAnalyser(const Config::Node &cfg)
 		: MorphAnalyser(cfg)
 	{
 		std::string filename = cfg.get("file", "");
