@@ -1,6 +1,7 @@
 #include <libpltagger/conv/joinrule.h>
 #include <libtoki/foreach.h>
 #include <libpltagger/tagsetmanager.h>
+#include <libpltagger/conv/attributecopier.h>
 
 namespace PlTagger { namespace Conversion {
 
@@ -26,7 +27,7 @@ namespace PlTagger { namespace Conversion {
 			} else if (v.first == "post") {
 				add_postcondition(v.second.data());
 			} else if (v.first == "copy_attr") {
-				add_copy_attr(v.second.data());
+				set_copy_attrs(v.second.data());
 			}
 		}
 		set_token1_preconditions(pos1, orth1);
@@ -66,10 +67,9 @@ namespace PlTagger { namespace Conversion {
 		copy_t2_attrs_ = v;
 	}
 
-	void JoinRule::add_copy_attr(const std::string& name)
+	void JoinRule::set_copy_attrs(const std::string& names)
 	{
-		attribute_idx_t a = tagset_->attribute_dictionary().get_id(name);
-		copy_t2_attrs_.push_back(a);
+		copy_t2_attrs_ = make_attribute_list(tagset(), names);
 	}
 
 	void JoinRule::add_postcondition(const TagPredicate &tp)
@@ -86,20 +86,10 @@ namespace PlTagger { namespace Conversion {
 	{
 		if (pre1_.check(*t1) && pre2_.check(*t2)) {
 			t1->set_orth(t1->orth() + t2->orth());
-			std::vector<Lexeme> new_lexemes;
-			foreach (const Lexeme& lex1, t1->lexemes()) {
-				foreach (const Lexeme& lex2, t2->lexemes()) {
-					Lexeme lex = lex1;
-					foreach (attribute_idx_t a, copy_t2_attrs_) {
-						lex.tag().values()[a] = lex2.tag().values()[a];
-					}
-					foreach (const TagPredicate& p, post_) {
-						p.apply(lex.tag());
-					}
-					new_lexemes.push_back(lex);
-				}
+			copy_attributes(*t2, copy_t2_attrs_, *t1);
+			foreach (const TagPredicate& p, post_) {
+				p.token_apply(*t1);
 			}
-			t1->lexemes() = new_lexemes;
 			delete t2;
 			return t1;
 		} else {

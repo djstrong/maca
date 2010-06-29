@@ -78,7 +78,7 @@ namespace PlTagger { namespace Conversion {
 		void set_copy_attrs(const std::vector<attribute_idx_t>& v);
 
 		/// Adder for the copy attributes list, string version
-		void add_copy_attr(const std::string& name);
+		void set_copy_attrs(const std::string& names);
 
 		/// Postcondidtion adder
 		void add_postcondition(const TagPredicate& tp);

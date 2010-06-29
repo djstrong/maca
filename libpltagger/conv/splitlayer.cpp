@@ -1,6 +1,7 @@
 #include <libpltagger/conv/splitlayer.h>
 #include <libpltagger/tagsetmanager.h>
 #include <libtoki/foreach.h>
+#include <libpltagger/conv/attributecopier.h>
 
 namespace PlTagger { namespace Conversion {
 
@@ -25,7 +26,7 @@ namespace PlTagger { namespace Conversion {
 			} else if (v.first == "t1_post") {
 				add_t1_postcondition(v.second.data());
 			} else if (v.first == "copy_attrs_to_t2") {
-				add_copy_attr_to_t2(v.second.data());
+				set_copy_attrs_to_t2(v.second.data());
 			} else if (v.first == "t2_lemma") {
 				t2_lexeme_.set_lemma(UnicodeString::fromUTF8(v.second.data()));
 			} else if (v.first == "t2_tag") {
@@ -47,12 +48,9 @@ namespace PlTagger { namespace Conversion {
 		copy_attrs_to_t2_.push_back(a);
 	}
 
-	void TwoSplitLayer::add_copy_attr_to_t2(const std::string& s)
+	void TwoSplitLayer::set_copy_attrs_to_t2(const std::string& s)
 	{
-		attribute_idx_t a = tagset_from().attribute_dictionary().get_id(s);
-		if (tagset_from().attribute_dictionary().is_id_valid(a)) {
-			copy_attrs_to_t2_.push_back(a);
-		}
+		copy_attrs_to_t2_ = make_attribute_list(tagset(), s);
 	}
 
 	void TwoSplitLayer::add_precondition(const TagPredicate &tp)
@@ -109,11 +107,10 @@ namespace PlTagger { namespace Conversion {
 				if (orth_matcher_->matches(status)) {
 					Token* t2 = new Token(orth_matcher_->group(2, status), Toki::Whitespace::None);
 					t2->add_lexeme(t2_lexeme_);
-					foreach (attribute_idx_t a, copy_attrs_to_t2_) {
-						t2->lexemes()[0].tag().values()[a] = t->lexemes()[0].tag().values()[a];
-					}
+					copy_attributes(*t, copy_attrs_to_t2_, *t2);
 					queue_.push_back(t2);
 					t->set_orth(orth_matcher_->group(1, status));
+
 					foreach (const TagPredicate& tp, t1_post_) {
 						tp.token_apply(*t);
 					}
@@ -133,7 +130,7 @@ namespace PlTagger { namespace Conversion {
 	{
 		foreach (const Config::Node::value_type &v, cfg) {
 			if (v.first == "copy_attrs_to_t3") {
-				add_copy_attr_to_t3(v.second.data());
+				set_copy_attrs_to_t3(v.second.data());
 			} else if (v.first == "t3_lemma") {
 				t3_lexeme_.set_lemma(UnicodeString::fromUTF8(v.second.data()));
 			} else if (v.first == "t3_tag") {
@@ -153,12 +150,9 @@ namespace PlTagger { namespace Conversion {
 		copy_attrs_to_t3_.push_back(a);
 	}
 
-	void ThreeSplitLayer::add_copy_attr_to_t3(const std::string& s)
+	void ThreeSplitLayer::set_copy_attrs_to_t3(const std::string& s)
 	{
-		attribute_idx_t a = tagset_from().attribute_dictionary().get_id(s);
-		if (tagset_from().attribute_dictionary().is_id_valid(a)) {
-			copy_attrs_to_t3_.push_back(a);
-		}
+		copy_attrs_to_t3_ = make_attribute_list(tagset(), s);
 	}
 	
 	void ThreeSplitLayer::set_t3_lexeme(const Lexeme &lex)
@@ -183,16 +177,13 @@ namespace PlTagger { namespace Conversion {
 				if (orth_matcher_->matches(status)) {
 					Token* t2 = new Token(orth_matcher_->group(2, status), Toki::Whitespace::None);
 					t2->add_lexeme(t2_lexeme_);
-					foreach (attribute_idx_t a, copy_attrs_to_t2_) {
-						t2->lexemes()[0].tag().values()[a] = t->lexemes()[0].tag().values()[a];
-					}
+					copy_attributes(*t, copy_attrs_to_t2_, *t2);
 					queue_.push_back(t2);
 					Token* t3 = new Token(orth_matcher_->group(3, status), Toki::Whitespace::None);
 					t3->add_lexeme(t3_lexeme_);
-					foreach (attribute_idx_t a, copy_attrs_to_t3_) {
-						t3->lexemes()[0].tag().values()[a] = t->lexemes()[0].tag().values()[a];
-					}
+					copy_attributes(*t, copy_attrs_to_t3_, *t3);
 					queue_.push_back(t3);
+
 					t->set_orth(orth_matcher_->group(1, status));
 					foreach (const TagPredicate& tp, t1_post_) {
 						tp.token_apply(*t);
