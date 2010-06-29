@@ -17,19 +17,23 @@ namespace PlTagger {
 		 * Instantiate a PlTaggerError instance with the given message.
 		 * @param what The message to associate with this error.
 		 */
-		PlTaggerError(const std::string &what)
-		 : std::runtime_error(what)
-		{
-		}
+		PlTaggerError(const std::string &what);
 
-		~PlTaggerError() throw()
-		{
-		}
+		~PlTaggerError() throw();
 
-		virtual std::string info() const
-		{
-			return what();
-		}
+		virtual std::string info() const;
+	};
+
+	class FileNotFound : public PlTaggerError
+	{
+	public:
+		FileNotFound(const std::string& filename, const std::string& type);
+
+		~FileNotFound() throw();
+
+		std::string info() const;
+
+		std::string filename, type, paths;
 	};
 
 } /* end ns PlTagger */

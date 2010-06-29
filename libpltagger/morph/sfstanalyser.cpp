@@ -24,7 +24,7 @@ namespace PlTagger {
 		: MorphAnalyser(cfg)
 	{
 		std::string filename = cfg.get("file", "");
-		if (filename.empty()) throw 9;
+		if (filename.empty()) throw ConfigValueMissing("file", "SfstAnalyser");
 		open_transducer(filename);
 	}
 

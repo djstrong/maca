@@ -15,7 +15,10 @@ namespace PlTagger { namespace Conversion {
 			} else {
 				first = static_cast<idx_t>(-1);
 				second = tagset.pos_dictionary().get_id(name);
-				assert(tagset.pos_dictionary().is_id_valid(static_cast<pos_idx_t>(second)));
+
+				if (!tagset.pos_dictionary().is_id_valid(static_cast<pos_idx_t>(second))) {
+					throw PlTaggerError("Predicate string invalid: " + name + " in tagset " + tagset.name());
+				}
 			}
 		}
 	}

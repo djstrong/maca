@@ -7,25 +7,15 @@
 
 namespace PlTagger {
 
-	TagsetNotFound::TagsetNotFound(const std::string& n)
-		: PlTaggerError("Tagset not found")
-		, name(n), paths(get_library_config_path_string()), id(-1)
-	{
-	}
-
 	TagsetNotFound::TagsetNotFound(tagset_idx_t id)
 		: PlTaggerError("Tagset not found")
-		, name(), paths(), id(id)
+		, id(id)
 	{
 	}
 	std::string TagsetNotFound::info() const
 	{
 		std::ostringstream ss;
-		if (id == tagset_idx_t(-1)) {
-			ss << "Tagset '" << name << "' not found in search path " << paths;
-		} else {
-			ss << "Tagset with id " << (int)id << " not found in cache";
-		}
+		ss << "Tagset with id " << (int)id << " not found in cache";
 		return ss.str();
 	}
 
@@ -44,7 +34,7 @@ namespace PlTagger {
 		if (!ptr) {
 			std::ifstream ifs;
 			if (!open_file_from_search_path(name + ".tagset", ifs)) {
-				throw TagsetNotFound(name);
+				throw FileNotFound(name + ".tagset", "Tagset");
 			}
 			ptr.reset(new Tagset);
 			*ptr = TagsetParser::load_ini(ifs);

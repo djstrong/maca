@@ -12,17 +12,11 @@ namespace PlTagger {
 	class TagsetNotFound : public PlTaggerError
 	{
 	public:
-		explicit TagsetNotFound(const std::string& n);
-
 		explicit TagsetNotFound(const tagset_idx_t id);
 
 		~TagsetNotFound() throw() {}
 
 		std::string info() const;
-
-		std::string name;
-
-		std::string paths;
 
 		tagset_idx_t id;
 	};

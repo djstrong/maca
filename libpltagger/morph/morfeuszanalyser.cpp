@@ -12,6 +12,25 @@
 
 namespace PlTagger {
 
+	MorfeuszError::MorfeuszError(const std::string& error, const std::string input, InterpMorf* interp)
+		: PlTaggerError("Morfeusz error: " + error), error(error), input(input), interp(interp)
+	{
+	}
+
+	MorfeuszError::~MorfeuszError() throw()
+	{
+	}
+
+	std::string MorfeuszError::info() const
+	{
+		std::stringstream ss;
+		ss << what();
+		if (!input.empty()) {
+			ss << " for input '" << input << "'";
+		}
+		return ss.str();
+	}
+
 	MorfeuszAnalyser::MorfeuszAnalyser(const Tagset* tagset, Conversion::TagsetConverter* conv)
 		: MorphAnalyser(tagset), conv_(conv)
 	{
@@ -24,7 +43,7 @@ namespace PlTagger {
 	{
 		std::string fn = cfg.get("converter", "");
 		std::ifstream ifs;
-		if (!open_file_from_search_path(fn, ifs)) throw 9;
+		if (!open_file_from_search_path(fn, ifs)) throw FileNotFound(fn, "Converter");
 
 		Config::Node conv_cfg = Config::from_stream(ifs);
 		std::auto_ptr<Conversion::TagsetConverter> c(new Conversion::TagsetConverter(conv_cfg));
@@ -76,13 +95,17 @@ namespace PlTagger {
 						paths.back().push_back(tse);
 						int v = pmorf[tse].k;
 						while (prec[v].size() == 1) {
-							assert(succ[v].size() == 1);
+							if (succ[v].size() != 1) {
+								throw MorfeuszError("path splits twice", s, pmorf);
+							}
 							tse = succ[v][0];
 							paths.back().push_back(tse);
 							v = pmorf[tse].k;
 						}
 						//assume this is the merge node, check for consistency
-						assert(merge_node == -1 || merge_node == v);
+						if (merge_node != -1 && merge_node != v) {
+							throw MorfeuszError("path merge node ambiguity", s, pmorf);
+						}
 						merge_node = v;
 					}
 
@@ -116,9 +139,13 @@ namespace PlTagger {
 				} else if (!succ[i].empty()) { //simple case, only one interp
 					int edge = succ[i][0];
 					unambiguous.push_back(make_token(t, pmorf + edge));
-					assert(pmorf[edge].k == i + 1);
+					if (pmorf[edge].k != i + 1) {
+						throw MorfeuszError("simple path has non-consecutive nodes", s, pmorf);
+					}
 				} else { //only the last node should have no succesors
-					assert(i == node_count - 1);
+					if (i != node_count - 1) {
+						throw MorfeuszError("node without succesors that is not the last node", s, pmorf);
+					}
 				}
 			}
 			if (!unambiguous.empty()) {

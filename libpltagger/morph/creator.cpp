@@ -36,7 +36,7 @@ namespace PlTagger {
 				ma = new MorfeuszAnalyser(v.second);
 #endif
 			} else {
-				throw 9;
+				throw PlTaggerError("Unknown analyser type: " + v.first);
 			}
 			std::string toki_types = v.second.get("toki_type", "");
 			string_range_vector sr;
@@ -48,7 +48,7 @@ namespace PlTagger {
 				if (da->default_handler() == NULL) {
 					da->set_default_handler(ma);
 				} else {
-					throw 9;
+					throw PlTaggerError("More than one default morph handler");
 				}
 			} else {
 				foreach (const string_range& r, sr) {

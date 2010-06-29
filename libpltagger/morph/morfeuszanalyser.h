@@ -8,6 +8,20 @@
 
 namespace PlTagger {
 
+	class MorfeuszError : public PlTaggerError
+	{
+	public:
+		MorfeuszError(const std::string& error, const std::string input = "", InterpMorf* interp = NULL);
+
+		~MorfeuszError() throw();
+
+		std::string info() const;
+
+		std::string error, input;
+
+		InterpMorf* interp;
+	};
+
 	class MorfeuszAnalyser : public MorphAnalyser
 	{
 	public:

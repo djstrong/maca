@@ -37,6 +37,7 @@ SET(libpltagger_STAT_SRC
     conv/tagrulelayer.cpp
     conv/tagsetconverter.cpp
     debug.cpp
+    exception.cpp
     lexeme.cpp
     main.cpp
     morph/constanalyser.cpp
