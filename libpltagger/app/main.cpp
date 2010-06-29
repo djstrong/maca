@@ -36,7 +36,7 @@ int main(int argc, char** argv)
 	boost::program_options::options_description desc("Allowed options");
 	desc.add_options()
 #ifdef HAVE_SFST
-			("sfst-transducer,s", value(&sfst)->default_value("/home/ilor/semantic/tagger/fst/M.cfst"),
+			("sfst-transducer,s", value(&sfst),
 			 "SFST transducer file to use (compact format)")
 #endif
 			("m-dict-file,m", value(&mdict),
