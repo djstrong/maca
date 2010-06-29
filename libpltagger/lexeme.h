@@ -38,6 +38,8 @@ namespace PlTagger {
 			return tag_;
 		}
 
+		bool not_null() const;
+
 		bool operator<(const Lexeme& other) const;
 
 		bool operator==(const Lexeme& other) const;

@@ -1,4 +1,5 @@
 #include <libpltagger/lexeme.h>
+#include <libpltagger/tagsetmanager.h>
 
 namespace PlTagger {
 
@@ -15,6 +16,11 @@ namespace PlTagger {
 	Lexeme Lexeme::create(const UnicodeString& lemma, const Tag& tag)
 	{
 		return Lexeme(lemma, tag);
+	}
+
+	bool Lexeme::not_null() const
+	{
+		return lemma_.length() > 0 && TagsetManagerSingleton::Instance().get_cache_entry(tag_.tagset_id());
 	}
 
 	bool Lexeme::operator<(const Lexeme& other) const
