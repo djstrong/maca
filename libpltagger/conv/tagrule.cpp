@@ -1,6 +1,7 @@
 #include <libpltagger/conv/tagrule.h>
 #include <libtoki/foreach.h>
 #include <iostream>
+#include <boost/algorithm/string.hpp>
 
 namespace PlTagger { namespace Conversion {
 
@@ -16,7 +17,13 @@ namespace PlTagger { namespace Conversion {
 
 	void TagRule::add_precondition(const std::string &pred_string)
 	{
-		pre_.push_back(TagPredicate(pred_string, *tagset_));
+		string_range_vector srv;
+		boost::algorithm::split(srv, pred_string, boost::is_any_of(": "));
+		foreach (const string_range& sr, srv) {
+			if (!sr.empty()) {
+				pre_.push_back(TagPredicate(pred_string, *tagset_));
+			}
+		}
 	}
 
 	void TagRule::add_postcondition(const TagPredicate &tp)
@@ -26,7 +33,13 @@ namespace PlTagger { namespace Conversion {
 
 	void TagRule::add_postcondition(const std::string &pred_string)
 	{
-		post_.push_back(TagPredicate(pred_string, *tagset_));
+		string_range_vector srv;
+		boost::algorithm::split(srv, pred_string, boost::is_any_of(": "));
+		foreach (const string_range& sr, srv) {
+			if (!sr.empty()) {
+				post_.push_back(TagPredicate(pred_string, *tagset_));
+			}
+		}
 	}
 
 	void TagRule::apply(Tag &tag) const
