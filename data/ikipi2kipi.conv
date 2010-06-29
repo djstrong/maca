@@ -56,3 +56,7 @@ post=tns
 pre=bedzie
 post=tns
 
+[convert]
+tagset_from=ikipi
+tagset_to=kipi
+override=n:n1
