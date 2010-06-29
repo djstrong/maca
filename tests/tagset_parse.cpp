@@ -127,17 +127,17 @@ BOOST_AUTO_TEST_CASE( size6 )
 
 BOOST_AUTO_TEST_CASE( load_named )
 {
-//	BOOST_CHECK_NO_THROW(
-	try {
+	BOOST_CHECK_NO_THROW(
+		try {
 			PlTagger::get_named_tagset("test");
 		}catch(PlTagger::PlTaggerError& e) {
 			std::cerr << e.info();
+			throw;
 		}
-
-//	);
+	);
 	BOOST_CHECK_THROW(
 		PlTagger::get_named_tagset("__nonexistant_9867s8t"),
-		PlTagger::TagsetNotFound);
+		PlTagger::FileNotFound);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
