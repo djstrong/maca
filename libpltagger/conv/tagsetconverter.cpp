@@ -17,7 +17,11 @@ namespace PlTagger { namespace Conversion {
 	TagsetConverter::TagsetConverter(const Config::Node& cfg)
 		: layers_()
 	{
-		foreach (const Config::Node::value_type &v, cfg) {
+		foreach (Config::Node::value_type v, cfg) {
+			std::string tagset_string = v.second.get("tagset", "");
+			if (tagset_string.empty() && !layers_.empty()) {
+				v.second.put("tagset", layers_.back()->tagset_to().name());
+			}
 			if (v.first == "tag_rule" || v.first == "tag") {
 				TagRuleLayer* trl;
 				if (!layers_.empty()
