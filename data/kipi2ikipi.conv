@@ -4,9 +4,11 @@ tagset_to=ikipi
 override=n1:n
 override=n2:n
 override=n3:n
+override=p1:f
+override=p2:f
+override=p3:f
 
 [join]
-tagset=ikipi
 t1_pos=praet
 t2_pos=aglt
 copy_attr=per
