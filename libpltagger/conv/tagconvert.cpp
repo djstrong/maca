@@ -41,6 +41,9 @@ namespace PlTagger { namespace Conversion {
 			pos_idx_t pos2 = tagset_to_.pos_dictionary().get_id(to);
 			if (tagset_to_.pos_dictionary().is_id_valid(pos2)) {
 				pos_mapping_[pos] = pos2;
+			} else {
+				std::cerr << "Invalid POS/POS mapping override, " << to
+						<< " not a valid POS in " << tagset_to().id_string() << "\n";
 			}
 		} else {
 			value_idx_t vto = tagset_to_.value_dictionary().get_id(to);
@@ -54,8 +57,14 @@ namespace PlTagger { namespace Conversion {
 					value_idx_t vfrom = tagset_from_.value_dictionary().get_id(from);
 					if (tagset_to_.value_dictionary().is_id_valid(vfrom)) {
 						value_mapping_[vfrom] = vto;
+					} else {
+						std::cerr << "Invalid POS/POS mapping override, " << from
+								<< " not a valid POS in " << tagset_from().id_string() << "\n";
 					}
 				}
+			} else {
+				std::cerr << "Invalid mapping override, " << to
+						<< " not a valid value in " << tagset_to().id_string() << "\n";
 			}
 		}
 	}
@@ -122,12 +131,12 @@ namespace PlTagger { namespace Conversion {
 				if (colon != std::string::npos) {
 					std::string o_from = o.substr(0, colon);
 					std::string o_to = o.substr(colon + 1);
-					tc_.is_complete(&std::cerr);
 					std::cerr << "Overriding '" << o_from << "' with '" << o_to << "'\n";
 					tc_.add_override(o_from, o_to);
 				}
 			}
 		}
+		tc_.is_complete(&std::cerr);
 	}
 
 	Token* TagConvertLayer::get_next_token()

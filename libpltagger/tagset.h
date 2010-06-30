@@ -228,7 +228,7 @@ namespace PlTagger {
 		}
 
 		/// Tagset name accesor
-		const std::string name() const {
+		std::string name() const {
 			return name_;
 		}
 
@@ -236,6 +236,12 @@ namespace PlTagger {
 		void set_name(const std::string& name) {
 			name_ = name;
 		}
+
+		/// Return a pretty name/id string for the tagset
+		std::string id_string() const;
+
+		/// Return a pretty name/id string for the tagset and a tag
+		std::string id_string(const Tag& tag) const;
 
 	private:
 		/// Temporary solution to allow splitting theparser into a separate class

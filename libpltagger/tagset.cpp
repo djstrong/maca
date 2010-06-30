@@ -36,7 +36,6 @@ namespace PlTagger {
 	}
 
 
-
 	tagset_idx_t Tagset::next_id_ = static_cast<tagset_idx_t>(0);
 
 	Tagset::Tagset()
@@ -50,6 +49,21 @@ namespace PlTagger {
 		std::stringstream ss;
 		ss << s;
 		*this = TagsetParser::load_ini(ss);
+	}
+
+	std::string Tagset::id_string() const
+	{
+		std::stringstream ss;
+		ss << "tagset " << name_ << " (" << (int)id_ << ")";
+		return ss.str();
+	}
+
+	std::string Tagset::id_string(const Tag& tag) const
+	{
+		std::stringstream ss;
+		ss << "tagset " << name_ << " (" << (int)id_ << "), ";
+		ss << "tag " << tag_to_string(tag);
+		return ss.str();
 	}
 
 	void Tagset::parse_tag(const string_range &s, bool allow_extra,
@@ -201,47 +215,61 @@ namespace PlTagger {
 	bool Tagset::validate_tag(const Tag &t, bool allow_extra, std::ostream* os) const
 	{
 		if (!pos_dict_.is_id_valid(t.pos_id())) {
-			if (os) (*os) << "POS not valid : " << (int) t.pos_id();
+			if (os) {
+				(*os) << id_string(t) << " POS not valid : " << (int) t.pos_id();
+			}
 			return false;
 		}
 		std::vector<bool> valid = get_pos_valid_attributes(t.pos_id());
 		std::vector<bool> required = get_pos_required_attributes(t.pos_id());
 		if (t.values().size() < attribute_dict_.size()) {
-			if (os) (*os) << "Values size below tagset attribute count: "
+			if (os) {
+				(*os) << id_string(t) << " Values size below tagset attribute count: "
 					<< t.values().size() << "<" << attribute_dict_.size();
+			}
 			return false;
 		}
 		if (!allow_extra && t.values().size() > attribute_dict_.size()) {
-			if (os) (*os) << "Values size above tagset attribute count"
+			if (os) {
+				(*os) << id_string(t) << " Values size above tagset attribute count"
 					<< t.values().size() << ">" << attribute_dict_.size();
+			}
 			return false;
 		}
 		for (attribute_idx_t i = static_cast<attribute_idx_t>(0); i < t.values().size(); ++i) {
 			value_idx_t v = t.values()[i];
 			if (v == 0) {
 				if (required[i]) {
-					if (os) (*os) << "Required attribuite "
+					if (os) {
+						(*os) << id_string(t) << " Required attribuite "
 							<< attribute_dictionary().get_string(i) << " missing";
+					}
 					return false;
 				}
 			} else {
 				if (!valid[i] && !allow_extra) {
-					if (os) (*os) << "Extra attribute value: "
+					if (os) {
+						(*os) << id_string(t) << " Extra attribute value: "
 							<< value_dictionary().get_string(v) << " (attribute "
 							<< attribute_dictionary().get_string(i) << ")";
+					}
 					return false;
 				}
 				if (!value_dict_.is_id_valid(v)) {
-					if (os) (*os) << "Invalid value at attribite "
+					if (os) {
+						(*os) << id_string(t) << " Invalid value at attribite "
 							<< attribute_dictionary().get_string(i);
+					}
 					return false;
 				}
 				attribute_idx_t a = value_attribute_[v];
 				if (a != i) {
-					if (os) (*os) << "Value does not match attribute, got "
+					if (os) {
+						(*os) << id_string(t) << " Value does not match attribute, got "
 							<< value_dictionary().get_string(v) << " ("
-							<< attribute_dictionary().get_string(a) << ") in";
+							<< attribute_dictionary().get_string(a) << ") in"
 							<< attribute_dictionary().get_string(i) << "'s position";
+					}
 					return false;
 				}
 			}
