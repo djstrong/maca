@@ -207,32 +207,41 @@ namespace PlTagger {
 		std::vector<bool> valid = get_pos_valid_attributes(t.pos_id());
 		std::vector<bool> required = get_pos_required_attributes(t.pos_id());
 		if (t.values().size() < attribute_dict_.size()) {
-			if (os) (*os) << "Values size below tagset attribute count";
+			if (os) (*os) << "Values size below tagset attribute count: "
+					<< t.values().size() << "<" << attribute_dict_.size();
 			return false;
 		}
 		if (!allow_extra && t.values().size() > attribute_dict_.size()) {
-			if (os) (*os) << "Values size above tagset attribute count";
+			if (os) (*os) << "Values size above tagset attribute count"
+					<< t.values().size() << ">" << attribute_dict_.size();
 			return false;
 		}
-		for (size_t i = 0; i < t.values().size(); ++i) {
+		for (attribute_idx_t i = static_cast<attribute_idx_t>(0); i < t.values().size(); ++i) {
 			value_idx_t v = t.values()[i];
 			if (v == 0) {
 				if (required[i]) {
-					if (os) (*os) << "Required attribuite missing";
+					if (os) (*os) << "Required attribuite "
+							<< attribute_dictionary().get_string(i) << " missing";
 					return false;
 				}
 			} else {
 				if (!valid[i] && !allow_extra) {
-					if (os) (*os) << "Extra attribute value";
+					if (os) (*os) << "Extra attribute value: "
+							<< value_dictionary().get_string(v) << " (attribute "
+							<< attribute_dictionary().get_string(i) << ")";
 					return false;
 				}
 				if (!value_dict_.is_id_valid(v)) {
-					if (os) (*os) << "Invalid value";
+					if (os) (*os) << "Invalid value at attribite "
+							<< attribute_dictionary().get_string(i);
 					return false;
 				}
 				attribute_idx_t a = value_attribute_[v];
-				if (a != static_cast<attribute_idx_t>(i)) {
-					if (os) (*os) << "Value does not match attribute";
+				if (a != i) {
+					if (os) (*os) << "Value does not match attribute, got "
+							<< value_dictionary().get_string(v) << " ("
+							<< attribute_dictionary().get_string(a) << ") in";
+							<< attribute_dictionary().get_string(i) << "'s position";
 					return false;
 				}
 			}
