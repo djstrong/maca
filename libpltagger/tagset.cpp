@@ -89,7 +89,6 @@ namespace PlTagger {
 				}
 			}
 		}
-
 	}
 
 	void Tagset::parse_tag(const string_range_vector &fields, bool allow_extra,

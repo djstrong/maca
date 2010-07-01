@@ -20,11 +20,6 @@ namespace PlTagger {
 		tag_ = tagset().parse_simple_tag(tag_string, false);
 	}
 
-
-	ConstAnalyser::~ConstAnalyser()
-	{
-	}
-
 	void ConstAnalyser::process_functional(const Toki::Token &t, boost::function<void (Token*)> sink)
 	{
 		Token* tt = new Token(t);

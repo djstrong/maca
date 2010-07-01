@@ -10,21 +10,40 @@
 
 namespace PlTagger {
 
+	/**
+	 * A standard-container-based analyser template for use with map-like
+	 * containers. Data is loaded from a file in tab-separated format of
+	 * orth, lemma and tag-string triplets.
+	 */
 	template<typename MapT>
 	class MapAnalyser : public MorphAnalyser
 	{
 	public:
+		/// Constructor for an empty analyser working with a tagset
 		explicit MapAnalyser(const Tagset* tagset);
 
+		/**
+		 * Config node constructor. Recognized keys are:
+		 * - data - the data file to load
+		 */
 		explicit MapAnalyser(const Config::Node& cfg);
 
+		/// Data file loading function
 		void load_m_dictionary(const std::string& fn);
 
+		/// MorphAnalyser override
 		void process_functional(const Toki::Token &t, boost::function<void (Token*)> sink);
 
 	private:
+		/// the orth to analysis map
 		MapT map_;
 	};
+
+	/// typedef for a tree-map (std::map) analyser
+	typedef MapAnalyser< std::map< std::string, Lexeme > > StdMapAnalyser;
+
+	/// typedef for a hashmap (std::unordered_map) analyser
+	typedef MapAnalyser< boost::unordered_map< std::string, Lexeme > > HashMapAnalyser;
 
 /* implementation */
 
@@ -45,9 +64,9 @@ namespace PlTagger {
 	void MapAnalyser<MapT>::load_m_dictionary(const std::string &fn)
 	{
 		std::ifstream ifs(fn.c_str());
-		char buf[201];
+		char buf[2001];
 		while (ifs.good()) {
-			ifs.getline(buf, 200);
+			ifs.getline(buf, 2000);
 			//std::vector< boost::iterator_range<const char*> > v;
 			//std::string b(buf);
 			std::vector< std::string > v;
@@ -72,9 +91,6 @@ namespace PlTagger {
 		}
 	}
 
-	typedef MapAnalyser< std::map< std::string, Lexeme > > StdMapAnalyser;
-
-	typedef MapAnalyser< boost::unordered_map< std::string, Lexeme > > HashMapAnalyser;
 
 } /* end ns PlTagger */
 

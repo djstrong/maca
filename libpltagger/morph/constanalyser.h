@@ -5,18 +5,27 @@
 
 namespace PlTagger {
 
+	/**
+	 * A simple analyser that always returns the same interpretation for any
+	 * token.
+	 */
 	class ConstAnalyser : public MorphAnalyser
 	{
 	public:
+		/// Constructor for a ConstAnalyser with a tagset and a tag string
 		ConstAnalyser(const Tagset* tagset, const std::string& tag);
 
+		/// Constructor for a ConstAnalyser with a tagset and a tag string
 		ConstAnalyser(const Tagset* tagset, const Tag& tag);
 
+		/**
+		 * Config node constructor. Recognized keys are:
+		 * - tag - the tag to use as the analysis for all tokens
+		 */
 		explicit ConstAnalyser(const Config::Node& cfg);
 
-		~ConstAnalyser();
-
-		 void process_functional(const Toki::Token &t, boost::function<void (Token*)> sink);
+		/// MapAnalyser override
+		void process_functional(const Toki::Token &t, boost::function<void (Token*)> sink);
 	private:
 		Tag tag_;
 	};
