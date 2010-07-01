@@ -17,8 +17,7 @@ namespace PlTagger {
 	BOOST_STRONG_TYPEDEF(idx_t, pos_idx_t);
 	BOOST_STRONG_TYPEDEF(idx_t, attribute_idx_t);
 	BOOST_STRONG_TYPEDEF(idx_t, value_idx_t);
-	BOOST_STRONG_TYPEDEF(idx_t, tagset_idx_t);
-
+	BOOST_STRONG_TYPEDEF(boost::uint32_t, tagset_idx_t);
 
 	/**
 	 * This is an extended version of a POS tag, which also includes a number
