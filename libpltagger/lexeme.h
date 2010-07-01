@@ -38,15 +38,25 @@ namespace PlTagger {
 			return tag_;
 		}
 
-		bool not_null() const;
+		bool is_null() const;
 
+		/**
+		 * Lexeme comparison. Lexemes are ordered by lemma and then by tag, see
+		 * Tag::operator< . Boost template magic provides other comparison ops.
+		 */
 		bool operator<(const Lexeme& other) const;
 
+		/**
+		 * Lexeme equality. Lemma and tag must compare equal. Boost template
+		 * magic provides operatpr!=.
+		 */
 		bool operator==(const Lexeme& other) const;
 
 	private:
+		/// The lemma -- basic form
 		UnicodeString lemma_;
 
+		/// The tag
 		Tag tag_;
 	};
 

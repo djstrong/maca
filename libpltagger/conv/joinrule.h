@@ -15,10 +15,15 @@ namespace PlTagger { namespace Conversion {
 	 *
 	 * First, some conditions are checked on both tokens that are considered
 	 * for joining (not that the no-space requirement os checked elsewhere).
+
 	 * Then, if the checks pass, the orths are appended and the lexemes taken
-	 * from token 1. If attributes are to be copied from token 2 tokens, and
-	 * token 2 contains more than one value for some of the attributes, the
-	 * joined token will have all the possible combinations of values.
+	 * from token 1.
+
+	 * Then some attrobute values from token 2 lexemes are put into the joined
+	 * token. If token 2 lexemes contain more than one value for some of the
+	 * attributes, the joined token will have all the possible combinations.
+	 *
+	 * Then some postcondition predicates are applied on the joined token.
 	 */
 	class JoinRule
 	{

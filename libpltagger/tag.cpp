@@ -1,5 +1,8 @@
 #include <libpltagger/tag.h>
+#include <libpltagger/tagsetmanager.h>
+
 #include <libtoki/foreach.h>
+
 #include <cstring>
 #include <sstream>
 
@@ -18,6 +21,12 @@ namespace PlTagger {
 	Tag::Tag(tagset_idx_t tagset_id, pos_idx_t pos, const std::vector<value_idx_t> &values)
 		: pos_id_(pos), values_(values), tagset_id_(tagset_id)
 	{
+	}
+
+	bool Tag::has_valid_tagset() const
+	{
+		return tagset_id_ != static_cast<tagset_idx_t>(-1)
+			&& TagsetManagerSingleton::Instance().get_cache_entry(tagset_id());
 	}
 
 	std::string Tag::raw_dump() const

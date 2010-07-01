@@ -22,11 +22,13 @@ namespace PlTagger {
 	class TagParseError : public PlTaggerError
 	{
 	public:
+		/// Constructor
 		TagParseError(const std::string &what)
 		 : PlTaggerError(what)
 		{
 		}
 
+		/// Destructor
 		~TagParseError() throw() {}
 	};
 
@@ -34,22 +36,41 @@ namespace PlTagger {
 	class TagsetMismatch : public PlTaggerError
 	{
 	public:
+		/// Constructor from Tagset objects
 		TagsetMismatch(const std::string& where, const Tagset& expected, const Tagset& actual);
 
+		/// Constructor from tagset ids
 		TagsetMismatch(const std::string& where, tagset_idx_t expected, tagset_idx_t actual);
 
+		/// Destructor
 		~TagsetMismatch() throw() {}
 
+		/// PlTaggerError override
 		std::string info() const;
 
+		/// ids of the mismatching tagsets
 		tagset_idx_t expected_id, actual_id;
 	};
 
 	class TagsetParser;
 
+	/**
+	 * A tagset is the set of possible tags, the Tagset class also contains the
+	 * necessary string--number mappings for POS, attribute and value names.
+	 *
+	 * Tagset objects are used for tag string parsing and to create tag strings
+	 * from tags. Created tags must be used with the same tagset object.
+	 *
+	 * Tagsets are usually loaded from ini-like files, but note that tagset
+	 * file loading is delegated to a separate class, TagsetParser.
+	 *
+	 * Tagsets are referred to by name and managed centrally by TagsetManager,
+	 * though it is possible to have tagset objects not using the manager.
+	 */
 	class Tagset
 	{
 	public:
+		/// Empty tagset constructor
 		Tagset();
 
 		/**
@@ -244,7 +265,7 @@ namespace PlTagger {
 		std::string id_string(const Tag& tag) const;
 
 	private:
-		/// Temporary solution to allow splitting theparser into a separate class
+		/// Temporary solution to allow splitting the parser into a separate class
 		friend class TagsetParser;
 
 		/// Tagset name

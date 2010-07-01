@@ -34,8 +34,8 @@ namespace PlTagger { namespace Conversion {
 				t2_lexeme_.tag() = tagset().parse_simple_tag(v.second.data(), true);
 			}
 		}
-		if (!t2_lexeme_.not_null()) {
-			throw PlTaggerError("3-split layer: invalid token 3 lexeme");
+		if (t2_lexeme_.is_null()) {
+			throw PlTaggerError("3-split layer: invalid token 2 lexeme");
 		}
 	}
 
@@ -151,7 +151,7 @@ namespace PlTagger { namespace Conversion {
 		if (orth_matcher_->groupCount() < 3) {
 			throw PlTaggerError("3-split layer regex has less than 3 groups");
 		}
-		if (!t3_lexeme_.not_null()) {
+		if (t3_lexeme_.is_null()) {
 			throw PlTaggerError("3-split layer: invalid token 3 lexeme");
 		}
 	}

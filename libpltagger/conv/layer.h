@@ -8,32 +8,57 @@
 
 namespace PlTagger { namespace Conversion {
 
+	/**
+	 * Base class for conversion layers.
+	 */
 	class Layer : public TokenSource
 	{
 	public:
+		/// Constructor
 		Layer();
 
+		/// Destructor
 		virtual ~Layer();
 
+		/// Source setter
 		void set_source(TokenSource* src);
 
+		/// Source getter
 		TokenSource* source();
 
+		/**
+		 * The tagset of tokens coming into the layer.
+		 */
 		virtual const Tagset& tagset_from() const = 0;
 
+		/**
+		 * The tagset of tokens coming out of the layer.
+		 */
 		virtual const Tagset& tagset_to() const = 0;
 
 	private:
+		/// The current token source
 		TokenSource* source_;
 	};
 
+	/**
+	 * Base class for conversion layers that do not change a token's tagset.
+	 *
+	 * (i.e. the 'from' and 'to' tagsets are identical).
+	 */
 	class OneTagsetLayer : public Layer
 	{
 	public:
+		/**
+		 * Constructor.
+		 * @param tagset the tagset used for tokens coming in and out of the layer.
+		 */
 		OneTagsetLayer(const Tagset& tagset);
 
+		/// Layer override
 		const Tagset& tagset_from() const;
 
+		/// Layer override
 		const Tagset& tagset_to() const;
 
 		/**
@@ -45,6 +70,7 @@ namespace PlTagger { namespace Conversion {
 		}
 
 	private:
+		/// The tagset
 		const Tagset& tagset_;
 	};
 

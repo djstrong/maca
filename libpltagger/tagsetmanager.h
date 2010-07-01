@@ -9,15 +9,22 @@
 
 namespace PlTagger {
 
+	/**
+	 * Exception class for signalling cache errors
+	 */
 	class TagsetNotFound : public PlTaggerError
 	{
 	public:
+		/// Constructor
 		explicit TagsetNotFound(const tagset_idx_t id);
 
+		/// Destructor
 		~TagsetNotFound() throw() {}
 
+		/// PlTaggerError override
 		std::string info() const;
 
+		/// The invalid tagset id
 		tagset_idx_t id;
 	};
 
