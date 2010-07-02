@@ -46,7 +46,7 @@ post=praet:tns
 
 [tag]
 pre=fin
-post:tns
+post=tns
 
 [tag]
 pre=praet
