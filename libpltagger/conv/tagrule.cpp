@@ -57,6 +57,7 @@ namespace PlTagger { namespace Conversion {
 		foreach (Lexeme& lex, token.lexemes()) {
 			apply(lex.tag());
 		}
+		token.remove_duplicate_lexemes();
 	}
 
 	Tag TagRule::apply_copy(const Tag &tag) const

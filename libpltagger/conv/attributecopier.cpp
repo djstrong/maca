@@ -40,6 +40,7 @@ namespace PlTagger { namespace Conversion {
 			}
 		}
 		to.lexemes() = new_lexemes;
+		to.remove_duplicate_lexemes();
 	}
 
 } /* end ns Conversion */ } /* end ns PlTagger */
