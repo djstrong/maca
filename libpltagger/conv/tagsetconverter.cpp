@@ -27,8 +27,9 @@ namespace PlTagger { namespace Conversion {
 				if (!layers_.empty()
 						&& (trl = dynamic_cast<TagRuleLayer*>(layers_.back()))) {
 					trl->append_rule(v.second);
+				} else {
+					add_layer(new TagRuleLayer(v.second));
 				}
-				add_layer(new TagRuleLayer(v.second));
 			} else if (v.first == "convert") {
 				add_layer(new TagConvertLayer(v.second));
 			} else if (v.first == "join_rule" || v.first == "join") {
@@ -36,8 +37,9 @@ namespace PlTagger { namespace Conversion {
 				if (!layers_.empty()
 						&& (jl = dynamic_cast<JoinLayer*>(layers_.back()))) {
 					jl->append_rule(v.second);
+				} else {
+					add_layer(new JoinLayer(v.second));
 				}
-				add_layer(new JoinLayer(v.second));
 			} else if (v.first == "split") {
 				add_layer(new TwoSplitLayer(v.second));
 			} else if (v.first == "3split") {
