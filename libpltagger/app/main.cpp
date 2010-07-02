@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 	std::string tagset_load, tagset_save;
 	using boost::program_options::value;
 #ifdef HAVE_MORFEUSZ
-	bool morfeusz;
+        bool morfeusz = false;
 #endif
 	boost::program_options::options_description desc("Allowed options");
 	desc.add_options()
@@ -70,8 +70,10 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	boost::shared_ptr<PlTagger::Conversion::TagsetConverter> converter;
-	if (!conv.empty()) {
+	
+        boost::shared_ptr<PlTagger::Conversion::TagsetConverter> converter;
+
+        if (!conv.empty()) {
 		Toki::Config::Node cfg = Toki::Config::from_file(conv);
 		converter.reset(new PlTagger::Conversion::TagsetConverter(cfg));
 	}
