@@ -88,6 +88,7 @@ namespace PlTagger {
 
 		/**
 		 * Tag parsing -- functional version, whole tag string, char* overload.
+		 * TODO explain why needed
 		 *
 		 * A simple wrapper for string split and a call to the split string version.
 		 */
