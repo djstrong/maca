@@ -63,7 +63,7 @@ namespace PlTagger { namespace Conversion {
 			}
 		} else {
 			foreach (Lexeme& lex, t.lexemes()) {
-				lex.tag().pos_id() = second;
+				lex.tag().set_pos_id((pos_idx_t)second);
 			}
 		}
 	}
