@@ -11,7 +11,6 @@ ppr     praep npraep
 acm     congr rec
 agg     nagl agl
 vcl     wok nwok
-tnt     integer frac
 
 [POS]	
 interp
@@ -21,9 +20,9 @@ adj     nmb cas gnd deg
 adja
 adjp
 adv     deg
-num     nmb cas gnd acm
-ppron12 nmb cas gnd per acn
-ppron3  nmb cas gnd per acn ppr
+num     nmb cas gnd [acm]
+ppron12 nmb cas gnd per [acn]
+ppron3  nmb cas gnd per [acn] [ppr]
 siebie  cas
 fin     nmb per asp
 bedzie  nmb per asp
@@ -38,18 +37,11 @@ ger     nmb cas gnd asp ngt
 pact    nmb cas gnd asp ngt
 ppas    nmb cas gnd asp ngt
 winien  nmb gnd asp
-pred   
-prep    cas
+pred
+prep    cas [vcl]
 conj
-qub
+qub     [vcl]
 xxs     nmb cas gnd
 xxx
 ign
-numcol  nmb cas gnd acm
-twf
-tnum    tnt
-tsym
-tdate
-ttime
-turi
-tmail
+numcol  nmb cas gnd [acm]
