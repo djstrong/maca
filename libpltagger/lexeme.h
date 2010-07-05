@@ -48,7 +48,7 @@ namespace PlTagger {
 
 		/**
 		 * Lexeme equality. Lemma and tag must compare equal. Boost template
-		 * magic provides operatpr!=.
+		 * magic provides operator!=.
 		 */
 		bool operator==(const Lexeme& other) const;
 

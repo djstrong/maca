@@ -56,7 +56,6 @@ namespace PlTagger { namespace Conversion {
 		}
 	}
 
-
 	void TagsetConverter::add_layer(Layer* l)
 	{
 		if (!layers_.empty()) {
