@@ -40,8 +40,8 @@ namespace PlTagger { namespace Conversion {
 			foreach (JoinRule& rule, rules_) {
 				Token* joined = rule.try_join(buf_, t);
 				if (joined != NULL) {
-					buf_ = NULL;
-					return joined;
+					buf_ = joined;
+					return get_next_token();
 				}
 			}
 		}
