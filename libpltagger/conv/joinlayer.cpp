@@ -41,7 +41,10 @@ namespace PlTagger { namespace Conversion {
 				Token* joined = rule.try_join(buf_, t);
 				if (joined != NULL) {
 					buf_ = joined;
-					return get_next_token();
+					t = source()->get_next_token();
+					if (t == NULL || t->wa() != Toki::Whitespace::None) {
+						break;
+					}
 				}
 			}
 		}
