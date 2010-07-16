@@ -7,6 +7,12 @@ namespace PlTagger { namespace Conversion {
 	std::vector<attribute_idx_t> make_attribute_list(const Tagset& tagset, const std::string& str)
 	{
 		std::vector<attribute_idx_t> v;
+		append_attribute_list(v, tagset, str);
+		return v;
+	}
+
+	void append_attribute_list(std::vector<attribute_idx_t>& v, const Tagset& tagset, const std::string& str)
+	{
 		string_range_vector srv;
 		boost::algorithm::split(srv, str, boost::is_any_of(": "));
 		foreach (const string_range& sr, srv) {
@@ -19,7 +25,6 @@ namespace PlTagger { namespace Conversion {
 				}
 			}
 		}
-		return v;
 	}
 
 	void copy_attributes(const Tag& from, const std::vector<attribute_idx_t>& alist, Tag& to)
