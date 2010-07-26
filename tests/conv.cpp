@@ -122,7 +122,7 @@ BOOST_FIXTURE_TEST_CASE(join, Fxz)
 	Conversion::JoinRule jr(*tagset1);
 	jr.set_token1_preconditions("P1", UnicodeString::fromUTF8("abcd"));
 	jr.set_token2_preconditions("", UnicodeString::fromUTF8("efg"));
-	jr.set_copy_attrs("C");
+	jr.append_copy_attrs("C");
 	jr.add_postcondition("A");
 
 	std::vector<Token*> tv, tv2;

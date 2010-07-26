@@ -27,7 +27,7 @@ namespace PlTagger { namespace Conversion {
 			} else if (v.first == "t1_post") {
 				add_t1_postcondition(v.second.data());
 			} else if (v.first == "copy_attrs_to_t2") {
-				set_copy_attrs_to_t2(v.second.data());
+				append_copy_attrs_to_t2(v.second.data());
 			} else if (v.first == "t2_lemma") {
 				t2_lexeme_.set_lemma(UnicodeString::fromUTF8(v.second.data()));
 			} else if (v.first == "t2_tag") {
@@ -49,9 +49,9 @@ namespace PlTagger { namespace Conversion {
 		copy_attrs_to_t2_.push_back(a);
 	}
 
-	void TwoSplitLayer::set_copy_attrs_to_t2(const std::string& s)
+	void TwoSplitLayer::append_copy_attrs_to_t2(const std::string& s)
 	{
-		copy_attrs_to_t2_ = make_attribute_list(tagset(), s);
+		append_attribute_list(copy_attrs_to_t2_, tagset(), s);
 	}
 
 	void TwoSplitLayer::add_precondition(const TagPredicate &tp)
@@ -141,7 +141,7 @@ namespace PlTagger { namespace Conversion {
 	{
 		foreach (const Config::Node::value_type &v, cfg) {
 			if (v.first == "copy_attrs_to_t3") {
-				set_copy_attrs_to_t3(v.second.data());
+				append_copy_attrs_to_t3(v.second.data());
 			} else if (v.first == "t3_lemma") {
 				t3_lexeme_.set_lemma(UnicodeString::fromUTF8(v.second.data()));
 			} else if (v.first == "t3_tag") {
@@ -161,9 +161,9 @@ namespace PlTagger { namespace Conversion {
 		copy_attrs_to_t3_.push_back(a);
 	}
 
-	void ThreeSplitLayer::set_copy_attrs_to_t3(const std::string& s)
+	void ThreeSplitLayer::append_copy_attrs_to_t3(const std::string& s)
 	{
-		copy_attrs_to_t3_ = make_attribute_list(tagset(), s);
+		append_attribute_list(copy_attrs_to_t3_, tagset(), s);
 	}
 	
 	void ThreeSplitLayer::set_t3_lexeme(const Lexeme &lex)

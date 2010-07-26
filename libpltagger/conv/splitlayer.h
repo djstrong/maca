@@ -59,7 +59,7 @@ namespace PlTagger { namespace Conversion {
 
 		void add_copy_attr_to_t2(attribute_idx_t a);
 
-		void set_copy_attrs_to_t2(const std::string& a);
+		void append_copy_attrs_to_t2(const std::string& a);
 
 		void set_t2_lexeme(const Lexeme& lex);
 
@@ -102,7 +102,7 @@ namespace PlTagger { namespace Conversion {
 
 		void add_copy_attr_to_t3(attribute_idx_t a);
 
-		void set_copy_attrs_to_t3(const std::string& a);
+		void append_copy_attrs_to_t3(const std::string& a);
 
 		void set_t3_lexeme(const Lexeme& lex);
 

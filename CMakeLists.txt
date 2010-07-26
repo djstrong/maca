@@ -77,4 +77,5 @@ find_package(Boost 1.41 REQUIRED COMPONENTS program_options filesystem regex)
 
 add_subdirectory(libpltagger)
 add_subdirectory(libpltagger/app)
+add_subdirectory(libpltagger/tagset-tool)
 add_subdirectory(tests)

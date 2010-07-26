@@ -27,7 +27,7 @@ namespace PlTagger { namespace Conversion {
 			} else if (v.first == "post") {
 				add_postcondition(v.second.data());
 			} else if (v.first == "copy_attr") {
-				set_copy_attrs(v.second.data());
+				append_copy_attrs(v.second.data());
 			}
 		}
 		set_token1_preconditions(pos1, orth1);
@@ -67,9 +67,9 @@ namespace PlTagger { namespace Conversion {
 		copy_t2_attrs_ = v;
 	}
 
-	void JoinRule::set_copy_attrs(const std::string& names)
+	void JoinRule::append_copy_attrs(const std::string& names)
 	{
-		copy_t2_attrs_ = make_attribute_list(tagset(), names);
+		append_attribute_list(copy_t2_attrs_, tagset(), names);
 	}
 
 	void JoinRule::add_postcondition(const TagPredicate &tp)
