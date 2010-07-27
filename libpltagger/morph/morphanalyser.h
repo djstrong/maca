@@ -49,8 +49,11 @@ namespace PlTagger {
 		 * indicating that the token has not been recognized at all, and more
 		 * than one token meaning that the analyser decided to split the token
 		 * into smaller parts.
+		 *
+		 * Should return true if the sink was called at least once, and false
+		 * of no tokens were output.
 		 */
-		virtual void process_functional(const Toki::Token &t, boost::function<void (Token*)> sink) = 0;
+		virtual bool process_functional(const Toki::Token &t, boost::function<void (Token*)> sink) = 0;
 
 		/// Tagset accesor
 		const Tagset& tagset() const {

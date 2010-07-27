@@ -25,7 +25,7 @@ namespace PlTagger {
 		explicit ConstAnalyser(const Config::Node& cfg);
 
 		/// MapAnalyser override
-		void process_functional(const Toki::Token &t, boost::function<void (Token*)> sink);
+		bool process_functional(const Toki::Token &t, boost::function<void (Token*)> sink);
 	private:
 		Tag tag_;
 	};

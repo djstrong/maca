@@ -32,7 +32,7 @@ namespace PlTagger {
 		void load_m_dictionary(const std::string& fn);
 
 		/// MorphAnalyser override
-		void process_functional(const Toki::Token &t, boost::function<void (Token*)> sink);
+		bool process_functional(const Toki::Token &t, boost::function<void (Token*)> sink);
 
 	private:
 		/// the orth to analysis map
@@ -80,7 +80,7 @@ namespace PlTagger {
 	}
 
 	template<typename MapT>
-	void MapAnalyser<MapT>::process_functional(const Toki::Token &t, boost::function<void (Token*)> sink)
+	bool MapAnalyser<MapT>::process_functional(const Toki::Token &t, boost::function<void (Token*)> sink)
 	{
 		typename MapT::const_iterator i;
 		i = map_.find(t.orth_utf8());
@@ -88,6 +88,9 @@ namespace PlTagger {
 			Token* tt = new Token(t);
 			tt->add_lexeme(i->second);
 			sink(tt);
+			return true;
+		} else {
+			return false;
 		}
 	}
 

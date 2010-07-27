@@ -44,7 +44,7 @@ namespace PlTagger {
 		~SfstAnalyser();
 
 		/// MorphAnalyser override
-		void process_functional(const Toki::Token& t, boost::function<void (Token*)> sink);
+		bool process_functional(const Toki::Token& t, boost::function<void (Token*)> sink);
 
 		/// helper function for interfacing with the transducer output
 		static std::string unescape_analysis(const std::string& sfst_analysis);

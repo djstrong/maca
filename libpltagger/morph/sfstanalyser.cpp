@@ -48,18 +48,23 @@ namespace PlTagger {
 		fclose(f);
 	}
 
-	void SfstAnalyser::process_functional(const Toki::Token &t, boost::function<void (Token*)> sink)
+	bool SfstAnalyser::process_functional(const Toki::Token &t, boost::function<void (Token*)> sink)
 	{
 		std::vector< CAnalysis > a;
 		std::string s = t.orth_utf8();
 		ct_->analyze_string(const_cast<char*>(s.c_str()), a);
-		Token* tt = new Token(t);
-		foreach (CAnalysis& ca, a) {
-			//std::cout << s << "\t" <<<  unescape_analysis(ct_->print_analysis(ca)) << "\n";
-			split_analysis_into(unescape_analysis((ct_->print_analysis(ca))),
-				tt->lexemes(), tagset());
+		if (a.empty()) {
+			return false;
+		} else {
+			Token* tt = new Token(t);
+			foreach (CAnalysis& ca, a) {
+				//std::cout << s << "\t" <<<  unescape_analysis(ct_->print_analysis(ca)) << "\n";
+				split_analysis_into(unescape_analysis((ct_->print_analysis(ca))),
+					tt->lexemes(), tagset());
+			}
+			sink(tt);
+			return true;
 		}
-		sink(tt);
 	}
 
 	std::string SfstAnalyser::unescape_analysis(const std::string &sfst_analysis)

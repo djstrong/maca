@@ -7,6 +7,8 @@
 
 namespace PlTagger {
 
+	MorphAnalyser* make_analyser(const Config::Node& cfg);
+
 	MorphAnalyser* create_analyser(const Config::Node& cfg);
 
 } /* end ns PlTagger */

@@ -22,13 +22,16 @@
 #include <libpltagger/tagsetparser.h>
 #include <libpltagger/conv/tagsetconverter.h>
 
+#include <libpltagger/io/plain.h>
+#include <libpltagger/io/xces.h>
+
 #include <libpltagger/debug.h>
 #include <fstream>
 
 int main(int argc, char** argv)
 {
 	std::string sfst, mdict, conv, cfg_analyser;
-	std::string tagset_load, tagset_save;
+	std::string tagset_load;
 	using boost::program_options::value;
 #ifdef HAVE_MORFEUSZ
         bool morfeusz = false;
@@ -51,8 +54,6 @@ int main(int argc, char** argv)
 			 "Tagset conversion testing\n")
 			("analyser,a", value(&cfg_analyser),
 			 "Analyser config file\n")
-			("save-tagset", value(&tagset_save),
-			 "Path to tagset ini file to save\n")
 			("help,h", "Show help")
 			;
 	boost::program_options::variables_map vm;
@@ -117,21 +118,6 @@ int main(int argc, char** argv)
 				std::cerr << e.info() << "\n";
 				exit(1);
 			}
-			std::cerr << "Tagset loaded: "
-				<< tagset->pos_dictionary().size() << " POSes, "
-				<< tagset->attribute_dictionary().size() << " attributes, "
-				<< tagset->value_dictionary().size() << " values\n";
-			std::cerr << "Size is " << tagset->size()
-				<< " (extra size is " << tagset->size_extra() << ")\n";
-			//std::cerr << "POSes: ";
-			//foreach (const std::string& s, tagset->pos_dictionary()) {
-			//	std::cerr << s << " ";
-			//}
-
-			if (!tagset_save.empty()) {
-				std::ofstream ofs(tagset_save.c_str());
-				PlTagger::TagsetParser::save_ini(*tagset, ofs);
-			}
 		} else {
 			std::cerr << "tagset file open error\n";
 			return 7;
@@ -164,18 +150,13 @@ int main(int argc, char** argv)
 	}
 
 	if (ma) {
+		PlTagger::XcesWriter pw(std::cout, ma->tagset());
 		while (std::cin.good()) {
 			std::string s;
 			std::cin >> s;
 			Toki::Token t(s.c_str(), "t", Toki::Whitespace::None);
 			std::vector<PlTagger::Token*> tv = ma->process(t);
-			foreach (PlTagger::Token* tt, tv) {
-				if (tt != tv[0]) {
-					std::cout << "---\n";
-				}
-				PlTagger::token_output(ma->tagset(), std::cout, tt);
-				std::cout << "\n";
-			}
+			pw.write_sentence(tv);
 		}
 	} else {
 		std::cerr << "Nothing to do! Try --help.\n";

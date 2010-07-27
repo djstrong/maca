@@ -54,7 +54,7 @@ namespace PlTagger {
 		MorfeuszAnalyser(const Config::Node& cfg);
 
 		/// MorphAnalyser override
-		void process_functional(const Toki::Token &t, boost::function<void(Token *)>sink);
+		bool process_functional(const Toki::Token &t, boost::function<void(Token *)>sink);
 
 		/// helper to create a token from a Morfeusz interpretation struct
 		Token* make_token(const Toki::Token& t, InterpMorf* im) const;

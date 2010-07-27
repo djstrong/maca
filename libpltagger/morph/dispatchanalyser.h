@@ -22,7 +22,7 @@ namespace PlTagger {
 		~DispatchAnalyser();
 
 		/// MorphAnalyser override
-		void process_functional(const Toki::Token &t, boost::function<void (Token*)> sink);
+		bool process_functional(const Toki::Token &t, boost::function<void (Token*)> sink);
 
 		/**
 		 * Handler adding function. The passed analyser should have the same
@@ -31,25 +31,25 @@ namespace PlTagger {
 		 */
 		void add_type_handler(const std::string& type,  MorphAnalyser* a);
 
-		/// setter for the default analyser, used when no analyser matches
+		/// adder for the default analyser list, used when no analyser matches
 		/// the Toki token type
-		void set_default_handler(MorphAnalyser* a);
+		void add_default_handler(MorphAnalyser* a);
 
-		/// getter for the default handler
-		MorphAnalyser* default_handler();
+		/// getter for the default handlers size
+		size_t default_handlers_count() const;
 
 		/// getter for the number of handlers
 		size_t handler_count() const;
 
 	private:
 		/// the toki type -> analyser map
-		std::map<std::string, MorphAnalyser*> type_handlers_;
+		std::map<std::string, std::vector<MorphAnalyser*> > type_handlers_;
 
 		/// the set of analysers this DispatchAnalyser owns
 		std::set<MorphAnalyser*> analysers_;
 
 		/// the default analyser
-		MorphAnalyser* default_;
+		std::vector<MorphAnalyser*> default_;
 	};
 
 } /* end ns PlTagger */

@@ -4,7 +4,7 @@
 namespace PlTagger {
 
 	DispatchAnalyser::DispatchAnalyser(const Tagset* tagset)
-		: MorphAnalyser(tagset), type_handlers_(), analysers_(), default_(NULL)
+		: MorphAnalyser(tagset), type_handlers_(), analysers_(), default_()
 	{
 	}
 
@@ -19,30 +19,33 @@ namespace PlTagger {
 	{
 		if (a->tagset().id() != tagset().id()) throw TagsetMismatch("dispatch analyser handler", tagset(), a->tagset());
 		analysers_.insert(a);
-		type_handlers_.insert(std::make_pair(type, a));
+		type_handlers_[type].push_back(a);
 	}
 
-	void DispatchAnalyser::process_functional(const Toki::Token &t, boost::function<void (Token*)> sink)
+	bool DispatchAnalyser::process_functional(const Toki::Token &t, boost::function<void (Token*)> sink)
 	{
-		std::map<std::string, MorphAnalyser*>::const_iterator i;
+		std::map<std::string, std::vector<MorphAnalyser*> >::const_iterator i;
 		i = type_handlers_.find(t.type());
+		const std::vector<MorphAnalyser*>* v = &default_;
 		if (i != type_handlers_.end()) {
-			i->second->process_functional(t, sink);
-		} else {
-			if (default_) {
-				default_->process_functional(t, sink);
+			v = &i->second;
+		}
+		foreach (MorphAnalyser* ma, *v) {
+			if (ma->process_functional(t, sink)) {
+				return true;
 			}
 		}
+		return false;
 	}
 
-	void DispatchAnalyser::set_default_handler(MorphAnalyser* a)
+	void DispatchAnalyser::add_default_handler(MorphAnalyser* a)
 	{
-		default_ = a;
+		default_.push_back(a);
 	}
 
-	MorphAnalyser* DispatchAnalyser::default_handler()
+	size_t DispatchAnalyser::default_handlers_count() const
 	{
-		return default_;
+		return default_.size();
 	}
 
 	size_t DispatchAnalyser::handler_count() const

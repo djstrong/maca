@@ -53,12 +53,12 @@ namespace PlTagger {
 		morfeusz_set_option(MORFOPT_ENCODING, MORFEUSZ_UTF_8);
 	}
 
-	void MorfeuszAnalyser::process_functional(const Toki::Token &t, boost::function<void(Token *)>sink)
+	bool MorfeuszAnalyser::process_functional(const Toki::Token &t, boost::function<void(Token *)>sink)
 	{
 		std::string s = t.orth_utf8();
 		InterpMorf *pmorf = morfeusz_analyse(const_cast<char*>(s.c_str()));
 		if (pmorf[0].p == -1) { // no analyses
-			return;
+			return false;
 		} else if (pmorf[1].p == -1) { // only one analysis
 			std::vector<Token*> vec;
 			vec.push_back(make_token(t, pmorf));
@@ -152,6 +152,7 @@ namespace PlTagger {
 				flush_convert(unambiguous, sink);
 			}
 		}
+		return true;
 	}
 
 	Token* MorfeuszAnalyser::make_token(const Toki::Token& t, InterpMorf *im) const

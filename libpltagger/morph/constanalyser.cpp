@@ -20,11 +20,12 @@ namespace PlTagger {
 		tag_ = tagset().parse_simple_tag(tag_string, false);
 	}
 
-	void ConstAnalyser::process_functional(const Toki::Token &t, boost::function<void (Token*)> sink)
+	bool ConstAnalyser::process_functional(const Toki::Token &t, boost::function<void (Token*)> sink)
 	{
 		Token* tt = new Token(t);
 		tt->add_lexeme(Lexeme(tt->orth(), tag_));
 		sink(tt);
+		return true;
 	}
 
 } /* end ns PlTagger */
