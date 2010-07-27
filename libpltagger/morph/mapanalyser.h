@@ -70,11 +70,14 @@ namespace PlTagger {
 			//std::vector< boost::iterator_range<const char*> > v;
 			//std::string b(buf);
 			std::vector< std::string > v;
-			boost::iterator_range<const char*> r(buf, buf + ifs.gcount());
+			if (ifs.gcount() > 2) {
+			string_range r(buf, buf + ifs.gcount() - 1);
 			boost::algorithm::split(v, r, boost::is_any_of("\t"));
 			if (v.size() == 3) {
-				Lexeme lex(UnicodeString::fromUTF8(v[1]), Tagset().parse_simple_tag(v[2], false));
+				std::cerr << v[2] << "!!" << v[2].size();
+				Lexeme lex(UnicodeString::fromUTF8(v[1]), tagset().parse_simple_tag(v[2], false));
 				map_.insert(std::make_pair(v[0], lex));
+			}
 			}
 		}
 	}
