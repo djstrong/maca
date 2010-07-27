@@ -15,6 +15,7 @@
 int main(int argc, char** argv)
 {
 	std::string tagset_load, tagset_save;
+	bool quiet = false;
 	using boost::program_options::value;
 
 	boost::program_options::options_description desc("Allowed options");
@@ -23,12 +24,18 @@ int main(int argc, char** argv)
 			 "Path to tagset ini file to load\n")
 			("save-tagset,s", value(&tagset_save),
 			 "Path to tagset ini file to save\n")
+			("quiet,q", value(&quiet)->zero_tokens(),
+			 "Suppress startup info when loading a tagset\n")
 			("help,h", "Show help")
 			;
 	boost::program_options::variables_map vm;
+	boost::program_options::positional_options_description p;
+	p.add("tagset", -1);
 
 	try {
-		boost::program_options::store(boost::program_options::command_line_parser(argc, argv).options(desc).run(), vm);
+		boost::program_options::store(
+			boost::program_options::command_line_parser(argc, argv)
+			.options(desc).positional(p).run(), vm);
 	} catch (boost::program_options::error& e) {
 		std::cerr << e.what() << "\n";
 		return 2;
@@ -50,23 +57,29 @@ int main(int argc, char** argv)
 				std::cerr << e.info() << "\n";
 				exit(1);
 			}
-			std::cerr << "Tagset loaded: "
-				<< tagset->pos_dictionary().size() << " POSes, "
-				<< tagset->attribute_dictionary().size() << " attributes, "
-				<< tagset->value_dictionary().size() << " values\n";
-			std::cerr << "Size is " << tagset->size()
-				<< " (extra size is " << tagset->size_extra() << ")\n";
-			std::cerr << "POSes: ";
-			foreach (const std::string& s, tagset->pos_dictionary()) {
-				std::cerr << s << " ";
+			if (!quiet) {
+				std::cerr << "Tagset loaded: "
+					<< tagset->pos_dictionary().size() << " POSes, "
+					<< tagset->attribute_dictionary().size() << " attributes, "
+					<< tagset->value_dictionary().size() << " values\n";
+				std::cerr << "Size is " << tagset->size()
+					<< " (extra size is " << tagset->size_extra() << ")\n";
+				std::cerr << "POSes: ";
+				foreach (const std::string& s, tagset->pos_dictionary()) {
+					std::cerr << s << " ";
+				}
+				std::cerr << "\n";
 			}
-			std::cerr << "\n";
 
 			if (!tagset_save.empty()) {
 				std::ofstream ofs(tagset_save.c_str());
-				std::cerr << "Saving tagset to " << tagset_save << " ... ";
+				if (!quiet) {
+					std::cerr << "Saving tagset to " << tagset_save << " ... ";
+				}
 				PlTagger::TagsetParser::save_ini(*tagset, ofs);
-				std::cerr << "ok\n";
+				if (!quiet) {
+					std::cerr << "ok\n";
+				}
 			}
 
 			while (std::cin.good()) {
@@ -130,7 +143,8 @@ int main(int argc, char** argv)
 			return 7;
 		}
 	} else {
-		std::cerr << "Nothing to do!\n";
+		std::cerr << "Usage: tagset-tool [OPTIONS] <tagset-file>\n";
+		std::cerr << "See tagset-tool --help\n";
 		return 1;
 	}
 	return 0;
