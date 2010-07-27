@@ -39,6 +39,7 @@ SET(libpltagger_STAT_SRC
     conv/tagsetconverter.cpp
     debug.cpp
     exception.cpp
+    io/plain.cpp
     io/xces.cpp
     lexeme.cpp
     main.cpp
