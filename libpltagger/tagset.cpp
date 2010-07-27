@@ -155,7 +155,7 @@ namespace PlTagger {
 		if (ts.empty()) throw TagParseError("Empty POS+attribute list");
 		pos_idx_t pos_id = pos_dict_.get_id(ts[0]);
 		if (!pos_dict_.is_id_valid(pos_id)) {
-			throw TagParseError("Invalid POS: " + boost::copy_range<std::string>(ts[0]));
+			throw TagParseError("Invalid POS: [" + boost::copy_range<std::string>(ts[0]) + "]");
 		}
 		const std::vector<bool>& valid_attrs_mask = get_pos_valid_attributes(pos_id);
 
