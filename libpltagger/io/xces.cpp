@@ -121,7 +121,19 @@ namespace PlTagger {
 	{
 		xmlpp::DomParser dom;
 		dom.set_substitute_entities();
-		dom.parse_stream(is);
+		try {
+			dom.parse_stream(is);
+		} catch (xmlpp::parse_error& e) {
+			std::stringstream ss;
+			ss << "XCES XML parse error : " << e.what();
+			if (e.what() == std::string("libxml error 201")) {
+				ss << " (maybe the XML is missing a "
+					<< "xmlns:xlink=\"http://www.w3.org/1999/xlink\""
+					<< " in the root node?)";
+			}
+			throw PlTaggerError(ss.str());
+		}
+
 		if (dom) {
 			const xmlpp::Node* root = dom.get_document()->get_root_node();
 			if (!root) throw PlTaggerError("no root");
