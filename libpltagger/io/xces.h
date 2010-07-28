@@ -1,54 +1,58 @@
 #ifndef LIBPLTAGGER_IO_XCES_H
 #define LIBPLTAGGER_IO_XCES_H
 
-#include <libpltagger/token.h>
+#include <libpltagger/io/reader.h>
+#include <libpltagger/io/writer.h>
 
+#include <deque>
+
+namespace xmlpp {
+	class Node;
+}
 namespace PlTagger {
 
-	class XcesWriter {
+	class XcesWriter : public TokenWriter {
 	public:
 
 		XcesWriter(std::ostream& os, const Tagset& tagset);
 
 		~XcesWriter();
 
-		/// Output the footer string.
-		/// Optional, the destructor calls this if necessary.
-		void finish();
-
-		/// Output the footer if needed and start off a new document header
-		void reset();
-
 		void write_sentence(const std::vector<Token*>& v);
 
 		void write_paragraph(const std::vector< std::vector<Token*> >& v);
 
-	private:
-		void iwrite(const std::string& s);
+	protected:
+		void do_header();
 
-		void indent();
+		void do_footer();
 
-		void header();
+		void do_token(const Token& t);
 
-		void footer();
-
-		void token(const Token& t);
-
-		void sentence(const std::vector<Token*>& v);
+		void do_sentence(const std::vector<Token*>& v);
 
 		void paragraph_head();
 
-		void paragraph(const std::vector< std::vector<Token*> >& v);
-
-		std::ostream& os_;
-
-		const Tagset& tagset_;
-
-		bool needs_footer_;
-
-		int indent_;
+		void do_paragraph(const std::vector< std::vector<Token*> >& v);
 
 		int cid_;
+	};
+
+
+
+	class XcesReader : public TokenReader
+	{
+	public:
+		XcesReader(std::istream& is, const Tagset& tagset);
+
+		~XcesReader();
+
+		Token* token_from_tok_node(const xmlpp::Node* n);
+
+		std::vector< std::vector<Token*> > read_paragraph();
+
+	protected:
+		std::deque< std::vector< std::vector< Token* > > > paragraphs_;
 	};
 
 } /* end ns PlTagger */

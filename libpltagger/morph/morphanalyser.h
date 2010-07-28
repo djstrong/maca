@@ -40,6 +40,16 @@ namespace PlTagger {
 		/// and insert the resulting tagger tokens into the given vector.
 		void process(const Toki::Token &t, std::vector<Token*>& vec);
 
+		/// Convenience process_functional wrapper to process a vector of Toki
+		/// tokens and return a vector of tagger tokens. The toki tokens are
+		/// deleted.
+		std::vector<Token*> process_dispose(const std::vector<Toki::Token*>& t);
+
+		/// Convenience process_functional wrapper to process a vector of Toki
+		/// tokens and insert the resulting tagger tokens into the given
+		/// vector. The toki tokens are deleted.
+		void process_dispose(const std::vector<Toki::Token*>& t, std::vector<Token*>& v);
+
 		/**
 		 * The main token analysis function to be implemented in derived
 		 * classes. Takes a Toki token and feeds the resulting tagger tokens
@@ -54,6 +64,16 @@ namespace PlTagger {
 		 * of no tokens were output.
 		 */
 		virtual bool process_functional(const Toki::Token &t, boost::function<void (Token*)> sink) = 0;
+
+		/**
+		 * Convenience function to call process_functional and then dispose of
+		 * the incoming Toki tokens.
+		 */
+		bool process_functional_dispose(const Toki::Token *t, boost::function<void (Token*)> sink) {
+			bool rv = process_functional(*t, sink);
+			delete t;
+			return rv;
+		}
 
 		/// Tagset accesor
 		const Tagset& tagset() const {

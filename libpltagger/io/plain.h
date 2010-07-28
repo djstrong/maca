@@ -1,22 +1,22 @@
 #ifndef LIBPLTAGGER_IO_PLAIN_H
 #define LIBPLTAGGER_IO_PLAIN_H
 
-#include <libpltagger/token.h>
+#include <libpltagger/io/reader.h>
+#include <libpltagger/io/writer.h>
 
 namespace PlTagger {
 
-	class PlainWriter
+	class PlainWriter : public TokenWriter
 	{
 	public:
 		PlainWriter(std::ostream& os, const Tagset& tagset);
 
-		void write_token(const Token& t);
+	protected:
+		void do_token(const Token& t);
 
-		void write_sentence(const std::vector<Token*>& t);
-	private:
-		std::ostream& os_;
+		void do_sentence(const std::vector<Token*>& t);
 
-		const Tagset& tagset_;
+		void do_paragraph(const std::vector< std::vector<Token *> >& t);
 	};
 
 	class PlainReader

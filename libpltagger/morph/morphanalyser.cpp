@@ -53,4 +53,19 @@ namespace PlTagger {
 		//tagset().parse_tag(tag, false, func);
 	}
 
+	std::vector<Token*> MorphAnalyser::process_dispose(const std::vector<Toki::Token*>& t)
+	{
+		std::vector<Token*> v;
+		process_dispose(t, v);
+		return v;
+	}
+
+	void MorphAnalyser::process_dispose(const std::vector<Toki::Token*>& t, std::vector<Token*>& v)
+	{
+		foreach (Toki::Token* tt, t) {
+			process(*tt, v);
+			delete tt;
+		}
+	}
+
 } /* end ns PlTagger */

@@ -40,6 +40,8 @@ SET(libpltagger_STAT_SRC
     debug.cpp
     exception.cpp
     io/plain.cpp
+    io/reader.cpp
+    io/writer.cpp
     io/xces.cpp
     lexeme.cpp
     main.cpp

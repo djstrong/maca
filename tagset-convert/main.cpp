@@ -4,7 +4,10 @@
 #include <libpltagger/conv/tagsetconverter.h>
 #include <libpltagger/debug.h>
 #include <libpltagger/settings.h>
+#include <libpltagger/tagsetmanager.h>
 #include <libpltagger/tagsetparser.h>
+
+#include <libpltagger/io/xces.h>
 
 #include <libtoki/foreach.h>
 
@@ -49,7 +52,13 @@ int main(int argc, char** argv)
 		std::cout << desc << "\n";
 		return 1;
 	}
+
+
 	if (!converter.empty()) {
+		const PlTagger::Tagset& tagset = PlTagger::get_named_tagset(converter);
+		PlTagger::XcesReader reader(std::cin, tagset);
+		PlTagger::XcesWriter writer(std::cout, tagset);
+		writer.write_paragraph(reader.read_paragraph());
 	} else {
 		std::cerr << "Usage: tagset-convert [OPTIONS] <converter>\n";
 		std::cerr << "See tagset-convert --help\n";

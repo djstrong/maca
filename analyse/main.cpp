@@ -6,7 +6,14 @@
 #include <libpltagger/settings.h>
 #include <libpltagger/tagsetparser.h>
 
+#include <libpltagger/io/plain.h>
+#include <libpltagger/io/xces.h>
+#include <libpltagger/morph/morphanalyser.h>
+#include <libpltagger/morph/creator.h>
+
 #include <libtoki/foreach.h>
+#include <libtoki/layertokenizer.h>
+#include <libtoki/sentencesplitter.h>
 
 #include <boost/program_options.hpp>
 
@@ -52,6 +59,28 @@ int main(int argc, char** argv)
 		return 1;
 	}
 	if (!config.empty()) {
+		std::ifstream ifs;
+		if (!PlTagger::open_file_from_search_path(config, ifs)) {
+			std::cerr << "Config file open error\n";
+			return 8;
+		}
+		Toki::Config::Node cfg = Toki::Config::from_stream(ifs);
+		boost::shared_ptr<PlTagger::MorphAnalyser> ma(PlTagger::create_analyser(cfg));
+		const Toki::Config::Node& conf = toki_config.empty() ?
+			Toki::Config::default_config() :
+			Toki::Config::from_file(toki_config);
+		Toki::LayerTokenizer tok(conf);
+		tok.set_input_source(std::cin);
+		Toki::SentenceSplitter sen(tok);
+		PlTagger::PlainWriter pw(std::cout, ma->tagset());
+
+		while (sen.has_more()) {
+			std::vector<Toki::Token*> sentence = sen.get_next_sentence();
+			assert(!sentence.empty());
+			std::vector<PlTagger::Token*> analysed_sentence = ma->process_dispose(sentence);
+			pw.write_sentence(analysed_sentence);
+		}
+
 	} else {
 		std::cerr << "Usage: tagset-tool [OPTIONS] <tagset-file>\n";
 		std::cerr << "See tagset-tool --help\n";
