@@ -6,12 +6,10 @@ namespace PlTagger {
 	TokenWriter::TokenWriter(std::ostream& os, const Tagset& tagset)
 		: os_(os), tagset_(tagset), needs_footer_(true), indent_(0)
 	{
-		do_header();
 	}
 
 	TokenWriter::~TokenWriter()
 	{
-		finish();
 	}
 
 	void TokenWriter::finish()

@@ -9,10 +9,12 @@ namespace PlTagger {
 	XcesWriter::XcesWriter(std::ostream& os, const Tagset& tagset)
 		: TokenWriter(os, tagset), cid_(0)
 	{
+		do_header();
 	}
 
 	XcesWriter::~XcesWriter()
 	{
+		finish();
 	}
 
 	void XcesWriter::write_sentence(const std::vector<Token *>& v)
