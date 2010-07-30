@@ -51,6 +51,9 @@ namespace PlTagger {
 
 	void XcesWriter::do_token(const Token &t)
 	{
+		if (t.wa() == Toki::Whitespace::None) {
+			osi() << "<ns/>\n";
+		}
 		osi() << "<tok>\n";
 		indent_more();
 		osi() << "<orth>" << t.orth_utf8() << "</orth>\n";
