@@ -131,7 +131,6 @@ namespace PlTagger { namespace Conversion {
 				if (colon != std::string::npos) {
 					std::string o_from = o.substr(0, colon);
 					std::string o_to = o.substr(colon + 1);
-					std::cerr << "Overriding '" << o_from << "' with '" << o_to << "'\n";
 					tc_.add_override(o_from, o_to);
 				}
 			}
