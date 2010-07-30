@@ -158,7 +158,7 @@ namespace PlTagger {
 	Token* MorfeuszAnalyser::make_token(const Toki::Token& t, InterpMorf *im) const
 	{
 		Token* tt = new Token();
-		if (im->p > 0) {
+		if (im->p == 0) {
 			tt->set_wa(t.preceeding_whitespace());
 		} else {
 			tt->set_wa(Toki::Whitespace::None);
