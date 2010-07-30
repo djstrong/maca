@@ -72,7 +72,7 @@ int main(int argc, char** argv)
 		Toki::LayerTokenizer tok(conf);
 		tok.set_input_source(std::cin);
 		Toki::SentenceSplitter sen(tok);
-		PlTagger::PlainWriter pw(std::cout, ma->tagset());
+		PlTagger::XcesWriter pw(std::cout, ma->tagset());
 
 		while (sen.has_more()) {
 			std::vector<Toki::Token*> sentence = sen.get_next_sentence();
