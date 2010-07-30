@@ -10,6 +10,9 @@ tab-to-sfst.py: convert whitespace-delimited data file to SFST format.
 Lines in the input file are expected to be in the following format:
 orth	lemma	tag
 
+The output file is usable by fst_compile -c, the output of which
+can be used as a morphology analyser module.
+
 Usage: tab-to-sfst.py infile outfile
 
 Progress info is output to stdout every 1000 lines processed.
