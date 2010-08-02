@@ -1,6 +1,7 @@
 #include <libpltagger/exception.h>
 #include <libpltagger/tagset.h>
 #include <libpltagger/lexeme.h>
+#include <libpltagger/token.h>
 #include <libpltagger/settings.h>
 #include <libpltagger/tagsetparser.h>
 
@@ -359,6 +360,22 @@ namespace PlTagger {
 		}
 		vs *= pos_dict_.size();
 		return vs;
+	}
+
+	void Tagset::lexemes_into_token(Token& tok, const UnicodeString& lemma, const string_range& tags) const
+	{
+		string_range_vector options;
+		boost::algorithm::split(options, tags, boost::is_any_of("+|"));
+
+		boost::function<Lexeme (const Tag&)> lex;
+		lex = boost::bind(&Lexeme::create, boost::cref(lemma), _1);
+
+		boost::function<void (const Tag&)> func;
+		func = boost::bind(&Token::add_lexeme, boost::ref(tok), boost::bind(lex, _1));
+
+		foreach (const string_range& o, options) {
+			parse_tag(o, true, func);
+		}
 	}
 
 } /* end ns PlTagger */

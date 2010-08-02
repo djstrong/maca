@@ -14,6 +14,8 @@
 #include <libpltagger/symboldictionary.h>
 #include <libpltagger/typedefs.h>
 
+#include <unicode/unistr.h>
+
 namespace PlTagger {
 
 	/**
@@ -53,6 +55,8 @@ namespace PlTagger {
 	};
 
 	class TagsetParser;
+
+	class Token;
 
 	/**
 	 * A tagset is the set of possible tags, the Tagset class also contains the
@@ -264,6 +268,24 @@ namespace PlTagger {
 
 		/// Return a pretty name/id string for the tagset and a tag
 		std::string id_string(const Tag& tag) const;
+
+		/**
+		 * Convenience function for the case when there is a lemma and a
+		 * possibly complex tag string and we want to add the resulting lexemes
+		 * into a token by parsing the tag string and creating one lexeme for
+		 * every separate tag, all with the same lemma.
+		 *
+		 * The new lexemes are appended, duplicates are not checked.
+		 */
+		void lexemes_into_token(Token& tok, const UnicodeString& lemma, const string_range& tags) const;
+
+		/**
+		 * Convenience overload
+		 */
+		void lexemes_into_token(Token& tok, const std::string& lemma, const string_range& tags) const {
+			UnicodeString u = UnicodeString::fromUTF8(lemma);
+			lexemes_into_token(tok, u, tags);
+		}
 
 	private:
 		/// Temporary solution to allow splitting the parser into a separate class

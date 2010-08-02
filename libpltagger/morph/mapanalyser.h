@@ -2,7 +2,9 @@
 #define LIBPLTAGGER_MAPANALYSER_H
 
 #include <libpltagger/morph/morphanalyser.h>
+
 #include <libtoki/confignode.h>
+#include <libtoki/foreach.h>
 
 #include <boost/unordered_map.hpp>
 #include <fstream>
@@ -40,10 +42,20 @@ namespace PlTagger {
 	};
 
 	/// typedef for a tree-map (std::map) analyser
-	typedef MapAnalyser< std::map< std::string, Lexeme > > StdMapAnalyser;
+	typedef MapAnalyser<
+		std::map<
+			std::string,
+			std::vector< std::pair<std::string, std::string> >
+		>
+	> StdMapAnalyser;
 
 	/// typedef for a hashmap (std::unordered_map) analyser
-	typedef MapAnalyser< boost::unordered_map< std::string, Lexeme > > HashMapAnalyser;
+	typedef MapAnalyser<
+		boost::unordered_map<
+			std::string,
+			std::vector< std::pair<std::string, std::string> >
+		>
+	> HashMapAnalyser;
 
 /* implementation */
 
@@ -64,19 +76,26 @@ namespace PlTagger {
 	void MapAnalyser<MapT>::load_m_dictionary(const std::string &fn)
 	{
 		std::ifstream ifs(fn.c_str());
-		char buf[2001];
+		static const size_t BUFSIZE = 2000;
+		char buf[BUFSIZE + 1];
 		while (ifs.good()) {
-			ifs.getline(buf, 2000);
+			ifs.getline(buf, BUFSIZE);
 			//std::vector< boost::iterator_range<const char*> > v;
 			//std::string b(buf);
-			std::vector< std::string > v;
-			if (ifs.gcount() > 2) {
-			string_range r(buf, buf + ifs.gcount() - 1);
-			boost::algorithm::split(v, r, boost::is_any_of("\t"));
-			if (v.size() == 3) {
-				Lexeme lex(UnicodeString::fromUTF8(v[1]), tagset().parse_simple_tag(v[2], false));
-				map_.insert(std::make_pair(v[0], lex));
+			size_t len = ifs.gcount();
+			size_t i = 0;
+			while (i < BUFSIZE && (buf[i] == ' ' || buf[i] == '\t')) {
+				++i;
 			}
+			if (i + 1 < len) {
+				std::vector< std::string > v;
+				string_range r(buf + i, buf + len - 1); // do not include the trailing null
+				boost::algorithm::split(v, r, boost::is_any_of("\t "), boost::algorithm::token_compress_on);
+				if (v.size() == 3) {
+					map_[v[0]].push_back(std::make_pair(v[1], v[2]));
+				} else {
+					std::cerr << "Invalid map line (" << v.size() << "): " << buf << "\n";
+				}
 			}
 		}
 	}
@@ -88,7 +107,10 @@ namespace PlTagger {
 		i = map_.find(t.orth_utf8());
 		if (i != map_.end()) {
 			Token* tt = new Token(t);
-			tt->add_lexeme(i->second);
+			typedef std::pair<std::string, std::string> sp;
+			foreach (const sp& o, i->second) {
+				tagset().lexemes_into_token(*tt, o.first, o.second);
+			}
 			sink(tt);
 			return true;
 		} else {

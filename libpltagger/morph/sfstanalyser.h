@@ -49,10 +49,6 @@ namespace PlTagger {
 		/// helper function for interfacing with the transducer output
 		static std::string unescape_analysis(const std::string& sfst_analysis);
 
-		/// helper function for interfacing with the transducer output
-		static void split_analysis_into(const std::string &sfst_analysis,
-				std::vector<Lexeme>& lv, const Tagset& tagset);
-
 	private:
 		/// convenience function for loading a transducer file
 		void open_transducer(const std::string& filename);
