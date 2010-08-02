@@ -39,7 +39,9 @@ namespace PlTagger {
 	{
 		os() << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 		os() << "<!DOCTYPE cesAna SYSTEM \"xcesAnaIPI.dtd\">\n";
-		os() << "<cesAna xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.0\" type=\"lex disamb\">\n";
+		os() << "<cesAna";
+		//os() << " xmlns:xlink=\"http://www.w3.org/1999/xlink\"";
+		os() << " version=\"1.0\" type=\"lex disamb\">\n";
 		os() << "<chunkList>\n";
 	}
 
@@ -86,7 +88,7 @@ namespace PlTagger {
 	void XcesWriter::paragraph_head()
 	{
 		osi() << "<chunk id=\"ch" << ++cid_ << "\""
-			<< " xlink:href=\"unknown\" type=\"tok\">\n";
+			<< " type=\"tok\">\n";
 	}
 
 
