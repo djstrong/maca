@@ -19,11 +19,7 @@ namespace PlTagger {
 
 	void XcesWriter::write_sentence(const std::vector<Token *>& v)
 	{
-		paragraph_head();
-		indent_more();
 		do_sentence(v);
-		indent_less();
-		osi() << "</chunk>\n";
 	}
 
 	void XcesWriter::write_paragraph(const std::vector<std::vector<Token *> > &v)
