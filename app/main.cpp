@@ -10,7 +10,7 @@
 #endif
 
 #include <libpltagger/morph/mapanalyser.h>
-#include <libpltagger/morph/creator.h>
+#include <libpltagger/morph/dispatchanalyser.h>
 
 #include <iostream>
 #include <boost/algorithm/string.hpp>
@@ -145,7 +145,7 @@ int main(int argc, char** argv)
 		std::ifstream ifs;
 		if (PlTagger::open_file_from_search_path(cfg_analyser, ifs)) {
 			Toki::Config::Node cfg = Toki::Config::from_stream(ifs);
-			ma.reset(PlTagger::create_analyser(cfg));
+			ma.reset(new PlTagger::DispatchAnalyser(cfg));
 		}
 	}
 

@@ -18,6 +18,9 @@ namespace PlTagger {
 		/// Constructor for a DispatchAnalyser working with a tagset
 		DispatchAnalyser(const Tagset* tagset);
 
+		/// Constructor for a DispatchAnalyser from config
+		DispatchAnalyser(const Config::Node& cfg);
+
 		/// Destructor
 		~DispatchAnalyser();
 

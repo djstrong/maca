@@ -8,6 +8,9 @@
 
 #include <boost/function.hpp>
 
+#include <loki/Factory.h>
+#include <loki/Singleton.h>
+
 namespace PlTagger {
 
 	/**
@@ -89,10 +92,79 @@ namespace PlTagger {
 		void parse_tag_into_token(Token* tok, const UnicodeString& lemma,
 				const std::string& tag) const;
 
+		/**
+		 * Factory interface for creating analysers from string identifiers
+		 *
+		 * Mostly a convenience function to avoid having client code refer directly
+		 * to the TokenLayerFactory instance.
+		 *
+		 * @param class_id the unique class identifier
+		 * @param input the input source to pass to the layer's constructor
+		 * @param props the configuration to pass to the layer's constructor
+		 */
+		static MorphAnalyser* create(const std::string class_id,
+				const Config::Node& props);
+
+		/**
+		 * Function to get a vector of available analyser type strings.
+		 */
+		static std::vector<std::string> available_analyser_types();
+
+		/**
+		 * Convenience template for registering MorphAnalyser derived classes.
+		 */
+		template <typename T>
+		static bool register_analyser(const std::string& class_id);
+
 	private:
 		/// The tagset used by this analyser
 		const Tagset* tagset_;
 	};
+
+	/**
+	 * Declaration of the MorphAnalyser factory as a singleton Loki object factory.
+	 * The factory instance can be accessed as MorphAnalyserFactory::Instance().
+	 * It is assumed that all derived classes have the same constructor signature.
+	 */
+	typedef Loki::SingletonHolder<
+		Loki::Factory<
+			MorphAnalyser, // The base class for objects created in the factory
+			std::string, // Identifier type
+			Loki::TL::MakeTypelist< const Config::Node& >::Result
+			// TokenLayer constructor arguments' types specification
+		>,
+		Loki::CreateUsingNew, // default_config, needed to change the item below
+		Loki::LongevityLifetime::DieAsSmallObjectChild // Required per libloki docs
+	>
+	MorphAnalyserFactory;
+
+	/**
+	 * Convenience typedef for the exception type the factory throws
+	 */
+	typedef Loki::DefaultFactoryError<
+		std::string, MorphAnalyser
+	>::Exception
+	MorphAnalyserFactoryException;
+
+
+
+	/**
+	 * Convenience template MorphAnalyser creation function
+	 */
+	template <typename T>
+	T* analyser_creator(const Config::Node& props)
+	{
+		return new T(props);
+	}
+
+	template <typename T>
+	bool MorphAnalyser::register_analyser(const std::string& class_id)
+	{
+		//bool ret =
+				MorphAnalyserFactory::Instance().
+		Register(class_id, analyser_creator<T>);
+		return true;//ret;
+	}
 
 } /* end ns PlTagger */
 

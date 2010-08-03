@@ -47,10 +47,11 @@ SET(libpltagger_STAT_SRC
     lexeme.cpp
     main.cpp
     morph/constanalyser.cpp
-    morph/creator.cpp
     morph/dispatchanalyser.cpp
+    morph/init.cpp
     morph/mapanalyser.cpp
     morph/morphanalyser.cpp
+    sentence.cpp
     settings.cpp
     symboldictionary.cpp
     tag.cpp

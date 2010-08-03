@@ -1,4 +1,5 @@
 #include <libpltagger/morph/morphanalyser.h>
+#include <libpltagger/morph/init.h>
 #include <libpltagger/tagsetmanager.h>
 
 #include <boost/bind.hpp>
@@ -67,5 +68,17 @@ namespace PlTagger {
 			delete tt;
 		}
 	}
+
+	MorphAnalyser* MorphAnalyser::create(std::string class_id, const Config::Node& props)
+	{
+		return MorphAnalyserFactory::Instance().CreateObject(class_id, props);
+	}
+
+	std::vector<std::string> MorphAnalyser::available_analyser_types()
+	{
+		return MorphAnalyserFactory::Instance().RegisteredIds();
+	}
+
+	static bool registered = init_morph_analysers();
 
 } /* end ns PlTagger */

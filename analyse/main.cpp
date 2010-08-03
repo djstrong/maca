@@ -69,7 +69,7 @@ int main(int argc, char** argv)
 			return 8;
 		}
 		Toki::Config::Node cfg = Toki::Config::from_stream(ifs);
-		boost::shared_ptr<PlTagger::MorphAnalyser> ma(PlTagger::create_analyser(cfg));
+		boost::shared_ptr<PlTagger::MorphAnalyser> ma(new PlTagger::DispatchAnalyser(cfg));
 		const Toki::Config::Node& conf = toki_config.empty() ?
 			Toki::Config::default_config() :
 			Toki::Config::from_file(toki_config);
