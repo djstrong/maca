@@ -84,6 +84,9 @@ int main(int argc, char** argv)
 			assert(!sentence.empty());
 			std::vector<PlTagger::Token*> analysed_sentence = ma->process_dispose(sentence);
 			writer->write_sentence(analysed_sentence);
+			foreach (PlTagger::Token* t, analysed_sentence) {
+				delete t;
+			}
 		}
 
 	} else {
