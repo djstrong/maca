@@ -160,10 +160,7 @@ namespace PlTagger {
 	template <typename T>
 	bool MorphAnalyser::register_analyser(const std::string& class_id)
 	{
-		//bool ret =
-				MorphAnalyserFactory::Instance().
-		Register(class_id, analyser_creator<T>);
-		return true;//ret;
+		return MorphAnalyserFactory::Instance().Register(class_id, analyser_creator<T>);
 	}
 
 } /* end ns PlTagger */
