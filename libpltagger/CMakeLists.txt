@@ -44,6 +44,7 @@ SET(libpltagger_STAT_SRC
     io/reader.cpp
     io/writer.cpp
     io/xces.cpp
+    iob.cpp
     lexeme.cpp
     main.cpp
     morph/constanalyser.cpp
