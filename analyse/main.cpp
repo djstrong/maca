@@ -8,13 +8,13 @@
 
 #include <libpltagger/io/plain.h>
 #include <libpltagger/io/xces.h>
-#include <libpltagger/morph/morphanalyser.h>
-#include <libpltagger/morph/creator.h>
+#include <libpltagger/morph/dispatchanalyser.h>
 
 #include <libtoki/foreach.h>
 #include <libtoki/layertokenizer.h>
 #include <libtoki/sentencesplitter.h>
 
+#include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>
 
 #include <fstream>
@@ -26,6 +26,10 @@ int main(int argc, char** argv)
 	bool quiet = false;
 	using boost::program_options::value;
 
+	std::string writers = boost::algorithm::join(PlTagger::TokenWriter::available_writer_types(), " ");
+
+	std::string writers_help = "Output format, any of: " + writers + "\n";
+
 	boost::program_options::options_description desc("Allowed options");
 	desc.add_options()
 			("config,c", value(&config),
@@ -35,7 +39,7 @@ int main(int argc, char** argv)
 			("input-format,i", value(&input_format)->default_value("plain"),
 			 "Input format\n")
 			("output-format,o", value(&output_format)->default_value("plain"),
-			 "Output format\n")
+			 writers_help.c_str())
 			("quiet,q", value(&quiet)->zero_tokens(),
 			 "Suppress startup info when loading a tagset\n")
 			("help,h", "Show help")
@@ -72,13 +76,14 @@ int main(int argc, char** argv)
 		Toki::LayerTokenizer tok(conf);
 		tok.set_input_source(std::cin);
 		Toki::SentenceSplitter sen(tok);
-		PlTagger::XcesWriter pw(std::cout, ma->tagset());
+		boost::scoped_ptr<PlTagger::TokenWriter> writer;
+		writer.reset(PlTagger::TokenWriter::create(output_format, std::cout, ma->tagset()));
 
 		while (sen.has_more()) {
 			std::vector<Toki::Token*> sentence = sen.get_next_sentence();
 			assert(!sentence.empty());
 			std::vector<PlTagger::Token*> analysed_sentence = ma->process_dispose(sentence);
-			pw.write_sentence(analysed_sentence);
+			writer->write_sentence(analysed_sentence);
 		}
 
 	} else {

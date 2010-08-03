@@ -7,9 +7,16 @@
 namespace PlTagger {
 
 	XcesWriter::XcesWriter(std::ostream& os, const Tagset& tagset)
-		: TokenWriter(os, tagset), cid_(0)
+		: TokenWriter(os, tagset), cid_(0), use_indent_(true)
 	{
 		do_header();
+	}
+
+	XcesWriter* XcesWriter::create_flat(std::ostream& os, const Tagset& tagset)
+	{
+		XcesWriter* w = new XcesWriter(os, tagset);
+		w->use_indent(false);
+		return w;
 	}
 
 	XcesWriter::~XcesWriter()
@@ -25,9 +32,9 @@ namespace PlTagger {
 	void XcesWriter::write_paragraph(const std::vector<std::vector<Token *> > &v)
 	{
 		paragraph_head();
-		indent_more();
+		if (use_indent_) indent_more();
 		do_paragraph(v);
-		indent_less();
+		if (use_indent_) indent_less();
 		osi() << "</chunk>\n";
 	}
 
@@ -53,7 +60,7 @@ namespace PlTagger {
 			osi() << "<ns/>\n";
 		}
 		osi() << "<tok>\n";
-		indent_more();
+		if (use_indent_) indent_more();
 		osi() << "<orth>" << t.orth_utf8() << "</orth>\n";
 		foreach (const Lexeme& l, t.lexemes()) {
 			osi() << "<lex>"
@@ -61,18 +68,18 @@ namespace PlTagger {
 				<< "<ctag>" << tagset().tag_to_string(l.tag()) << "</ctag>"
 				<< "</lex>\n";
 		}
-		indent_less();
+		if (use_indent_) indent_less();
 		osi() << "</tok>\n";
 	}
 
 	void XcesWriter::do_sentence(const std::vector<Token *>& v)
 	{
 		osi() << "<chunk type=\"s\">\n";
-		indent_more();
+		if (use_indent_) indent_more();
 		foreach (const Token* t, v) {
 			do_token(*t);
 		}
-		indent_less();
+		if (use_indent_) indent_less();
 		osi() << "</chunk>\n";
 	}
 

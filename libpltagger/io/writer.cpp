@@ -1,4 +1,5 @@
 #include <libpltagger/io/writer.h>
+#include <libpltagger/io/init.h>
 #include <libtoki/foreach.h>
 
 namespace PlTagger {
@@ -72,5 +73,19 @@ namespace PlTagger {
 			write_sentence(s);
 		}
 	}
+
+	TokenWriter* TokenWriter::create(const std::string class_id,
+			std::ostream& os,
+			const Tagset& tagset)
+	{
+		return TokenWriterFactory::Instance().CreateObject(class_id, os, tagset);
+	}
+
+	std::vector<std::string> TokenWriter::available_writer_types()
+	{
+		return TokenWriterFactory::Instance().RegisteredIds();
+	}
+
+	static bool registered = init_token_writers();
 
 } /* end ns PlTagger */

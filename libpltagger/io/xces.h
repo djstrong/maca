@@ -13,8 +13,13 @@ namespace PlTagger {
 
 	class XcesWriter : public TokenWriter {
 	public:
-
 		XcesWriter(std::ostream& os, const Tagset& tagset);
+
+		void use_indent(bool v) {
+			use_indent_ = v;
+		}
+
+		static XcesWriter* create_flat(std::ostream& os, const Tagset& tagset);
 
 		~XcesWriter();
 
@@ -36,9 +41,9 @@ namespace PlTagger {
 		void do_paragraph(const std::vector< std::vector<Token*> >& v);
 
 		int cid_;
+
+		bool use_indent_;
 	};
-
-
 
 	class XcesReader : public TokenReader
 	{
