@@ -172,6 +172,7 @@ namespace PlTagger {
 	void DispatchAnalyser::add_default_handler(MorphAnalyser* a)
 	{
 		default_.push_back(a);
+		analysers_.insert(a);
 	}
 
 	size_t DispatchAnalyser::default_handlers_count() const

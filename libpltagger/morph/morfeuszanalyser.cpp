@@ -53,6 +53,11 @@ namespace PlTagger {
 		morfeusz_set_option(MORFOPT_ENCODING, MORFEUSZ_UTF_8);
 	}
 
+	MorfeuszAnalyser::~MorfeuszAnalyser()
+	{
+		delete conv_;
+	}
+
 	bool MorfeuszAnalyser::process_functional(const Toki::Token &t, boost::function<void(Token *)>sink)
 	{
 		std::string s = t.orth_utf8();
