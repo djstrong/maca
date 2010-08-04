@@ -8,6 +8,10 @@ override=p1:m1
 override=p2:n
 override=p3:n
 
+[tag]
+pre=bedzie
+post=fut
+
 [join]
 t1_pos=praet
 t2_pos=aglt
@@ -27,10 +31,6 @@ t1_pos=conjt
 t2_pos=aglt
 copy_attr=per
 copy_attr=vcl
-
-[tag]
-pre=bedzie
-post=fut
 
 [tag]
 pre=fin:gnd:perf
