@@ -41,6 +41,7 @@ SET(libpltagger_STAT_SRC
     exception.cpp
     io/init.cpp
     io/plain.cpp
+    io/premorph.cpp
     io/reader.cpp
     io/writer.cpp
     io/xces.cpp

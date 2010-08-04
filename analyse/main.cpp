@@ -7,6 +7,7 @@
 #include <libpltagger/tagsetparser.h>
 
 #include <libpltagger/io/plain.h>
+#include <libpltagger/io/premorph.h>
 #include <libpltagger/io/xces.h>
 #include <libpltagger/morph/dispatchanalyser.h>
 
@@ -37,7 +38,7 @@ int main(int argc, char** argv)
 			("toki-config,t", value(&toki_config),
 			 "Tokenizer configuration file (only used in some input modes)\n")
 			("input-format,i", value(&input_format)->default_value("plain"),
-			 "Input format\n")
+			 "Input format, any of: plain premorph\n")
 			("output-format,o", value(&output_format)->default_value("plain"),
 			 writers_help.c_str())
 			("quiet,q", value(&quiet)->zero_tokens(),
@@ -74,6 +75,13 @@ int main(int argc, char** argv)
 			Toki::Config::default_config() :
 			Toki::Config::from_file(toki_config);
 		Toki::LayerTokenizer tok(conf);
+
+		if (input_format == "premorph" || input_format == "pre") {
+			PlTagger::PremorphProcessor pp(std::cout, tok, *ma);
+			pp.parse_stream(std::cin);
+			return 0;
+		}
+
 		tok.set_input_source(std::cin);
 		Toki::SentenceSplitter sen(tok);
 		boost::scoped_ptr<PlTagger::TokenWriter> writer;
