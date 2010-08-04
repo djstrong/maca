@@ -84,6 +84,7 @@ namespace PlTagger {
 
 			std::vector<Token*> unambiguous;
 
+			// FIXME ths should not be a for loop
 			for (int i = 0; i < node_count; ++i) {
 				if (succ[i].size() > 1) { // complex case, many interps or segmentation ambiguity
 					if (!unambiguous.empty()) {
@@ -140,7 +141,7 @@ namespace PlTagger {
 					}
 
 					flush_convert(token_paths, sink);
-					i = merge_node;
+					i = merge_node - 1; //account for the ++i from the for
 				} else if (!succ[i].empty()) { //simple case, only one interp
 					int edge = succ[i][0];
 					unambiguous.push_back(make_token(t, pmorf + edge));
