@@ -116,6 +116,7 @@ namespace PlTagger { namespace Conversion {
 					std::cerr << t->orth_utf8() << " ";
 				}
 			}
+			std::cerr << "\n";
 			choose_shortest_path(conv_v, sink);
 		}
 	}
