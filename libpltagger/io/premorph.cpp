@@ -18,6 +18,8 @@ namespace PlTagger {
 		void on_end_element(const Glib::ustring & name);
 		void on_cdata_block(const Glib::ustring & text);
 		void on_characters(const Glib::ustring & text);
+		void on_error(const Glib::ustring &text);
+		void on_fatal_error(const Glib::ustring &text);
 	private:
 		std::ostream& os_;
 		std::stringstream buf_;
@@ -102,6 +104,15 @@ namespace PlTagger {
 	void PremorphProcessorImpl::on_cdata_block(const Glib::ustring &text)
 	{
 
+	}
+
+	void PremorphProcessorImpl::on_error(const Glib::ustring &text)
+	{
+		std::cerr << "XML Error: " << (std::string)text << "\n";
+	}
+	void PremorphProcessorImpl::on_fatal_error(const Glib::ustring &text)
+	{
+		std::cerr << "XML Fatal error: " << (std::string)text << "\n";
 	}
 
 } /* end ns PlTagger */
