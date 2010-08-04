@@ -109,7 +109,13 @@ namespace PlTagger { namespace Conversion {
 			convert_container(path, sink);
 		}
 		if (!try_fold_paths(conv_v, sink)) {
-			std::cerr << ">>>Path folding failed, returning shortest\n";
+			std::cerr << "!!! Path folding failed, returning shortest from: ";
+			foreach (const std::vector<Token*>& path, v) {
+				std::cerr << " >> ";
+				foreach (Token* t, path) {
+					std::cerr << t->orth_utf8() << " ";
+				}
+			}
 			choose_shortest_path(conv_v, sink);
 		}
 	}
