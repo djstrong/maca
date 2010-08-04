@@ -147,7 +147,7 @@ namespace PlTagger { namespace Conversion {
 				assert(tagset_from().validate_tag(lex.tag(), true, &std::cerr));
 				lex.tag() = (tc_.cast(lex.tag()));
 				assert(lex.tag().tagset_id() == tagset_to().id());
-				assert(tagset_to().validate_tag(lex.tag(), true, &std::cerr));
+				//assert(tagset_to().validate_tag(lex.tag(), true, &std::cerr));
 			}
 			t->remove_duplicate_lexemes();
 		}
