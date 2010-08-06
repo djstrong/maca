@@ -36,7 +36,8 @@ int main(int argc, char** argv)
 			("config,c", value(&config),
 			 "Morphological analyser configuration file\n")
 			("toki-config,t", value(&toki_config),
-			 "Tokenizer configuration file (only used in some input modes)\n")
+			 "Tokenizer configuration file. "
+			 "Overrides tagger config value, only used in some input modes.\n")
 			("input-format,i", value(&input_format)->default_value("plain"),
 			 "Input format, any of: plain premorph\n")
 			("output-format,o", value(&output_format)->default_value("plain"),
@@ -71,6 +72,10 @@ int main(int argc, char** argv)
 		}
 		Toki::Config::Node cfg = Toki::Config::from_stream(ifs);
 		boost::shared_ptr<PlTagger::MorphAnalyser> ma(new PlTagger::DispatchAnalyser(cfg));
+
+		if (toki_config.empty()) {
+			toki_config = cfg.get("general.toki-config", "");
+		}
 		const Toki::Config::Node& conf = toki_config.empty() ?
 			Toki::Config::default_config() :
 			Toki::Config::from_file(toki_config);
