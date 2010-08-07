@@ -1,6 +1,3 @@
-#ifdef HAVE_CONFIG_D_H
-#include <libpltagger/config_d.h>
-#endif
 #include <libpltagger/conv/tagsetconverter.h>
 #include <libpltagger/debug.h>
 #include <libpltagger/settings.h>
@@ -66,10 +63,13 @@ int main(int argc, char** argv)
 	}
 	if (!config.empty()) {
 		std::ifstream ifs;
-		if (!PlTagger::open_file_from_search_path(config, ifs)) {
-			std::cerr << "Config file open error\n";
+		std::string fn = PlTagger::find_file_in_search_path(config);
+		if (fn.empty()) {
+			std::cerr << "Config file open error for " << config << "\n";
 			return 8;
 		}
+		ifs.open(fn.c_str());
+		std::cerr << "Loading tagger configuration from " << fn << "\n";
 		Toki::Config::Node cfg = Toki::Config::from_stream(ifs);
 		boost::shared_ptr<PlTagger::MorphAnalyser> ma(new PlTagger::DispatchAnalyser(cfg));
 
@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 		}
 		const Toki::Config::Node& conf = toki_config.empty() ?
 			Toki::Config::default_config() :
-			Toki::Config::from_file(toki_config);
+			Toki::Config::get_library_config(toki_config);
 		Toki::LayerTokenizer tok(conf);
 
 		if (input_format == "premorph" || input_format == "pre") {

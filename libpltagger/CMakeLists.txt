@@ -2,6 +2,13 @@
 
 PROJECT(pltagger)
 
+set(LIBPLTAGGER_PATH_SEPARATOR ";")
+set(LIBPLTAGGER_DATA_DIR ".;${CMAKE_INSTALL_PREFIX}/${LIBPLTAGGER_INSTALL_DATA_DIR}")
+configure_file(config_d.in include/libpltagger/config_d.h)
+include_directories( ${CMAKE_CURRENT_BINARY_DIR}/include/ )
+add_definitions(-DHAVE_CONFIG_D_H)
+
+
 #include_directories("/usr/include/sfst-1.0")
 #set(LIBS ${LIBS} "sfst1")
 

@@ -61,17 +61,12 @@ if (MORFEUSZ_FOUND)
 endif(MORFEUSZ_FOUND)
 
 set(LIBPLTAGGER_INSTALL_DATA_DIR lib/pltagger)
-set(LIBPLTAGGER_DATA_DIR "${CMAKE_INSTALL_PREFIX}/${LIBPLTAGGER_INSTALL_DATA_DIR};.")
 set(LIBPLTAGGER_VERSION "${ver_major}.${ver_minor}")
 FIND_PATH(LIBPLTAGGER_SRC_DATA_DIR
     test.tagset
     ${CMAKE_SOURCE_DIR}/data
 )
 MARK_AS_ADVANCED(LIBPLTAGGER_SRC_DATA_DIR)
-
-configure_file(libpltagger/config_d.in include/libpltagger/config_d.h)
-include_directories( ${CMAKE_CURRENT_BINARY_DIR}/include/ )
-add_definitions(-DHAVE_CONFIG_D_H)
 
 find_package(Boost 1.41 REQUIRED COMPONENTS program_options filesystem regex)
 

@@ -60,7 +60,7 @@ namespace PlTagger {
 
 	std::string get_library_config_path_string()
 	{
-		return boost::algorithm::join(library_config_path, ";");
+		return boost::algorithm::join(library_config_path, LIBPLTAGGER_PATH_SEPARATOR);
 	}
 
 	void set_library_config_path(const std::vector<std::string> &vec)
@@ -71,7 +71,7 @@ namespace PlTagger {
 	void set_library_config_path(const std::string &s)
 	{
 		std::vector<std::string> v;
-		boost::algorithm::split(v, s, std::bind1st(std::equal_to<char>(), ';'));
+		boost::algorithm::split(v, s, std::bind1st(std::equal_to<char>(), LIBPLTAGGER_PATH_SEPARATOR[0]));
 		set_library_config_path(v);
 	}
 
@@ -81,7 +81,7 @@ namespace PlTagger {
 #ifdef LIBPLTAGGER_DATA_DIR
 		set_library_config_path(LIBPLTAGGER_DATA_DIR);
 #else
-		set_library_config_path("..");
+		set_library_config_path(".");
 #endif
 			return !library_config_path.empty();
 		}
