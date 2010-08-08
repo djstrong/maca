@@ -103,8 +103,8 @@ int main(int argc, char** argv)
 		}
 
 	} else {
-		std::cerr << "Usage: tagset-tool [OPTIONS] <tagset-file>\n";
-		std::cerr << "See tagset-tool --help\n";
+		std::cerr << "Usage: analyse -c CONFIG [OPTIONS]\n";
+		std::cerr << "See analyse --help\n";
 		return 1;
 	}
 	return 0;
