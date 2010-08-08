@@ -1,3 +1,4 @@
+#include <libpltagger/io/xcescommon.h>
 #include <libpltagger/io/xceswriter.h>
 #include <libtoki/foreach.h>
 
@@ -67,20 +68,7 @@ namespace PlTagger {
 
 	void XcesWriter::do_token(const Token &t)
 	{
-		if (t.wa() == Toki::Whitespace::None) {
-			osi() << "<ns/>\n";
-		}
-		osi() << "<tok>\n";
-		if (use_indent_) indent_more();
-		osi() << "<orth>" << t.orth_utf8() << "</orth>\n";
-		foreach (const Lexeme& l, t.lexemes()) {
-			osi() << "<lex>"
-				<< "<base>" << l.lemma_utf8() << "</base>"
-				<< "<ctag>" << tagset().tag_to_string(l.tag()) << "</ctag>"
-				<< "</lex>\n";
-		}
-		if (use_indent_) indent_less();
-		osi() << "</tok>\n";
+		token_as_xces_xml(os(), tagset(), t, use_indent_ ? indent_level() : -1);
 	}
 
 	void XcesWriter::do_sentence(const std::vector<Token *>& v)

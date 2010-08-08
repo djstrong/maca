@@ -75,6 +75,10 @@ namespace PlTagger {
 
 		void indent_less(int n = 1);
 
+		int indent_level() const {
+			return indent_;
+		}
+
 		std::ostream& osi();
 
 	private:

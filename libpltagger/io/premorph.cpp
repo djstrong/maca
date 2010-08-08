@@ -1,4 +1,5 @@
 #include <libpltagger/io/premorph.h>
+#include <libpltagger/io/xcescommon.h>
 #include <libtoki/foreach.h>
 #include <libxml++/parsers/saxparser.h>
 #include <libtoki/sentencesplitter.h>
@@ -74,18 +75,7 @@ namespace PlTagger {
 				os_ << " <chunk type=\"s\">\n";
 				std::vector<Toki::Token*> sentence = sen.get_next_sentence();
 				foreach (Token* t, ma_.process_dispose(sentence)) {
-					if (t->wa() == Toki::Whitespace::None) {
-						os_ << "  <ns/>\n";
-					}
-					os_ << "  <tok>\n";
-					os_ << "   <orth>" << t->orth_utf8() << "</orth>\n";
-					foreach (const Lexeme& lex, t->lexemes()) {
-						os_ << "   <lex>"
-							<< "<base>" << lex.lemma_utf8() << "</base>"
-							<< "<ctag>" << ma_.tagset().tag_to_string(lex.tag()) << "</ctag>"
-							<< "</lex>\n";
-					}
-					os_ << "  </tok>\n";
+					token_as_xces_xml(os_, ma_.tagset(), *t, 1);
 					delete t;
 				}
 				os_ << " </chunk>\n";
