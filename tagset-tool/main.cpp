@@ -1,6 +1,3 @@
-#ifdef HAVE_CONFIG_D_H
-#include <libpltagger/config_d.h>
-#endif
 #include <libpltagger/conv/tagsetconverter.h>
 #include <libpltagger/debug.h>
 #include <libpltagger/settings.h>
