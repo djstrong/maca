@@ -23,7 +23,7 @@
 #include <libpltagger/conv/tagsetconverter.h>
 
 #include <libpltagger/io/plain.h>
-#include <libpltagger/io/xces.h>
+#include <libpltagger/io/xceswriter.h>
 
 #include <libpltagger/debug.h>
 #include <fstream>

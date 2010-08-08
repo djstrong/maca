@@ -7,7 +7,8 @@
 #include <libpltagger/tagsetmanager.h>
 #include <libpltagger/tagsetparser.h>
 
-#include <libpltagger/io/xces.h>
+#include <libpltagger/io/xcesreader.h>
+#include <libpltagger/io/xceswriter.h>
 
 #include <libtoki/foreach.h>
 

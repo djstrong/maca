@@ -1,6 +1,6 @@
 #include <libpltagger/io/init.h>
 #include <libpltagger/io/plain.h>
-#include <libpltagger/io/xces.h>
+#include <libpltagger/io/xceswriter.h>
 
 namespace PlTagger {
 
