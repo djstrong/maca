@@ -10,10 +10,12 @@
 
 namespace PlTagger {
 
-	class XcesNoMorphReaderImpl : public xmlpp::SaxParser
+	class XcesTokenReaderImpl : public xmlpp::SaxParser
 	{
 	public:
-		XcesNoMorphReaderImpl();
+		XcesTokenReaderImpl(const Tagset& tagset);
+
+		Token* try_get_next();
 
 	protected:
 		void on_start_element(const Glib::ustring & name,
@@ -22,81 +24,119 @@ namespace PlTagger {
 		void on_cdata_block(const Glib::ustring & text);
 		void on_characters(const Glib::ustring & text);
 
-		bool had_ns_;
-		bool in_tok_;
-		bool in_orth_;
-		std::string orth_;
-		std::deque<Toki::Token*> data_;
+		const Tagset& tagset_;
+
+		enum state_t { XS_NONE, XS_TOK, XS_ORTH, XS_LEX, XS_LEMMA, XS_TAG };
+		state_t state_;
+
+		Toki::Whitespace::Enum wa_;
+
+		Token* tok_;
+
+		std::string sbuf_;
+
+		std::deque<Token*> buf_;
 	};
 
-	XcesNoMorphReader::XcesNoMorphReader()
-		: impl_(new XcesNoMorphReaderImpl)
+	XcesTokenReader::XcesTokenReader(const Tagset& tagset, std::istream& is)
+		: is_(is), impl_(new XcesTokenReaderImpl(tagset))
 	{
 	}
 
-	XcesNoMorphReader::~XcesNoMorphReader()
+	XcesTokenReader::~XcesTokenReader()
 	{
 	}
 
-	void XcesNoMorphReader::parse_file(const std::string& filename)
+	Token* XcesTokenReader::get_next_token()
 	{
-		impl_->parse_file(filename);
+		Token* t = impl_->try_get_next();
+		if (t != NULL) {
+			return t;
+		}
+		if (!is_.good()) {
+			return NULL;
+		}
+		static const int BUFSIZE=10240;
+		unsigned char buf[BUFSIZE+1];
+		is_.read(reinterpret_cast<char*>(buf), BUFSIZE);
+		impl_->parse_chunk_raw(buf, is_.gcount());
+		if (is_.eof()) {
+			impl_->finish_chunk_parsing();
+		}
+		return impl_->try_get_next();
 	}
 
-	void XcesNoMorphReader::parse_stream(std::istream& is)
-	{
-		impl_->parse_stream(is);
-	}
-
-	XcesNoMorphReaderImpl::XcesNoMorphReaderImpl()
+	XcesTokenReaderImpl::XcesTokenReaderImpl(const Tagset& tagset)
 		: xmlpp::SaxParser()
-		, had_ns_(false), in_tok_(false), in_orth_(false), orth_()
-		, data_()
+		, tagset_(tagset), state_(XS_NONE), wa_(Toki::Whitespace::Newline)
+		,tok_(NULL), sbuf_(), buf_()
 	{
 	}
 
-	void XcesNoMorphReaderImpl::on_start_element(const Glib::ustring &name, const AttributeList &attributes)
+	Token* XcesTokenReaderImpl::try_get_next()
+	{
+		if (buf_.empty()) {
+			return NULL;
+		} else {
+			Token* t = buf_.front();
+			buf_.pop_front();
+			return t;
+		}
+	}
+
+	void XcesTokenReaderImpl::on_start_element(const Glib::ustring &name, const AttributeList &attributes)
 	{
 		if (name == "tok") {
-			in_tok_ = true;
-			orth_ = "";
-		} else if (in_tok_ && name == "orth") {
-			in_orth_ = true;
+			state_ = XS_TOK;
+			tok_ = new Token();
+			tok_->set_wa(wa_);
+			wa_ = Toki::Whitespace::Space;
+		} else if (state_ == XS_TOK && name == "orth") {
+			state_ = XS_ORTH;
+			sbuf_ = "";
+		} else if (state_ == XS_TOK && name == "lex") {
+			assert(tok_ != NULL);
+			tok_->add_lexeme(Lexeme());
+			state_ = XS_LEX;
+		} else if (state_ == XS_LEX && name == "base") {
+			state_ = XS_LEMMA;
+			sbuf_ = "";
+		} else if (state_ == XS_LEX && name == "ctag") {
+			state_ = XS_TAG;
+			sbuf_ = "";
 		} else if (name == "ns") {
-			had_ns_ = true;
+			wa_ = Toki::Whitespace::None;
 		}
 	}
 
-	void XcesNoMorphReaderImpl::on_end_element(const Glib::ustring &name)
+	void XcesTokenReaderImpl::on_end_element(const Glib::ustring &name)
 	{
-		if (name == "tok") {
-			if (!orth_.empty()) {
-				Toki::Whitespace::Enum wa;
-				if (had_ns_) {
-					wa = Toki::Whitespace::None;
-				} else {
-					wa = Toki::Whitespace::Space;
-				}
-				Toki::Token* t = new Toki::Token(
-						UnicodeString::fromUTF8(orth_), "", wa);
-				data_.push_back(t);
-			}
-			in_tok_ = false;
-			in_orth_ = false;
-		} else if (name == "orth") {
-			in_orth_ = false;
+		if (state_ == XS_ORTH && name == "orth") {
+			tok_->set_orth(UnicodeString::fromUTF8(sbuf_));
+			state_ = XS_TOK;
+		} else if (state_ == XS_LEMMA && name == "base") {
+			tok_->lexemes().back().set_lemma(UnicodeString::fromUTF8(sbuf_));
+			state_ = XS_LEX;
+		} else if (state_ == XS_TAG && name == "ctag") {
+			Tag tag = tagset_.parse_simple_tag(sbuf_, true);
+			tok_->lexemes().back().tag() = tag;
+			state_ = XS_LEX;
+		} else if (state_ == XS_LEX && name == "lex") {
+			state_ = XS_TOK;
+		} else if (state_ == XS_TOK && name == "tok") {
+			buf_.push_back(tok_);
+			tok_ = NULL;
+			state_ = XS_NONE;
 		}
 	}
 
-	void XcesNoMorphReaderImpl::on_cdata_block(const Glib::ustring &text)
+	void XcesTokenReaderImpl::on_cdata_block(const Glib::ustring &/*text*/)
 	{
 	}
 
-	void XcesNoMorphReaderImpl::on_characters(const Glib::ustring &text)
+	void XcesTokenReaderImpl::on_characters(const Glib::ustring &text)
 	{
-		if (in_orth_) {
-			orth_ += (std::string)text;
-		}
+		sbuf_ += (std::string)text;
 	}
 
 

@@ -19,10 +19,12 @@
 #include <libtoki/foreach.h>
 #include <libtoki/confignode.h>
 #include <libpltagger/settings.h>
+#include <libpltagger/tagsetmanager.h>
 #include <libpltagger/tagsetparser.h>
 #include <libpltagger/conv/tagsetconverter.h>
 
 #include <libpltagger/io/plain.h>
+#include <libpltagger/io/xces.h>
 #include <libpltagger/io/xceswriter.h>
 
 #include <libpltagger/debug.h>
@@ -71,7 +73,14 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	
+	const PlTagger::Tagset& tagsetz = PlTagger::get_named_tagset("ikipi");
+	PlTagger::XcesTokenReader xtr(tagsetz, std::cin);
+	PlTagger::PlainWriter pw(std::cout, tagsetz);
+	while (PlTagger::Token* t = xtr.get_next_token()) {
+		pw.write_token_dispose(t);
+	}
+	return 0;
+
         boost::shared_ptr<PlTagger::Conversion::TagsetConverter> converter;
 
         if (!conv.empty()) {

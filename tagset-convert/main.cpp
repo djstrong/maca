@@ -7,30 +7,38 @@
 #include <libpltagger/tagsetmanager.h>
 #include <libpltagger/tagsetparser.h>
 
+#include <libpltagger/io/xces.h>
 #include <libpltagger/io/xcesreader.h>
 #include <libpltagger/io/xceswriter.h>
+#include <libpltagger/io/writer.h>
 
 #include <libtoki/foreach.h>
 
+#include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>
 
 #include <fstream>
 
 int main(int argc, char** argv)
 {
-	std::string converter;
+	std::string converter, verify_tagset;
 	std::string input_format, output_format;
 	bool quiet = false;
 	using boost::program_options::value;
+
+	std::string writers = boost::algorithm::join(PlTagger::TokenWriter::available_writer_types(), " ");
+	std::string writers_help = "Output format, any of: " + writers + "\n";
 
 	boost::program_options::options_description desc("Allowed options");
 	desc.add_options()
 			("converter,c", value(&converter),
 			 "Tagset converter configuration\n")
-			("input-format,i", value(&input_format)->default_value("plain"),
+			("verify,v", value(&verify_tagset),
+			 "Verify tags within a tagset\n")
+			("input-format,i", value(&input_format)->default_value("xces"),
 			 "Input format\n")
-			("output-format,o", value(&output_format)->default_value("plain"),
-			 "Output format\n")
+			("output-format,o", value(&output_format)->default_value("xces"),
+			 writers_help.c_str())
 			("quiet,q", value(&quiet)->zero_tokens(),
 			 "Suppress startup info \n")
 			("help,h", "Show help")
@@ -54,12 +62,22 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-
-	if (!converter.empty()) {
+	if (!verify_tagset.empty()) {
+		const PlTagger::Tagset& tagset = PlTagger::get_named_tagset(verify_tagset);
+		PlTagger::XcesTokenReader xtr(tagset, std::cin);
+		while (PlTagger::Token* t = xtr.get_next_token()) {
+			std::cerr << t->orth_utf8() << " ";
+			foreach (const PlTagger::Lexeme& lex, t->lexemes()) {
+				tagset.validate_tag(lex.tag(), false, &std::cerr);
+			}
+			delete t;
+		}
+	} else if (!converter.empty()) {
 		const PlTagger::Tagset& tagset = PlTagger::get_named_tagset(converter);
 		PlTagger::XcesReader reader(std::cin, tagset);
-		PlTagger::XcesWriter writer(std::cout, tagset);
-		writer.write_paragraph(reader.read_paragraph());
+		boost::scoped_ptr<PlTagger::TokenWriter> writer;
+		writer.reset(PlTagger::TokenWriter::create(output_format, std::cout, tagset));
+		writer->write_paragraph(reader.read_paragraph());
 	} else {
 		std::cerr << "Usage: tagset-convert [OPTIONS] <converter>\n";
 		std::cerr << "See tagset-convert --help\n";

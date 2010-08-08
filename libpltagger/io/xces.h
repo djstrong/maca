@@ -2,25 +2,26 @@
 #define LIBPLTAGGER_IO_XCES_H
 
 #include <boost/scoped_ptr.hpp>
-#include <libtoki/tokensource.h>
+#include <libpltagger/tagset.h>
+#include <libpltagger/tokensource.h>
 
 namespace PlTagger {
 
-	class XcesNoMorphReaderImpl;
+	class XcesTokenReaderImpl;
 
-	class XcesNoMorphReader// : public Toki::TokenSource
+	class XcesTokenReader : public TokenSource
 	{
 	public:
-		XcesNoMorphReader();
+		XcesTokenReader(const Tagset& tagset, std::istream& is);
 
-		~XcesNoMorphReader();
+		~XcesTokenReader();
 
-		void parse_file(const std::string& filename);
-
-		void parse_stream(std::istream& is);
+		Token* get_next_token();
 
 	protected:
-		boost::scoped_ptr<XcesNoMorphReaderImpl> impl_;
+		std::istream& is_;
+
+		boost::scoped_ptr<XcesTokenReaderImpl> impl_;
 	};
 
 
