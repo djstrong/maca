@@ -37,6 +37,7 @@ namespace PlTagger {
 		/**
 		 * Config node constructor. recognized keys are:
 		 * - file - the transducer file
+		 * - lower-case - lowercase all input to the transducer
 		 */
 		SfstAnalyser(const Config::Node& cfg);
 
@@ -55,6 +56,9 @@ namespace PlTagger {
 
 		/// the transducer
 		CompactTransducer* ct_;
+
+		/// force lower case flag
+		bool lcase_;
 	};
 
 } /* end ns PlTagger */

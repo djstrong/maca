@@ -15,13 +15,13 @@
 namespace PlTagger {
 
 	SfstAnalyser::SfstAnalyser(const Tagset* tagset, const std::string &filename)
-		: MorphAnalyser(tagset)
+		: MorphAnalyser(tagset), lcase_(false)
 	{
 		open_transducer(filename);
 	}
 
 	SfstAnalyser::SfstAnalyser(const Config::Node &cfg)
-		: MorphAnalyser(cfg)
+		: MorphAnalyser(cfg), lcase_(cfg.get("lower-case", false))
 	{
 		std::string filename = cfg.get("file", "");
 		if (filename.empty()) throw ConfigValueMissing("file", "SfstAnalyser");
@@ -51,7 +51,14 @@ namespace PlTagger {
 	bool SfstAnalyser::process_functional(const Toki::Token &t, boost::function<void (Token*)> sink)
 	{
 		std::vector< CAnalysis > a;
-		std::string s = t.orth_utf8();
+		std::string s;
+		if (lcase_) {
+			UnicodeString u = t.orth();
+			u.toLower();
+			u.toUTF8String(s);
+		} else {
+			s = t.orth_utf8();
+		}
 		ct_->analyze_string(const_cast<char*>(s.c_str()), a);
 		if (a.empty()) {
 			return false;
