@@ -22,8 +22,10 @@ namespace PlTagger {
 		static bool init_done = false;
 		if (init_done) return false;
 		MorphAnalyser::register_analyser<ConstAnalyser>("const");
-		MorphAnalyser::register_analyser<StdMapAnalyser>("map");
-		MorphAnalyser::register_analyser<HashMapAnalyser>("hashmap");
+		MorphAnalyser::register_analyser<StdMapAnalyser>("map-case");
+		MorphAnalyser::register_analyser<StdMapCaselessAnalyser>("map");
+		MorphAnalyser::register_analyser<HashMapAnalyser>("hashmap-case");
+		MorphAnalyser::register_analyser<HashMapCaselessAnalyser>("hashmap");
 #ifdef HAVE_SFST
 		MorphAnalyser::register_analyser<SfstAnalyser>("sfst");
 #endif

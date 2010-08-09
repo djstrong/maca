@@ -41,23 +41,77 @@ namespace PlTagger {
 		MapT map_;
 	};
 
+	/// Helper struct for ICU string caseless compare
+	struct IcuStringCaselessCompare
+	{
+		bool operator()(const UnicodeString& u1, const UnicodeString& u2) const {
+			return u1.caseCompare(u2, 0) < 0;
+		}
+	};
+
+	/// Helper struct for ICU hashing
+	struct IcuHash
+	{
+		std::size_t operator()(const UnicodeString& x) const
+		{
+			return x.hashCode();
+		}
+	};
+
+	/// Helper struct for ICU string caseless compare and hashing
+	struct IcuStringCaselessEqual
+	{
+		bool operator()(const UnicodeString& u1, const UnicodeString& u2) const {
+			return u1.caseCompare(u2, 0) == 0;
+		}
+
+		std::size_t operator()(const UnicodeString& x) const
+		{
+			UnicodeString xx = x;
+			xx.toLower();
+			return xx.hashCode();
+		}
+	};
+
+
 	/// typedef for a tree-map (std::map) analyser
 	typedef MapAnalyser<
 		std::map<
-			std::string,
-			std::vector< std::pair<std::string, std::string> >
+			UnicodeString,
+			std::vector< std::pair<std::string, std::string>
+			>
 		>
 	> StdMapAnalyser;
+
+	/// typedef for a tree-map (std::map) analyser, caseless
+	typedef MapAnalyser<
+		std::map<
+			UnicodeString,
+			std::vector< std::pair<std::string, std::string> >,
+			IcuStringCaselessCompare
+		>
+	> StdMapCaselessAnalyser;
 
 	/// typedef for a hashmap (std::unordered_map) analyser
 	typedef MapAnalyser<
 		boost::unordered_map<
-			std::string,
-			std::vector< std::pair<std::string, std::string> >
+			UnicodeString,
+			std::vector< std::pair<std::string, std::string> >,
+			IcuHash
 		>
 	> HashMapAnalyser;
 
-/* implementation */
+	/// typedef for a hashmap (std::unordered_map) analyser, caseless
+	typedef MapAnalyser<
+		boost::unordered_map<
+			UnicodeString,
+			std::vector< std::pair<std::string, std::string> >,
+			IcuStringCaselessEqual,
+			IcuStringCaselessEqual
+		>
+	> HashMapCaselessAnalyser;
+
+	/* implementation */
 
 	template<typename MapT>
 	MapAnalyser<MapT>::MapAnalyser(const Tagset* tagset)
@@ -92,7 +146,8 @@ namespace PlTagger {
 				string_range r(buf + i, buf + len - 1); // do not include the trailing null
 				boost::algorithm::split(v, r, boost::is_any_of("\t "), boost::algorithm::token_compress_on);
 				if (v.size() == 3) {
-					map_[v[0]].push_back(std::make_pair(v[1], v[2]));
+					const UnicodeString& key = UnicodeString::fromUTF8(v[0]);
+					map_[key].push_back(std::make_pair(v[1], v[2]));
 				} else {
 					std::cerr << "Invalid map line (" << v.size() << "): " << buf << "\n";
 				}
@@ -104,7 +159,8 @@ namespace PlTagger {
 	bool MapAnalyser<MapT>::process_functional(const Toki::Token &t, boost::function<void (Token*)> sink)
 	{
 		typename MapT::const_iterator i;
-		i = map_.find(t.orth_utf8());
+		const UnicodeString& key = t.orth();
+		i = map_.find(key);
 		if (i != map_.end()) {
 			Token* tt = new Token(t);
 			typedef std::pair<std::string, std::string> sp;
