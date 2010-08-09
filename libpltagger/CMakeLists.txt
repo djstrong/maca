@@ -54,6 +54,7 @@ SET(libpltagger_STAT_SRC
     io/xces.cpp
     io/xcescommon.cpp
     io/xcesreader.cpp
+    io/xcesvalidate.cpp
     io/xceswriter.cpp
     iob.cpp
     lexeme.cpp

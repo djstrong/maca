@@ -7,7 +7,7 @@
 #include <libpltagger/tagsetmanager.h>
 #include <libpltagger/tagsetparser.h>
 
-#include <libpltagger/io/xces.h>
+#include <libpltagger/io/xcesvalidate.h>
 #include <libpltagger/io/xcesreader.h>
 #include <libpltagger/io/xceswriter.h>
 #include <libpltagger/io/writer.h>
@@ -64,14 +64,8 @@ int main(int argc, char** argv)
 
 	if (!verify_tagset.empty()) {
 		const PlTagger::Tagset& tagset = PlTagger::get_named_tagset(verify_tagset);
-		PlTagger::XcesTokenReader xtr(tagset, std::cin);
-		while (PlTagger::Token* t = xtr.get_next_token()) {
-			std::cerr << t->orth_utf8() << " ";
-			foreach (const PlTagger::Lexeme& lex, t->lexemes()) {
-				tagset.validate_tag(lex.tag(), false, &std::cerr);
-			}
-			delete t;
-		}
+		PlTagger::XcesValidator xv(tagset, std::cout);
+		xv.validate_stream(std::cin);
 	} else if (!converter.empty()) {
 		const PlTagger::Tagset& tagset = PlTagger::get_named_tagset(converter);
 		PlTagger::XcesReader reader(std::cin, tagset);
