@@ -3,8 +3,8 @@
 
 #include <libpltagger/morph/morphanalyser.h>
 
-#include <libtoki/confignode.h>
-#include <libtoki/foreach.h>
+#include <libtoki/util/confignode.h>
+#include <libtoki/util/foreach.h>
 
 #include <boost/unordered_map.hpp>
 #include <fstream>

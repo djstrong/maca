@@ -2,7 +2,7 @@
 #include <sstream>
 #include <boost/algorithm/string.hpp>
 #include <fstream>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 
 namespace PlTagger {
 

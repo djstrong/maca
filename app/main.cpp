@@ -16,8 +16,8 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>
 
-#include <libtoki/foreach.h>
-#include <libtoki/confignode.h>
+#include <libtoki/util/foreach.h>
+#include <libtoki/util/confignode.h>
 #include <libpltagger/settings.h>
 #include <libpltagger/tagsetmanager.h>
 #include <libpltagger/tagsetparser.h>

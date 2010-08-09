@@ -4,7 +4,7 @@
 #include <libpltagger/config_d.h>
 #endif
 
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 
 #include <libtoki/parser/loose_ini_paser.h>
 

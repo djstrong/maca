@@ -1,6 +1,6 @@
 #include <libpltagger/token.h>
 #include <sstream>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 
 namespace PlTagger {
 

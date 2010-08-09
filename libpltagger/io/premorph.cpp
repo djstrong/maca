@@ -1,6 +1,6 @@
 #include <libpltagger/io/premorph.h>
 #include <libpltagger/io/xcescommon.h>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 #include <libxml++/parsers/saxparser.h>
 #include <libtoki/sentencesplitter.h>
 #include <vector>
@@ -91,7 +91,7 @@ namespace PlTagger {
 		buf_ << static_cast<std::string>(text);
 	}
 
-	void PremorphProcessorImpl::on_cdata_block(const Glib::ustring &text)
+	void PremorphProcessorImpl::on_cdata_block(const Glib::ustring & /*text*/)
 	{
 
 	}

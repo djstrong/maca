@@ -1,6 +1,6 @@
 #include <libpltagger/conv/joinlayer.h>
 #include <libpltagger/tagsetmanager.h>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 
 namespace PlTagger { namespace Conversion {
 

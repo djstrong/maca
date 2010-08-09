@@ -1,6 +1,6 @@
 #include <libpltagger/io/xcesreader.h>
-#include <libtoki/xmlutil.h>
-#include <libtoki/foreach.h>
+#include <libtoki/util/xmlutil.h>
+#include <libtoki/util/foreach.h>
 #include <libxml++/libxml++.h>
 
 namespace PlTagger {

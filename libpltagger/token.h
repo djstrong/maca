@@ -7,7 +7,7 @@
 #include <unicode/unistr.h>
 #include <string>
 #include <libtoki/token.h>
-#include <libtoki/util.h>
+#include <libtoki/util/util.h>
 #include <vector>
 
 namespace PlTagger {

@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 #include <set>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 #ifdef HAVE_SFST
 #include <libpltagger/morph/sfstanalyser.h>
 

@@ -8,8 +8,8 @@
 #include <libpltagger/io/xces.h>
 #include <libpltagger/morph/dispatchanalyser.h>
 
-#include <libtoki/foreach.h>
-#include <libtoki/layertokenizer.h>
+#include <libtoki/util/foreach.h>
+#include <libtoki/tokenizer/layertokenizer.h>
 #include <libtoki/sentencesplitter.h>
 
 #include <boost/algorithm/string.hpp>

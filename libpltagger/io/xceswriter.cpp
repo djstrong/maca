@@ -1,6 +1,6 @@
 #include <libpltagger/io/xcescommon.h>
 #include <libpltagger/io/xceswriter.h>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 
 namespace PlTagger {
 

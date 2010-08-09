@@ -3,7 +3,7 @@
 #include <libpltagger/settings.h>
 #include <libpltagger/tagsetparser.h>
 
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 
 #include <boost/program_options.hpp>
 

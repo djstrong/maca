@@ -1,5 +1,5 @@
 #include <libpltagger/conv/tagrule.h>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 

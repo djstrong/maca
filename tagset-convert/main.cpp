@@ -12,7 +12,7 @@
 #include <libpltagger/io/xceswriter.h>
 #include <libpltagger/io/writer.h>
 
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>

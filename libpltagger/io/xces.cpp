@@ -1,6 +1,6 @@
 #include <libpltagger/io/xces.h>
 #include <libpltagger/io/reader.h>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 #include <libxml++/libxml++.h>
 #include <libxml++/nodes/node.h>
 #include <libxml++/nodes/element.h>

@@ -1,7 +1,7 @@
 #include <libpltagger/io/xcesvalidate.h>
 #include <libpltagger/tagset.h>
 
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 #include <libxml++/libxml++.h>
 #include <libxml++/nodes/node.h>
 #include <libxml++/nodes/element.h>
@@ -67,7 +67,7 @@ namespace PlTagger {
 
 
 
-	void XcesValidatorImpl::on_start_element(const Glib::ustring &name, const AttributeList &attributes)
+	void XcesValidatorImpl::on_start_element(const Glib::ustring &name, const AttributeList& /*attributes*/)
 	{
 		if (name == "tok") {
 			state_ = XS_TOK;

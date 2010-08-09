@@ -1,5 +1,5 @@
 #include <libpltagger/conv/predicate.h>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 
 namespace PlTagger { namespace Conversion {
 

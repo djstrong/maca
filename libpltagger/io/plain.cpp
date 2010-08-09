@@ -1,5 +1,5 @@
 #include <libpltagger/io/plain.h>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 
 namespace PlTagger {
 

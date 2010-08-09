@@ -4,7 +4,7 @@
 
 #include <boost/bind.hpp>
 #include <boost/algorithm/string.hpp>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 
 namespace PlTagger {
 

@@ -5,7 +5,7 @@
 #include <libpltagger/conv/splitlayer.h>
 #include <libpltagger/conv/tagrulelayer.h>
 #include <libpltagger/conv/tagconvert.h>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 
 namespace PlTagger { namespace Conversion {
 

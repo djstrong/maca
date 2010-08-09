@@ -1,5 +1,5 @@
 #include <libpltagger/conv/joinrule.h>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 #include <libpltagger/tagsetmanager.h>
 #include <libpltagger/conv/attributecopier.h>
 #include <boost/algorithm/string.hpp>
