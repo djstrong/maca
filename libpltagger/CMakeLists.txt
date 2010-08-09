@@ -122,6 +122,7 @@ if(UNIX)
                  PATTERN "*.xml"
                  PATTERN "*.txt"
                 PATTERN ".svn" EXCLUDE
+                PATTERN "local/*" EXCLUDE
         )
 endif(UNIX)
 
