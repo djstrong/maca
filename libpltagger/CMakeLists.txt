@@ -119,7 +119,6 @@ if(UNIX)
                 FILES_MATCHING PATTERN "*.ini"
                  PATTERN "*.tagset"
                  PATTERN "*.conv"
-                 PATTERN "*.ini"
                  PATTERN "*.xml"
                  PATTERN "*.txt"
                 PATTERN ".svn" EXCLUDE
