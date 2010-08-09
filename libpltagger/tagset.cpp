@@ -18,6 +18,27 @@
 
 namespace PlTagger {
 
+	TagParseError::TagParseError(const std::string &what, const std::string& val, const std::string& tag, const std::string& tagset)
+	 : PlTaggerError(what), val(val), tag(tag), tagset(tagset)
+	{
+	}
+
+	std::string TagParseError::info() const
+	{
+		std::ostringstream ss;
+		ss << what();
+		if (!val.empty()) {
+			ss << ": " << val;
+		}
+		if (!tag.empty()) {
+			ss << " [" << tag << "]";
+		}
+		if (!tagset.empty()) {
+			ss << " (" << tagset << ")";
+		}
+		return ss.str();
+	}
+
 	TagsetMismatch::TagsetMismatch(const std::string& where, const Tagset& expected, const Tagset& actual)
 	 : PlTaggerError("Tagset mismatch in " + where), expected_id(expected.id()), actual_id(actual.id())
 	{
@@ -96,11 +117,11 @@ namespace PlTagger {
 			boost::function<void(const Tag &)>sink) const
 	{
 		if (fields.empty()) {
-			throw TagParseError("No POS");
+			throw TagParseError("No POS", "", "", id_string());
 		}
 		pos_idx_t pos_id = pos_dict_.get_id(fields[0]);
 		if (!pos_dict_.is_id_valid(pos_id)) {
-			throw TagParseError("Invalid POS: " + boost::copy_range<std::string>(fields[0]));
+			throw TagParseError("Invalid POS", boost::copy_range<std::string>(fields[0]), "", id_string());
 		}
 		std::vector< std::vector<value_idx_t> > opts(1);
 		for (size_t fi = 1; fi < fields.size(); ++fi) {
@@ -112,14 +133,14 @@ namespace PlTagger {
 				foreach (string_range& dot, dots) {
 					value_idx_t v = value_dict_.get_id(dot);
 					if (!value_dict_.is_id_valid(v)) {
-						throw TagParseError("Unknown attribute value: " + boost::copy_range<std::string>(r));
+						throw TagParseError("Unknown attribute value", boost::copy_range<std::string>(r), "", id_string());
 					}
 					values.push_back(v);
 				}
 				append_to_multi_tag(opts, values);
 			} else if (!r.empty()) { // underscore handling
 				if (fi - 1 >= pos_attributes_[pos_id].size()) {
-					throw TagParseError("Underscore beyond the last attribute for this POS");
+					throw TagParseError("Underscore beyond the last attribute for this POS", "", "", id_string());
 				}
 				attribute_idx_t attr = pos_attributes_[pos_id][fi - 1];
 				append_to_multi_tag(opts, attribute_values_[attr]);
@@ -153,10 +174,10 @@ namespace PlTagger {
 
 	Tag Tagset::parse_simple_tag(const string_range_vector &ts, bool allow_extra) const
 	{
-		if (ts.empty()) throw TagParseError("Empty POS+attribute list");
+		if (ts.empty()) throw TagParseError("Empty POS+attribute list", "", "", id_string());
 		pos_idx_t pos_id = pos_dict_.get_id(ts[0]);
 		if (!pos_dict_.is_id_valid(pos_id)) {
-			throw TagParseError("Invalid POS: [" + boost::copy_range<std::string>(ts[0]) + "]");
+			throw TagParseError("Invalid POS", boost::copy_range<std::string>(ts[0]), "", id_string());
 		}
 		const std::vector<bool>& valid_attrs_mask = get_pos_valid_attributes(pos_id);
 
@@ -168,7 +189,7 @@ namespace PlTagger {
 			if (!ts[i].empty()) {
 				value_idx_t val_id = value_dict_.get_id(ts[i]);
 				if (!value_dict_.is_id_valid(val_id)) {
-					throw TagParseError("Unknown attribute value: " + boost::copy_range<std::string>(ts[i]));
+					throw TagParseError("Unknown attribute value", boost::copy_range<std::string>(ts[i]), "", id_string());
 				}
 				attribute_idx_t attr_id = get_value_attribute(val_id);
 				if (valid_attrs_mask[attr_id] || allow_extra) {
@@ -193,11 +214,7 @@ namespace PlTagger {
 			if (valid_attrs_mask[attr_id] || allow_extra) {
 				tag.values()[attr_id] = val_id;
 			} else {
-				std::stringstream ss;
-				ss << "Attribute not valid for this POS: "
-					<< pos_dict_.get_string(pos) << " - "
-					<< attribute_dict_.get_string(attr_id);
-				throw TagParseError(ss.str());
+				throw TagParseError("Attribute not valid for this POS", attribute_dict_.get_string(attr_id), pos_dict_.get_string(pos), id_string());
 			}
 		}
 		return tag;
@@ -216,7 +233,7 @@ namespace PlTagger {
 	{
 		if (!pos_dict_.is_id_valid(t.pos_id())) {
 			if (os) {
-				(*os) << id_string(t) << " POS not valid : " << (int) t.pos_id();
+				(*os) << " POS not valid : " << (int) t.pos_id();
 			}
 			return false;
 		}
@@ -224,14 +241,14 @@ namespace PlTagger {
 		std::vector<bool> required = get_pos_required_attributes(t.pos_id());
 		if (t.values().size() < attribute_dict_.size()) {
 			if (os) {
-				(*os) << id_string(t) << " Values size below tagset attribute count: "
+				(*os) << " Values size below tagset attribute count: "
 					<< t.values().size() << "<" << attribute_dict_.size();
 			}
 			return false;
 		}
 		if (!allow_extra && t.values().size() > attribute_dict_.size()) {
 			if (os) {
-				(*os) << id_string(t) << " Values size above tagset attribute count"
+				(*os) << " Values size above tagset attribute count"
 					<< t.values().size() << ">" << attribute_dict_.size();
 			}
 			return false;
@@ -241,7 +258,7 @@ namespace PlTagger {
 			if (v == 0) {
 				if (required[i]) {
 					if (os) {
-						(*os) << id_string(t) << " Required attribuite "
+						(*os)  << " Required attribuite "
 							<< attribute_dictionary().get_string(i) << " missing";
 					}
 					return false;
@@ -249,7 +266,7 @@ namespace PlTagger {
 			} else {
 				if (!valid[i] && !allow_extra) {
 					if (os) {
-						(*os) << id_string(t) << " Extra attribute value: "
+						(*os) << " Extra attribute value: "
 							<< value_dictionary().get_string(v) << " (attribute "
 							<< attribute_dictionary().get_string(i) << ")";
 					}
@@ -257,7 +274,7 @@ namespace PlTagger {
 				}
 				if (!value_dict_.is_id_valid(v)) {
 					if (os) {
-						(*os) << id_string(t) << " Invalid value at attribite "
+						(*os) << " Invalid value at attribite "
 							<< attribute_dictionary().get_string(i);
 					}
 					return false;
@@ -265,7 +282,7 @@ namespace PlTagger {
 				attribute_idx_t a = value_attribute_[v];
 				if (a != i) {
 					if (os) {
-						(*os) << id_string(t) << " Value does not match attribute, got "
+						(*os) << " Value does not match attribute, got "
 							<< value_dictionary().get_string(v) << " ("
 							<< attribute_dictionary().get_string(a) << ") in"
 							<< attribute_dictionary().get_string(i) << "'s position";

@@ -69,7 +69,7 @@ namespace PlTagger {
 					string_range sr(analysis.begin() + pos + 1, analysis.end() - 1);
 					tagset().lexemes_into_token(*tt, lemma, sr);
 				} else {
-					throw TagParseError("SFST format: < missing");
+					throw TagParseError("SFST format: < missing", "", analysis, "");
 				}
 			}
 			sink(tt);

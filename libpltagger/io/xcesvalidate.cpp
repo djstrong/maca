@@ -91,7 +91,7 @@ namespace PlTagger {
 		void error_preamble(std::ostream& os, const std::string& orth, const std::string& tag,
 				int tokenid, int tagid) {
 			os << "Token " << tokenid << " (" << orth << "), tag " << tagid
-				<< " (" << tag << "):";
+				<< " (" << tag << "): ";
 		}
 	}
 
@@ -110,7 +110,7 @@ namespace PlTagger {
 				}
 			} catch (TagParseError& e) {
 				error_preamble(os_, last_orth_, sbuf_, token_idx_, tag_idx_);
-				os_ << e.what() << "\n";
+				os_ << e.info() << "\n";
 			}
 			state_ = XS_LEX;
 		} else if (state_ == XS_LEX && name == "lex") {

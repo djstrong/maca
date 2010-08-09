@@ -25,13 +25,15 @@ namespace PlTagger {
 	{
 	public:
 		/// Constructor
-		TagParseError(const std::string &what)
-		 : PlTaggerError(what)
-		{
-		}
+		TagParseError(const std::string &what, const std::string& val, const std::string& tag, const std::string& tagset);
 
 		/// Destructor
 		~TagParseError() throw() {}
+
+		/// PlTaggerError override
+		std::string info() const;
+
+		std::string val, tag, tagset;
 	};
 
 	/// Exception class for signalling tagset mismatches in various situations
