@@ -19,6 +19,8 @@ namespace PlTagger {
 	public:
 		XcesReaderImpl(const Tagset& tagset);
 
+		~XcesReaderImpl();
+
 		Chunk* try_get_next();
 
 	protected:
@@ -79,6 +81,16 @@ namespace PlTagger {
 		, tagset_(tagset), state_(XS_NONE), wa_(Toki::Whitespace::Newline)
 		, sbuf_(), tok_(NULL), sent_(NULL), chunk_(NULL), obuf_()
 	{
+	}
+
+	XcesReaderImpl::~XcesReaderImpl()
+	{
+		delete tok_;
+		delete sent_;
+		delete chunk_;
+		foreach (Chunk* c, obuf_) {
+			delete c;
+		}
 	}
 
 	Chunk* XcesReaderImpl::try_get_next()

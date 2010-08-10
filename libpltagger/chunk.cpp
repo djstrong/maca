@@ -1,9 +1,17 @@
 #include <libpltagger/chunk.h>
+#include <libtoki/util/foreach.h>
 
 namespace PlTagger {
 
 	Chunk::Chunk()
 	{
+	}
+
+	Chunk::~Chunk()
+	{
+		foreach (Sentence* s, sentences_) {
+			delete s;
+		}
 	}
 
 	bool Chunk::has_attribute(const std::string &name) const

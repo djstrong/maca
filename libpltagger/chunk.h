@@ -13,6 +13,8 @@ namespace PlTagger {
 		template <typename T>
 		explicit Chunk(const T& range);
 
+		~Chunk();
+
 		bool has_attribute(const std::string& name) const;
 
 		std::string get_attribute(const std::string& name) const;

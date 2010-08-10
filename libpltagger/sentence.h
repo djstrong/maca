@@ -15,6 +15,8 @@ namespace PlTagger {
 		template <typename T>
 		explicit Sentence(const T& range);
 
+		~Sentence();
+
 		size_t size() const {
 			return tokens_.size();
 		}
