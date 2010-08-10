@@ -1,8 +1,8 @@
 #ifndef LIBPLTAGGER_TAGSETCONVERTER_H
 #define LIBPLTAGGER_TAGSETCONVERTER_H
 
+#include <libpltagger/sentence.h>
 #include <libpltagger/tagset.h>
-#include <libpltagger/token.h>
 #include <libpltagger/tokensource.h>
 #include <libpltagger/util/confignode.h>
 #include <boost/function.hpp>
@@ -83,6 +83,8 @@ namespace PlTagger { namespace Conversion {
 		 */
 		void convert_ambiguous(const std::vector< std::vector<Token*> >& v,
 				boost::function<void (Token*)> sink);
+
+		Sentence* convert_sentence(Sentence* s);
 
 	private:
 		/// The conversion layers

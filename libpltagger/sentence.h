@@ -29,7 +29,11 @@ namespace PlTagger {
 			return tokens_[idx];
 		}
 
-		const std::vector<Token*> tokens() const {
+		const std::vector<Token*>& tokens() const {
+			return tokens_;
+		}
+
+		std::vector<Token*>& tokens() {
 			return tokens_;
 		}
 

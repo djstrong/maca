@@ -121,4 +121,27 @@ namespace PlTagger { namespace Conversion {
 		}
 	}
 
+	Sentence* TagsetConverter::convert_sentence(Sentence* s)
+	{
+		Sentence* res = new Sentence;
+		boost::sub_range< std::vector<Token*> > tsr;
+		boost::function<void (Token*)> adder = boost::bind(&Sentence::append, res, _1);
+		std::vector<Token*>::iterator i = s->tokens().begin();
+		if (i != s->tokens().end()) {
+			std::vector<Token*>::iterator b = i;
+			tsr.begin() = i;
+			++i;
+			while (i != s->tokens().end()) {
+				const Token& t = **i;
+				if (t.wa() != Toki::Whitespace::None) {
+					convert_container(boost::sub_range< std::vector<Token*> > (b, i), adder);
+					b = i;
+				}
+				++i;
+			}
+			convert_container(boost::sub_range< std::vector<Token*> >(b, i), adder);
+		}
+		return res;
+	}
+
 } /* end ns Conversion */ } /* end ns PlTagger */
