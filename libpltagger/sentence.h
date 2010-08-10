@@ -7,7 +7,7 @@
 
 namespace PlTagger {
 
-	class Sentence
+	class Sentence : private boost::noncopyable
 	{
 	public:
 		template <typename T>

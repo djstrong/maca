@@ -4,7 +4,7 @@
 #include <libpltagger/tagset.h>
 #include <libpltagger/token.h>
 #include <libpltagger/tokensource.h>
-#include <libpltagger/confignode.h>
+#include <libpltagger/util/confignode.h>
 #include <boost/function.hpp>
 
 namespace PlTagger { namespace Conversion {

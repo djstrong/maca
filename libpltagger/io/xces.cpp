@@ -84,7 +84,7 @@ namespace PlTagger {
 		}
 	}
 
-	void XcesTokenReaderImpl::on_start_element(const Glib::ustring &name, const AttributeList &attributes)
+	void XcesTokenReaderImpl::on_start_element(const Glib::ustring &name, const AttributeList& /*attributes*/)
 	{
 		if (name == "tok") {
 			state_ = XS_TOK;

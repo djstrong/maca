@@ -32,7 +32,17 @@ link_directories(${Boost_LIBRARY_DIRS})
 set(LIBS ${LIBS} ${Boost_LIBRARIES})
 
 SET(libpltagger_STAT_SRC
-    confignode.cpp
+    exception.cpp
+    iob.cpp
+    lexeme.cpp
+    main.cpp
+    sentence.cpp
+    tag.cpp
+    tagset.cpp
+    tagsetmanager.cpp
+    tagsetparser.cpp
+    token.cpp
+    tokensource.cpp
     conv/attributecopier.cpp
     conv/fold.cpp
     conv/joinlayer.cpp
@@ -44,8 +54,6 @@ SET(libpltagger_STAT_SRC
     conv/tagrule.cpp
     conv/tagrulelayer.cpp
     conv/tagsetconverter.cpp
-    debug.cpp
-    exception.cpp
     io/init.cpp
     io/plain.cpp
     io/premorph.cpp
@@ -56,23 +64,15 @@ SET(libpltagger_STAT_SRC
     io/xcesreader.cpp
     io/xcesvalidate.cpp
     io/xceswriter.cpp
-    iob.cpp
-    lexeme.cpp
-    main.cpp
     morph/constanalyser.cpp
     morph/dispatchanalyser.cpp
     morph/init.cpp
     morph/mapanalyser.cpp
     morph/morphanalyser.cpp
-    sentence.cpp
-    settings.cpp
-    symboldictionary.cpp
-    tag.cpp
-    tagset.cpp
-    tagsetmanager.cpp
-    tagsetparser.cpp
-    token.cpp
-    tokensource.cpp
+    util/confignode.cpp
+    util/debug.cpp
+    util/settings.cpp
+    util/symboldictionary.cpp
 )
 
 if (SFST_FOUND)

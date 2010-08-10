@@ -1,4 +1,4 @@
-#include <libpltagger/symboldictionary.h>
+#include <libpltagger/util/symboldictionary.h>
 
 namespace PlTagger {
 

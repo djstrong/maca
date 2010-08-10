@@ -18,7 +18,7 @@
 
 #include <libtoki/util/foreach.h>
 #include <libtoki/util/confignode.h>
-#include <libpltagger/settings.h>
+#include <libpltagger/util/settings.h>
 #include <libpltagger/tagsetmanager.h>
 #include <libpltagger/tagsetparser.h>
 #include <libpltagger/conv/tagsetconverter.h>
@@ -27,7 +27,7 @@
 #include <libpltagger/io/xces.h>
 #include <libpltagger/io/xceswriter.h>
 
-#include <libpltagger/debug.h>
+#include <libpltagger/util/debug.h>
 #include <fstream>
 
 int main(int argc, char** argv)

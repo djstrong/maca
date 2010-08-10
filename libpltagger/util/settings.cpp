@@ -1,4 +1,4 @@
-#include <libpltagger/settings.h>
+#include <libpltagger/util/settings.h>
 
 #ifdef HAVE_CONFIG_D_H
 #include <libpltagger/config_d.h>

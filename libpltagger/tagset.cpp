@@ -2,7 +2,7 @@
 #include <libpltagger/tagset.h>
 #include <libpltagger/lexeme.h>
 #include <libpltagger/token.h>
-#include <libpltagger/settings.h>
+#include <libpltagger/util/settings.h>
 #include <libpltagger/tagsetparser.h>
 
 #include <libtoki/util/foreach.h>

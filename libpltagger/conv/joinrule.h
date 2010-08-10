@@ -5,7 +5,7 @@
 #include <libpltagger/token.h>
 #include <libpltagger/conv/predicate.h>
 #include <boost/function.hpp>
-#include <libpltagger/confignode.h>
+#include <libpltagger/util/confignode.h>
 
 namespace PlTagger { namespace Conversion {
 

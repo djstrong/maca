@@ -3,7 +3,7 @@
 
 #include <libpltagger/conv/layer.h>
 #include <libpltagger/conv/predicate.h>
-#include <libpltagger/confignode.h>
+#include <libpltagger/util/confignode.h>
 #include <deque>
 #include <unicode/regex.h>
 

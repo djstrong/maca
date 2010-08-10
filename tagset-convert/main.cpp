@@ -2,8 +2,8 @@
 #include <libpltagger/config_d.h>
 #endif
 #include <libpltagger/conv/tagsetconverter.h>
-#include <libpltagger/debug.h>
-#include <libpltagger/settings.h>
+#include <libpltagger/util/debug.h>
+#include <libpltagger/util/settings.h>
 #include <libpltagger/tagsetmanager.h>
 #include <libpltagger/tagsetparser.h>
 
