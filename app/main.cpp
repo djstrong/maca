@@ -73,14 +73,6 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	const PlTagger::Tagset& tagsetz = PlTagger::get_named_tagset("ikipi");
-	PlTagger::XcesTokenReader xtr(tagsetz, std::cin);
-	PlTagger::PlainWriter pw(std::cout, tagsetz);
-	while (PlTagger::Token* t = xtr.get_next_token()) {
-		pw.write_token_dispose(t);
-	}
-	return 0;
-
         boost::shared_ptr<PlTagger::Conversion::TagsetConverter> converter;
 
         if (!conv.empty()) {
@@ -165,7 +157,7 @@ int main(int argc, char** argv)
 			std::cin >> s;
 			Toki::Token t(s.c_str(), "t", Toki::Whitespace::None);
 			std::vector<PlTagger::Token*> tv = ma->process(t);
-			pw.write_sentence(tv);
+			//pw.write_sentence(tv);
 		}
 	} else {
 		std::cerr << "Nothing to do! Try --help.\n";

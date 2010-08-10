@@ -96,7 +96,7 @@ int main(int argc, char** argv)
 			std::vector<Toki::Token*> sentence = sen.get_next_sentence();
 			assert(!sentence.empty());
 			std::vector<PlTagger::Token*> analysed_sentence = ma->process_dispose(sentence);
-			writer->write_sentence(analysed_sentence);
+			writer->write_sentence(PlTagger::Sentence(analysed_sentence));
 			foreach (PlTagger::Token* t, analysed_sentence) {
 				delete t;
 			}

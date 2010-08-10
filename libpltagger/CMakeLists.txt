@@ -32,6 +32,7 @@ link_directories(${Boost_LIBRARY_DIRS})
 set(LIBS ${LIBS} ${Boost_LIBRARIES})
 
 SET(libpltagger_STAT_SRC
+    chunk.cpp
     exception.cpp
     iob.cpp
     lexeme.cpp

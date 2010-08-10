@@ -34,16 +34,29 @@ namespace PlTagger {
 		finish();
 	}
 
-	void XcesWriter::write_sentence(const std::vector<Token *>& v)
+	void XcesWriter::write_token(const Token &t)
 	{
-		do_sentence(v);
+		token_as_xces_xml(os(), tagset(), t, use_indent_ ? indent_level() : -1);
 	}
 
-	void XcesWriter::write_paragraph(const std::vector<std::vector<Token *> > &v)
+	void XcesWriter::write_sentence(const Sentence& s)
 	{
-		paragraph_head();
+		osi() << "<chunk type=\"s\">\n";
 		if (use_indent_) indent_more();
-		do_paragraph(v);
+		foreach (const Token* t, s.tokens()) {
+			write_token(*t);
+		}
+		if (use_indent_) indent_less();
+		osi() << "</chunk>\n";
+	}
+
+	void XcesWriter::write_chunk(const Chunk &c)
+	{
+		paragraph_head(c);
+		if (use_indent_) indent_more();
+		foreach (const Sentence* s, c.sentences()) {
+			write_sentence(*s);
+		}
 		if (use_indent_) indent_less();
 		osi() << "</chunk>\n";
 	}
@@ -53,7 +66,7 @@ namespace PlTagger {
 		os() << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 		os() << "<!DOCTYPE cesAna SYSTEM \"xcesAnaIPI.dtd\">\n";
 		os() << "<cesAna";
-		//os() << " xmlns:xlink=\"http://www.w3.org/1999/xlink\"";
+		os() << " xmlns:xlink=\"http://www.w3.org/1999/xlink\"";
 		os() << " version=\"1.0\" type=\"lex disamb\">\n";
 		os() << "<chunkList>\n";
 		if (force_chunk_) paragraph_head();
@@ -66,31 +79,19 @@ namespace PlTagger {
 		os() << "</cesAna>\n";
 	}
 
-	void XcesWriter::do_token(const Token &t)
-	{
-		token_as_xces_xml(os(), tagset(), t, use_indent_ ? indent_level() : -1);
-	}
-
-	void XcesWriter::do_sentence(const std::vector<Token *>& v)
-	{
-		osi() << "<chunk type=\"s\">\n";
-		if (use_indent_) indent_more();
-		foreach (const Token* t, v) {
-			do_token(*t);
-		}
-		if (use_indent_) indent_less();
-		osi() << "</chunk>\n";
-	}
-
-	void XcesWriter::do_paragraph(const std::vector< std::vector<Token *> >& v)
-	{
-		TokenWriter::do_paragraph(v);
-	}
-
 	void XcesWriter::paragraph_head()
 	{
 		osi() << "<chunk id=\"ch" << ++cid_ << "\""
 			<< " type=\"tok\">\n";
+	}
+
+	void XcesWriter::paragraph_head(const Chunk& c)
+	{
+		osi() << "<chunk";
+		foreach (const Chunk::attr_map_t::value_type& v, c.attributes()) {
+			os() << " " << v.first << "=\"" << v.second << "\"";
+		}
+		os() << ">\n";
 	}
 
 } /* end ns PlTagger */

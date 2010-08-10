@@ -2,27 +2,37 @@
 #define LIBPLTAGGER_IO_XCESREADER_H
 
 #include <libpltagger/io/reader.h>
+#include <libpltagger/chunk.h>
 #include <deque>
-
-namespace xmlpp {
-	class Node;
-}
+#include <boost/scoped_ptr.hpp>
 
 namespace PlTagger {
 
-	class XcesReader : public TokenReader
+	class XcesReaderImpl;
+
+	class XcesReaderError : public PlTaggerError
 	{
 	public:
-		XcesReader(std::istream& is, const Tagset& tagset);
+		/// Constructor
+		XcesReaderError(const std::string &what);
+
+		/// Destructor
+		~XcesReaderError() throw();
+	};
+
+	class XcesReader
+	{
+	public:
+		XcesReader(const Tagset& tagset, std::istream& is);
 
 		~XcesReader();
 
-		Token* token_from_tok_node(const xmlpp::Node* n);
-
-		std::vector< std::vector<Token*> > read_paragraph();
+		Chunk* get_next_chunk();
 
 	protected:
-		std::deque< std::vector< std::vector< Token* > > > paragraphs_;
+		std::istream& is_;
+
+		boost::scoped_ptr<XcesReaderImpl> impl_;
 	};
 
 

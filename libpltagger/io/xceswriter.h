@@ -23,22 +23,20 @@ namespace PlTagger {
 
 		~XcesWriter();
 
-		void write_sentence(const std::vector<Token*>& v);
+		void write_token(const Token &t);
 
-		void write_paragraph(const std::vector< std::vector<Token*> >& v);
+		void write_sentence(const Sentence &s);
+
+		void write_chunk(const Chunk &c);
 
 	protected:
 		void do_header();
 
 		void do_footer();
 
-		void do_token(const Token& t);
-
-		void do_sentence(const std::vector<Token*>& v);
-
 		void paragraph_head();
 
-		void do_paragraph(const std::vector< std::vector<Token*> >& v);
+		void paragraph_head(const Chunk& c);
 
 		int cid_;
 

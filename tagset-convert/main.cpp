@@ -68,10 +68,12 @@ int main(int argc, char** argv)
 		xv.validate_stream(std::cin);
 	} else if (!converter.empty()) {
 		const PlTagger::Tagset& tagset = PlTagger::get_named_tagset(converter);
-		PlTagger::XcesReader reader(std::cin, tagset);
+		PlTagger::XcesReader reader(tagset, std::cin);
 		boost::scoped_ptr<PlTagger::TokenWriter> writer;
 		writer.reset(PlTagger::TokenWriter::create(output_format, std::cout, tagset));
-		writer->write_paragraph(reader.read_paragraph());
+		while (PlTagger::Chunk* c = reader.get_next_chunk()) {
+			writer->write_chunk(*c);
+		}
 	} else {
 		std::cerr << "Usage: tagset-convert [OPTIONS] <converter>\n";
 		std::cerr << "See tagset-convert --help\n";
