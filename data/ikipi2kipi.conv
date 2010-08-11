@@ -1,7 +1,7 @@
 [split]
-tagset=my
+tagset=ikipi
 pre=fin:prt
-regexp=(.+ł)(e[mś])
+regexp=(?i:(.+ł)(e[mś]))
 post=praet:per:vcl:tns
 copy_attrs_to_t2=nmb:per:vcl
 t2_tag=aglt:imperf
@@ -9,7 +9,7 @@ t2_lemma=być
 
 [split]
 pre=fin:prt
-regexp=(.+ł[ao])([mś])
+regexp=(?i:(.+ł[ao])([mś]))
 post=praet:per:vcl:tns
 copy_attrs_to_t2=nmb:per:vcl
 t2_tag=aglt:imperf
@@ -17,7 +17,7 @@ t2_lemma=być
 
 [split]
 pre=fin:prt
-regexp=(.+)(śmy|ście)
+regexp=(.+)(?i:(śmy|ście))
 post=praet:per:vcl:tns
 copy_attrs_to_t2=nmb:per:vcl
 t2_tag=aglt:imperf
@@ -25,14 +25,14 @@ t2_lemma=być
 
 [split]
 pre=conjt:ter
-regexp=(.+)(by)
+regexp=(.+)(?i:(by))
 post=praet:per:vcl:tns
 t2_tag=qub
 t2_lemma=by
 
 [3split]
 pre=conjt
-regexp=(.+)(by)(m|ś|śmy|ście)
+regexp=(.+)(?i:(by)(m|ś|śmy|ście))
 post=praet:per:vcl:tns
 copy_attrs_to_t3=nmb:per:vcl
 t2_tag=qub
@@ -59,4 +59,3 @@ post=tns
 [convert]
 tagset_from=ikipi
 tagset_to=kipi
-override=n:n1
