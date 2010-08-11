@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import sys
 import codecs
@@ -45,40 +46,41 @@ def work():
 	zzlist = []
 	li = 0
 	for line in file:
-		olist = []
-		orth, lemma, tag = line.split()
-		for e1, e2 in escapes:
-			tag = tag.replace(e1, e2)
-		i = 0
-		m = min(len(orth), len(lemma))
-		while (i < m):
-			co = orth[i]
-			cl = lemma[i]
-			if co == cl:
+		if line.strip():
+			olist = []
+			orth, lemma, tag = line.split()
+			for e1, e2 in escapes:
+				tag = tag.replace(e1, e2)
+			i = 0
+			m = min(len(orth), len(lemma))
+			while (i < m):
+				co = orth[i]
+				cl = lemma[i]
+				if co == cl:
+					ewrite(olist, co)
+				else:
+					ewrite(olist, cl)
+					olist.append(':')
+					ewrite(olist, co)
+				i = i + 1
+			while (i < len(orth)):
+				co = orth[i]
+				olist.append('<>:')
 				ewrite(olist, co)
-			else:
+				i = i + 1
+			while (i < len(lemma)):
+				cl = lemma[i]
 				ewrite(olist, cl)
-				olist.append(':')
-				ewrite(olist, co)
-			i = i + 1
-		while (i < len(orth)):
-			co = orth[i]
-			olist.append('<>:')
-			ewrite(olist, co)
-			i = i + 1
-		while (i < len(lemma)):
-			cl = lemma[i]
-			ewrite(olist, cl)
-			olist.append(':<>')
-			i = i + 1
-		olist.append('<')
-		olist.append(tag)
-		olist.append('>:<>\n')
-		li = li + 1
-		if li % 1000 == 0:
-			print "\r", li,
+				olist.append(':<>')
+				i = i + 1
+			olist.append('<')
+			olist.append(tag)
+			olist.append('>:<>\n')
+			li = li + 1
+			if li % 1000 == 0:
+				print "\r", li,
 			zzlist.append(''.join(olist))
-			zzlist = []
+			olist = []
 	ofile.write(''.join(zzlist))
 
 t = timeit.Timer(work)
