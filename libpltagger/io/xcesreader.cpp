@@ -17,7 +17,7 @@ namespace PlTagger {
 	class XcesReaderImpl : public xmlpp::SaxParser
 	{
 	public:
-		XcesReaderImpl(const Tagset& tagset);
+		XcesReaderImpl(const Tagset& tagset, bool disamb_only);
 
 		~XcesReaderImpl();
 
@@ -46,10 +46,12 @@ namespace PlTagger {
 		Chunk* chunk_;
 
 		std::deque<Chunk*> obuf_;
+
+		bool disamb_only_;
 	};
 
-	XcesReader::XcesReader(const Tagset& tagset, std::istream& is)
-		: is_(is), impl_(new XcesReaderImpl(tagset))
+	XcesReader::XcesReader(const Tagset& tagset, std::istream& is, bool disamb_only)
+		: is_(is), impl_(new XcesReaderImpl(tagset, disamb_only))
 	{
 	}
 
@@ -76,10 +78,11 @@ namespace PlTagger {
 		return impl_->try_get_next();
 	}
 
-	XcesReaderImpl::XcesReaderImpl(const Tagset& tagset)
+	XcesReaderImpl::XcesReaderImpl(const Tagset& tagset, bool disamb_only)
 		: xmlpp::SaxParser()
 		, tagset_(tagset), state_(XS_NONE), wa_(Toki::Whitespace::Newline)
 		, sbuf_(), tok_(NULL), sent_(NULL), chunk_(NULL), obuf_()
+		, disamb_only_(disamb_only)
 	{
 	}
 
@@ -141,8 +144,19 @@ namespace PlTagger {
 			sbuf_ = "";
 		} else if (state_ == XS_TOK && name == "lex") {
 			assert(tok_ != NULL);
-			tok_->add_lexeme(Lexeme());
-			state_ = XS_LEX;
+			bool okay = true;
+			if (disamb_only_) {
+				okay = false;
+				foreach (const Attribute& a, attributes) {
+					if (a.name == "disamb" && a.value == "1") {
+						okay = true;
+					}
+				}
+			}
+			if (okay) {
+				tok_->add_lexeme(Lexeme());
+				state_ = XS_LEX;
+			}
 		} else if (state_ == XS_LEX && name == "base") {
 			state_ = XS_LEMMA;
 			sbuf_ = "";

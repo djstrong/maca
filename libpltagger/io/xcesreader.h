@@ -23,7 +23,7 @@ namespace PlTagger {
 	class XcesReader
 	{
 	public:
-		XcesReader(const Tagset& tagset, std::istream& is);
+		XcesReader(const Tagset& tagset, std::istream& is, bool disamb_only = false);
 
 		~XcesReader();
 

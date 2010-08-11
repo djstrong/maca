@@ -3,8 +3,8 @@
 
 namespace PlTagger {
 
-	PlainWriter::PlainWriter(std::ostream& os, const Tagset& tagset)
-		: TokenWriter(os, tagset)
+	PlainWriter::PlainWriter(std::ostream& os, const Tagset& tagset, const string_range_vector& params)
+		: TokenWriter(os, tagset, params)
 	{
 	}
 

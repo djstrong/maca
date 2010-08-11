@@ -3,8 +3,8 @@
 
 namespace PlTagger {
 
-	OrthWriter::OrthWriter(std::ostream& os, const Tagset& tagset)
-		: TokenWriter(os, tagset)
+	OrthWriter::OrthWriter(std::ostream& os, const Tagset& tagset, const string_range_vector& params)
+		: TokenWriter(os, tagset, params)
 	{
 	}
 

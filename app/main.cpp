@@ -150,16 +150,5 @@ int main(int argc, char** argv)
 		}
 	}
 
-	if (ma) {
-		PlTagger::XcesWriter pw(std::cout, ma->tagset());
-		while (std::cin.good()) {
-			std::string s;
-			std::cin >> s;
-			Toki::Token t(s.c_str(), "t", Toki::Whitespace::None);
-			std::vector<PlTagger::Token*> tv = ma->process(t);
-			//pw.write_sentence(tv);
-		}
-	} else {
-		std::cerr << "Nothing to do! Try --help.\n";
-	}
+	std::cerr << "Nothing to do! Try --help.\n";
 }
