@@ -141,6 +141,8 @@ namespace PlTagger { namespace Conversion {
 			}
 			convert_container(boost::sub_range< std::vector<Token*> >(b, i), adder);
 		}
+		s->tokens().clear();
+		delete s;
 		return res;
 	}
 
