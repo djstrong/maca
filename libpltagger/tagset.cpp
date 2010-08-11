@@ -2,10 +2,10 @@
 #include <libpltagger/tagset.h>
 #include <libpltagger/lexeme.h>
 #include <libpltagger/token.h>
-#include <libpltagger/settings.h>
+#include <libpltagger/util/settings.h>
 #include <libpltagger/tagsetparser.h>
 
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/strong_typedef.hpp>

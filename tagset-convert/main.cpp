@@ -2,8 +2,9 @@
 #include <libpltagger/config_d.h>
 #endif
 #include <libpltagger/conv/tagsetconverter.h>
-#include <libpltagger/debug.h>
-#include <libpltagger/settings.h>
+#include <libpltagger/util/confignode.h>
+#include <libpltagger/util/debug.h>
+#include <libpltagger/util/settings.h>
 #include <libpltagger/tagsetmanager.h>
 #include <libpltagger/tagsetparser.h>
 
@@ -12,7 +13,7 @@
 #include <libpltagger/io/xceswriter.h>
 #include <libpltagger/io/writer.h>
 
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>
@@ -67,11 +68,24 @@ int main(int argc, char** argv)
 		PlTagger::XcesValidator xv(tagset, std::cout);
 		xv.validate_stream(std::cin);
 	} else if (!converter.empty()) {
-		const PlTagger::Tagset& tagset = PlTagger::get_named_tagset(converter);
-		PlTagger::XcesReader reader(std::cin, tagset);
-		boost::scoped_ptr<PlTagger::TokenWriter> writer;
-		writer.reset(PlTagger::TokenWriter::create(output_format, std::cout, tagset));
-		writer->write_paragraph(reader.read_paragraph());
+		try {
+			//const PlTagger::Tagset& tagset = PlTagger::get_named_tagset(converter);
+			std::string fn = PlTagger::find_file_in_search_path(converter);
+			PlTagger::Config::Node n = PlTagger::Config::from_file(fn);
+			PlTagger::Conversion::TagsetConverter conv(n);
+			PlTagger::XcesReader reader(conv.tagset_from(), std::cin);
+			boost::scoped_ptr<PlTagger::TokenWriter> writer;
+			writer.reset(PlTagger::TokenWriter::create(output_format, std::cout, conv.tagset_to()));
+			while (PlTagger::Chunk* c = reader.get_next_chunk()) {
+				foreach (PlTagger::Sentence*& s, c->sentences()) {
+					s = conv.convert_sentence(s);
+				}
+				writer->write_chunk(*c);
+				delete c;
+			}
+		} catch (PlTagger::PlTaggerError& e) {
+			std::cerr << "Error: " << e.info() << "\n";
+		}
 	} else {
 		std::cerr << "Usage: tagset-convert [OPTIONS] <converter>\n";
 		std::cerr << "See tagset-convert --help\n";

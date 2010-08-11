@@ -11,7 +11,7 @@
 #include <boost/function.hpp>
 
 #include <libpltagger/exception.h>
-#include <libpltagger/symboldictionary.h>
+#include <libpltagger/util/symboldictionary.h>
 #include <libpltagger/typedefs.h>
 
 #include <unicode/unistr.h>

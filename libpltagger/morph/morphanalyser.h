@@ -2,7 +2,7 @@
 #define LIBPLTAGGER_MORPHANALYSER_H
 
 #include <libtoki/token.h>
-#include <libpltagger/confignode.h>
+#include <libpltagger/util/confignode.h>
 #include <libpltagger/token.h>
 #include <libpltagger/tagset.h>
 

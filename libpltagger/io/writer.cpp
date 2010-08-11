@@ -1,6 +1,6 @@
 #include <libpltagger/io/writer.h>
 #include <libpltagger/io/init.h>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 
 namespace PlTagger {
 
@@ -39,40 +39,12 @@ namespace PlTagger {
 		indent_ -= n;
 	}
 
-	void TokenWriter::write_token(const Token& t)
-	{
-		do_token(t);
-	}
-
 	void TokenWriter::write_token_dispose(Token* t)
 	{
 		write_token(*t);
 		delete t;
 	}
 
-	void TokenWriter::write_sentence(const std::vector<Token *> &s)
-	{
-		do_sentence(s);
-	}
-
-	void TokenWriter::write_paragraph(const std::vector< std::vector<Token *> > &p)
-	{
-		do_paragraph(p);
-	}
-
-	void TokenWriter::do_sentence(const std::vector<Token *> &s)
-	{
-		foreach (const Token* tok, s) {
-			write_token(*tok);
-		}
-	}
-
-	void TokenWriter::do_paragraph(const std::vector< std::vector<Token *> > &p)
-	{
-		foreach (const std::vector<Token *> s, p) {
-			write_sentence(s);
-		}
-	}
 
 	TokenWriter* TokenWriter::create(const std::string class_id,
 			std::ostream& os,

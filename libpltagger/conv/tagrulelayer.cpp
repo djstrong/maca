@@ -1,5 +1,5 @@
 #include <libpltagger/conv/tagrulelayer.h>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 #include <libpltagger/tagsetmanager.h>
 
 namespace PlTagger { namespace Conversion {

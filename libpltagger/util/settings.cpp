@@ -1,10 +1,10 @@
-#include <libpltagger/settings.h>
+#include <libpltagger/util/settings.h>
 
 #ifdef HAVE_CONFIG_D_H
 #include <libpltagger/config_d.h>
 #endif
 
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 
 #include <libtoki/parser/loose_ini_paser.h>
 

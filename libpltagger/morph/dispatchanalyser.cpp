@@ -1,6 +1,6 @@
 #include <libpltagger/morph/dispatchanalyser.h>
 
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 
 #include <boost/algorithm/string.hpp>
 

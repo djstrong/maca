@@ -1,8 +1,8 @@
 #include <libpltagger/morph/morfeuszanalyser.h>
 #include <libpltagger/token.h>
 #include <libpltagger/morph/morfeuszcompat.h>
-#include <libpltagger/settings.h>
-#include <libtoki/foreach.h>
+#include <libpltagger/util/settings.h>
+#include <libtoki/util/foreach.h>
 
 #include <morfeusz.h>
 #include <fstream>

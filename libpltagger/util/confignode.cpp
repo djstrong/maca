@@ -1,4 +1,4 @@
-#include <libpltagger/confignode.h>
+#include <libpltagger/util/confignode.h>
 #include <sstream>
 
 namespace PlTagger {

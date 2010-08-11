@@ -4,7 +4,7 @@
 #include <sfst/interface.h>
 #include <sfst/compact.h>
 #include <cstdio>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 #include <sstream>
 #include <iostream>
 

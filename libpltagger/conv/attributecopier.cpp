@@ -1,6 +1,6 @@
 #include <libpltagger/conv/attributecopier.h>
 #include <boost/algorithm/string.hpp>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 
 namespace PlTagger { namespace Conversion {
 

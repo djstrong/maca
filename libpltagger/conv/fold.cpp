@@ -1,5 +1,5 @@
 #include <libpltagger/conv/fold.h>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 #include <libpltagger/token.h>
 
 namespace PlTagger { namespace Conversion {

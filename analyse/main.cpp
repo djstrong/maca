@@ -1,6 +1,6 @@
 #include <libpltagger/conv/tagsetconverter.h>
-#include <libpltagger/debug.h>
-#include <libpltagger/settings.h>
+#include <libpltagger/util/debug.h>
+#include <libpltagger/util/settings.h>
 #include <libpltagger/tagsetparser.h>
 
 #include <libpltagger/io/plain.h>
@@ -8,8 +8,8 @@
 #include <libpltagger/io/xces.h>
 #include <libpltagger/morph/dispatchanalyser.h>
 
-#include <libtoki/foreach.h>
-#include <libtoki/layertokenizer.h>
+#include <libtoki/util/foreach.h>
+#include <libtoki/tokenizer/layertokenizer.h>
 #include <libtoki/sentencesplitter.h>
 
 #include <boost/algorithm/string.hpp>
@@ -96,7 +96,7 @@ int main(int argc, char** argv)
 			std::vector<Toki::Token*> sentence = sen.get_next_sentence();
 			assert(!sentence.empty());
 			std::vector<PlTagger::Token*> analysed_sentence = ma->process_dispose(sentence);
-			writer->write_sentence(analysed_sentence);
+			writer->write_sentence(PlTagger::Sentence(analysed_sentence));
 			foreach (PlTagger::Token* t, analysed_sentence) {
 				delete t;
 			}

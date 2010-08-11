@@ -1,7 +1,7 @@
 #ifndef LIBPLTAGGER_IO_WRITER_H
 #define LIBPLTAGGER_IO_WRITER_H
 
-#include <libpltagger/token.h>
+#include <libpltagger/chunk.h>
 
 #include <loki/Factory.h>
 #include <loki/Singleton.h>
@@ -18,13 +18,13 @@ namespace PlTagger {
 
 		virtual ~TokenWriter();
 
-		virtual void write_token(const Token& t);
+		virtual void write_token(const Token& t) = 0;
 
 		void write_token_dispose(Token* t);
 
-		virtual void write_sentence(const std::vector<Token*>& s);
+		virtual void write_sentence(const Sentence& s) = 0;
 
-		virtual void write_paragraph(const std::vector<std::vector<Token*> >& p);
+		virtual void write_chunk(const Chunk& p) = 0;
 
 		std::ostream& os() {
 			return os_;
@@ -64,12 +64,6 @@ namespace PlTagger {
 
 	protected:
 		virtual void do_footer() {}
-
-		virtual void do_token(const Token& t) = 0;
-
-		virtual void do_sentence(const std::vector<Token*>& s) = 0;
-
-		virtual void do_paragraph(const std::vector<std::vector<Token*> >& p) = 0;
 
 		void indent_more(int n = 1);
 

@@ -1,5 +1,5 @@
 #include <libpltagger/io/plain.h>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 
 namespace PlTagger {
 
@@ -8,24 +8,28 @@ namespace PlTagger {
 	{
 	}
 
-	void PlainWriter::do_token(const Token &t)
+	void PlainWriter::write_token(const Token &t)
 	{
 		os() << t.orth_utf8() << "\n";
 		foreach (const Lexeme& lex, t.lexemes()) {
 			os() << "\t" << lex.lemma_utf8() << "\t" << tagset().tag_to_string(lex.tag()) << "\n";
 		}
 	}
-	void PlainWriter::do_sentence(const std::vector<Token *> &t)
+	void PlainWriter::write_sentence(const Sentence &s)
 	{
 		os() << "[[[\n";
-		TokenWriter::do_sentence(t);
+		foreach (const Token* t, s.tokens()) {
+			write_token(*t);
+		}
 		os() << "]]]\n";
 	}
 
-	void PlainWriter::do_paragraph(const std::vector< std::vector<Token *> > &t)
+	void PlainWriter::write_chunk(const Chunk& c)
 	{
 		os() << "[[[<<<\n\n";
-		TokenWriter::do_paragraph(t);
+		foreach (const Sentence* s, c.sentences()) {
+			write_sentence(*s);
+		}
 		os() << ">>>]]]\n\n";
 	}
 

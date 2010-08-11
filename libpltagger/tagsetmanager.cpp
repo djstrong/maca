@@ -1,7 +1,7 @@
 #include <libpltagger/tagsetmanager.h>
 #include <libpltagger/tagsetparser.h>
-#include <libpltagger/settings.h>
-#include <libtoki/foreach.h>
+#include <libpltagger/util/settings.h>
+#include <libtoki/util/foreach.h>
 #include <fstream>
 #include <iostream>
 

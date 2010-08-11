@@ -1,5 +1,5 @@
 #include <libpltagger/morph/morfeuszcompat.h>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 #include <deque>
 
 namespace PlTagger { namespace MorfeuszCompat {

@@ -4,7 +4,7 @@
 #include <libpltagger/token.h>
 #include <libpltagger/morph/morphanalyser.h>
 
-#include <libtoki/tokenizer.h>
+#include <libtoki/tokenizer/tokenizer.h>
 
 #include <boost/scoped_ptr.hpp>
 

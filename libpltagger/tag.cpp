@@ -1,7 +1,7 @@
 #include <libpltagger/tag.h>
 #include <libpltagger/tagsetmanager.h>
 
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 
 #include <cstring>
 #include <sstream>

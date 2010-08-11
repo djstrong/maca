@@ -11,12 +11,11 @@ namespace PlTagger {
 	public:
 		PlainWriter(std::ostream& os, const Tagset& tagset);
 
-	protected:
-		void do_token(const Token& t);
+		void write_token(const Token& t);
 
-		void do_sentence(const std::vector<Token*>& t);
+		void write_sentence(const Sentence& t);
 
-		void do_paragraph(const std::vector< std::vector<Token *> >& t);
+		void write_chunk(const Chunk& c);
 	};
 
 	class PlainReader

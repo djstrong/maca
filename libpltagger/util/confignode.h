@@ -1,7 +1,7 @@
 #ifndef LIBPLTAGGER_CONFIGNODE_H
 #define LIBPLTAGGER_CONFIGNODE_H
 
-#include <libtoki/confignode.h>
+#include <libtoki/util/confignode.h>
 #include <libpltagger/exception.h>
 
 namespace PlTagger {

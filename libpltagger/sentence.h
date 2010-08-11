@@ -7,11 +7,15 @@
 
 namespace PlTagger {
 
-	class Sentence
+	class Sentence : private boost::noncopyable
 	{
 	public:
+		Sentence();
+
 		template <typename T>
-		Sentence(const T& range);
+		explicit Sentence(const T& range);
+
+		~Sentence();
 
 		size_t size() const {
 			return tokens_.size();
@@ -25,13 +29,20 @@ namespace PlTagger {
 			return tokens_[idx];
 		}
 
-		const std::vector<Token*> tokens() const {
+		const std::vector<Token*>& tokens() const {
 			return tokens_;
+		}
+
+		std::vector<Token*>& tokens() {
+			return tokens_;
+		}
+
+		void append(Token* t) {
+			tokens_.push_back(t);
 		}
 
 	private:
 		std::vector<Token*> tokens_;
-
 	};
 
 	template <typename T>

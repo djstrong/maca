@@ -3,7 +3,7 @@
 
 #include <libpltagger/conv/layer.h>
 #include <libpltagger/conv/tagrule.h>
-#include <libpltagger/confignode.h>
+#include <libpltagger/util/confignode.h>
 
 namespace PlTagger { namespace Conversion {
 

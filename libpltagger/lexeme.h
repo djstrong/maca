@@ -4,7 +4,7 @@
 #include <unicode/unistr.h>
 
 #include <libpltagger/tag.h>
-#include <libtoki/util.h>
+#include <libtoki/util/util.h>
 
 namespace PlTagger {
 

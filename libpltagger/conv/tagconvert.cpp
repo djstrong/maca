@@ -1,7 +1,7 @@
 #include <libpltagger/conv/tagconvert.h>
 #include <libpltagger/token.h>
 #include <libpltagger/tagsetmanager.h>
-#include <libtoki/foreach.h>
+#include <libtoki/util/foreach.h>
 
 namespace PlTagger { namespace Conversion {
 
