@@ -9,7 +9,7 @@ namespace PlTagger {
 	class PlainWriter : public TokenWriter
 	{
 	public:
-		PlainWriter(std::ostream& os, const Tagset& tagset);
+		PlainWriter(std::ostream& os, const Tagset& tagset, const string_range_vector& params);
 
 		void write_token(const Token& t);
 

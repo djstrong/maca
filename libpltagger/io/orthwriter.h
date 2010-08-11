@@ -7,7 +7,7 @@ namespace PlTagger {
 
 	class OrthWriter : public TokenWriter {
 	public:
-		OrthWriter(std::ostream& os, const Tagset& tagset);
+		OrthWriter(std::ostream& os, const Tagset& tagset, const string_range_vector& params);
 
 		~OrthWriter();
 

@@ -4,29 +4,25 @@
 
 namespace PlTagger {
 
-	XcesWriter::XcesWriter(std::ostream& os, const Tagset& tagset, bool force_chunk /*=true*/)
-		: TokenWriter(os, tagset), cid_(0), use_indent_(true), force_chunk_(force_chunk)
+	XcesWriter::XcesWriter(std::ostream& os, const Tagset& tagset, const string_range_vector& params)
+		: TokenWriter(os, tagset, params), cid_(0)
+		, use_indent_(true), force_chunk_(false), force_disamb_(false), sort_tags_(false)
 	{
+		foreach (const string_range& param, params) {
+			std::string p = boost::copy_range<std::string>(param);
+			if (p == "flat") {
+				use_indent_ = false;
+			} else if (p == "chunk") {
+				force_chunk_ = true;
+			} else if (p == "nochunk") {
+				force_chunk_ = false;
+			} else if (p == "disamb") {
+				force_disamb_ = true;
+			} else if (p == "sorttags") {
+				sort_tags_ = true;
+			}
+		}
 		do_header();
-	}
-
-	XcesWriter* XcesWriter::create_flat(std::ostream& os, const Tagset& tagset)
-	{
-		XcesWriter* w = new XcesWriter(os, tagset);
-		w->use_indent(false);
-		return w;
-	}
-
-	XcesWriter* XcesWriter::create_nochunk(std::ostream& os, const Tagset& tagset)
-	{
-		return new XcesWriter(os, tagset, false);
-	}
-
-	XcesWriter* XcesWriter::create_flat_nochunk(std::ostream& os, const Tagset& tagset)
-	{
-		XcesWriter* w = new XcesWriter(os, tagset, false);
-		w->use_indent(false);
-		return w;
 	}
 
 	XcesWriter::~XcesWriter()
@@ -36,7 +32,8 @@ namespace PlTagger {
 
 	void XcesWriter::write_token(const Token &t)
 	{
-		token_as_xces_xml(os(), tagset(), t, use_indent_ ? indent_level() : -1);
+		token_as_xces_xml(os(), tagset(), t, use_indent_ ? indent_level() : -1,
+				force_disamb_, sort_tags_);
 	}
 
 	void XcesWriter::write_sentence(const Sentence& s)

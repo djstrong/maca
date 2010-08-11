@@ -7,19 +7,7 @@ namespace PlTagger {
 
 	class XcesWriter : public TokenWriter {
 	public:
-		XcesWriter(std::ostream& os, const Tagset& tagset, bool force_chunk=true);
-
-		void use_indent(bool v) {
-			use_indent_ = v;
-		}
-
-		void force_chunk(bool v) {
-			force_chunk_ = v;
-		}
-
-		static XcesWriter* create_flat(std::ostream& os, const Tagset& tagset);
-		static XcesWriter* create_nochunk(std::ostream& os, const Tagset& tagset);
-		static XcesWriter* create_flat_nochunk(std::ostream& os, const Tagset& tagset);
+		XcesWriter(std::ostream& os, const Tagset& tagset, const string_range_vector& params);
 
 		~XcesWriter();
 
@@ -43,6 +31,10 @@ namespace PlTagger {
 		bool use_indent_;
 
 		bool force_chunk_;
+
+		bool force_disamb_;
+
+		bool sort_tags_;
 	};
 
 

@@ -14,7 +14,7 @@ namespace PlTagger {
 	class TokenWriter
 	{
 	public:
-		TokenWriter(std::ostream& os, const Tagset& tagset);
+		TokenWriter(std::ostream& os, const Tagset& tagset, const string_range_vector& params);
 
 		virtual ~TokenWriter();
 
@@ -47,6 +47,18 @@ namespace PlTagger {
 		 * @param tagset the tagset to pass to the writer's constructor
 		 */
 		static TokenWriter* create(const std::string class_id,
+				std::ostream& os,
+				const Tagset& tagset,
+				const string_range_vector& params);
+
+		/**
+		 * Factory interface for creating writers from string identifiers.
+		 *
+		 * Params are split from the class id and then the more general version
+		 * is called. Parameters are expected to be comma-separated from the
+		 * class id.
+		 */
+		static TokenWriter* create(const std::string class_id_params,
 				std::ostream& os,
 				const Tagset& tagset);
 
@@ -94,7 +106,7 @@ namespace PlTagger {
 		Loki::Factory<
 			TokenWriter, // The base class for objects created in the factory
 			std::string, // Identifier type
-			Loki::TL::MakeTypelist< std::ostream&, const Tagset& >::Result
+			Loki::TL::MakeTypelist< std::ostream&, const Tagset&, const string_range_vector& >::Result
 			// TokenLayer constructor arguments' types specification
 		>,
 		Loki::CreateUsingNew, // default_config, needed to change the item below
@@ -115,9 +127,9 @@ namespace PlTagger {
 	 */
 	template <typename T>
 	inline
-	T* writer_creator(std::ostream& os, const Tagset& tagset)
+	T* writer_creator(std::ostream& os, const Tagset& tagset, const string_range_vector& params)
 	{
-		return new T(os, tagset);
+		return new T(os, tagset, params);
 	}
 
 	template <typename T>
