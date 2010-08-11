@@ -39,7 +39,7 @@ namespace PlTagger {
 	}
 
 	MorfeuszAnalyser::MorfeuszAnalyser(const Config::Node& cfg)
-		: MorphAnalyser(cfg), conv_(NULL)
+		: MorphAnalyser(cfg), conv_(NULL), ign_tag_(), warn_on_ign_(false)
 	{
 		std::string fn = cfg.get("converter", "");
 		std::ifstream ifs;
@@ -50,6 +50,11 @@ namespace PlTagger {
 
 		if (c->tagset_to().id() != tagset().id()) throw TagsetMismatch("Morfeusz analyser creation", tagset(), c->tagset_to());
 		conv_ = c.release();
+
+		std::string ign_tag_string = cfg.get("ign_tag", "ign");
+		ign_tag_ = conv_->tagset_from().parse_simple_tag(ign_tag_string, false);
+		warn_on_ign_ = cfg.get("warn_on_ign", false);
+
 		morfeusz_set_option(MORFOPT_ENCODING, MORFEUSZ_UTF_8);
 	}
 
@@ -65,9 +70,13 @@ namespace PlTagger {
 		if (pmorf[0].p == -1) { // no analyses
 			return false;
 		} else if (pmorf[1].p == -1) { // only one analysis
-			std::vector<Token*> vec;
-			vec.push_back(make_token(t, pmorf));
-			flush_convert(vec, sink);
+			if (pmorf->interp) {
+				std::vector<Token*> vec;
+				vec.push_back(make_token(t, pmorf));
+				flush_convert(vec, sink);
+			} else {
+				return false;
+			}
 		} else { // token was split, or there are multiple analyses (lemmas)
 			int node_count = 0, edge_count = 0;
 			while (pmorf[edge_count].p != -1) {
@@ -175,9 +184,9 @@ namespace PlTagger {
 
 	void MorfeuszAnalyser::pmorf_into_token(Token *tt, InterpMorf *im) const
 	{
-		UnicodeString lemma = UnicodeString::fromUTF8(im->haslo);
 		tt->set_orth(UnicodeString::fromUTF8(im->forma));
 		if (im->interp) {
+			UnicodeString lemma = UnicodeString::fromUTF8(im->haslo);
 			boost::function<Lexeme (const Tag&)> lex;
 			lex = boost::bind(&Lexeme::create, boost::cref(lemma), _1);
 
@@ -193,7 +202,11 @@ namespace PlTagger {
 				}
 			}
 		} else {
-			tt->add_ign(conv_->tagset_from());
+			if (warn_on_ign_) {
+				std::cerr << "Morfeusz: tagging as ign: " << im->forma << "\n";
+			}
+			Lexeme ign_lex(tt->orth(), ign_tag_);
+			tt->add_lexeme(ign_lex);
 		}
 	}
 
