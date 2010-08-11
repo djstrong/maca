@@ -1,4 +1,5 @@
 #include <libpltagger/io/init.h>
+#include <libpltagger/io/orthwriter.h>
 #include <libpltagger/io/plain.h>
 #include <libpltagger/io/xceswriter.h>
 
@@ -13,6 +14,7 @@ namespace PlTagger {
 		TokenWriterFactory::Instance().Register("xces-nochunk", XcesWriter::create_nochunk);
 		TokenWriterFactory::Instance().Register("xces-flat-nochunk", XcesWriter::create_flat_nochunk);
 		TokenWriterFactory::Instance().Register("plain", writer_creator<PlainWriter>);
+		TokenWriterFactory::Instance().Register("orth", writer_creator<OrthWriter>);
 		init_done = true;
 		return true;
 	}

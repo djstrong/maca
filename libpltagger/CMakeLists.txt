@@ -56,6 +56,7 @@ SET(libpltagger_STAT_SRC
     conv/tagrulelayer.cpp
     conv/tagsetconverter.cpp
     io/init.cpp
+    io/orthwriter.cpp
     io/plain.cpp
     io/premorph.cpp
     io/reader.cpp
