@@ -1,4 +1,5 @@
 #include <libpltagger/morph/dispatchanalyser.h>
+#include <libpltagger/morph/constanalyser.h>
 
 #include <libtoki/util/foreach.h>
 
@@ -96,13 +97,18 @@ namespace PlTagger {
 	}
 
 	DispatchAnalyser::DispatchAnalyser(const Config::Node &cfg)
-		: MorphAnalyser(cfg.get_child("general")), type_handlers_(), analysers_(), default_()
+		: MorphAnalyser(cfg.get_child("general")), type_handlers_(), analysers_(), default_(), fallback_(NULL)
 	{
 		const Config::Node* dnp = NULL;
 		try {
 			dnp = &cfg.get_child("default");
 		} catch (boost::property_tree::ptree_error& e) {
 			throw PlTaggerError("No default MA section in config");
+		}
+
+		std::string ign_tag_string = cfg.get("general.ign_tag", "");
+		if (!ign_tag_string.empty()) {
+			fallback_ = new ConstAnalyser(&tagset(), ign_tag_string);
 		}
 
 		MaCreator mc(tagset(), cfg);
@@ -144,6 +150,7 @@ namespace PlTagger {
 		foreach (MorphAnalyser* ma, analysers_) {
 			delete ma;
 		}
+		delete fallback_;
 	}
 
 	void DispatchAnalyser::add_type_handler(const std::string &type, MorphAnalyser *a)
@@ -166,7 +173,12 @@ namespace PlTagger {
 				return true;
 			}
 		}
-		return false;
+		if (fallback_) {
+			return fallback_->process_functional(t, sink);
+		} else {
+			throw PlTaggerError("Token was not processed by any of the analysers and there is no fallback: " + t.orth_utf8() + "");
+			return false;
+		}
 	}
 
 	void DispatchAnalyser::add_default_handler(MorphAnalyser* a)

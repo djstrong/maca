@@ -51,8 +51,11 @@ namespace PlTagger {
 		/// the set of analysers this DispatchAnalyser owns
 		std::set<MorphAnalyser*> analysers_;
 
-		/// the default analyser
+		/// the default analysers
 		std::vector<MorphAnalyser*> default_;
+
+		/// the fallback analyser
+		MorphAnalyser* fallback_;
 	};
 
 } /* end ns PlTagger */
