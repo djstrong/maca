@@ -66,12 +66,18 @@ namespace PlTagger {
 		os() << " xmlns:xlink=\"http://www.w3.org/1999/xlink\"";
 		os() << " version=\"1.0\" type=\"lex disamb\">\n";
 		os() << "<chunkList>\n";
-		if (force_chunk_) paragraph_head();
+		if (force_chunk_) {
+			indent_more();
+			paragraph_head();
+		}
 	}
 
 	void XcesWriter::do_footer()
 	{
-		if (force_chunk_) os() << "</chunk>\n";
+		if (force_chunk_) {
+			osi() << "</chunk>\n";
+			indent_less();
+		}
 		os() << "</chunkList>\n";
 		os() << "</cesAna>\n";
 	}
