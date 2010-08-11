@@ -79,7 +79,7 @@ namespace PlTagger {
 	void XcesWriter::paragraph_head()
 	{
 		osi() << "<chunk id=\"ch" << ++cid_ << "\""
-			<< " type=\"tok\">\n";
+			<< " type=\"p\">\n";
 	}
 
 	void XcesWriter::paragraph_head(const Chunk& c)

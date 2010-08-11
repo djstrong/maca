@@ -117,8 +117,8 @@ namespace PlTagger {
 				}
 			}
 			if (state_ == XS_NONE) {
-				if (type != "p") {
-					throw XcesReaderError("Top level <chunk> not type=\"p\"");
+				if (type == "s") {
+					throw XcesReaderError("Top level <chunk> is type=\"s\"");
 				}
 				state_ = XS_CHUNK;
 				chunk_ = new Chunk;

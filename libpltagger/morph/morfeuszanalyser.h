@@ -75,6 +75,10 @@ namespace PlTagger {
 	private:
 		/// the tagset converter
 		Conversion::TagsetConverter* conv_;
+
+		Tag ign_tag_;
+
+		bool warn_on_ign_;
 	};
 
 } /* end ns Pltagger */

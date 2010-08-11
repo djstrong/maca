@@ -62,11 +62,7 @@ namespace PlTagger {
 		string_range_vector params;
 		boost::algorithm::split(params, class_id_params, boost::is_any_of(","));
 		std::string class_id = boost::copy_range<std::string>(params[0]);
-		foreach (const string_range& sr, params) {
-			std::cerr << boost::copy_range<std::string>(sr) << "--";
-		}
 		params.erase(params.begin(), params.begin() + 1);
-
 		return TokenWriterFactory::Instance().CreateObject(class_id, os, tagset, params);
 	}
 

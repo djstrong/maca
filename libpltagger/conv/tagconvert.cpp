@@ -143,7 +143,11 @@ namespace PlTagger { namespace Conversion {
 		Token* t = source()->get_next_token();
 		if (t != NULL) {
 			foreach (Lexeme& lex, t->lexemes()) {
-				assert(lex.tag().tagset_id() == tagset_from().id());
+				if (lex.tag().tagset_id() != tagset_from().id()) {
+					std::cerr << lex.tag().tagset_id() << " vs " << tagset_from().id();
+					assert(lex.tag().tagset_id() == tagset_from().id());
+				}
+
 				assert(tagset_from().validate_tag(lex.tag(), true, &std::cerr));
 				lex.tag() = (tc_.cast(lex.tag()));
 				assert(lex.tag().tagset_id() == tagset_to().id());
