@@ -147,8 +147,6 @@ namespace PlTagger { namespace Conversion {
 					std::cerr << lex.tag().tagset_id() << " vs " << tagset_from().id();
 					assert(lex.tag().tagset_id() == tagset_from().id());
 				}
-
-				assert(tagset_from().validate_tag(lex.tag(), true, &std::cerr));
 				lex.tag() = (tc_.cast(lex.tag()));
 				assert(lex.tag().tagset_id() == tagset_to().id());
 				//assert(tagset_to().validate_tag(lex.tag(), true, &std::cerr));
