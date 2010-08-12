@@ -86,6 +86,7 @@ namespace PlTagger { namespace Conversion {
 					<< (int)p << ")";
 				rv = false;
 				if (!all) return rv;
+				if (os) (*os) << "\n";
 			}
 			if (!tagset_to().pos_dictionary().is_id_valid(pi->second)) {
 				if (os) (*os) << "Mapping for POS "
@@ -93,6 +94,7 @@ namespace PlTagger { namespace Conversion {
 					<< (int)p << ") is invalid (" << (int)pi->second << ")";
 				rv = false;
 				if (!all) return rv;
+				if (os) (*os) << "\n";
 			}
 		}
 		for (attribute_idx_t p = static_cast<attribute_idx_t>(0); p < tagset_from().attribute_dictionary().size(); ++p) {
@@ -104,6 +106,7 @@ namespace PlTagger { namespace Conversion {
 						<< (int)p << ") is invalid (" << (int)pi->second << ")";
 					rv = false;
 					if (!all) return rv;
+					if (os) (*os) << "\n";
 				}
 			}
 		}
@@ -115,6 +118,7 @@ namespace PlTagger { namespace Conversion {
 					<< (int)p << ")";
 				rv = false;
 				if (!all) return rv;
+				if (os) (*os) << "\n";
 			}
 			if (!tagset_to().value_dictionary().is_id_valid(pi->second)) {
 				if (os) (*os) << "Mapping for value "
@@ -122,6 +126,7 @@ namespace PlTagger { namespace Conversion {
 					<< (int)p << ") is invalid (" << (int)pi->second << ")";
 				rv = false;
 				if (!all) return rv;
+				if (os) (*os) << "\n";
 			}
 		}
 		return rv;
