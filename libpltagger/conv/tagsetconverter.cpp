@@ -55,6 +55,8 @@ namespace PlTagger { namespace Conversion {
 				add_layer(new TwoSplitLayer(v.second));
 			} else if (v.first == "3split") {
 				add_layer(new ThreeSplitLayer(v.second));
+			} else {
+				std::cerr << "Unknown conversion layer type: " << v.first << "\n";
 			}
 		}
 		if (layers_.empty()) throw PlTaggerError("Empty tagset converter");
