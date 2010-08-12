@@ -23,20 +23,31 @@ namespace PlTagger { namespace Conversion {
 				v.second.put("tagset", layers_.back()->tagset_to().name());
 			}
 			if (v.first == "tag_rule" || v.first == "tag") {
-				TagRuleLayer* trl;
-				if (!layers_.empty()
-						&& (trl = dynamic_cast<TagRuleLayer*>(layers_.back()))) {
-					trl->append_rule(v.second);
+				if (!layers_.empty()) {
+					TagRuleLayer* trl = dynamic_cast<TagRuleLayer*>(layers_.back());
+					bool separate = v.second.get("separate", false);
+					if (!separate && trl != NULL
+							&& (NULL == dynamic_cast<RegexTagRuleLayer*>(layers_.back()))) {
+						trl->append_rule(v.second);
+					} else {
+						add_layer(new TagRuleLayer(v.second));
+					}
 				} else {
 					add_layer(new TagRuleLayer(v.second));
 				}
+			} else if (v.first == "regex_tag_rule" || v.first == "re_tag") {
+				add_layer(new RegexTagRuleLayer(v.second));
 			} else if (v.first == "convert") {
 				add_layer(new TagConvertLayer(v.second));
 			} else if (v.first == "join_rule" || v.first == "join") {
-				JoinLayer* jl;
-				if (!layers_.empty()
-						&& (jl = dynamic_cast<JoinLayer*>(layers_.back()))) {
-					jl->append_rule(v.second);
+				if (!layers_.empty()) {
+					JoinLayer* jl = dynamic_cast<JoinLayer*>(layers_.back());
+					bool separate = v.second.get("separate", false);
+					if (!separate && jl != NULL) {
+						jl->append_rule(v.second);
+					} else {
+						add_layer(new JoinLayer(v.second));
+					}
 				} else {
 					add_layer(new JoinLayer(v.second));
 				}

@@ -37,8 +37,51 @@ namespace PlTagger { namespace Conversion {
 	{
 		Token* t = source()->get_next_token();
 		if (t != NULL) {
-			foreach (const TagRule& tr, rules_) {
-				tr.apply(*t);
+			process(t);
+		}
+		return t;
+	}
+
+	void TagRuleLayer::process(Token* t)
+	{
+		foreach (const TagRule& tr, rules_) {
+			tr.apply(*t);
+		}
+	}
+
+
+	RegexTagRuleLayer::RegexTagRuleLayer(const Tagset& tagset)
+		: TagRuleLayer(tagset), matcher_(NULL)
+	{
+	}
+
+	RegexTagRuleLayer::RegexTagRuleLayer(const Config::Node& cfg)
+		: TagRuleLayer(cfg), matcher_(NULL)
+	{
+		append_rule(cfg);
+		std::string regexp_string = cfg.get("regexp", "");
+		UErrorCode status = U_ZERO_ERROR;
+		matcher_ = new RegexMatcher(UnicodeString::fromUTF8(regexp_string), 0, status);
+		if (!U_SUCCESS(status)) throw PlTaggerError("Regexp failed to compile: " + regexp_string);
+	}
+
+	RegexTagRuleLayer::~RegexTagRuleLayer()
+	{
+		delete matcher_;
+	}
+
+	Token* RegexTagRuleLayer::get_next_token()
+	{
+		Token* t = source()->get_next_token();
+		if (t != NULL) {
+			if (matcher_) {
+				UErrorCode e = U_ZERO_ERROR;
+				matcher_->reset(t->orth());
+				if (matcher_->matches(e)) {
+					process(t);
+				}
+			} else {
+				process(t);
 			}
 		}
 		return t;

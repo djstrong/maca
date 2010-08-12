@@ -4,6 +4,7 @@
 #include <libpltagger/conv/layer.h>
 #include <libpltagger/conv/tagrule.h>
 #include <libpltagger/util/confignode.h>
+#include <unicode/regex.h>
 
 namespace PlTagger { namespace Conversion {
 
@@ -38,14 +39,45 @@ namespace PlTagger { namespace Conversion {
 		void append_rule(const Config::Node& cfg);
 
 		/**
-		 * Layer override -- gar tokens from source, pass them through the
+		 * Layer override -- get tokens from source, pass them through the
+		 * tag rules and return.
+		 */
+		Token* get_next_token();
+
+	protected:
+		/// Pass a token through the rules
+		void process(Token*);
+
+	private:
+		/// The TagRules used by this layer
+		std::vector<TagRule> rules_;
+	};
+
+	class RegexTagRuleLayer : public TagRuleLayer
+	{
+	public:
+		/**
+		 * Empty layer constructor
+		 */
+		RegexTagRuleLayer(const Tagset& tagset);
+
+		/**
+		 * Constructor from a config node. Creates a layer and uses the config
+		 * to create one tag rule with a regex.
+		 */
+		RegexTagRuleLayer(const Config::Node& cfg);
+
+		/// Destructor
+		~RegexTagRuleLayer();
+
+		/**
+		 * Layer override -- get tokens from source, pass them through the
 		 * tag rules and return.
 		 */
 		Token* get_next_token();
 
 	private:
-		/// The TagRules used by this layer
-		std::vector<TagRule> rules_;
+		RegexMatcher* matcher_;
 	};
 
 } /* end ns Conversion */ } /* end ns PlTagger */
