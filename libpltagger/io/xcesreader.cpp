@@ -61,21 +61,18 @@ namespace PlTagger {
 
 	Chunk* XcesReader::get_next_chunk()
 	{
-		Chunk* t = impl_->try_get_next();
-		if (t != NULL) {
-			return t;
-		}
-		if (!is_.good()) {
-			return NULL;
-		}
 		static const int BUFSIZE=10240;
-		unsigned char buf[BUFSIZE+1];
-		is_.read(reinterpret_cast<char*>(buf), BUFSIZE);
-		impl_->parse_chunk_raw(buf, is_.gcount());
-		if (is_.eof()) {
-			impl_->finish_chunk_parsing();
+		Chunk* t = impl_->try_get_next();
+		while (t == NULL && is_.good()) {
+			unsigned char buf[BUFSIZE+1];
+			is_.read(reinterpret_cast<char*>(buf), BUFSIZE);
+			impl_->parse_chunk_raw(buf, is_.gcount());
+			if (is_.eof()) {
+				impl_->finish_chunk_parsing();
+			}
+			t = impl_->try_get_next();
 		}
-		return impl_->try_get_next();
+		return t;
 	}
 
 	XcesReaderImpl::XcesReaderImpl(const Tagset& tagset, bool disamb_only)
