@@ -49,9 +49,15 @@ namespace PlTagger { namespace Conversion {
 
 		/**
 		 * Checks if all POS and values are properly mapped
+		 * @param os Optional stream for error explanation
+		 * @param all Continue checking and outputting errors after a fault
 		 * @returns true if the mapping is complete
 		 */
-		bool is_complete(std::ostream* os = NULL) const;
+		bool is_complete(std::ostream* os = NULL, bool all = false) const;
+
+		void set_late_check(bool v) {
+			late_check_ = v;
+		}
 
 	protected:
 		/// Input tagset
@@ -70,6 +76,8 @@ namespace PlTagger { namespace Conversion {
 		/// POS mapping
 		typedef std::map<pos_idx_t, pos_idx_t> pos_map_t;
 		pos_map_t pos_mapping_;
+
+		bool late_check_;
 	};
 
 	/**
