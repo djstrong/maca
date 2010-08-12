@@ -9,7 +9,6 @@ ngt	aff neg
 acn	akc nakc
 ppr	praep npraep
 acm	congr rec
-agg	nagl agl
 vcl	wok nwok
 tns	prt prs fut
 tnt	integer frac
@@ -26,12 +25,12 @@ num     nmb cas gnd [acm]
 ppron12 nmb cas gnd per [acn]
 ppron3  nmb cas gnd per [acn] [ppr]
 siebie  cas
-fin	nmb [gnd] per asp [agg] [vcl] [tns]
+fin	nmb [gnd] per asp [tns]
 bedzie  nmb per asp tns
 aglt    nmb per asp vcl
-praet   nmb gnd asp [agg]
+praet   nmb gnd asp
 impt    nmb per asp
-conjt	nmb gnd per asp [agg]
+conjt	nmb gnd per asp
 imps    asp
 inf     asp
 pcon    asp
