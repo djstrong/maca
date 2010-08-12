@@ -6,7 +6,7 @@
 namespace PlTagger { namespace Conversion {
 
 	TagConverter::TagConverter(const Tagset& from, const Tagset& to)
-		: tagset_from_(from), tagset_to_(to)
+		: tagset_from_(from), tagset_to_(to), late_check_(true)
 	{
 		from.pos_dictionary().create_mapping_to(to.pos_dictionary(), pos_mapping_);
 		from.attribute_dictionary().create_mapping_to(to.attribute_dictionary(), attribute_mapping_);
@@ -28,6 +28,12 @@ namespace PlTagger { namespace Conversion {
 				if (i != value_mapping_.end()) {
 					attribute_idx_t a = tagset_to_.get_value_attribute(i->second);
 					to.values()[a] = i->second;
+				} else {
+					if (late_check_) {
+						std::cerr << "TagConverter: Value not found in map: "
+							<< tagset_from().value_dictionary().get_string(v)
+							<< "\n";
+					}
 				}
 			}
 		}
@@ -69,21 +75,24 @@ namespace PlTagger { namespace Conversion {
 		}
 	}
 
-	bool TagConverter::is_complete(std::ostream* os) const
+	bool TagConverter::is_complete(std::ostream* os, bool all /*=false*/) const
 	{
+		bool rv = true;
 		for (pos_idx_t p = static_cast<pos_idx_t>(0); p < tagset_from().pos_dictionary().size(); ++p) {
 			pos_map_t::const_iterator pi = pos_mapping_.find(p);
 			if (pi == pos_mapping_.end()) {
 				if (os) (*os) << "No mapping for POS "
 					<< tagset_from().pos_dictionary().get_string(p) << " ("
 					<< (int)p << ")";
-				return false;
+				rv = false;
+				if (!all) return rv;
 			}
 			if (!tagset_to().pos_dictionary().is_id_valid(pi->second)) {
 				if (os) (*os) << "Mapping for POS "
 					<< tagset_from().pos_dictionary().get_string(p) << " ("
 					<< (int)p << ") is invalid (" << (int)pi->second << ")";
-				return false;
+				rv = false;
+				if (!all) return rv;
 			}
 		}
 		for (attribute_idx_t p = static_cast<attribute_idx_t>(0); p < tagset_from().attribute_dictionary().size(); ++p) {
@@ -93,7 +102,8 @@ namespace PlTagger { namespace Conversion {
 					if (os) (*os) << "Mapping for attribute "
 						<< tagset_from().attribute_dictionary().get_string(p) << " ("
 						<< (int)p << ") is invalid (" << (int)pi->second << ")";
-					return false;
+					rv = false;
+					if (!all) return rv;
 				}
 			}
 		}
@@ -103,16 +113,18 @@ namespace PlTagger { namespace Conversion {
 				if (os) (*os) << "No mapping for value "
 					<< tagset_from().value_dictionary().get_string(p) << " ("
 					<< (int)p << ")";
-				return false;
+				rv = false;
+				if (!all) return rv;
 			}
 			if (!tagset_to().value_dictionary().is_id_valid(pi->second)) {
 				if (os) (*os) << "Mapping for value "
 					<< tagset_from().value_dictionary().get_string(p) << " ("
 					<< (int)p << ") is invalid (" << (int)pi->second << ")";
-				return false;
+				rv = false;
+				if (!all) return rv;
 			}
 		}
-		return true;
+		return rv;
 	}
 
 	TagConvertLayer::TagConvertLayer(const TagConverter &tc)
@@ -135,7 +147,18 @@ namespace PlTagger { namespace Conversion {
 				}
 			}
 		}
-		tc_.is_complete(&std::cerr);
+		bool check_all = cfg.get("check-all", true);
+		std::string check = cfg.get("check", "warn");
+		if (check == "warn") {
+			tc_.is_complete(&std::cerr, check_all);
+		} else if (check == "err") {
+			if (!tc_.is_complete(&std::cerr, check_all)) {
+				throw PlTaggerError("TagConverter not complete and check=err");
+			}
+		} else if (check != "ignore") {
+			throw PlTaggerError("TagConverter check should be either warn, err, or ignore");
+		}
+		tc_.set_late_check(cfg.get("late-check", true));
 	}
 
 	Token* TagConvertLayer::get_next_token()
