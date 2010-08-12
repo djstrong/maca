@@ -1,3 +1,13 @@
+[tag]
+tagset=morfeusz
+pre=agl
+post=agg
+
+[tag]
+tagset=morfeusz
+pre=nagl
+post=agg
+
 [convert]
 tagset_from=morfeusz
 tagset_to=ikipi
@@ -7,8 +17,11 @@ override=n3:n
 override=p1:m1
 override=p2:n
 override=p3:n
+check=ignore
+late-check=true
 
 [tag]
+tagset=ikipi
 pre=bedzie
 post=fut
 
@@ -16,21 +29,17 @@ post=fut
 t1_pos=praet
 t2_pos=aglt
 copy_attr=per
-copy_attr=vcl
-post=fin
-post=prt
+post=fin:prt
 
 [join]
 t1_pos=praet
 t2_orth=by
-post=conjt
-post=ter
+post=conjt:ter
 
 [join]
 t1_pos=conjt
 t2_pos=aglt
 copy_attr=per
-copy_attr=vcl
 
 [tag]
 pre=fin:gnd:perf
@@ -39,4 +48,3 @@ post=fut
 [tag]
 pre=fin:gnd:imperf
 post=prs
-

@@ -1,8 +1,21 @@
+[tag]
+tagset=kipi
+pre=agl
+post=agg
+
+[tag]
+tagset=kipi
+pre=nagl
+post=agg
+
 [convert]
 tagset_from=kipi
 tagset_to=ikipi
+check=ignore
+late-check=true
 
 [tag]
+tagset=ikipi
 pre=bedzie
 post=fut
 
@@ -10,21 +23,17 @@ post=fut
 t1_pos=praet
 t2_pos=aglt
 copy_attr=per
-copy_attr=vcl
-post=fin
-post=prt
+post=fin:prt
 
 [join]
 t1_pos=praet
 t2_orth=by
-post=conjt
-post=ter
+post=conjt:ter
 
 [join]
 t1_pos=conjt
 t2_pos=aglt
 copy_attr=per
-copy_attr=vcl
 
 [tag]
 pre=fin:gnd:perf
@@ -33,4 +42,3 @@ post=fut
 [tag]
 pre=fin:gnd:imperf
 post=prs
-
