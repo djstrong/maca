@@ -186,21 +186,9 @@ namespace PlTagger {
 	{
 		tt->set_orth(UnicodeString::fromUTF8(im->forma));
 		if (im->interp) {
-			UnicodeString lemma = UnicodeString::fromUTF8(im->haslo);
-			boost::function<Lexeme (const Tag&)> lex;
-			lex = boost::bind(&Lexeme::create, boost::cref(lemma), _1);
-
-			boost::function<void (const Tag&)> func;
-			func = boost::bind(&std::vector<Lexeme>::push_back, &tt->lexemes(), boost::bind(lex, _1));
-
-			string_range_vector options;
-			boost::algorithm::split(options, im->interp, boost::is_any_of("+|"));
-
-			foreach (string_range& sr, options) {
-				if (!sr.empty()) {
-					conv_->tagset_from().parse_tag(sr, false, func);
-				}
-			}
+			conv_->tagset_from().lexemes_into_token(*tt,
+					UnicodeString::fromUTF8(im->haslo),
+					std::make_pair(im->interp, im->interp + strlen(im->interp)));
 		} else {
 			if (warn_on_ign_) {
 				std::cerr << "Morfeusz: tagging as ign: " << im->forma << "\n";

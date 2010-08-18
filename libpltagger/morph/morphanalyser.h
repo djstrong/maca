@@ -88,10 +88,6 @@ namespace PlTagger {
 			tagset_ = tagset;
 		}
 
-		/// Convenience function for adding lexemes to tokens
-		void parse_tag_into_token(Token* tok, const UnicodeString& lemma,
-				const std::string& tag) const;
-
 		/**
 		 * Factory interface for creating analysers from string identifiers
 		 *
