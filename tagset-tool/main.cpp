@@ -8,7 +8,9 @@
 
 #include <boost/program_options.hpp>
 
+#include <algorithm>
 #include <fstream>
+#include <iterator>
 
 void tagset_info(const PlTagger::Tagset& tagset)
 {
@@ -85,22 +87,32 @@ void tagset_query_loop(const PlTagger::Tagset& tagset)
 	}
 }
 
-void tag_parse_loop(const PlTagger::Tagset& tagset, bool validate)
+void tag_parse_loop(const PlTagger::Tagset& tagset, bool validate, bool sort)
 {
 	while (std::cin.good()) {
 		std::string s;
 		std::cin >> s;
-		try {
-			std::vector<PlTagger::Tag> tags = tagset.parse_tag(s, true);
-			foreach (const PlTagger::Tag& tag, tags) {
-				std::cout << tagset.tag_to_string(tag);
-				if (validate) {
-					tagset.validate_tag(tag, false, &std::cout);
+		if (!s.empty()) {
+			try {
+				PlTagger::Token t;
+				tagset.lexemes_into_token(t, UnicodeString(), s);
+				std::vector<std::string> out;
+				foreach (const PlTagger::Lexeme& lex, t.lexemes()) {
+					std::stringstream ss;
+					ss << tagset.tag_to_string(lex.tag());
+					if (validate) {
+						tagset.validate_tag(lex.tag(), false, &ss);
+					}
+					out.push_back(ss.str());
 				}
-				std::cout << "\n";
+				if (sort) {
+					std::sort(out.begin(), out.end());
+				}
+				std::copy(out.begin(), out.end(),
+						std::ostream_iterator<std::string>(std::cout, "\n"));
+			} catch (PlTagger::TagParseError& e) {
+				std::cerr << "TagParseError: " << e.info() << "\n";
 			}
-		} catch (PlTagger::TagParseError& e) {
-			std::cerr << "TagParseError: " << e.info() << "\n";
 		}
 	}
 }
@@ -109,14 +121,14 @@ int main(int argc, char** argv)
 {
 	std::string tagset_load, tagset_save;
 	bool quiet = false;
-	bool parse = false, validate = false;
+	bool parse = false, validate = false, sort = false;
 	using boost::program_options::value;
 
 	boost::program_options::options_description desc("Allowed options");
 	desc.add_options()
 			("tagset,t", value(&tagset_load),
 			 "Path to tagset ini file to load\n")
-			("save-tagset,s", value(&tagset_save),
+			("save-tagset,S", value(&tagset_save),
 			 "Path to tagset ini file to save\n")
 			("quiet,q", value(&quiet)->zero_tokens(),
 			 "Suppress startup info when loading a tagset\n")
@@ -124,6 +136,8 @@ int main(int argc, char** argv)
 			 "Parse complex tag strings mode")
 			("validate,v", value(&validate)->zero_tokens(),
 			 "Validate parsed tags")
+			("sort,s", value(&sort)->zero_tokens(),
+			 "Sort parsed tags")
 			("help,h", "Show help")
 			;
 	boost::program_options::variables_map vm;
@@ -166,7 +180,7 @@ int main(int argc, char** argv)
 
 			if (parse) {
 				std::cerr << "(Tag parse mode)\n";
-				tag_parse_loop(tagset, validate);
+				tag_parse_loop(tagset, validate, sort);
 			} else {
 				std::cerr << "(Tagset query mode)\n";
 				tagset_query_loop(tagset);
