@@ -131,7 +131,7 @@ BOOST_FIXTURE_TEST_CASE(join, Fxz)
 	tv.push_back(new Token(UnicodeString::fromUTF8("efg"), Toki::Whitespace::None));
 	Tag tag1 = tagset1->parse_simple_tag("P1:a2:b1", false);
 	Tag tag2 = tagset1->parse_simple_tag("P2:a2:b1:c2", false);
-	std::cerr << tag2.raw_dump() << tagset1->tag_to_string(tag2);
+	//std::cerr << tag2.raw_dump() << tagset1->tag_to_string(tag2);
 	tv[0]->add_lexeme(Lexeme(UnicodeString::fromUTF8("lex1"), tag1));
 	tv[1]->add_lexeme(Lexeme(UnicodeString::fromUTF8("lex2"), tag1));
 	tv[2]->add_lexeme(Lexeme(UnicodeString::fromUTF8("lex3"), tag2));
@@ -144,7 +144,7 @@ BOOST_FIXTURE_TEST_CASE(join, Fxz)
 	BOOST_CHECK_EQUAL(t->lexemes().size(), 1);
 	BOOST_CHECK_EQUAL(t->lexemes()[0].lemma_utf8(), "lex2");
 	BOOST_CHECK_EQUAL(tagset1->tag_to_string(t->lexemes()[0].tag()), "P1::b1:c2");
-	std::cerr << t->lexemes()[0].tag().raw_dump() << tagset1->tag_to_string(t->lexemes()[0].tag());
+	//std::cerr << t->lexemes()[0].tag().raw_dump() << tagset1->tag_to_string(t->lexemes()[0].tag());
 }
 
 BOOST_AUTO_TEST_SUITE_END()
