@@ -123,6 +123,7 @@ if(UNIX)
                  PATTERN "*.conv"
                  PATTERN "*.xml"
                  PATTERN "*.txt"
+				 PATTERN "*.fst"
                 PATTERN ".svn" EXCLUDE
                 PATTERN "local/*" EXCLUDE
         )
