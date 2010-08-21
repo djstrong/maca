@@ -63,7 +63,7 @@ int main(int argc, char** argv)
 	}
 	if (!config.empty()) {
 		std::ifstream ifs;
-		std::string fn = PlTagger::find_file_in_search_path(config);
+		std::string fn = PlTagger::Path::Instance().find_file(config);
 		if (fn.empty()) {
 			std::cerr << "Config file open error for " << config << "\n";
 			return 8;
@@ -77,8 +77,8 @@ int main(int argc, char** argv)
 			toki_config = cfg.get("general.toki-config", "");
 		}
 		const Toki::Config::Node& conf = toki_config.empty() ?
-			Toki::Config::default_config() :
-			Toki::Config::get_library_config(toki_config);
+			Toki::default_config() :
+			Toki::get_named_config(toki_config);
 		Toki::LayerTokenizer tok(conf);
 
 		if (input_format == "premorph" || input_format == "pre") {

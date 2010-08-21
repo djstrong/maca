@@ -17,9 +17,10 @@ namespace PlTagger {
 		return what();
 	}
 
-	FileNotFound::FileNotFound(const std::string& filename, const std::string& type)
+	FileNotFound::FileNotFound(const std::string& filename, const std::string& paths,
+			const std::string& where)
 		: PlTaggerError("File not found: " + filename), filename(filename),
-		type(type), paths(get_library_config_path_string())
+		paths(paths), where(where)
 	{
 	}
 
@@ -30,10 +31,10 @@ namespace PlTagger {
 	std::string FileNotFound::info() const
 	{
 		std::ostringstream ss;
-		if (type.empty()) {
+		if (where.empty()) {
 			ss << "File ";
 		} else {
-			ss << type << " file ";
+			ss << where << " file ";
 		}
 		ss << "'" << filename << "' not found in search path " << paths;
 		return ss.str();

@@ -27,13 +27,14 @@ namespace PlTagger {
 	class FileNotFound : public PlTaggerError
 	{
 	public:
-		FileNotFound(const std::string& filename, const std::string& type);
+		FileNotFound(const std::string& filename, const std::string& paths,
+				const std::string& where);
 
 		~FileNotFound() throw();
 
 		std::string info() const;
 
-		std::string filename, type, paths;
+		std::string filename, paths, where;
 	};
 
 } /* end ns PlTagger */

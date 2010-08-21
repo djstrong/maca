@@ -1,5 +1,6 @@
 #include <libpltagger/morph/sfstanalyser.h>
 #include <libpltagger/exception.h>
+#include <libpltagger/util/settings.h>
 
 #include <sfst/interface.h>
 #include <sfst/compact.h>
@@ -25,6 +26,7 @@ namespace PlTagger {
 	{
 		std::string filename = cfg.get("file", "");
 		if (filename.empty()) throw ConfigValueMissing("file", "SfstAnalyser");
+		filename = Path::Instance().find_file_or_throw(filename, "SFST");
 		open_transducer(filename);
 	}
 

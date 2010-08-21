@@ -144,9 +144,12 @@ int main(int argc, char** argv)
 	}
 	if (!cfg_analyser.empty()) {
 		std::ifstream ifs;
-		if (PlTagger::open_file_from_search_path(cfg_analyser, ifs)) {
+		if (PlTagger::Path::Instance().open_stream(cfg_analyser, ifs)) {
 			Toki::Config::Node cfg = Toki::Config::from_stream(ifs);
 			ma.reset(new PlTagger::DispatchAnalyser(cfg));
+		} else {
+			std::cerr << "Config file not found: " << cfg_analyser << "\n";
+			return 11;
 		}
 	}
 

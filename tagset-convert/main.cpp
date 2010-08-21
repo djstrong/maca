@@ -88,12 +88,8 @@ int main(int argc, char** argv)
 	} else if (!converter.empty()) {
 		try {
 			//const PlTagger::Tagset& tagset = PlTagger::get_named_tagset(converter);
-			std::string fn = PlTagger::find_file_in_search_path(converter);
-			if (fn.empty()) {
-				std::cerr << "Converter " << converter << " not found in search path "
-					<< PlTagger::get_library_config_path_string() << "\n";
-				return 2;
-			}
+			std::string fn = PlTagger::Path::Instance().find_file_or_throw(
+					converter, "Converter");
 			std::cerr << "Loading converter from " << fn << "\n";
 			PlTagger::Config::Node n = PlTagger::Config::from_file(fn);
 			PlTagger::Conversion::TagsetConverter conv(n);
