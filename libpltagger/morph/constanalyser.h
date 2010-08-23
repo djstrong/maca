@@ -28,6 +28,11 @@ namespace PlTagger {
 		/// MapAnalyser override
 		bool process_functional(const Toki::Token &t, boost::function<void (Token*)> sink);
 
+		/// Class identifier
+		static const char* identifier;
+
+		/// Registered flag
+		static bool registered;
 	private:
 		/// The tag
 		Tag tag_;

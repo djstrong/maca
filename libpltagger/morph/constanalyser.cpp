@@ -2,6 +2,10 @@
 
 namespace PlTagger {
 
+	const char* ConstAnalyser::identifier = "const";
+
+	bool ConstAnalyser::registered = MorphAnalyser::register_analyser<ConstAnalyser>();
+
 	ConstAnalyser::ConstAnalyser(const Tagset *tagset, const std::string &tag)
 		: MorphAnalyser(tagset), tag_(tagset->parse_simple_tag(tag, false))
 	{

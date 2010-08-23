@@ -37,6 +37,12 @@ namespace PlTagger {
 		/// MorphAnalyser override
 		bool process_functional(const Toki::Token &t, boost::function<void (Token*)> sink);
 
+		/// Class identifier
+		static const char* identifier;
+
+		/// Registered flag
+		static bool registered;
+
 	private:
 		/// the orth to analysis map
 		MapT map_;

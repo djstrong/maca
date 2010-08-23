@@ -117,6 +117,13 @@ namespace PlTagger {
 		template <typename T>
 		static bool register_analyser(const std::string& class_id);
 
+		/**
+		 * Convenience template for registering MorphAnalyser derived classes.
+		 * Assumes the identifier is at T::identifier
+		 */
+		template <typename T>
+		static bool register_analyser();
+
 	private:
 		/// The tagset used by this analyser
 		const Tagset* tagset_;
@@ -162,6 +169,12 @@ namespace PlTagger {
 	bool MorphAnalyser::register_analyser(const std::string& class_id)
 	{
 		return MorphAnalyserFactory::Instance().Register(class_id, analyser_creator<T>);
+	}
+
+	template <typename T>
+	bool MorphAnalyser::register_analyser()
+	{
+		return MorphAnalyserFactory::Instance().Register(T::identifier, analyser_creator<T>);
 	}
 
 	extern "C" {

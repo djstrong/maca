@@ -72,6 +72,12 @@ namespace PlTagger {
 		/// pass the resulting tokens to the sink
 		void flush_convert(std::vector< std::vector<Token*> >& vec, boost::function<void(Token *)>sink);
 
+		/// Class identifier
+		static const char* identifier;
+
+		/// Registered flag
+		static bool registered;
+
 	private:
 		/// the tagset converter
 		Conversion::TagsetConverter* conv_;

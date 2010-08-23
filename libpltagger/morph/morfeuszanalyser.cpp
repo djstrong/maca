@@ -12,6 +12,10 @@
 
 namespace PlTagger {
 
+	const char* MorfeuszAnalyser::identifier = "morfeusz";
+
+	bool MorfeuszAnalyser::registered = MorphAnalyser::register_analyser<MorfeuszAnalyser>();
+
 	MorfeuszError::MorfeuszError(const std::string& error, const std::string input, InterpMorf* interp)
 		: PlTaggerError("Morfeusz error: " + error), error(error), input(input), interp(interp)
 	{
