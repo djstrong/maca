@@ -129,7 +129,7 @@ namespace PlTagger {
 			Loki::TL::MakeTypelist< const Config::Node& >::Result
 			// TokenLayer constructor arguments' types specification
 		>,
-		Loki::CreateUsingNew, // default_config, needed to change the item below
+		Loki::CreateUsingNew, // default, needed to change the item below
 		Loki::LongevityLifetime::DieAsSmallObjectChild // Required per libloki docs
 	>
 	MorphAnalyserFactory;
