@@ -1,5 +1,4 @@
 #include <libpltagger/morph/morphanalyser.h>
-#include <libpltagger/morph/init.h>
 #include <libpltagger/util/settings.h>
 #include <libpltagger/tagsetmanager.h>
 
@@ -62,8 +61,6 @@ namespace PlTagger {
 	{
 		return MorphAnalyserFactory::Instance().RegisteredIds();
 	}
-
-	static bool registered = init_morph_analysers();
 
 	bool libPlTagger_register_analyser(const char* class_id, MorphAnalyser* (*creator)(const Config::Node&))
 	{

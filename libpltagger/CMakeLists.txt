@@ -68,7 +68,6 @@ SET(libpltagger_STAT_SRC
     io/xceswriter.cpp
     morph/constanalyser.cpp
     morph/dispatchanalyser.cpp
-    morph/init.cpp
     morph/mapanalyser.cpp
     morph/morphanalyser.cpp
     util/confignode.cpp
