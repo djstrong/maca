@@ -131,7 +131,7 @@ namespace PlTagger {
 	void MapAnalyser<MapT>::load_m_dictionary(const std::string &fn)
 	{
 		std::ifstream ifs;
-		Path::Instance().open_stream_or_throw(fn, ifs, "Map analyser data");
+		Path::Instance().open_stream_or_throw(fn, ifs, "map analyser data");
 		static const size_t BUFSIZE = 2000;
 		char buf[BUFSIZE + 1];
 		while (ifs.good()) {

@@ -33,7 +33,7 @@ namespace PlTagger {
 		boost::shared_ptr<Tagset> ptr = get_cache_entry(name);
 		if (!ptr) {
 			std::string fn = Path::Instance().find_file_or_throw(
-					name + ".tagset", "Tagset");
+					name + ".tagset", "tagset");
 			std::ifstream ifs;
 			ifs.open(fn.c_str());
 			ptr.reset(new Tagset);
@@ -41,7 +41,9 @@ namespace PlTagger {
 			cache_.insert(std::make_pair(name, ptr));
 			id_cache_.insert(std::make_pair(ptr->id(), ptr));
 			ptr->set_name(name);
-			std::cerr << "Tagset '" << name << "' from " << fn << " loaded with id " << (int)ptr->id() << "\n";
+			if (Path::Instance().get_verbose()) {
+				std::cerr << "Tagset '" << name << " loaded with id " << (int)ptr->id() << "\n";
+			}
 		}
 		return *ptr;
 	}

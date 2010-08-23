@@ -12,7 +12,7 @@ add_definitions(-DHAVE_CONFIG_D_H)
 #include_directories("/usr/include/sfst-1.0")
 #set(LIBS ${LIBS} "sfst1")
 
-find_package(Toki 0.3 REQUIRED)
+find_package(Toki 0.3.1 REQUIRED)
 set(LIBS ${LIBS} ${Toki_LIBRARY})
 
 find_package(ICU REQUIRED QUIET)

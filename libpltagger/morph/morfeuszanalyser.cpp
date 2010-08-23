@@ -43,7 +43,7 @@ namespace PlTagger {
 	{
 		std::string fn = cfg.get("converter", "");
 		std::ifstream ifs;
-		Path::Instance().open_stream_or_throw(fn, ifs, "Converter");
+		Path::Instance().open_stream_or_throw(fn, ifs, "converter");
 
 		Config::Node conv_cfg = Config::from_stream(ifs);
 		std::auto_ptr<Conversion::TagsetConverter> c(new Conversion::TagsetConverter(conv_cfg));

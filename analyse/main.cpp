@@ -61,16 +61,13 @@ int main(int argc, char** argv)
 		std::cout << desc << "\n";
 		return 1;
 	}
+	Toki::Path::Instance().set_verbose(!quiet);
+	PlTagger::Path::Instance().set_verbose(!quiet);
+
 	if (!config.empty()) {
 		try {
 			std::ifstream ifs;
-			std::string fn = PlTagger::Path::Instance().find_file(config);
-			if (fn.empty()) {
-				std::cerr << "Config file open error for " << config << "\n";
-				return 8;
-			}
-			ifs.open(fn.c_str());
-			std::cerr << "Loading tagger configuration from " << fn << "\n";
+			PlTagger::Path::Instance().open_stream_or_throw(config, ifs, "tagger config");
 			Toki::Config::Node cfg = Toki::Config::from_stream(ifs);
 			boost::shared_ptr<PlTagger::MorphAnalyser> ma(new PlTagger::DispatchAnalyser(cfg));
 

@@ -67,6 +67,7 @@ int main(int argc, char** argv)
 		std::cout << desc << "\n";
 		return 1;
 	}
+	PlTagger::Path::Instance().set_verbose(!quiet);
 
 	if (!verify_tagset.empty()) {
 		const PlTagger::Tagset& tagset = PlTagger::get_named_tagset(verify_tagset);
@@ -89,7 +90,7 @@ int main(int argc, char** argv)
 		try {
 			//const PlTagger::Tagset& tagset = PlTagger::get_named_tagset(converter);
 			std::string fn = PlTagger::Path::Instance().find_file_or_throw(
-					converter, "Converter");
+					converter, "converter");
 			std::cerr << "Loading converter from " << fn << "\n";
 			PlTagger::Config::Node n = PlTagger::Config::from_file(fn);
 			PlTagger::Conversion::TagsetConverter conv(n);

@@ -206,6 +206,8 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
+	PlTagger::Path::Instance().set_verbose(!quiet);
+
 	if (!tagset_load.empty()) {
 		try {
 			const PlTagger::Tagset& tagset = PlTagger::get_named_tagset(tagset_load);
