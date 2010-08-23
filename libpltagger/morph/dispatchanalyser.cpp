@@ -27,7 +27,7 @@ namespace PlTagger {
 			~MaCreator();
 
 			/// caching getter for a morph analyser with a given id
-			MorphAnalyser* get_ma(const std::string& id);
+			MorphAnalyser* get_ma(const std::string& id, bool autoload);
 
 			/// Okay flag setter (do not dispose of created analysers at destruction)
 			void okay();
@@ -66,7 +66,7 @@ namespace PlTagger {
 		}
 	} /* end anon ns */
 
-	MorphAnalyser* MaCreator::get_ma(const std::string &id)
+	MorphAnalyser* MaCreator::get_ma(const std::string &id, bool autoload)
 	{
 		std::map<std::string, MorphAnalyser*>::iterator i;
 		i = amap_.find(id);
@@ -84,7 +84,19 @@ namespace PlTagger {
 			try {
 				ma = MorphAnalyser::create(id, *cfgp);
 			} catch (MorphAnalyserFactoryException&) {
-				throw PlTaggerError("Unknown analyser type: " + id);
+				if (autoload) {
+					if (MorphAnalyser::load_plugin(id, false)) {
+						try {
+							ma = MorphAnalyser::create(id, *cfgp);
+						} catch (MorphAnalyserFactoryException&) {
+							throw PlTaggerError("Unknown analyser type: " + id + " (plugin found but create failed)");
+						}
+					} else {
+						throw PlTaggerError("Unknown analyser type: " + id + " (plugin not found)");
+					}
+				} else {
+					throw PlTaggerError("Unknown analyser type: " + id);
+				}
 			}
 
 			if (ma->tagset().id() != tagset_.id()) {
@@ -124,11 +136,13 @@ namespace PlTagger {
 			}
 		}
 
+		bool autoload = cfg.get("general.plugin_autoload", true);
+
 		MaCreator mc(tagset(), cfg);
 
 		foreach (const Config::Node::value_type &v, *dnp) {
 			if (v.first == "ma") {
-				MorphAnalyser* ma = mc.get_ma(v.second.data());
+				MorphAnalyser* ma = mc.get_ma(v.second.data(), autoload);
 				add_default_handler(ma);
 			}
 		}
@@ -146,7 +160,7 @@ namespace PlTagger {
 				}
 				foreach (const Config::Node::value_type &vv, v.second) {
 					if (vv.first == "ma") {
-						MorphAnalyser* ma = mc.get_ma(vv.second.data());
+						MorphAnalyser* ma = mc.get_ma(vv.second.data(), autoload);
 						foreach (const std::string& s, ttv) {
 							add_type_handler(s, ma);
 						}
