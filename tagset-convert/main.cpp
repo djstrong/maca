@@ -1,17 +1,9 @@
-#ifdef HAVE_CONFIG_D_H
-#include <libpltagger/config_d.h>
-#endif
 #include <libpltagger/conv/tagsetconverter.h>
-#include <libpltagger/util/confignode.h>
-#include <libpltagger/util/debug.h>
-#include <libpltagger/util/settings.h>
-#include <libpltagger/tagsetmanager.h>
-#include <libpltagger/tagsetparser.h>
-
 #include <libpltagger/io/xcesvalidate.h>
 #include <libpltagger/io/xcesreader.h>
 #include <libpltagger/io/xceswriter.h>
-#include <libpltagger/io/writer.h>
+#include <libpltagger/util/settings.h>
+#include <libpltagger/tagsetmanager.h>
 
 #include <libtoki/util/foreach.h>
 

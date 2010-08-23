@@ -1,8 +1,7 @@
-#include <libpltagger/conv/tagsetconverter.h>
-#include <libpltagger/util/debug.h>
 #include <libpltagger/util/settings.h>
 #include <libpltagger/tagsetparser.h>
 #include <libpltagger/tagsetmanager.h>
+#include <libpltagger/token.h>
 
 #include <libtoki/util/foreach.h>
 
