@@ -5,6 +5,7 @@
 
 #include <libtoki/sentencesplitter.h>
 #include <libtoki/tokenizer/layertokenizer.h>
+#include <libtoki/util/foreach.h>
 #include <libtoki/util/settings.h>
 
 #include <boost/algorithm/string.hpp>
@@ -16,6 +17,7 @@ int main(int argc, char** argv)
 {
 	std::string config, toki_config;
 	std::string input_format, output_format;
+	std::vector<std::string> plugins;
 	bool quiet = false;
 	using boost::program_options::value;
 
@@ -34,6 +36,8 @@ int main(int argc, char** argv)
 			 "Input format, any of: plain premorph\n")
 			("output-format,o", value(&output_format)->default_value("plain"),
 			 writers_help.c_str())
+			("plugin,p", value(&plugins),
+			 "Additional plugins to load")
 			("quiet,q", value(&quiet)->zero_tokens(),
 			 "Suppress startup info when loading a tagset\n")
 			("help,h", "Show help")
@@ -52,8 +56,14 @@ int main(int argc, char** argv)
 	}
 	boost::program_options::notify(vm);
 
+	foreach (const std::string& s, plugins) {
+		PlTagger::MorphAnalyser::load_plugin(s, false);
+	}
+
 	if (vm.count("help")) {
 		std::cout << desc << "\n";
+		std::cout << "Available analyser types: ";
+		std::cout << boost::algorithm::join(PlTagger::MorphAnalyser::available_analyser_types(), " ") << "\n";
 		return 1;
 	}
 	Toki::Path::Instance().set_verbose(!quiet);
