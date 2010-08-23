@@ -8,7 +8,11 @@ Tagsets:
 Configurations:
 • morfeusz.ini — uses Morfeusz, outputs in morfeusz tagset,
 • morfeusz-kipi.ini — uses morfpatch, Morfeusz and acro-infl+acro-uninfl, outputs in kipi tagset,
-• morfeusz-ikipi.ini — as above but outputs in ikipi tagset.
+• morfeusz-ikipi.ini — as above but outputs in ikipi tagset,
+• morfeusz-kipi-ext.ini — as morfeusz-kipi but uses the extended tagset of TaKIPI (tsym, tnum etc.),
+• morfeusz-ikipi-ext.ini — s morfeusz-ikipi but uses the extended tagset of TaKIPI.
+
+
 All these configuration use default Toki config (suited for processing Polish).
 
 Data sets:
