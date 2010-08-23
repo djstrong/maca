@@ -107,6 +107,11 @@ namespace PlTagger {
 		static std::vector<std::string> available_analyser_types();
 
 		/**
+		 * Load a plugin analyser module
+		 */
+		static bool load_plugin(const std::string& name, bool quiet = false);
+
+		/**
 		 * Convenience template for registering MorphAnalyser derived classes.
 		 */
 		template <typename T>
@@ -157,6 +162,10 @@ namespace PlTagger {
 	bool MorphAnalyser::register_analyser(const std::string& class_id)
 	{
 		return MorphAnalyserFactory::Instance().Register(class_id, analyser_creator<T>);
+	}
+
+	extern "C" {
+		bool libPlTagger_register_analyser(const char* class_id, MorphAnalyser* (*creator)(const Config::Node&));
 	}
 
 } /* end ns PlTagger */

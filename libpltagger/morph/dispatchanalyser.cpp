@@ -111,6 +111,19 @@ namespace PlTagger {
 			fallback_ = new ConstAnalyser(&tagset(), ign_tag_string);
 		}
 
+		const Config::Node* dng = NULL;
+		try {
+			dng = &cfg.get_child("general");
+		} catch (boost::property_tree::ptree_error& e) {
+		}
+		if (dng != NULL) {
+			foreach (const Config::Node::value_type &v, *dng) {
+				if (v.first == "plugin") {
+					MorphAnalyser::load_plugin(v.second.data(), false);
+				}
+			}
+		}
+
 		MaCreator mc(tagset(), cfg);
 
 		foreach (const Config::Node::value_type &v, *dnp) {

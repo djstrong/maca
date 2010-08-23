@@ -97,4 +97,22 @@ namespace PlTagger {
 		return rv;
 	}
 
+#ifdef SFST_AS_PLUGIN
+	namespace {
+		MorphAnalyser* sfst_create(const Config::Node& cfg)
+		{
+			return new SfstAnalyser(cfg);
+		}
+
+		struct registerer
+		{
+			registerer() {
+				libPlTagger_register_analyser("sfst", &sfst_create);
+			}
+		};
+
+		registerer rrr;
+	}
+#endif
+
 } /* end ns PlTagger */

@@ -208,4 +208,22 @@ namespace PlTagger {
 		conv_->convert_ambiguous(vec, sink);
 	}
 
+#ifdef MORFEUSZ_AS_PLUGIN
+	namespace {
+		MorphAnalyser* morfeusz_create(const Config::Node& cfg)
+		{
+			return new MorfeuszAnalyser(cfg);
+		}
+
+		struct registerer
+		{
+			registerer() {
+				libPlTagger_register_analyser("morfeusz", &morfeusz_create);
+			}
+		};
+
+		registerer rrr;
+	}
+#endif
+
 } /* end ns PlTagger */
