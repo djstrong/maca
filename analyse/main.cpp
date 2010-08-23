@@ -1,16 +1,11 @@
-#include <libpltagger/conv/tagsetconverter.h>
-#include <libpltagger/util/debug.h>
-#include <libpltagger/util/settings.h>
-#include <libpltagger/tagsetparser.h>
-
-#include <libpltagger/io/plain.h>
+#include <libpltagger/io/writer.h>
 #include <libpltagger/io/premorph.h>
-#include <libpltagger/io/xces.h>
 #include <libpltagger/morph/dispatchanalyser.h>
+#include <libpltagger/util/settings.h>
 
-#include <libtoki/util/foreach.h>
-#include <libtoki/tokenizer/layertokenizer.h>
 #include <libtoki/sentencesplitter.h>
+#include <libtoki/tokenizer/layertokenizer.h>
+#include <libtoki/util/settings.h>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>
