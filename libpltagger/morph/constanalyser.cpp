@@ -13,17 +13,22 @@ namespace PlTagger {
 	}
 
 	ConstAnalyser::ConstAnalyser(const Config::Node& cfg)
-		: MorphAnalyser(cfg), tag_()
+		: MorphAnalyser(cfg), tag_(), lower_lemma_(false)
 	{
 		std::string tag_string = cfg.get("tag", "");
 		if (tag_string.empty()) throw ConfigValueMissing("tag", "ConstAnalyser");
 		tag_ = tagset().parse_simple_tag(tag_string, false);
+		lower_lemma_ = cfg.get("lower_lemma", false);
 	}
 
 	bool ConstAnalyser::process_functional(const Toki::Token &t, boost::function<void (Token*)> sink)
 	{
 		Token* tt = new Token(t);
-		tt->add_lexeme(Lexeme(tt->orth(), tag_));
+		UnicodeString lemma = t.orth();
+		if (lower_lemma_) {
+			lemma.toLower();
+		};
+		tt->add_lexeme(Lexeme(lemma, tag_));
 		sink(tt);
 		return true;
 	}

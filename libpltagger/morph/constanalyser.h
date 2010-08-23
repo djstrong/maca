@@ -7,7 +7,7 @@ namespace PlTagger {
 
 	/**
 	 * A simple analyser that always returns the same interpretation for any
-	 * token.
+	 * token. The tag is pre-set, and the lemma is the token's orth.
 	 */
 	class ConstAnalyser : public MorphAnalyser
 	{
@@ -21,13 +21,19 @@ namespace PlTagger {
 		/**
 		 * Config node constructor. Recognized keys are:
 		 * - tag - the tag to use as the analysis for all tokens
+		 * - lower_lemma - if true, lowercase the lemma (false by default)
 		 */
 		explicit ConstAnalyser(const Config::Node& cfg);
 
 		/// MapAnalyser override
 		bool process_functional(const Toki::Token &t, boost::function<void (Token*)> sink);
+
 	private:
+		/// The tag
 		Tag tag_;
+
+		/// flag to lowercase lemma
+		bool lower_lemma_;
 	};
 
 } /* end ns PlTagger */
