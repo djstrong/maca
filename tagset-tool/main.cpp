@@ -178,7 +178,7 @@ int main(int argc, char** argv)
 			("save-tagset,S", value(&tagset_save),
 			 "Path to tagset ini file to save\n")
 			("quiet,q", value(&quiet)->zero_tokens(),
-			 "Suppress startup info when loading a tagset\n")
+			 "Suppress startup info\n")
 			("parse,p", value(&parse)->zero_tokens(),
 			 "Parse complex tag strings mode")
 			("validate,v", value(&validate)->zero_tokens(),
@@ -226,11 +226,15 @@ int main(int argc, char** argv)
 			}
 			boost::function<void (const std::string&)> f;
 			if (parse) {
-				std::cerr << "(Tag parse mode)\n";
+				if (!quiet) {
+					std::cerr << "(Tag parse mode)\n";
+				}
 				_prompt = "tag-parse> ";
 				f = boost::bind(&tag_parse_cb, boost::ref(tagset), validate, sort, _1);
 			} else {
-				std::cerr << "(Tagset query mode)\n";
+				if (!quiet) {
+					std::cerr << "(Tagset query mode)\n";
+				}
 				_prompt = "tagset-query> ";
 				f = boost::bind(&tagset_query_cb, boost::ref(tagset), _1);
 			}
