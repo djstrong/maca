@@ -62,43 +62,50 @@ int main(int argc, char** argv)
 		return 1;
 	}
 	if (!config.empty()) {
-		std::ifstream ifs;
-		std::string fn = PlTagger::Path::Instance().find_file(config);
-		if (fn.empty()) {
-			std::cerr << "Config file open error for " << config << "\n";
-			return 8;
+		try {
+			std::ifstream ifs;
+			std::string fn = PlTagger::Path::Instance().find_file(config);
+			if (fn.empty()) {
+				std::cerr << "Config file open error for " << config << "\n";
+				return 8;
+			}
+			ifs.open(fn.c_str());
+			std::cerr << "Loading tagger configuration from " << fn << "\n";
+			Toki::Config::Node cfg = Toki::Config::from_stream(ifs);
+			boost::shared_ptr<PlTagger::MorphAnalyser> ma(new PlTagger::DispatchAnalyser(cfg));
+
+			if (toki_config.empty()) {
+				toki_config = cfg.get("general.toki-config", "");
+			}
+			const Toki::Config::Node& conf = toki_config.empty() ?
+				Toki::default_config() :
+				Toki::get_named_config(toki_config);
+			Toki::LayerTokenizer tok(conf);
+
+			if (input_format == "premorph" || input_format == "pre") {
+				PlTagger::PremorphProcessor pp(std::cout, tok, *ma);
+				pp.parse_stream(std::cin);
+				return 0;
+			}
+
+			tok.set_input_source(std::cin);
+			Toki::SentenceSplitter sen(tok);
+			boost::scoped_ptr<PlTagger::TokenWriter> writer;
+			writer.reset(PlTagger::TokenWriter::create(output_format, std::cout, ma->tagset()));
+
+			while (sen.has_more()) {
+				std::vector<Toki::Token*> sentence = sen.get_next_sentence();
+				assert(!sentence.empty());
+				std::vector<PlTagger::Token*> analysed_sentence = ma->process_dispose(sentence);
+				writer->write_sentence(PlTagger::Sentence(analysed_sentence));
+			}
+		} catch (PlTagger::PlTaggerError& e) {
+			std::cerr << "PlTagger Error: " << e.info() << "\n";
+			return 4;
+		} catch (Toki::TokenizerLibError& e) {
+			std::cerr << "Tokenizer Error: " << e.info() << "\n";
+			return 6;
 		}
-		ifs.open(fn.c_str());
-		std::cerr << "Loading tagger configuration from " << fn << "\n";
-		Toki::Config::Node cfg = Toki::Config::from_stream(ifs);
-		boost::shared_ptr<PlTagger::MorphAnalyser> ma(new PlTagger::DispatchAnalyser(cfg));
-
-		if (toki_config.empty()) {
-			toki_config = cfg.get("general.toki-config", "");
-		}
-		const Toki::Config::Node& conf = toki_config.empty() ?
-			Toki::default_config() :
-			Toki::get_named_config(toki_config);
-		Toki::LayerTokenizer tok(conf);
-
-		if (input_format == "premorph" || input_format == "pre") {
-			PlTagger::PremorphProcessor pp(std::cout, tok, *ma);
-			pp.parse_stream(std::cin);
-			return 0;
-		}
-
-		tok.set_input_source(std::cin);
-		Toki::SentenceSplitter sen(tok);
-		boost::scoped_ptr<PlTagger::TokenWriter> writer;
-		writer.reset(PlTagger::TokenWriter::create(output_format, std::cout, ma->tagset()));
-
-		while (sen.has_more()) {
-			std::vector<Toki::Token*> sentence = sen.get_next_sentence();
-			assert(!sentence.empty());
-			std::vector<PlTagger::Token*> analysed_sentence = ma->process_dispose(sentence);
-			writer->write_sentence(PlTagger::Sentence(analysed_sentence));
-		}
-
 	} else {
 		std::cerr << "Usage: analyse -c CONFIG [OPTIONS]\n";
 		std::cerr << "See analyse --help\n";
