@@ -40,7 +40,7 @@ int main(int argc, char** argv)
 			;
 	boost::program_options::variables_map vm;
 	boost::program_options::positional_options_description p;
-	p.add("tagset", -1);
+	p.add("config", -1);
 
 	try {
 		boost::program_options::store(
@@ -61,9 +61,7 @@ int main(int argc, char** argv)
 
 	if (!config.empty()) {
 		try {
-			std::ifstream ifs;
-			PlTagger::Path::Instance().open_stream_or_throw(config, ifs, "tagger config");
-			Toki::Config::Node cfg = Toki::Config::from_stream(ifs);
+			PlTagger::Config::Node cfg = PlTagger::get_named_config(config);
 			boost::shared_ptr<PlTagger::MorphAnalyser> ma(new PlTagger::DispatchAnalyser(cfg));
 
 			if (toki_config.empty()) {
