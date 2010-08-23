@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.8.0)
 
 set(ver_major "0")
 set(ver_minor "1")
+set(ver_patch "1")
 
 # use some of our own Find* scripts
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeScripts)
@@ -61,7 +62,7 @@ if (MORFEUSZ_FOUND)
 endif(MORFEUSZ_FOUND)
 
 set(LIBPLTAGGER_INSTALL_DATA_DIR lib/pltagger)
-set(LIBPLTAGGER_VERSION "${ver_major}.${ver_minor}")
+set(LIBPLTAGGER_VERSION "${ver_major}.${ver_minor}.${ver_patch}")
 FIND_PATH(LIBPLTAGGER_SRC_DATA_DIR
     test.tagset
     ${CMAKE_SOURCE_DIR}/data
