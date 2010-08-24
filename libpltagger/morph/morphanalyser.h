@@ -177,10 +177,6 @@ namespace PlTagger {
 		return MorphAnalyserFactory::Instance().Register(T::identifier, analyser_creator<T>);
 	}
 
-	extern "C" {
-		bool libPlTagger_register_analyser(const char* class_id, MorphAnalyser* (*creator)(const Config::Node&));
-	}
-
 } /* end ns PlTagger */
 
 #endif // LIBPLTAGGER_MORPHANALYSER_H

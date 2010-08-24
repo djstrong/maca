@@ -62,20 +62,27 @@ namespace PlTagger {
 		return MorphAnalyserFactory::Instance().RegisteredIds();
 	}
 
-	bool libPlTagger_register_analyser(const char* class_id, MorphAnalyser* (*creator)(const Config::Node&))
-	{
-		return MorphAnalyserFactory::Instance().Register(class_id, creator);
-	}
-
 	bool MorphAnalyser::load_plugin(const std::string& name, bool quiet)
 	{
-		std::string soname = "libpltagger_" + name + ".so";
+		std::string soname;
+		if (name.size() > 1 && name.find('/') != name.npos) {
+			soname = name;
+		} else {
+			soname = "libpltagger_" + name + ".so";
+		}
 		size_t count = available_analyser_types().size();
-		void* handle = dlopen(soname.c_str(), RTLD_NOW);
+		void* handle = dlopen(soname.c_str(), RTLD_NOW | RTLD_NOLOAD);
+		if (handle != NULL) {
+			if (!quiet) {
+				std::cerr << "Warning: " << soname << " has already been loaded\n";
+			}
+			return false;
+		}
+		handle = dlopen(soname.c_str(), RTLD_NOW);
 		if (handle == NULL) {
 			const char* dle = dlerror();
 			if (!quiet) {
-				std::cerr << "dlopen error while loading " << soname << "\n";
+				std::cerr << "Error: dlopen error while loading " << soname << ": ";
 				if (dle != NULL) {
 					std::cerr << dle << "\n";
 				}
@@ -88,7 +95,7 @@ namespace PlTagger {
 			}
 			return false;
 		} else {
-			if (Path::Instance().get_verbose()) {
+			if (!quiet && -Path::Instance().get_verbose()) {
 				std::cerr << "Loaded plugin '" << name << "'\n";
 			}
 			return true;
