@@ -1,6 +1,6 @@
 #include <libpltagger/exception.h>
 #include <sstream>
-#include <libpltagger/settings.h>
+#include <libpltagger/util/settings.h>
 namespace PlTagger {
 
 	PlTaggerError::PlTaggerError(const std::string &what)
