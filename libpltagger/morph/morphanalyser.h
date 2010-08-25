@@ -3,6 +3,7 @@
 
 #include <libtoki/token.h>
 #include <libpltagger/util/confignode.h>
+#include <libpltagger/sentence.h>
 #include <libpltagger/token.h>
 #include <libpltagger/tagset.h>
 
@@ -52,6 +53,16 @@ namespace PlTagger {
 		/// tokens and insert the resulting tagger tokens into the given
 		/// vector. The toki tokens are deleted.
 		void process_dispose(const std::vector<Toki::Token*>& t, std::vector<Token*>& v);
+
+		/// Convenience process_functional wrapper to process a vector of Toki
+		/// tokens and return a vector of tagger tokens. The toki tokens are
+		/// deleted.
+		Sentence* process_dispose(Toki::Sentence* s);
+
+		/// Convenience process_functional wrapper to process a Toki Sentence
+		/// tokens and insert the resulting tagger tokens into a PlTagger
+		/// Sentence. The Toki sentence and tokens are deleted.
+		void process_dispose(Toki::Sentence* t, Sentence* v);
 
 		/**
 		 * The main token analysis function to be implemented in derived

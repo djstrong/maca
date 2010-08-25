@@ -7,6 +7,7 @@
 #include <boost/bind.hpp>
 #include <boost/algorithm/string.hpp>
 
+#include <memory>
 #include <dlfcn.h>
 
 namespace PlTagger {
@@ -50,6 +51,22 @@ namespace PlTagger {
 			process(*tt, v);
 			delete tt;
 		}
+	}
+
+	Sentence* MorphAnalyser::process_dispose(Toki::Sentence* t)
+	{
+		std::auto_ptr<Sentence> s(new Sentence);
+		process_dispose(t, s.get());
+		return s.release();
+	}
+
+	void MorphAnalyser::process_dispose(Toki::Sentence* t, Sentence* v)
+	{
+		foreach (Toki::Token* tt, t->tokens()) {
+			process(*tt, v->tokens());
+			delete tt;
+		}
+		t->tokens().clear();
 	}
 
 	MorphAnalyser* MorphAnalyser::create(std::string class_id, const Config::Node& props)

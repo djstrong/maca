@@ -73,11 +73,12 @@ namespace PlTagger {
 			Toki::SentenceSplitter sen(tok_);
 			while (sen.has_more()) {
 				os_ << " <chunk type=\"s\">\n";
-				std::vector<Toki::Token*> sentence = sen.get_next_sentence();
-				foreach (Token* t, ma_.process_dispose(sentence)) {
+				Toki::Sentence* sentence = sen.get_next_sentence();
+				foreach (Token* t, ma_.process_dispose(sentence->tokens())) {
 					token_as_xces_xml(os_, ma_.tagset(), *t, 1);
 					delete t;
 				}
+				delete sentence;
 				os_ << " </chunk>\n";
 			}
 			buf_.str("");

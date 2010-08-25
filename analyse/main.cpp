@@ -94,10 +94,10 @@ int main(int argc, char** argv)
 			writer.reset(PlTagger::TokenWriter::create(output_format, std::cout, ma->tagset()));
 
 			while (sen.has_more()) {
-				std::vector<Toki::Token*> sentence = sen.get_next_sentence();
-				assert(!sentence.empty());
-				std::vector<PlTagger::Token*> analysed_sentence = ma->process_dispose(sentence);
-				writer->write_sentence(PlTagger::Sentence(analysed_sentence));
+				boost::scoped_ptr<Toki::Sentence> sentence(sen.get_next_sentence());
+				assert(!sentence->empty());
+				boost::scoped_ptr<PlTagger::Sentence> analysed(ma->process_dispose(sentence.get()));
+				writer->write_sentence(*analysed);
 			}
 		} catch (PlTagger::PlTaggerError& e) {
 			std::cerr << "PlTagger Error: " << e.info() << "\n";
