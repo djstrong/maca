@@ -5,9 +5,6 @@
 
 namespace PlTagger
 {
-	TokenSource::~TokenSource()
-	{
-	}
 
 	void foo()
 	{

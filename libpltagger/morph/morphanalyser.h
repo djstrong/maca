@@ -3,6 +3,7 @@
 
 #include <libtoki/token.h>
 #include <libpltagger/util/confignode.h>
+#include <libpltagger/sentence.h>
 #include <libpltagger/token.h>
 #include <libpltagger/tagset.h>
 
@@ -53,6 +54,16 @@ namespace PlTagger {
 		/// vector. The toki tokens are deleted.
 		void process_dispose(const std::vector<Toki::Token*>& t, std::vector<Token*>& v);
 
+		/// Convenience process_functional wrapper to process a vector of Toki
+		/// tokens and return a vector of tagger tokens. The toki tokens are
+		/// deleted.
+		Sentence* process_dispose(Toki::Sentence* s);
+
+		/// Convenience process_functional wrapper to process a Toki Sentence
+		/// tokens and insert the resulting tagger tokens into a PlTagger
+		/// Sentence. The Toki sentence and tokens are deleted.
+		void process_dispose(Toki::Sentence* t, Sentence* v);
+
 		/**
 		 * The main token analysis function to be implemented in derived
 		 * classes. Takes a Toki token and feeds the resulting tagger tokens
@@ -88,10 +99,6 @@ namespace PlTagger {
 			tagset_ = tagset;
 		}
 
-		/// Convenience function for adding lexemes to tokens
-		void parse_tag_into_token(Token* tok, const UnicodeString& lemma,
-				const std::string& tag) const;
-
 		/**
 		 * Factory interface for creating analysers from string identifiers
 		 *
@@ -111,10 +118,22 @@ namespace PlTagger {
 		static std::vector<std::string> available_analyser_types();
 
 		/**
+		 * Load a plugin analyser module
+		 */
+		static bool load_plugin(const std::string& name, bool quiet = false);
+
+		/**
 		 * Convenience template for registering MorphAnalyser derived classes.
 		 */
 		template <typename T>
 		static bool register_analyser(const std::string& class_id);
+
+		/**
+		 * Convenience template for registering MorphAnalyser derived classes.
+		 * Assumes the identifier is at T::identifier
+		 */
+		template <typename T>
+		static bool register_analyser();
 
 	private:
 		/// The tagset used by this analyser
@@ -133,7 +152,7 @@ namespace PlTagger {
 			Loki::TL::MakeTypelist< const Config::Node& >::Result
 			// TokenLayer constructor arguments' types specification
 		>,
-		Loki::CreateUsingNew, // default_config, needed to change the item below
+		Loki::CreateUsingNew, // default, needed to change the item below
 		Loki::LongevityLifetime::DieAsSmallObjectChild // Required per libloki docs
 	>
 	MorphAnalyserFactory;
@@ -161,6 +180,12 @@ namespace PlTagger {
 	bool MorphAnalyser::register_analyser(const std::string& class_id)
 	{
 		return MorphAnalyserFactory::Instance().Register(class_id, analyser_creator<T>);
+	}
+
+	template <typename T>
+	bool MorphAnalyser::register_analyser()
+	{
+		return MorphAnalyserFactory::Instance().Register(T::identifier, analyser_creator<T>);
 	}
 
 } /* end ns PlTagger */

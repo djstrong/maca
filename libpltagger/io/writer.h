@@ -109,7 +109,7 @@ namespace PlTagger {
 			Loki::TL::MakeTypelist< std::ostream&, const Tagset&, const string_range_vector& >::Result
 			// TokenLayer constructor arguments' types specification
 		>,
-		Loki::CreateUsingNew, // default_config, needed to change the item below
+		Loki::CreateUsingNew, // default, needed to change the item below
 		Loki::LongevityLifetime::DieAsSmallObjectChild // Required per libloki docs
 	>
 	TokenWriterFactory;

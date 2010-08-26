@@ -50,6 +50,12 @@ namespace PlTagger {
 		/// helper function for interfacing with the transducer output
 		static std::string unescape_analysis(const std::string& sfst_analysis);
 
+		/// Class identifier
+		static const char* identifier;
+
+		/// Registered flag
+		static bool registered;
+
 	private:
 		/// convenience function for loading a transducer file
 		void open_transducer(const std::string& filename);

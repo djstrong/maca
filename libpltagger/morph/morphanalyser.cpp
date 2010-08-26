@@ -1,10 +1,14 @@
 #include <libpltagger/morph/morphanalyser.h>
-#include <libpltagger/morph/init.h>
+#include <libpltagger/util/settings.h>
 #include <libpltagger/tagsetmanager.h>
+
+#include <libtoki/util/foreach.h>
 
 #include <boost/bind.hpp>
 #include <boost/algorithm/string.hpp>
-#include <libtoki/util/foreach.h>
+
+#include <memory>
+#include <dlfcn.h>
 
 namespace PlTagger {
 
@@ -34,26 +38,6 @@ namespace PlTagger {
 		return v;
 	}
 
-	void MorphAnalyser::parse_tag_into_token(Token *tok, const UnicodeString &lemma,
-			const std::string &tag) const
-	{
-		boost::function<Lexeme (const Tag&)> lex;
-		lex = boost::bind(&Lexeme::create, boost::cref(lemma), _1);
-
-		boost::function<void (const Tag&)> func;
-		func = boost::bind(&std::vector<Lexeme>::push_back, &tok->lexemes(), boost::bind(lex, _1));
-
-		string_range_vector options;
-		boost::algorithm::split(options, tag, boost::is_any_of("+|"));
-
-		foreach (string_range& sr, options) {
-			if (!sr.empty()) {
-				tagset().parse_tag(sr, false, func);
-			}
-		}
-		//tagset().parse_tag(tag, false, func);
-	}
-
 	std::vector<Token*> MorphAnalyser::process_dispose(const std::vector<Toki::Token*>& t)
 	{
 		std::vector<Token*> v;
@@ -69,6 +53,22 @@ namespace PlTagger {
 		}
 	}
 
+	Sentence* MorphAnalyser::process_dispose(Toki::Sentence* t)
+	{
+		std::auto_ptr<Sentence> s(new Sentence);
+		process_dispose(t, s.get());
+		return s.release();
+	}
+
+	void MorphAnalyser::process_dispose(Toki::Sentence* t, Sentence* v)
+	{
+		foreach (Toki::Token* tt, t->tokens()) {
+			process(*tt, v->tokens());
+			delete tt;
+		}
+		t->tokens().clear();
+	}
+
 	MorphAnalyser* MorphAnalyser::create(std::string class_id, const Config::Node& props)
 	{
 		return MorphAnalyserFactory::Instance().CreateObject(class_id, props);
@@ -79,6 +79,44 @@ namespace PlTagger {
 		return MorphAnalyserFactory::Instance().RegisteredIds();
 	}
 
-	static bool registered = init_morph_analysers();
+	bool MorphAnalyser::load_plugin(const std::string& name, bool quiet)
+	{
+		std::string soname;
+		if (name.size() > 1 && name.find('/') != name.npos) {
+			soname = name;
+		} else {
+			soname = "libpltagger_" + name + ".so";
+		}
+		size_t count = available_analyser_types().size();
+		void* handle = dlopen(soname.c_str(), RTLD_NOW | RTLD_NOLOAD);
+		if (handle != NULL) {
+			if (!quiet) {
+				std::cerr << "Warning: " << soname << " has already been loaded\n";
+			}
+			return false;
+		}
+		handle = dlopen(soname.c_str(), RTLD_NOW);
+		if (handle == NULL) {
+			const char* dle = dlerror();
+			if (!quiet) {
+				std::cerr << "Error: dlopen error while loading " << soname << ": ";
+				if (dle != NULL) {
+					std::cerr << dle << "\n";
+				}
+			}
+			return false;
+		} else if (count >= available_analyser_types().size()) {
+			if (!quiet) {
+				std::cerr << "Warning: Plugin '" << name
+						<< "' did not register any new analyser types\n";
+			}
+			return false;
+		} else {
+			if (!quiet && -Path::Instance().get_verbose()) {
+				std::cerr << "Loaded plugin '" << name << "'\n";
+			}
+			return true;
+		}
+	}
 
 } /* end ns PlTagger */

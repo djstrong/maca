@@ -12,7 +12,7 @@ add_definitions(-DHAVE_CONFIG_D_H)
 #include_directories("/usr/include/sfst-1.0")
 #set(LIBS ${LIBS} "sfst1")
 
-find_package(Toki REQUIRED)
+find_package(Toki 0.3.2 REQUIRED)
 set(LIBS ${LIBS} ${Toki_LIBRARY})
 
 find_package(ICU REQUIRED QUIET)
@@ -68,7 +68,6 @@ SET(libpltagger_STAT_SRC
     io/xceswriter.cpp
     morph/constanalyser.cpp
     morph/dispatchanalyser.cpp
-    morph/init.cpp
     morph/mapanalyser.cpp
     morph/morphanalyser.cpp
     util/confignode.cpp
@@ -77,15 +76,55 @@ SET(libpltagger_STAT_SRC
     util/symboldictionary.cpp
 )
 
+if (UNIX)
+    set(MORFEUSZ_PLUGIN ON CACHE BOOL "Build Morfeusz analyser as a plugin")
+    set(SFST_PLUGIN ON CACHE BOOL "Build SFST analyser as a plugin")
+endif(UNIX)
+
+find_package(SFST)
 if (SFST_FOUND)
-    SET(libpltagger_STAT_SRC ${libpltagger_STAT_SRC} morph/sfstanalyser.cpp)
+    if(SFST_PLUGIN)
+        message(STATUS "SFST support will be built as a plugin")
+        add_library(pltagger_sfst MODULE morph/sfstanalyser.cpp)
+        target_link_libraries ( pltagger_sfst pltagger ${SFST_LIBRARY} )
+        set_target_properties(pltagger_sfst PROPERTIES
+            VERSION "${ver_major}.${ver_minor}"
+            SOVERSION ${ver_major})
+        set_target_properties(pltagger_sfst PROPERTIES
+            COMPILE_FLAGS "-DSFST_AS_PLUGIN -I${SFST_INCLUDE_DIR}"
+        )
+        install(TARGETS pltagger_sfst
+                LIBRARY DESTINATION lib)
+    else(SFST_PLUGIN)
+        set(LIBS ${LIBS} ${SFST_LIBRARY})
+        include_directories(${SFST_INCLUDE_DIR})
+        link_directories(${SFST_LIBRARY_DIRS})
+        set(HAVE_SFST 1)
+        SET(libpltagger_STAT_SRC ${libpltagger_STAT_SRC} morph/sfstanalyser.cpp)
+    endif(SFST_PLUGIN)
 endif (SFST_FOUND)
 
+find_package(Morfeusz)
 if (MORFEUSZ_FOUND)
-    SET(libpltagger_STAT_SRC ${libpltagger_STAT_SRC}
-    morph/morfeuszanalyser.cpp
-    morph/morfeuszcompat.cpp
-    )
+    if(MORFEUSZ_PLUGIN)
+        message(STATUS "Morfeusz support will be built as a plugin")
+        add_library(pltagger_morfeusz MODULE morph/morfeuszanalyser.cpp)
+        target_link_libraries ( pltagger_morfeusz pltagger ${MORFEUSZ_LIBRARY} )
+        set_target_properties(pltagger_morfeusz PROPERTIES
+            VERSION "${ver_major}.${ver_minor}"
+            SOVERSION ${ver_major})
+        set_target_properties(pltagger_morfeusz PROPERTIES
+            COMPILE_FLAGS "-DMORFEUSZ_AS_PLUGIN -I${MORFEUSZ_INCLUDE_DIR}"
+        )
+        install(TARGETS pltagger_morfeusz
+                LIBRARY DESTINATION lib)
+    else(MORFEUSZ_PLUGIN)
+        set(LIBS ${LIBS} ${MORFEUSZ_LIBRARY})
+        include_directories(${MORFEUSZ_INCLUDE_DIR})
+        link_directories(${MORFEUSZ_LIBRARY_DIRS})
+        set(HAVE_MORFEUSZ 1)
+        SET(libpltagger_STAT_SRC ${libpltagger_STAT_SRC} morph/morfeuszanalyser.cpp)
+    endif(MORFEUSZ_PLUGIN)
 endif (MORFEUSZ_FOUND)
 
 add_library(pltagger SHARED ${libpltagger_STAT_SRC})
@@ -123,6 +162,7 @@ if(UNIX)
                  PATTERN "*.conv"
                  PATTERN "*.xml"
                  PATTERN "*.txt"
+				 PATTERN "*.fst"
                 PATTERN ".svn" EXCLUDE
                 PATTERN "local/*" EXCLUDE
         )

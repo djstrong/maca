@@ -12,6 +12,10 @@
 
 namespace PlTagger {
 
+	const char* MorfeuszAnalyser::identifier = "morfeusz";
+
+	bool MorfeuszAnalyser::registered = MorphAnalyser::register_analyser<MorfeuszAnalyser>();
+
 	MorfeuszError::MorfeuszError(const std::string& error, const std::string input, InterpMorf* interp)
 		: PlTaggerError("Morfeusz error: " + error), error(error), input(input), interp(interp)
 	{
@@ -43,7 +47,7 @@ namespace PlTagger {
 	{
 		std::string fn = cfg.get("converter", "");
 		std::ifstream ifs;
-		if (!open_file_from_search_path(fn, ifs)) throw FileNotFound(fn, "Converter");
+		Path::Instance().open_stream_or_throw(fn, ifs, "converter");
 
 		Config::Node conv_cfg = Config::from_stream(ifs);
 		std::auto_ptr<Conversion::TagsetConverter> c(new Conversion::TagsetConverter(conv_cfg));
@@ -93,8 +97,8 @@ namespace PlTagger {
 
 			std::vector<Token*> unambiguous;
 
-			// FIXME ths should not be a for loop
-			for (int i = 0; i < node_count; ++i) {
+			int i = 0;
+			while (i < node_count) {
 				if (succ[i].size() > 1) { // complex case, many interps or segmentation ambiguity
 					if (!unambiguous.empty()) {
 						flush_convert(unambiguous, sink);
@@ -150,17 +154,19 @@ namespace PlTagger {
 					}
 
 					flush_convert(token_paths, sink);
-					i = merge_node - 1; //account for the ++i from the for
+					i = merge_node;
 				} else if (!succ[i].empty()) { //simple case, only one interp
 					int edge = succ[i][0];
 					unambiguous.push_back(make_token(t, pmorf + edge));
 					if (pmorf[edge].k != i + 1) {
 						throw MorfeuszError("simple path has non-consecutive nodes", s, pmorf);
 					}
+					++i;
 				} else { //only the last node should have no succesors
 					if (i != node_count - 1) {
 						throw MorfeuszError("node without succesors that is not the last node", s, pmorf);
 					}
+					++i;
 				}
 			}
 			if (!unambiguous.empty()) {
@@ -186,21 +192,9 @@ namespace PlTagger {
 	{
 		tt->set_orth(UnicodeString::fromUTF8(im->forma));
 		if (im->interp) {
-			UnicodeString lemma = UnicodeString::fromUTF8(im->haslo);
-			boost::function<Lexeme (const Tag&)> lex;
-			lex = boost::bind(&Lexeme::create, boost::cref(lemma), _1);
-
-			boost::function<void (const Tag&)> func;
-			func = boost::bind(&std::vector<Lexeme>::push_back, &tt->lexemes(), boost::bind(lex, _1));
-
-			string_range_vector options;
-			boost::algorithm::split(options, im->interp, boost::is_any_of("+|"));
-
-			foreach (string_range& sr, options) {
-				if (!sr.empty()) {
-					conv_->tagset_from().parse_tag(sr, false, func);
-				}
-			}
+			conv_->tagset_from().lexemes_into_token(*tt,
+					UnicodeString::fromUTF8(im->haslo),
+					std::make_pair(im->interp, im->interp + strlen(im->interp)));
 		} else {
 			if (warn_on_ign_) {
 				std::cerr << "Morfeusz: tagging as ign: " << im->forma << "\n";

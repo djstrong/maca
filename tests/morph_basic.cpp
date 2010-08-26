@@ -98,5 +98,5 @@ BOOST_FIXTURE_TEST_CASE( morph_dispatch3, Fd )
 BOOST_FIXTURE_TEST_CASE( morph_dispatch4, Fd )
 {
 	t.set_type("ZZZ");
-	BOOST_CHECK(a.process(t).empty());
+	BOOST_CHECK_THROW(a.process(t), PlTagger::PlTaggerError);
 }

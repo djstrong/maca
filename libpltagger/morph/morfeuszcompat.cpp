@@ -110,7 +110,7 @@ namespace PlTagger { namespace MorfeuszCompat {
 				//try {
 					UnicodeString lemma = UnicodeString::fromUTF8(pmorf->haslo);
 					tok->set_orth(UnicodeString::fromUTF8(pmorf->forma));
-					ma.parse_tag_into_token(tok, lemma, pmorf->interp);
+					ma.tagset().lexemes_into_token(*tok, lemma, std::string(pmorf->interp));
 				//}
 			}
 			last_p = pmorf->p;

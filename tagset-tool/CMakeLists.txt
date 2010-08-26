@@ -1,5 +1,12 @@
 PROJECT(tagset-tool)
 
+find_package(Libedit)
+if (Libedit_FOUND)
+    message(STATUS "Building with libedit")
+    add_definitions( -DHAVE_LIBEDIT )
+    set(LIBS ${LIBS} ${Libedit_LIBRARIES})
+endif (Libedit_FOUND)
+
 include_directories( ${CMAKE_SOURCE_DIR} )
 
 add_executable( tagset-tool main.cpp )

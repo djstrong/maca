@@ -2,6 +2,7 @@
 #define LIBPLTAGGER_MAPANALYSER_H
 
 #include <libpltagger/morph/morphanalyser.h>
+#include <libpltagger/util/settings.h>
 
 #include <libtoki/util/confignode.h>
 #include <libtoki/util/foreach.h>
@@ -35,6 +36,12 @@ namespace PlTagger {
 
 		/// MorphAnalyser override
 		bool process_functional(const Toki::Token &t, boost::function<void (Token*)> sink);
+
+		/// Class identifier
+		static const char* identifier;
+
+		/// Registered flag
+		static bool registered;
 
 	private:
 		/// the orth to analysis map
@@ -129,7 +136,8 @@ namespace PlTagger {
 	template<typename MapT>
 	void MapAnalyser<MapT>::load_m_dictionary(const std::string &fn)
 	{
-		std::ifstream ifs(fn.c_str());
+		std::ifstream ifs;
+		Path::Instance().open_stream_or_throw(fn, ifs, "map analyser data");
 		static const size_t BUFSIZE = 2000;
 		char buf[BUFSIZE + 1];
 		while (ifs.good()) {

@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.8.0)
 
 set(ver_major "0")
 set(ver_minor "1")
+set(ver_patch "1")
 
 # use some of our own Find* scripts
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeScripts)
@@ -44,24 +45,10 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 set(LIBS "")
 include_directories( ${Tagger_SOURCE_DIR} )
 
-find_package(SFST)
-if (SFST_FOUND)
-	set(LIBS ${LIBS} ${SFST_LIBRARY})
-	include_directories(${SFST_INCLUDE_DIR})
-	link_directories(${SFST_LIBRARY_DIRS})
-	set(HAVE_SFST 1)
-endif(SFST_FOUND)
 
-find_package(Morfeusz)
-if (MORFEUSZ_FOUND)
-	set(LIBS ${LIBS} ${MORFEUSZ_LIBRARY})
-	include_directories(${MORFEUSZ_INCLUDE_DIR})
-	link_directories(${MORFEUSZ_LIBRARY_DIRS})
-	set(HAVE_MORFEUSZ 1)
-endif(MORFEUSZ_FOUND)
 
 set(LIBPLTAGGER_INSTALL_DATA_DIR lib/pltagger)
-set(LIBPLTAGGER_VERSION "${ver_major}.${ver_minor}")
+set(LIBPLTAGGER_VERSION "${ver_major}.${ver_minor}.${ver_patch}")
 FIND_PATH(LIBPLTAGGER_SRC_DATA_DIR
     test.tagset
     ${CMAKE_SOURCE_DIR}/data
