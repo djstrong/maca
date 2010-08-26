@@ -79,15 +79,20 @@ namespace PlTagger {
 		return MorphAnalyserFactory::Instance().RegisteredIds();
 	}
 
+	std::string MorphAnalyser::get_plugin_soname(const std::string& name)
+	{
+		if (name.size() > 1 && name.find('/') != name.npos) {
+			return name;
+		} else {
+			return "libpltagger_" + name + ".so";
+		}
+	}
+
 	bool MorphAnalyser::load_plugin(const std::string& name, bool quiet)
 	{
-		std::string soname;
-		if (name.size() > 1 && name.find('/') != name.npos) {
-			soname = name;
-		} else {
-			soname = "libpltagger_" + name + ".so";
-		}
+		std::string soname = get_plugin_soname(name);
 		size_t count = available_analyser_types().size();
+		// first check if the plugin was already loaded
 		void* handle = dlopen(soname.c_str(), RTLD_NOW | RTLD_NOLOAD);
 		if (handle != NULL) {
 			if (!quiet) {
@@ -95,6 +100,7 @@ namespace PlTagger {
 			}
 			return false;
 		}
+		// actually load the library
 		handle = dlopen(soname.c_str(), RTLD_NOW);
 		if (handle == NULL) {
 			const char* dle = dlerror();
@@ -112,7 +118,7 @@ namespace PlTagger {
 			}
 			return false;
 		} else {
-			if (!quiet && -Path::Instance().get_verbose()) {
+			if (!quiet && Path::Instance().get_verbose()) {
 				std::cerr << "Loaded plugin '" << name << "'\n";
 			}
 			return true;

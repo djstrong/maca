@@ -118,6 +118,12 @@ namespace PlTagger {
 		static std::vector<std::string> available_analyser_types();
 
 		/**
+		 * Convert a plugin name to a shared library name that is expected to
+		 * contain the plugin.
+		 */
+		static std::string get_plugin_soname(const std::string& name);
+
+		/**
 		 * Load a plugin analyser module
 		 */
 		static bool load_plugin(const std::string& name, bool quiet = false);
