@@ -6,6 +6,8 @@
 #include <cstring>
 #include <sstream>
 
+#include <boost/functional/hash.hpp>
+
 namespace PlTagger {
 
 	Tag::Tag()
@@ -58,6 +60,15 @@ namespace PlTagger {
 		return tagset_id_ == other.tagset_id_
 				&& pos_id_ == other.pos_id_
 				&& values_ == other.values_;
+	}
+
+	size_t hash_value(const Tag& tag)
+	{
+		std::size_t seed = 0;
+		boost::hash_combine(seed, tag.pos_id_);
+		boost::hash_combine(seed, tag.tagset_id_);
+		boost::hash_combine(seed, tag.values_);
+		return seed;
 	}
 
 } /* end ns PlTagger */

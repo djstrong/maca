@@ -93,6 +93,8 @@ namespace PlTagger {
 
 		/// the tagset id
 		tagset_idx_t tagset_id_;
+
+		friend size_t hash_value(const Tag &tag);
 	};
 
 } /* end ns PlTagger */
