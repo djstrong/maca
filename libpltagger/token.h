@@ -12,12 +12,12 @@
 
 namespace PlTagger {
 
-	/// A single token being processed by the tagger.
-	/**
+	/** A single token being processed by the tagger.
+	 *
 	 * The orth is stored as an ICU UnicodeString.
 	 */
 	class Token
-		: boost::equality_comparable<Token>, boost::less_than_comparable<Token>
+		: boost::equality_comparable<Token>
 	{
 	public:
 		/// Creates an empty Token
@@ -28,6 +28,9 @@ namespace PlTagger {
 
 		/// Toki::Token conversion
 		explicit Token(const Toki::Token& tok);
+
+		/// Create a duplicate Token
+		Token* clone() const;
 
 		/// Orth getter
 		const UnicodeString& orth() const {
@@ -59,7 +62,7 @@ namespace PlTagger {
 			return lexemes_;
 		}
 
-		/// Lexemes setter
+		/// Lexemes nonconst getter
 		std::vector<Lexeme>& lexemes() {
 			return lexemes_;
 		}
@@ -69,10 +72,13 @@ namespace PlTagger {
 			lexemes_.push_back(lex);
 		}
 
+		/// Clear all lexemes and add one lexeme with lemma=orth and an ign tag
 		void make_ign(const Tagset& tagset);
 
+		/// Add a lexeme with lemma=orth and an ign tag
 		void add_ign(const Tagset& tagset);
 
+		/// Equality operator (!= is provided by boost template magic)
 		bool operator==(const Token& other) const;
 
 		/**

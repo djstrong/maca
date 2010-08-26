@@ -19,6 +19,12 @@ namespace PlTagger {
 	{
 	}
 
+	Token* Token::clone() const
+	{
+		Token* t = new Token(*this);
+		return this;
+	}
+
 	void Token::make_ign(const Tagset& tagset)
 	{
 		lexemes_.clear();
