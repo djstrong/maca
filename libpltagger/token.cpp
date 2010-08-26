@@ -22,7 +22,7 @@ namespace PlTagger {
 	Token* Token::clone() const
 	{
 		Token* t = new Token(*this);
-		return this;
+		return t;
 	}
 
 	void Token::make_ign(const Tagset& tagset)
