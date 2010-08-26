@@ -26,13 +26,14 @@
 #include <libpltagger/io/plain.h>
 #include <libpltagger/io/xces.h>
 #include <libpltagger/io/xceswriter.h>
+#include <libpltagger/io/xcesreader.h>
 
 #include <libpltagger/util/debug.h>
 #include <fstream>
 
 int main(int argc, char** argv)
 {
-	std::string sfst, mdict, conv, cfg_analyser;
+	std::string sfst, mdict, conv, cfg_analyser, readxces;
 	std::string tagset_load;
 	std::vector<std::string> plugins;
 	using boost::program_options::value;
@@ -42,8 +43,10 @@ int main(int argc, char** argv)
 			 "Path to tagset ini file to load\n")
 			("analyser,a", value(&cfg_analyser),
 			 "Analyser config file\n")
+			("read,r", value(&readxces),
+			 "Read a XCES file and hold\n")
 			("plugin,p", value(&plugins),
-			 "Plugins to load")
+			 "Additional plugins to load")
 			("help,h", "Show help")
 			;
 	boost::program_options::variables_map vm;
@@ -64,24 +67,40 @@ int main(int argc, char** argv)
 	boost::shared_ptr<PlTagger::Tagset> tagset(new PlTagger::Tagset);
 
 	if (!tagset_load.empty()) {
-		std::ifstream ifs(tagset_load.c_str());
-		if (ifs.good()) {
-			try {
-				*tagset = PlTagger::TagsetParser::load_ini(ifs);
-			} catch (PlTagger::TagsetParseError& e) {
-				std::cerr << e.info() << "\n";
-				exit(1);
-			}
-		} else {
-			std::cerr << "tagset file open error\n";
-			return 7;
-		}
+		*tagset = PlTagger::get_named_tagset(tagset_load);
 	}
 	foreach (const std::string& s, plugins) {
 		PlTagger::MorphAnalyser::load_plugin(s, false);
 	}
 	std::cerr << "Available analyser types: "
 			<< boost::algorithm::join(PlTagger::MorphAnalyser::available_analyser_types(), " ") << "\n";
-
+	if (!readxces.empty() && tagset) {
+		std::ifstream ifs(readxces.c_str());
+		if (!ifs.good()) {
+			std::cerr << "File open error\n";
+			return 8;
+		}
+		PlTagger::XcesReader xr(*tagset, ifs);
+		std::vector<PlTagger::Chunk*> chunks;
+		PlTagger::Chunk* ch = NULL;
+		int sc = 0;
+		int tc = 0;
+		while ((ch = xr.get_next_chunk())) {
+			chunks.push_back(ch);
+			sc += ch->sentences().size();
+			foreach (PlTagger::Sentence* s, ch->sentences()) {
+				tc += s->size();
+			}
+		}
+		std::cerr << "Read " << chunks.size() << " chunks, "
+				<< sc << " sentences, " << tc << " tokens\n";
+		std::string x;
+		std::cin >> x;
+		foreach (PlTagger::Chunk* c, chunks) {
+			delete c;
+		}
+		std::cerr << "Deleted\n";
+		std::cin >> x;
+	}
 	std::cerr << "Nothing to do! Try --help.\n";
 }
