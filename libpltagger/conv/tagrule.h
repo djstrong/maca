@@ -49,11 +49,6 @@ namespace PlTagger { namespace Conversion {
 		void apply(Tag& tag) const;
 
 		/**
-		 * Apply the rule on all tags of a token
-		 */
-		void apply(Token& token) const;
-
-		/**
 		 * Apply the rule on a tag -- check preconditions and if all match,
 		 * apply the postconditions, tag copying version.
 		 */

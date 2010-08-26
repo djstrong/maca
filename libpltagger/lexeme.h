@@ -34,8 +34,8 @@ namespace PlTagger {
 			return tag_;
 		}
 
-		Tag& tag() {
-			return tag_;
+		void set_tag(const Tag& tag) {
+			tag_ = tag;
 		}
 
 		bool is_null() const;

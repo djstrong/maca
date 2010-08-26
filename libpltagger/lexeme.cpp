@@ -19,7 +19,7 @@ namespace PlTagger {
 
 	bool Lexeme::is_null() const
 	{
-		return lemma_.length() == 0 || !tag_.has_valid_tagset();
+		return lemma().length() == 0 || !tag().has_valid_tagset();
 	}
 
 	bool Lexeme::operator<(const Lexeme& other) const

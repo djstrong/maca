@@ -39,9 +39,9 @@ namespace PlTagger { namespace Conversion {
 		std::vector<Lexeme> new_lexemes;
 		foreach (const Lexeme& lex1, to.lexemes()) {
 			foreach (const Lexeme& lex2, from.lexemes()) {
-				Lexeme lex = lex1;
-				copy_attributes(lex2.tag(), alist, lex.tag());
-				new_lexemes.push_back(lex);
+				Tag tag = lex1.tag();
+				copy_attributes(lex2.tag(), alist, tag);
+				new_lexemes.push_back(Lexeme(lex1.lemma(), tag));
 			}
 		}
 		to.lexemes() = new_lexemes;

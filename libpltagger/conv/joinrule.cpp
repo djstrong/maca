@@ -93,9 +93,7 @@ namespace PlTagger { namespace Conversion {
 		if (pre1_.check(*t1) && pre2_.check(*t2)) {
 			t1->set_orth(t1->orth() + t2->orth());
 			copy_attributes(*t2, copy_t2_attrs_, *t1);
-			foreach (const TagPredicate& p, post_) {
-				p.token_apply(*t1);
-			}
+			apply_predicates(post_, *t1);
 			delete t2;
 			return t1;
 		} else {

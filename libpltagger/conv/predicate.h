@@ -42,12 +42,12 @@ namespace PlTagger { namespace Conversion {
 		 * Apply the predicate to the tag, modyfying it so it matches the predicate
 		 */
 		void apply(Tag& tag) const;
-
-		/**
-		 * Apply the predicate to all tags of the token
-		 */
-		void token_apply(Token& t) const;
 	};
+
+	/**
+	 * Helper function to apply a number of predicates on a token
+	 */
+	void apply_predicates(const std::vector<TagPredicate>& v, Token& t);
 
 	class PosOrthPredicate : public std::pair<pos_idx_t, UnicodeString>
 	{

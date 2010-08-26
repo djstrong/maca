@@ -44,8 +44,12 @@ namespace PlTagger { namespace Conversion {
 
 	void TagRuleLayer::process(Token* t)
 	{
-		foreach (const TagRule& tr, rules_) {
-			tr.apply(*t);
+		foreach (Lexeme& lex, t->lexemes()) {
+			Tag newtag = lex.tag();
+			foreach (const TagRule& tr, rules_) {
+				tr.apply(newtag);
+			}
+			lex.set_tag(newtag);
 		}
 	}
 

@@ -175,7 +175,7 @@ namespace PlTagger {
 			state_ = XS_LEX;
 		} else if (state_ == XS_TAG && name == "ctag") {
 			Tag tag = tagset_.parse_simple_tag(sbuf_, true);
-			tok_->lexemes().back().tag() = tag;
+			tok_->lexemes().back().set_tag(tag);
 			state_ = XS_LEX;
 		} else if (state_ == XS_LEX && name == "lex") {
 			state_ = XS_TOK;

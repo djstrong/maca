@@ -55,16 +55,14 @@ namespace PlTagger { namespace Conversion {
 		}
 	}
 
-	void TagPredicate::token_apply(Token& t) const
+	void apply_predicates(const std::vector<TagPredicate>& v, Token& t)
 	{
-		if (first != static_cast<idx_t>(-1)) {
-			foreach (Lexeme& lex, t.lexemes()) {
-				lex.tag().values()[first] = second;
+		foreach (Lexeme& lex, t.lexemes()) {
+			Tag newtag = lex.tag();
+			foreach (const TagPredicate& tp, v) {
+				tp.apply(newtag);
 			}
-		} else {
-			foreach (Lexeme& lex, t.lexemes()) {
-				lex.tag().set_pos_id((pos_idx_t)second);
-			}
+			lex.set_tag(newtag);
 		}
 	}
 

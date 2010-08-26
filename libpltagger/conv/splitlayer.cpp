@@ -31,7 +31,7 @@ namespace PlTagger { namespace Conversion {
 			} else if (v.first == "t2_lemma") {
 				t2_lexeme_.set_lemma(UnicodeString::fromUTF8(v.second.data()));
 			} else if (v.first == "t2_tag") {
-				t2_lexeme_.tag() = tagset().parse_simple_tag(v.second.data(), true);
+				t2_lexeme_.set_tag(tagset().parse_simple_tag(v.second.data(), true));
 			}
 		}
 		if (t2_lexeme_.is_null()) {
@@ -122,9 +122,7 @@ namespace PlTagger { namespace Conversion {
 					queue_.push_back(t2);
 					t->set_orth(orth_matcher_->group(1, status));
 
-					foreach (const TagPredicate& tp, t1_post_) {
-						tp.token_apply(*t);
-					}
+					apply_predicates(t1_post_, *t);
 				}
 			}
 		}
@@ -145,7 +143,7 @@ namespace PlTagger { namespace Conversion {
 			} else if (v.first == "t3_lemma") {
 				t3_lexeme_.set_lemma(UnicodeString::fromUTF8(v.second.data()));
 			} else if (v.first == "t3_tag") {
-				t3_lexeme_.tag() = tagset().parse_simple_tag(v.second.data(), true);
+				t3_lexeme_.set_tag(tagset().parse_simple_tag(v.second.data(), true));
 			}
 		}
 		if (orth_matcher_->groupCount() < 3) {
@@ -196,9 +194,7 @@ namespace PlTagger { namespace Conversion {
 					queue_.push_back(t3);
 
 					t->set_orth(orth_matcher_->group(1, status));
-					foreach (const TagPredicate& tp, t1_post_) {
-						tp.token_apply(*t);
-					}
+					apply_predicates(t1_post_, *t);
 				}
 			}
 		}
