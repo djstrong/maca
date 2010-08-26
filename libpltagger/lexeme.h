@@ -2,9 +2,18 @@
 #define LIBPLTAGGER_LEXEME_H
 
 #include <unicode/unistr.h>
-
 #include <libpltagger/tag.h>
 #include <libtoki/util/util.h>
+
+#include <boost/flyweight.hpp>
+
+U_NAMESPACE_BEGIN
+inline size_t hash_value(const UnicodeString& u)
+{
+	return u.hashCode();
+}
+U_NAMESPACE_END
+
 
 namespace PlTagger {
 
@@ -54,9 +63,11 @@ namespace PlTagger {
 
 	private:
 		/// The lemma -- basic form
+		//boost::flyweight<UnicodeString> lemma_;
 		UnicodeString lemma_;
 
 		/// The tag
+		//boost::flyweight<Tag> tag_;
 		Tag tag_;
 	};
 
