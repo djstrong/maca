@@ -109,6 +109,7 @@ namespace PlTagger {
 
 	private:
 		/// The orth (actual encountered form)
+		//boost::flyweight<UnicodeString> orth_;
 		UnicodeString orth_;
 
 		/// The preceeding whitespace amount marker
