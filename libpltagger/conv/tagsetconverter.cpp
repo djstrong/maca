@@ -112,7 +112,8 @@ namespace PlTagger { namespace Conversion {
 		convert_container(v, sink);
 	}
 
-	void TagsetConverter::convert_ambiguous(const std::vector<std::vector<Token *> >& v, boost::function<void(Token *)>sink)
+	void TagsetConverter::convert_ambiguous(const std::vector<std::vector<Token *> >& v,
+			boost::function<void(Token *)>sink, bool warn_on_failure /*=true*/)
 	{
 		std::vector< std::vector<Token *> > conv_v;
 		foreach (const std::vector<Token*>& path, v) {
@@ -122,14 +123,16 @@ namespace PlTagger { namespace Conversion {
 			convert_container(path, sink);
 		}
 		if (!try_fold_paths(conv_v, sink)) {
-			std::cerr << "!!! Path folding failed, returning shortest from: ";
-			foreach (const std::vector<Token*>& path, v) {
-				std::cerr << " >> ";
-				foreach (Token* t, path) {
-					std::cerr << t->orth_utf8() << " ";
+			if (warn_on_failure) {
+				std::cerr << "!!! Path folding failed, returning shortest from: ";
+				foreach (const std::vector<Token*>& path, v) {
+					std::cerr << " >> ";
+					foreach (Token* t, path) {
+						std::cerr << t->orth_utf8() << " ";
+					}
 				}
+				std::cerr << "\n";
 			}
-			std::cerr << "\n";
 			choose_shortest_path(conv_v, sink);
 		}
 	}

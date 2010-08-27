@@ -82,7 +82,7 @@ namespace PlTagger { namespace Conversion {
 		 * and shortest-path selection as a fallback.
 		 */
 		void convert_ambiguous(const std::vector< std::vector<Token*> >& v,
-				boost::function<void (Token*)> sink);
+				boost::function<void (Token*)> sink, bool warn_on_failure = true);
 
 		Sentence* convert_sentence(Sentence* s);
 

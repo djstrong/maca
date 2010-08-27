@@ -85,6 +85,8 @@ namespace PlTagger {
 		Tag ign_tag_;
 
 		bool warn_on_ign_;
+
+		bool warn_on_fold_failure_;
 	};
 
 } /* end ns Pltagger */

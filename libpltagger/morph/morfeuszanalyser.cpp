@@ -36,7 +36,7 @@ namespace PlTagger {
 	}
 
 	MorfeuszAnalyser::MorfeuszAnalyser(const Tagset* tagset, Conversion::TagsetConverter* conv)
-		: MorphAnalyser(tagset), conv_(conv)
+		: MorphAnalyser(tagset), conv_(conv), warn_on_fold_failure_(true)
 	{
 		if (conv_->tagset_to().id() != tagset->id()) throw TagsetMismatch("Morfeusz analyser creation", *tagset, conv->tagset_to());
 		morfeusz_set_option(MORFOPT_ENCODING, MORFEUSZ_UTF_8);
@@ -58,6 +58,7 @@ namespace PlTagger {
 		std::string ign_tag_string = cfg.get("ign_tag", "ign");
 		ign_tag_ = conv_->tagset_from().parse_simple_tag(ign_tag_string, false);
 		warn_on_ign_ = cfg.get("warn_on_ign", false);
+		warn_on_fold_failure_ =  cfg.get("warn_on_fold_failure", true);
 
 		morfeusz_set_option(MORFOPT_ENCODING, MORFEUSZ_UTF_8);
 	}
@@ -211,7 +212,7 @@ namespace PlTagger {
 
 	void MorfeuszAnalyser::flush_convert(std::vector<std::vector<Token *> > &vec, boost::function<void(Token *)>sink)
 	{
-		conv_->convert_ambiguous(vec, sink);
+		conv_->convert_ambiguous(vec, sink, warn_on_fold_failure_);
 	}
 
 } /* end ns PlTagger */
