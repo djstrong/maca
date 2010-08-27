@@ -65,42 +65,48 @@ int main(int argc, char** argv)
 	}
 
 	boost::shared_ptr<PlTagger::Tagset> tagset(new PlTagger::Tagset);
-
-	if (!tagset_load.empty()) {
-		*tagset = PlTagger::get_named_tagset(tagset_load);
-	}
-	foreach (const std::string& s, plugins) {
-		PlTagger::MorphAnalyser::load_plugin(s, false);
-	}
-	std::cerr << "Available analyser types: "
-			<< boost::algorithm::join(PlTagger::MorphAnalyser::available_analyser_types(), " ") << "\n";
-	if (!readxces.empty() && tagset) {
-		std::ifstream ifs(readxces.c_str());
-		if (!ifs.good()) {
-			std::cerr << "File open error\n";
-			return 8;
+	try {
+		if (!tagset_load.empty()) {
+			*tagset = PlTagger::get_named_tagset(tagset_load);
 		}
-		PlTagger::XcesReader xr(*tagset, ifs);
-		std::vector<PlTagger::Chunk*> chunks;
-		PlTagger::Chunk* ch = NULL;
-		int sc = 0;
-		int tc = 0;
-		while ((ch = xr.get_next_chunk())) {
-			chunks.push_back(ch);
-			sc += ch->sentences().size();
-			foreach (PlTagger::Sentence* s, ch->sentences()) {
-				tc += s->size();
+		foreach (const std::string& s, plugins) {
+			PlTagger::MorphAnalyser::load_plugin(s, false);
+		}
+		std::cerr << "Available analyser types: "
+				<< boost::algorithm::join(PlTagger::MorphAnalyser::available_analyser_types(), " ") << "\n";
+		if (!readxces.empty() && tagset) {
+			std::ifstream ifs(readxces.c_str());
+			if (!ifs.good()) {
+				std::cerr << "File open error\n";
+				return 8;
 			}
+			PlTagger::XcesReader xr(*tagset, ifs);
+			std::vector<PlTagger::Chunk*> chunks;
+			PlTagger::Chunk* ch = NULL;
+			int sc = 0;
+			int tc = 0;
+			while ((ch = xr.get_next_chunk())) {
+				chunks.push_back(ch);
+				sc += ch->sentences().size();
+				foreach (PlTagger::Sentence* s, ch->sentences()) {
+					tc += s->size();
+				}
+			}
+			std::cerr << "Read " << chunks.size() << " chunks, "
+					<< sc << " sentences, " << tc << " tokens\n";
+			std::string x;
+			std::cin >> x;
+			foreach (PlTagger::Chunk* c, chunks) {
+				delete c;
+			}
+			std::cerr << "Deleted\n";
+			std::cin >> x;
 		}
-		std::cerr << "Read " << chunks.size() << " chunks, "
-				<< sc << " sentences, " << tc << " tokens\n";
-		std::string x;
-		std::cin >> x;
-		foreach (PlTagger::Chunk* c, chunks) {
-			delete c;
-		}
-		std::cerr << "Deleted\n";
-		std::cin >> x;
+	} catch (PlTagger::PlTaggerError& e) {
+		std::cerr << "Fatal error: " << e.info() << "\n";
+		return 9;
 	}
+
 	std::cerr << "Nothing to do! Try --help.\n";
 }
+
