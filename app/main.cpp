@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 			 "Analyser config file\n")
 			("read,r", value(&readxces),
 			 "Read a XCES file and hold\n")
-			("plugin,p", value(&plugins),
+			("plugin,P", value(&plugins),
 			 "Additional plugins to load")
 			("help,h", "Show help")
 			;

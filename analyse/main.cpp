@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 	std::string config, toki_config;
 	std::string input_format, output_format;
 	std::vector<std::string> plugins;
-	bool quiet = false;
+	bool quiet = false, progress = false;
 	using boost::program_options::value;
 
 	std::string writers = boost::algorithm::join(PlTagger::TokenWriter::available_writer_types(), " ");
@@ -36,8 +36,10 @@ int main(int argc, char** argv)
 			 "Input format, any of: plain premorph\n")
 			("output-format,o", value(&output_format)->default_value("plain"),
 			 writers_help.c_str())
-			("plugin,p", value(&plugins),
+			("plugin,P", value(&plugins),
 			 "Additional plugins to load")
+			("progress,p", value(&progress)->zero_tokens(),
+			 "Show progress info")
 			("quiet,q", value(&quiet)->zero_tokens(),
 			 "Suppress startup info when loading a tagset\n")
 			("help,h", "Show help")
@@ -92,12 +94,31 @@ int main(int argc, char** argv)
 			Toki::SentenceSplitter sen(tok);
 			boost::scoped_ptr<PlTagger::TokenWriter> writer;
 			writer.reset(PlTagger::TokenWriter::create(output_format, std::cout, ma->tagset()));
-
+			size_t tokens = 0, sentences = 0, sec_tokens = 0;
+			clock_t start = clock();
+			clock_t slice_start = start;
 			while (sen.has_more()) {
 				boost::scoped_ptr<Toki::Sentence> sentence(sen.get_next_sentence());
 				assert(!sentence->empty());
 				boost::scoped_ptr<PlTagger::Sentence> analysed(ma->process_dispose(sentence.get()));
 				writer->write_sentence(*analysed);
+				++sentences;
+				tokens += analysed->size();
+				if (progress) {
+					sec_tokens += analysed->size();
+					clock_t now_clock = clock();
+					if (now_clock - CLOCKS_PER_SEC > slice_start) {
+						double sec_elapsed = ((double)now_clock - slice_start) / CLOCKS_PER_SEC;
+						double elapsed = ((double)now_clock - start) / CLOCKS_PER_SEC;
+						double sec_rate = sec_tokens / sec_elapsed;
+						double rate = tokens / elapsed;
+						sec_tokens = 0;
+						slice_start = now_clock;
+						std::cerr << "\r" << "Processed " << sentences << " sentences, " << tokens << " tokens, "
+								<< "rate " << sec_rate << " t/s, avg " << rate << " t/s    ";
+					}
+
+				}
 			}
 		} catch (PlTagger::PlTaggerError& e) {
 			std::cerr << "PlTagger Error: " << e.info() << "\n";
