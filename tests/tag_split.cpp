@@ -2,7 +2,7 @@
 #include <set>
 #include <libtoki/util/foreach.h>
 #ifdef HAVE_SFST
-#include <libpltagger/morph/sfstanalyser.h>
+#include <libmaca/morph/sfstanalyser.h>
 
 BOOST_AUTO_TEST_SUITE( tag_split )
 
@@ -13,24 +13,24 @@ struct F {
 			"B data thing tag-thing thang\n"
 			"C a b c \n"
 			"[POS]\n some A B [C]\n";
-		tagset.reset(new PlTagger::Tagset(tagset_string));
+		tagset.reset(new Maca::Tagset(tagset_string));
 	}
-	boost::shared_ptr<PlTagger::Tagset> tagset;
+	boost::shared_ptr<Maca::Tagset> tagset;
 
-	std::vector<PlTagger::Tag> check_split(const char* orig, const std::set<std::string> expect)
+	std::vector<Maca::Tag> check_split(const char* orig, const std::set<std::string> expect)
 	{
 		std::set<std::string> actual;
-		std::vector<PlTagger::Tag> tags;
-		std::vector<PlTagger::Lexeme> lex;
+		std::vector<Maca::Tag> tags;
+		std::vector<Maca::Lexeme> lex;
 		//try {
 		std::string s = orig;
 		s = "<" + s + ">";
-		PlTagger::SfstAnalyser::split_analysis_into(s, lex, *tagset);
-		//} catch (PlTagger::TagParseError& e) {
+		Maca::SfstAnalyser::split_analysis_into(s, lex, *tagset);
+		//} catch (Maca::TagParseError& e) {
 		//	BOOST_FAIL("Tag parse error! " << e.what());
 		//}
 
-		foreach (const PlTagger::Lexeme& l, lex) {
+		foreach (const Maca::Lexeme& l, lex) {
 			BOOST_WARN(tagset->validate_tag(l.tag(), false));
 			actual.insert(tagset->tag_to_string(l.tag()));
 			tags.push_back(l.tag());
@@ -107,7 +107,7 @@ BOOST_FIXTURE_TEST_CASE( bad_value, F )
 	const char tag[] = "some:bad:data";
 	std::set<std::string> r;
 	BOOST_CHECK_THROW(
-			check_split(tag, r), PlTagger::TagParseError
+			check_split(tag, r), Maca::TagParseError
 	);
 }
 
@@ -116,7 +116,7 @@ BOOST_FIXTURE_TEST_CASE( bad_pos, F )
 	const char tag[] = "something:data";
 	std::set<std::string> r;
 	BOOST_CHECK_THROW(
-			check_split(tag, r), PlTagger::TagParseError
+			check_split(tag, r), Maca::TagParseError
 	);
 }
 

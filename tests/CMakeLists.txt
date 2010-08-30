@@ -13,7 +13,7 @@ add_executable( tests
 	tagset_parse.cpp
 )
 
-target_link_libraries ( tests pltagger ${Boost_LIBRARIES})
+target_link_libraries ( tests maca ${Boost_LIBRARIES})
 
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})

@@ -1,7 +1,7 @@
-#include <libpltagger/util/settings.h>
-#include <libpltagger/tagsetparser.h>
-#include <libpltagger/tagsetmanager.h>
-#include <libpltagger/token.h>
+#include <libmaca/util/settings.h>
+#include <libmaca/tagsetparser.h>
+#include <libmaca/tagsetmanager.h>
+#include <libmaca/token.h>
 
 #include <libtoki/util/foreach.h>
 
@@ -70,7 +70,7 @@ void libedit_read_loop(boost::function<void (const std::string&)>& line_cb)
 #endif
 
 
-void tagset_info(const PlTagger::Tagset& tagset)
+void tagset_info(const Maca::Tagset& tagset)
 {
 	std::cerr << "Tagset loaded: "
 		<< tagset.pos_dictionary().size() << " POSes, "
@@ -85,14 +85,14 @@ void tagset_info(const PlTagger::Tagset& tagset)
 	std::cerr << "\n";
 }
 
-void tagset_query_cb(const PlTagger::Tagset& tagset, const std::string& s)
+void tagset_query_cb(const Maca::Tagset& tagset, const std::string& s)
 {
-	PlTagger::pos_idx_t pos = tagset.pos_dictionary().get_id(s);
-	PlTagger::attribute_idx_t atr = tagset.attribute_dictionary().get_id(s);
-	PlTagger::value_idx_t val = tagset.value_dictionary().get_id(s);
+	Maca::pos_idx_t pos = tagset.pos_dictionary().get_id(s);
+	Maca::attribute_idx_t atr = tagset.attribute_dictionary().get_id(s);
+	Maca::value_idx_t val = tagset.value_dictionary().get_id(s);
 	if (tagset.pos_dictionary().is_id_valid(pos)) {
 		std::cout << s << " -> POS ->" ;
-		foreach (PlTagger::attribute_idx_t a, tagset.get_pos_attributes(pos)) {
+		foreach (Maca::attribute_idx_t a, tagset.get_pos_attributes(pos)) {
 			std::string astr = tagset.attribute_dictionary().get_string(a);
 			if (tagset.get_pos_required_attributes(pos)[a]) {
 				std::cout << " " << astr;
@@ -103,11 +103,11 @@ void tagset_query_cb(const PlTagger::Tagset& tagset, const std::string& s)
 		std::cout << "\n";
 	} else if (tagset.attribute_dictionary().is_id_valid(atr)) {
 		std::cout << s << " -> attribute ->";
-		foreach (PlTagger::value_idx_t v, tagset.get_attribute_values(atr)) {
+		foreach (Maca::value_idx_t v, tagset.get_attribute_values(atr)) {
 			std::cout << " " << tagset.value_dictionary().get_string(v);
 		}
 		std::cout << "\nIn POSes:";
-		for (PlTagger::pos_idx_t p = (PlTagger::pos_idx_t)(0); p < tagset.pos_dictionary().size(); ++p) {
+		for (Maca::pos_idx_t p = (Maca::pos_idx_t)(0); p < tagset.pos_dictionary().size(); ++p) {
 			if (tagset.get_pos_valid_attributes(p)[atr]) {
 				std::cout << " " << tagset.pos_dictionary().get_string(p);
 				if (!tagset.get_pos_required_attributes(p)[atr]) {
@@ -117,15 +117,15 @@ void tagset_query_cb(const PlTagger::Tagset& tagset, const std::string& s)
 		}
 		std::cout << "\n";
 	} else if (tagset.value_dictionary().is_id_valid(val)) {
-		PlTagger::attribute_idx_t a = tagset.get_value_attribute(val);
+		Maca::attribute_idx_t a = tagset.get_value_attribute(val);
 		std::cout << s << " -> value -> attribute ";
 		std::cout << tagset.attribute_dictionary().get_string(a);
 		std::cout << " .";
-		foreach (PlTagger::value_idx_t v, tagset.get_attribute_values(a)) {
+		foreach (Maca::value_idx_t v, tagset.get_attribute_values(a)) {
 			std::cout << " " << tagset.value_dictionary().get_string(v);
 		}
 		std::cout << "\nIn POSes:";
-		for (PlTagger::pos_idx_t p = (PlTagger::pos_idx_t)(0); p < tagset.pos_dictionary().size(); ++p) {
+		for (Maca::pos_idx_t p = (Maca::pos_idx_t)(0); p < tagset.pos_dictionary().size(); ++p) {
 			if (tagset.get_pos_valid_attributes(p)[a]) {
 				std::cout << " " << tagset.pos_dictionary().get_string(p);
 				if (!tagset.get_pos_required_attributes(p)[a]) {
@@ -139,13 +139,13 @@ void tagset_query_cb(const PlTagger::Tagset& tagset, const std::string& s)
 	}
 }
 
-void tag_parse_cb(const PlTagger::Tagset& tagset, bool validate, bool sort, const std::string& s)
+void tag_parse_cb(const Maca::Tagset& tagset, bool validate, bool sort, const std::string& s)
 {
 	try {
-		PlTagger::Token t;
+		Maca::Token t;
 		tagset.lexemes_into_token(t, UnicodeString(), s);
 		std::vector<std::string> out;
-		foreach (const PlTagger::Lexeme& lex, t.lexemes()) {
+		foreach (const Maca::Lexeme& lex, t.lexemes()) {
 			std::stringstream ss;
 			ss << tagset.tag_to_string(lex.tag());
 			if (validate) {
@@ -158,7 +158,7 @@ void tag_parse_cb(const PlTagger::Tagset& tagset, bool validate, bool sort, cons
 		}
 		std::copy(out.begin(), out.end(),
 				std::ostream_iterator<std::string>(std::cout, "\n"));
-	} catch (PlTagger::TagParseError& e) {
+	} catch (Maca::TagParseError& e) {
 		std::cerr << "TagParseError: " << e.info() << "\n";
 	}
 }
@@ -205,11 +205,11 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	PlTagger::Path::Instance().set_verbose(!quiet);
+	Maca::Path::Instance().set_verbose(!quiet);
 
 	if (!tagset_load.empty()) {
 		try {
-			const PlTagger::Tagset& tagset = PlTagger::get_named_tagset(tagset_load);
+			const Maca::Tagset& tagset = Maca::get_named_tagset(tagset_load);
 
 			if (!quiet) {
 				tagset_info(tagset);
@@ -220,7 +220,7 @@ int main(int argc, char** argv)
 				if (!quiet) {
 					std::cerr << "Saving tagset to " << tagset_save << " ... ";
 				}
-				PlTagger::TagsetParser::save_ini(tagset, ofs);
+				Maca::TagsetParser::save_ini(tagset, ofs);
 				if (!quiet) {
 					std::cerr << "ok\n";
 				}
@@ -244,8 +244,8 @@ int main(int argc, char** argv)
 #else
 			std_read_loop(f);
 #endif
-		} catch (PlTagger::PlTaggerError& e) {
-			std::cerr << "PlTagger Error: " << e.info() << "\n";
+		} catch (Maca::MacaError& e) {
+			std::cerr << "Maca Error: " << e.info() << "\n";
 			return 4;
 		}
 	} else {

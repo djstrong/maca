@@ -1,17 +1,17 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/bind.hpp>
 
-#include <libpltagger/morph/constanalyser.h>
-#include <libpltagger/morph/dispatchanalyser.h>
-#include <libpltagger/tagsetparser.h>
-#include <libpltagger/conv/tagconvert.h>
-#include <libpltagger/conv/tagsetconverter.h>
-#include <libpltagger/conv/tagrulelayer.h>
-#include <libpltagger/conv/joinlayer.h>
+#include <libmaca/morph/constanalyser.h>
+#include <libmaca/morph/dispatchanalyser.h>
+#include <libmaca/tagsetparser.h>
+#include <libmaca/conv/tagconvert.h>
+#include <libmaca/conv/tagsetconverter.h>
+#include <libmaca/conv/tagrulelayer.h>
+#include <libmaca/conv/joinlayer.h>
 
 #include <iostream>
 
-using namespace PlTagger;
+using namespace Maca;
 
 BOOST_AUTO_TEST_SUITE(conv)
 
@@ -35,11 +35,11 @@ struct Fxz {
 			"P1 A B \n"
 			"P2 A B C\n"
 			;
-		tagset1.reset(new PlTagger::Tagset(tagset1_string));
-		tagset2.reset(new PlTagger::Tagset(tagset2_string));
+		tagset1.reset(new Maca::Tagset(tagset1_string));
+		tagset2.reset(new Maca::Tagset(tagset2_string));
 	}
 
-	boost::shared_ptr<PlTagger::Tagset> tagset1, tagset2;
+	boost::shared_ptr<Maca::Tagset> tagset1, tagset2;
 };
 
 BOOST_FIXTURE_TEST_CASE(cast1, Fxz)

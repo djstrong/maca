@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 
-#include <libpltagger/token.h>
+#include <libmaca/token.h>
 
 const char tagsetstr1[] = "[ATTR]\n"
 	"A tag tog other a3 \n"
@@ -10,7 +10,7 @@ const char tagsetstr1[] = "[ATTR]\n"
 
 BOOST_AUTO_TEST_CASE( token )
 {
-	PlTagger::Token t(UnicodeString::fromUTF8("ZZ"), Toki::Whitespace::ManySpaces);
+	Maca::Token t(UnicodeString::fromUTF8("ZZ"), Toki::Whitespace::ManySpaces);
 	BOOST_CHECK_EQUAL(t.orth_utf8(), "ZZ");
 	BOOST_CHECK_EQUAL(t.wa(), Toki::Whitespace::ManySpaces);
 	BOOST_CHECK(t.lexemes().empty());
@@ -18,11 +18,11 @@ BOOST_AUTO_TEST_CASE( token )
 
 BOOST_AUTO_TEST_CASE( token_dup_lexemes )
 {
-	PlTagger::Token t(UnicodeString::fromUTF8("ZZ"), Toki::Whitespace::ManySpaces);
-	//PlTagger::Tagset tagset(tagsetstr1);
-	PlTagger::Tag t1(PlTagger::tagset_idx_t(0), PlTagger::pos_idx_t(0));
-	PlTagger::Lexeme l1(UnicodeString::fromUTF8("aaa"), t1);
-	PlTagger::Lexeme l2(UnicodeString::fromUTF8("bbb"), t1);
+	Maca::Token t(UnicodeString::fromUTF8("ZZ"), Toki::Whitespace::ManySpaces);
+	//Maca::Tagset tagset(tagsetstr1);
+	Maca::Tag t1(Maca::tagset_idx_t(0), Maca::pos_idx_t(0));
+	Maca::Lexeme l1(UnicodeString::fromUTF8("aaa"), t1);
+	Maca::Lexeme l2(UnicodeString::fromUTF8("bbb"), t1);
 	BOOST_CHECK(!t.check_duplicate_lexemes());
 	BOOST_CHECK(!t.remove_duplicate_lexemes());
 	t.add_lexeme(l1);
@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE( token_dup_lexemes )
 	t.add_lexeme(l2);
 	BOOST_CHECK(!t.check_duplicate_lexemes());
 	BOOST_CHECK(!t.remove_duplicate_lexemes());
-	PlTagger::Token tt(t);
+	Maca::Token tt(t);
 	t.add_lexeme(l1);
 	BOOST_CHECK(t != tt);
 	BOOST_CHECK(t.check_duplicate_lexemes());

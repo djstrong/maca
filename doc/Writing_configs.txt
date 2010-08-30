@@ -4,7 +4,7 @@ This library makes use of toki, configurable tokeniser. Toki divides running tex
 
 1. Configuration search path
 
-The installed configuration files are stored within the system library directory (currently LIB/pltagger, however the library name “pltagger“ is likely to change). They should have .ini extension. The analyser application (currently named “analyse”) or using the underlying library, the current directory is checked first and then the system library directory. The same goes for other files referenced by the config file.
+The installed configuration files are stored within the system library directory (currently LIB/maca, however the library name “maca“ is still subject to change). They should have .ini extension. The analyser application (currently named “analyse”) or using the underlying library, the current directory is checked first and then the system library directory. The same goes for other files referenced by the config file.
 
 TODO: mention the API part to instantiate a working analyser using given config name.
 

@@ -1,4 +1,4 @@
-PROJECT(Tagger)
+PROJECT(MorphAnalyser)
 cmake_minimum_required(VERSION 2.8.0)
 
 set(ver_major "0")
@@ -43,23 +43,24 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 set(LIBS "")
-include_directories( ${Tagger_SOURCE_DIR} )
+include_directories( ${MorphAnalyser_SOURCE_DIR} )
 
 
 
-set(LIBPLTAGGER_INSTALL_DATA_DIR lib/pltagger)
-set(LIBPLTAGGER_VERSION "${ver_major}.${ver_minor}.${ver_patch}")
-FIND_PATH(LIBPLTAGGER_SRC_DATA_DIR
+set(LIBMACA_INSTALL_DATA_DIR lib/maca)
+set(LIBMACA_VERSION "${ver_major}.${ver_minor}.${ver_patch}")
+FIND_PATH(LIBMACA_SRC_DATA_DIR
     test.tagset
     ${CMAKE_SOURCE_DIR}/data
 )
-MARK_AS_ADVANCED(LIBPLTAGGER_SRC_DATA_DIR)
+MARK_AS_ADVANCED(LIBMACA_SRC_DATA_DIR)
 
 find_package(Boost 1.41 REQUIRED COMPONENTS program_options filesystem regex)
 
-add_subdirectory(libpltagger)
-add_subdirectory(analyse)
-add_subdirectory(app)
-add_subdirectory(tagset-convert)
+add_subdirectory(libmaca)
+add_subdirectory(maca-analyse)
+add_subdirectory(maca-app)
+add_subdirectory(maca-convert)
 add_subdirectory(tagset-tool)
 add_subdirectory(tests)
+
