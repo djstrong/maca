@@ -18,7 +18,7 @@ namespace Maca {
 	 * Base class for morphological analysers.
 	 *
 	 * A MorphAnalyser analyser takes a Toki token and returns one or more
-	 * tagger tokens, each of which contains one or more lexemes. An analyser
+	 * Maca tokens, each of which contains one or more lexemes. An analyser
 	 * returns tags from a specified tagset.
 	 */
 	class MorphAnalyser
@@ -37,36 +37,36 @@ namespace Maca {
 		virtual ~MorphAnalyser();
 
 		/// Convenience process_functional wrapper to process a Toki token
-		/// and return a vector of tagger tokens.
+		/// and return a vector of Maca tokens.
 		std::vector<Token*> process(const Toki::Token& t);
 
 		/// Convenience process_functional wrapper  to process a Toki token
-		/// and insert the resulting tagger tokens into the given vector.
+		/// and insert the resulting Maca tokens into the given vector.
 		void process(const Toki::Token &t, std::vector<Token*>& vec);
 
 		/// Convenience process_functional wrapper to process a vector of Toki
-		/// tokens and return a vector of tagger tokens. The toki tokens are
+		/// tokens and return a vector of Maca tokens. The toki tokens are
 		/// deleted.
 		std::vector<Token*> process_dispose(const std::vector<Toki::Token*>& t);
 
 		/// Convenience process_functional wrapper to process a vector of Toki
-		/// tokens and insert the resulting tagger tokens into the given
+		/// tokens and insert the resulting Maca tokens into the given
 		/// vector. The toki tokens are deleted.
 		void process_dispose(const std::vector<Toki::Token*>& t, std::vector<Token*>& v);
 
 		/// Convenience process_functional wrapper to process a vector of Toki
-		/// tokens and return a vector of tagger tokens. The toki tokens are
+		/// tokens and return a vector of Maca tokens. The toki tokens are
 		/// deleted.
 		Sentence* process_dispose(Toki::Sentence* s);
 
 		/// Convenience process_functional wrapper to process a Toki Sentence
-		/// tokens and insert the resulting tagger tokens into a Maca
+		/// tokens and insert the resulting Maca tokens into a Maca
 		/// Sentence. The Toki sentence and tokens are deleted.
 		void process_dispose(Toki::Sentence* t, Sentence* v);
 
 		/**
 		 * The main token analysis function to be implemented in derived
-		 * classes. Takes a Toki token and feeds the resulting tagger tokens
+		 * classes. Takes a Toki token and feeds the resulting Maca tokens
 		 * into the sink function object.
 		 *
 		 * The sink function can be called zero or more times, with zero

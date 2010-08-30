@@ -6,7 +6,7 @@
 namespace Maca {
 
 	/**
-	 * Base class for readers of tagger tokens
+	 * Base class for readers of Maca tokens
 	 */
 	class TokenReader
 	{

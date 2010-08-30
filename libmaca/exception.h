@@ -6,7 +6,7 @@
 namespace Maca {
 
 	/**
-	 * Base class for all tagger errors. Derives from
+	 * Base class for all Maca errorss. Derives from
 	 * @c std::runtime_error. Call member function @c what to get a
 	 * human-readable message associated with the error.
 	 */

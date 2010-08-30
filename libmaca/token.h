@@ -12,7 +12,7 @@
 
 namespace Maca {
 
-	/** A single token being processed by the tagger.
+	/** A single token being processed by the analyser.
 	 *
 	 * The orth is stored as an ICU UnicodeString.
 	 */

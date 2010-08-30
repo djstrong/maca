@@ -9,7 +9,7 @@
 namespace Maca {
 
 	/**
-	 * Base class for writers of tagger tokens
+	 * Base class for writers of Maca tokens
 	 */
 	class TokenWriter
 	{
