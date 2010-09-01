@@ -40,6 +40,10 @@ namespace Maca {
 		/// and return a vector of Maca tokens.
 		std::vector<Token*> process(const Toki::Token& t);
 
+		/// Convenience process_functional wrapper to process a Toki sentence
+		/// and return a Maca sentence of analysed tokens
+		Sentence* process(const Toki::Sentence& s);
+
 		/// Convenience process_functional wrapper  to process a Toki token
 		/// and insert the resulting Maca tokens into the given vector.
 		void process(const Toki::Token &t, std::vector<Token*>& vec);

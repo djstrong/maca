@@ -75,8 +75,8 @@ namespace Maca {
 			Toki::SentenceSplitter sen(tok_);
 			while (sen.has_more()) {
 				os_ << " <chunk type=\"s\">\n";
-				boost::scoped_ptr<Sentence> sentence;
-				sentence.reset(ma_.process_dispose(sen.get_next_sentence()));
+				boost::scoped_ptr<Toki::Sentence> toki_sentence(sen.get_next_sentence());
+				boost::scoped_ptr<Sentence> sentence(ma_.process(*toki_sentence));
 				foreach (Token* t, sentence->tokens()) {
 					token_as_xces_xml(os_, ma_.tagset(), *t, 1);
 				}

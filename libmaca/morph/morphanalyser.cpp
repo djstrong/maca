@@ -38,6 +38,15 @@ namespace Maca {
 		return v;
 	}
 
+	Sentence* MorphAnalyser::process(const Toki::Sentence &s)
+	{
+		Sentence* ss = new Sentence;
+		foreach (Toki::Token* t, s.tokens()) {
+			process(*t, ss->tokens());
+		}
+		return ss;
+	}
+
 	std::vector<Token*> MorphAnalyser::process_dispose(const std::vector<Toki::Token*>& t)
 	{
 		std::vector<Token*> v;
