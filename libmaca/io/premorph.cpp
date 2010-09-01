@@ -57,7 +57,9 @@ namespace Maca {
 	{
 		os_ << "<" << name;
 		foreach (const xmlpp::SaxParser::Attribute& a, attributes) {
-			os_ << " " << a.name << "=\"" << a.value << "\"";
+			os_ << " " << a.name << "=\"";
+			encode_xml_entities_into(os_, a.value);
+			os_ << "\"";
 		}
 		os_ << ">";
 		os_ << "\n";
