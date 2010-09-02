@@ -66,20 +66,20 @@ namespace Maca {
 		os() << " xmlns:xlink=\"http://www.w3.org/1999/xlink\"";
 		os() << " version=\"1.0\" type=\"lex disamb\">\n";
 		os() << "<chunkList>\n";
-		indent_more();
+		if (use_indent_) indent_more();
 		if (force_chunk_) {
 			paragraph_head();
-			indent_more();
+			if (use_indent_) indent_more();
 		}
 	}
 
 	void XcesWriter::do_footer()
 	{
 		if (force_chunk_) {
-			indent_less();
+			if (use_indent_) indent_less();
 			osi() << "</chunk>\n";
 		}
-		indent_less();
+		if (use_indent_) indent_less();
 		os() << "</chunkList>\n";
 		os() << "</cesAna>\n";
 	}
