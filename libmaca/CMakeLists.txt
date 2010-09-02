@@ -75,6 +75,7 @@ SET(libmaca_STAT_SRC
     util/debug.cpp
     util/settings.cpp
     util/symboldictionary.cpp
+    util/tokentimer.cpp
 )
 
 if (UNIX)

@@ -19,16 +19,20 @@ namespace Maca {
 	public:
 		PremorphProcessor(std::ostream& os, Toki::Tokenizer& tok, Maca::MorphAnalyser& ma);
 
-		void process_stream(std::istream& is);
-
 		~PremorphProcessor();
 
 		void parse_file(const std::string& filename);
 
 		void parse_stream(std::istream& is);
 
+		void set_stats(bool v);
+
 	protected:
 		boost::scoped_ptr<PremorphProcessorImpl> impl_;
+
+		size_t tokens_;
+
+		size_t sentences_;
 	};
 
 } /* end ns Maca */

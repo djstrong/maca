@@ -2,6 +2,7 @@
 #include <libmaca/io/premorph.h>
 #include <libmaca/morph/dispatchanalyser.h>
 #include <libmaca/util/settings.h>
+#include <libmaca/util/tokentimer.h>
 
 #include <libtoki/sentencesplitter.h>
 #include <libtoki/tokenizer/layertokenizer.h>
@@ -86,6 +87,7 @@ int main(int argc, char** argv)
 
 			if (input_format == "premorph" || input_format == "pre") {
 				Maca::PremorphProcessor pp(std::cout, tok, *ma);
+				pp.set_stats(progress);
 				pp.parse_stream(std::cin);
 				return 0;
 			}
@@ -94,31 +96,19 @@ int main(int argc, char** argv)
 			Toki::SentenceSplitter sen(tok);
 			boost::scoped_ptr<Maca::TokenWriter> writer;
 			writer.reset(Maca::TokenWriter::create(output_format, std::cout, ma->tagset()));
-			size_t tokens = 0, sentences = 0, sec_tokens = 0;
-			clock_t start = clock();
-			clock_t slice_start = start;
+			Maca::TokenTimer timer;
 			while (sen.has_more()) {
 				boost::scoped_ptr<Toki::Sentence> sentence(sen.get_next_sentence());
 				assert(!sentence->empty());
 				boost::scoped_ptr<Maca::Sentence> analysed(ma->process_dispose(sentence.get()));
 				writer->write_sentence(*analysed);
-				++sentences;
-				tokens += analysed->size();
+				timer.count_sentence(*analysed);
 				if (progress) {
-					sec_tokens += analysed->size();
-					clock_t now_clock = clock();
-					if (now_clock - CLOCKS_PER_SEC > slice_start) {
-						double sec_elapsed = ((double)now_clock - slice_start) / CLOCKS_PER_SEC;
-						double elapsed = ((double)now_clock - start) / CLOCKS_PER_SEC;
-						double sec_rate = sec_tokens / sec_elapsed;
-						double rate = tokens / elapsed;
-						sec_tokens = 0;
-						slice_start = now_clock;
-						std::cerr << "\r" << "Processed " << sentences << " sentences, " << tokens << " tokens, "
-								<< "rate " << sec_rate << " t/s, avg " << rate << " t/s    ";
-					}
-
+					timer.check_slice();
 				}
+			}
+			if (progress) {
+				timer.stats();
 			}
 		} catch (Maca::MacaError& e) {
 			std::cerr << "Maca Error: " << e.info() << "\n";
