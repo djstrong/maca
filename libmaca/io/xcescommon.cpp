@@ -20,7 +20,6 @@ namespace Maca {
 			os << "<ctag>";
 			encode_xml_entities_into(os, tagset.tag_to_string(l.tag()));
 			os << "</ctag>";
-			os << "</lex>\n";
 		}
 	}
 
