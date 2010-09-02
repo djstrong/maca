@@ -20,17 +20,15 @@ namespace Maca {
 		~XcesReaderError() throw();
 	};
 
-	class XcesReader
+	class XcesReader : public BufferedTokenReader
 	{
 	public:
 		XcesReader(const Tagset& tagset, std::istream& is, bool disamb_only = false);
 
 		~XcesReader();
 
-		Chunk* get_next_chunk();
-
 	protected:
-		std::istream& is_;
+		void ensure_more();
 
 		boost::scoped_ptr<XcesReaderImpl> impl_;
 	};

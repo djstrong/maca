@@ -17,11 +17,9 @@ namespace Maca {
 	class XcesReaderImpl : public xmlpp::SaxParser
 	{
 	public:
-		XcesReaderImpl(const Tagset& tagset, bool disamb_only);
+		XcesReaderImpl(const Tagset& tagset, std::deque<Chunk*>& obuf,  bool disamb_only);
 
 		~XcesReaderImpl();
-
-		Chunk* try_get_next();
 
 	protected:
 		void on_start_element(const Glib::ustring & name,
@@ -47,13 +45,14 @@ namespace Maca {
 
 		Chunk* chunk_;
 
-		std::deque<Chunk*> obuf_;
+		std::deque<Chunk*>& obuf_;
 
 		bool disamb_only_;
 	};
 
 	XcesReader::XcesReader(const Tagset& tagset, std::istream& is, bool disamb_only)
-		: is_(is), impl_(new XcesReaderImpl(tagset, disamb_only))
+		: BufferedTokenReader(is, tagset)
+		, impl_(new XcesReaderImpl(tagset, chunk_buf_, disamb_only))
 	{
 	}
 
@@ -61,26 +60,23 @@ namespace Maca {
 	{
 	}
 
-	Chunk* XcesReader::get_next_chunk()
+	void XcesReader::ensure_more()
 	{
-		static const int BUFSIZE=10240;
-		Chunk* t = impl_->try_get_next();
-		while (t == NULL && is_.good()) {
+		static const int BUFSIZE=1024;
+		while (chunk_buf_.empty() && is().good()) {
 			unsigned char buf[BUFSIZE+1];
-			is_.read(reinterpret_cast<char*>(buf), BUFSIZE);
-			impl_->parse_chunk_raw(buf, is_.gcount());
-			if (is_.eof()) {
+			is().read(reinterpret_cast<char*>(buf), BUFSIZE);
+			impl_->parse_chunk_raw(buf, is().gcount());
+			if (is().eof()) {
 				impl_->finish_chunk_parsing();
 			}
-			t = impl_->try_get_next();
 		}
-		return t;
 	}
 
-	XcesReaderImpl::XcesReaderImpl(const Tagset& tagset, bool disamb_only)
+	XcesReaderImpl::XcesReaderImpl(const Tagset& tagset, std::deque<Chunk*>& obuf, bool disamb_only)
 		: xmlpp::SaxParser()
 		, tagset_(tagset), state_(XS_NONE), wa_(Toki::Whitespace::Newline)
-		, sbuf_(), tok_(NULL), sent_(NULL), chunk_(NULL), obuf_()
+		, sbuf_(), tok_(NULL), sent_(NULL), chunk_(NULL), obuf_(obuf)
 		, disamb_only_(disamb_only)
 	{
 	}
@@ -90,25 +86,10 @@ namespace Maca {
 		delete tok_;
 		delete sent_;
 		delete chunk_;
-		foreach (Chunk* c, obuf_) {
-			delete c;
-		}
-	}
-
-	Chunk* XcesReaderImpl::try_get_next()
-	{
-		if (obuf_.empty()) {
-			return NULL;
-		} else {
-			Chunk* t = obuf_.front();
-			obuf_.pop_front();
-			return t;
-		}
 	}
 
 	void XcesReaderImpl::on_start_element(const Glib::ustring &name, const AttributeList& attributes)
 	{
-		std::cerr << name;
 		if (name == "chunk") {
 			std::string type;
 			foreach (const Attribute& a, attributes) {
