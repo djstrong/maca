@@ -3,6 +3,7 @@
 #include <libmaca/io/xcesreader.h>
 #include <libmaca/io/xceswriter.h>
 #include <libmaca/util/settings.h>
+#include <libmaca/util/tokentimer.h>
 #include <libmaca/tagsetmanager.h>
 
 #include <libtoki/util/foreach.h>
@@ -18,6 +19,7 @@ int main(int argc, char** argv)
 	std::string input_format, output_format;
 	bool quiet = false;
 	bool disamb = false;
+	bool progress = false;
 	using boost::program_options::value;
 
 	std::string writers = boost::algorithm::join(Maca::TokenWriter::available_writer_types(), " ");
@@ -37,6 +39,8 @@ int main(int argc, char** argv)
 			 "Input format\n")
 			("output-format,o", value(&output_format)->default_value("xces"),
 			 writers_help.c_str())
+			("progress,p", value(&progress)->zero_tokens(),
+			 "Show progress info")
 			("quiet,q", value(&quiet)->zero_tokens(),
 			 "Suppress startup info \n")
 			("help,h", "Show help")
@@ -71,9 +75,17 @@ int main(int argc, char** argv)
 			Maca::XcesReader reader(tagset, std::cin, disamb);
 			boost::scoped_ptr<Maca::TokenWriter> writer;
 			writer.reset(Maca::TokenWriter::create(output_format, std::cout, tagset));
+			Maca::TokenTimer timer;
 			while (Maca::Chunk* c = reader.get_next_chunk()) {
 				writer->write_chunk(*c);
+				timer.count_chunk(*c);
+				if (progress) {
+					timer.check_slice();
+				}
 				delete c;
+			}
+			if (progress) {
+				timer.stats();
 			}
 		} catch (Maca::MacaError& e) {
 			std::cerr << "Error: " << e.info() << "\n";
@@ -89,12 +101,20 @@ int main(int argc, char** argv)
 			Maca::XcesReader reader(conv.tagset_from(), std::cin, disamb);
 			boost::scoped_ptr<Maca::TokenWriter> writer;
 			writer.reset(Maca::TokenWriter::create(output_format, std::cout, conv.tagset_to()));
+			Maca::TokenTimer timer;
 			while (Maca::Chunk* c = reader.get_next_chunk()) {
 				foreach (Maca::Sentence*& s, c->sentences()) {
 					s = conv.convert_sentence(s);
+					timer.count_sentence(*s);
+					if (progress) {
+						timer.check_slice();
+					}
 				}
 				writer->write_chunk(*c);
 				delete c;
+			}
+			if (progress) {
+				timer.stats();
 			}
 		} catch (Maca::MacaError& e) {
 			std::cerr << "Error: " << e.info() << "\n";
