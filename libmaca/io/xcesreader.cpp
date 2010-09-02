@@ -29,6 +29,8 @@ namespace Maca {
 		void on_end_element(const Glib::ustring & name);
 		void on_cdata_block(const Glib::ustring & text);
 		void on_characters(const Glib::ustring & text);
+		void on_error(const Glib::ustring &text);
+		void on_fatal_error(const Glib::ustring &text);
 
 		const Tagset& tagset_;
 
@@ -106,6 +108,7 @@ namespace Maca {
 
 	void XcesReaderImpl::on_start_element(const Glib::ustring &name, const AttributeList& attributes)
 	{
+		std::cerr << name;
 		if (name == "chunk") {
 			std::string type;
 			foreach (const Attribute& a, attributes) {
@@ -203,6 +206,14 @@ namespace Maca {
 		sbuf_ += (std::string)text;
 	}
 
+	void XcesReaderImpl::on_error(const Glib::ustring &text)
+	{
+		std::cerr << "XML Error: " << (std::string)text << "\n";
+	}
 
+	void XcesReaderImpl::on_fatal_error(const Glib::ustring &text)
+	{
+		std::cerr << "XML Fatal error: " << (std::string)text << "\n";
+	}
 
 } /* end ns Maca */
