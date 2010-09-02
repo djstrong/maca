@@ -35,6 +35,8 @@ namespace Maca {
 		bool force_disamb_;
 
 		bool sort_tags_;
+
+		bool split_chunks_on_newlines_;
 	};
 
 

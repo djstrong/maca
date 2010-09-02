@@ -6,7 +6,8 @@ namespace Maca {
 
 	XcesWriter::XcesWriter(std::ostream& os, const Tagset& tagset, const string_range_vector& params)
 		: TokenWriter(os, tagset, params), cid_(0)
-		, use_indent_(true), force_chunk_(false), force_disamb_(false), sort_tags_(false)
+		, use_indent_(true), force_chunk_(false), force_disamb_(false)
+		, sort_tags_(false), split_chunks_on_newlines_(false)
 	{
 		foreach (const string_range& param, params) {
 			std::string p = boost::copy_range<std::string>(param);
@@ -20,6 +21,8 @@ namespace Maca {
 				force_disamb_ = true;
 			} else if (p == "sorttags") {
 				sort_tags_ = true;
+			} else if (p == "split") {
+				split_chunks_on_newlines_ = true;
 			}
 		}
 		do_header();
@@ -49,9 +52,19 @@ namespace Maca {
 
 	void XcesWriter::write_chunk(const Chunk &c)
 	{
-		paragraph_head(c);
-		if (use_indent_) indent_more();
+		bool new_chunk = true;
 		foreach (const Sentence* s, c.sentences()) {
+			if (split_chunks_on_newlines_ && !s->tokens().empty()) {
+				const Token* first = s->tokens()[0];
+				if (first->wa() == Toki::Whitespace::ManyNewlines) {
+					new_chunk = true;
+				}
+			}
+			if (new_chunk) {
+				paragraph_head(c);
+				if (use_indent_) indent_more();
+				new_chunk = false;
+			}
 			write_sentence(*s);
 		}
 		if (use_indent_) indent_less();
