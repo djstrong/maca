@@ -15,10 +15,10 @@ namespace Maca {
 		start_ = slice_start_ = clock();
 	}
 
-	bool TokenTimer::check_slice()
+	bool TokenTimer::check_slice(int s /*= 1*/)
 	{
 		clock_t now_clock = clock();
-		if (now_clock - CLOCKS_PER_SEC > slice_start_) {
+		if (now_clock - CLOCKS_PER_SEC * s > slice_start_) {
 			double slice_elapsed = ((double)now_clock - slice_start_) / CLOCKS_PER_SEC;
 			double elapsed = ((double)now_clock - start_) / CLOCKS_PER_SEC;
 			double slice_rate = slice_tokens_ / slice_elapsed;
