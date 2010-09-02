@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 	std::string config, toki_config;
 	std::string input_format, output_format;
 	std::vector<std::string> plugins;
-	bool quiet = false, progress = false;
+	bool quiet = false, progress = false, split_chunks = false;
 	using boost::program_options::value;
 
 	std::string writers = boost::algorithm::join(Maca::TokenWriter::available_writer_types(), " ");
@@ -37,6 +37,8 @@ int main(int argc, char** argv)
 			 "Input format, any of: plain premorph\n")
 			("output-format,o", value(&output_format)->default_value("plain"),
 			 writers_help.c_str())
+			("split,s", value(&split_chunks)->zero_tokens(),
+			 "Split output into chunks on many-newline tokens")
 			("plugin,P", value(&plugins),
 			 "Additional plugins to load")
 			("progress,p", value(&progress)->zero_tokens(),
@@ -97,15 +99,32 @@ int main(int argc, char** argv)
 			boost::scoped_ptr<Maca::TokenWriter> writer;
 			writer.reset(Maca::TokenWriter::create(output_format, std::cout, ma->tagset()));
 			Maca::TokenTimer timer;
+			boost::scoped_ptr<Maca::Chunk> ch(new Maca::Chunk);
 			while (sen.has_more()) {
 				boost::scoped_ptr<Toki::Sentence> sentence(sen.get_next_sentence());
 				assert(!sentence->empty());
-				boost::scoped_ptr<Maca::Sentence> analysed(ma->process_dispose(sentence.get()));
-				writer->write_sentence(*analysed);
+				std::auto_ptr<Maca::Sentence> analysed(ma->process_dispose(sentence.get()));
 				timer.count_sentence(*analysed);
-				if (progress) {
-					timer.check_slice();
+				if (split_chunks) {
+					if (analysed->tokens()[0]->wa() == Toki::Whitespace::ManyNewlines) {
+						if (!ch->sentences().empty()) {
+							writer->write_chunk(*ch);
+							ch.reset(new Maca::Chunk());
+							if (progress) {
+								timer.check_slice();
+							}
+						}
+					}
+					ch->append(analysed.release());
+				} else {
+					writer->write_sentence(*analysed);
+					if (progress) {
+						timer.check_slice();
+					}
 				}
+			}
+			if (!ch->sentences().empty()) {
+				writer->write_chunk(*ch);
 			}
 			if (progress) {
 				timer.stats();
