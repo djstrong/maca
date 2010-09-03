@@ -2,10 +2,11 @@
 #define LIBMACA_CHUNK_H
 
 #include <libmaca/sentence.h>
+#include <boost/utility.hpp>
 
 namespace Maca {
 
-	class Chunk
+	class Chunk : boost::noncopyable
 	{
 	public:
 		Chunk();
