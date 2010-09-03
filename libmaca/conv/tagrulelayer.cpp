@@ -15,6 +15,11 @@ namespace Maca { namespace Conversion {
 		append_rule(cfg);
 	}
 
+	TagRuleLayer* TagRuleLayer::clone() const
+	{
+		return new TagRuleLayer(*this);
+	}
+
 	void TagRuleLayer::append_rule(const TagRule &tr)
 	{
 		rules_.push_back(tr);
@@ -55,23 +60,35 @@ namespace Maca { namespace Conversion {
 
 
 	RegexTagRuleLayer::RegexTagRuleLayer(const Tagset& tagset)
-		: TagRuleLayer(tagset), matcher_(NULL)
+		: TagRuleLayer(tagset), matcher_(), pattern_()
 	{
 	}
 
 	RegexTagRuleLayer::RegexTagRuleLayer(const Config::Node& cfg)
-		: TagRuleLayer(cfg), matcher_(NULL)
+		: TagRuleLayer(cfg), matcher_(), pattern_()
 	{
 		append_rule(cfg);
 		std::string regexp_string = cfg.get("regexp", "");
 		UErrorCode status = U_ZERO_ERROR;
-		matcher_ = new RegexMatcher(UnicodeString::fromUTF8(regexp_string), 0, status);
+		pattern_.reset(RegexPattern::compile(UnicodeString::fromUTF8(regexp_string), 0, status));
 		if (!U_SUCCESS(status)) throw MacaError("Regexp failed to compile: " + regexp_string);
+		matcher_.reset(pattern_->matcher(status));
+		if (!U_SUCCESS(status)) throw MacaError("Regexp failed to compile: " + regexp_string);
+	}
+
+	RegexTagRuleLayer* RegexTagRuleLayer::clone() const
+	{
+		RegexTagRuleLayer* copy = new RegexTagRuleLayer(tagset());
+		if (matcher_) {
+			copy->pattern_ = pattern_;
+			UErrorCode status = U_ZERO_ERROR;
+			copy->matcher_.reset(copy->pattern_->matcher(status));
+		}
+		return copy;
 	}
 
 	RegexTagRuleLayer::~RegexTagRuleLayer()
 	{
-		delete matcher_;
 	}
 
 	Token* RegexTagRuleLayer::get_next_token()

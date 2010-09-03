@@ -9,7 +9,8 @@ namespace Maca { namespace Conversion {
 	TwoSplitLayer::TwoSplitLayer(const Tagset& tagset)
 		: OneTagsetLayer(tagset)
 		, queue_()
-		, orth_matcher_(NULL) , pre_(), t1_post_(), copy_attrs_to_t2_()
+		, orth_matcher_(), orth_pattern_()
+		, pre_(), t1_post_(), copy_attrs_to_t2_()
 	{
 	}
 
@@ -41,7 +42,32 @@ namespace Maca { namespace Conversion {
 
 	TwoSplitLayer::~TwoSplitLayer()
 	{
-		delete orth_matcher_;
+		foreach (const Token* t, queue_) {
+			delete t;
+		}
+	}
+
+	TwoSplitLayer* TwoSplitLayer::clone() const
+	{
+		TwoSplitLayer* copy = new TwoSplitLayer(tagset());
+		clone_helper(copy);
+		return copy;
+	}
+
+	void TwoSplitLayer::clone_helper(TwoSplitLayer* copy) const
+	{
+		if (orth_pattern_) {
+			copy->orth_pattern_ = orth_pattern_;
+			UErrorCode status = U_ZERO_ERROR;
+			copy->orth_matcher_.reset(copy->orth_pattern_->matcher(status));
+		}
+		copy->pre_ = pre_;
+		copy->t1_post_ = t1_post_;
+		copy->copy_attrs_to_t2_ = copy_attrs_to_t2_;
+		copy->t2_lexeme_ = copy->t2_lexeme_;
+		foreach (const Token* t, queue_) {
+			copy->queue_.push_back(t->clone());
+		}
 	}
 
 	void TwoSplitLayer::add_copy_attr_to_t2(attribute_idx_t a)
@@ -89,7 +115,9 @@ namespace Maca { namespace Conversion {
 	void TwoSplitLayer::set_orth_regexp(const std::string &regexp_string)
 	{
 		UErrorCode status = U_ZERO_ERROR;
-		orth_matcher_ = new RegexMatcher(UnicodeString::fromUTF8(regexp_string), 0, status);
+		orth_pattern_.reset(RegexPattern::compile(UnicodeString::fromUTF8(regexp_string), 0, status));
+		if (!U_SUCCESS(status)) throw MacaError("Regexp failed to compile: " + regexp_string);
+		orth_matcher_.reset(orth_pattern_->matcher(status));
 		if (!U_SUCCESS(status)) throw MacaError("Regexp failed to compile: " + regexp_string);
 		if (orth_matcher_->groupCount() < 2) {
 			throw MacaError("Split layer regex has less than 2 groups");
@@ -152,6 +180,15 @@ namespace Maca { namespace Conversion {
 		if (t3_lexeme_.is_null()) {
 			throw MacaError("3-split layer: invalid token 3 lexeme");
 		}
+	}
+
+	ThreeSplitLayer* ThreeSplitLayer::clone() const
+	{
+		ThreeSplitLayer* copy = new ThreeSplitLayer(tagset());
+		TwoSplitLayer::clone_helper(copy);
+		copy->copy_attrs_to_t3_ = copy_attrs_to_t3_;
+		copy->t3_lexeme_ = t3_lexeme_;
+		return copy;
 	}
 
 	void ThreeSplitLayer::add_copy_attr_to_t3(attribute_idx_t a)

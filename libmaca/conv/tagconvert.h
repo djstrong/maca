@@ -96,6 +96,9 @@ namespace Maca { namespace Conversion {
 		 */
 		TagConvertLayer(const Config::Node& cfg);
 
+		/// Cloning
+		TagConvertLayer* clone() const;
+
 		/// TokeSource override
 		Token* get_next_token();
 

@@ -5,6 +5,8 @@
 #include <libmaca/conv/tagrule.h>
 #include <libmaca/util/confignode.h>
 #include <unicode/regex.h>
+#include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 
 namespace Maca { namespace Conversion {
 
@@ -24,6 +26,9 @@ namespace Maca { namespace Conversion {
 		 * to create one tag rule.
 		 */
 		TagRuleLayer(const Config::Node& cfg);
+
+		/// Cloning
+		TagRuleLayer* clone() const;
 
 		/**
 		 * Rule adder
@@ -67,6 +72,9 @@ namespace Maca { namespace Conversion {
 		 */
 		RegexTagRuleLayer(const Config::Node& cfg);
 
+		/// Cloning
+		RegexTagRuleLayer* clone() const;
+
 		/// Destructor
 		~RegexTagRuleLayer();
 
@@ -77,7 +85,9 @@ namespace Maca { namespace Conversion {
 		Token* get_next_token();
 
 	private:
-		RegexMatcher* matcher_;
+		boost::scoped_ptr<RegexMatcher> matcher_;
+
+		boost::shared_ptr<RegexPattern> pattern_;
 	};
 
 } /* end ns Conversion */ } /* end ns Maca */

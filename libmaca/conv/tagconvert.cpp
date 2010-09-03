@@ -137,6 +137,11 @@ namespace Maca { namespace Conversion {
 	{
 	}
 
+	TagConvertLayer* TagConvertLayer::clone() const
+	{
+		return new TagConvertLayer(*this);
+	}
+
 	TagConvertLayer::TagConvertLayer(const Config::Node& cfg)
 		: tc_(get_named_tagset(cfg.get<std::string>("tagset_from")),
 			get_named_tagset(cfg.get<std::string>("tagset_to")))

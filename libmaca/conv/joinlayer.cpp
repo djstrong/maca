@@ -15,6 +15,19 @@ namespace Maca { namespace Conversion {
 		append_rule(cfg);
 	}
 
+	JoinLayer::~JoinLayer()
+	{
+		delete buf_;
+	}
+
+	JoinLayer* JoinLayer::clone() const
+	{
+		JoinLayer* copy = new JoinLayer(tagset());
+		if (buf_ != NULL) {
+			copy->buf_ = buf_->clone();
+		}
+		return copy;
+	}
 
 	void JoinLayer::append_rule(const JoinRule &rule)
 	{

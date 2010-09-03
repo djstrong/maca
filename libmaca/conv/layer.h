@@ -20,6 +20,9 @@ namespace Maca { namespace Conversion {
 		/// Destructor
 		virtual ~Layer();
 
+		/// Cloning
+		virtual Layer* clone() const = 0;
+
 		/// Source setter
 		void set_source(TokenSource* src);
 

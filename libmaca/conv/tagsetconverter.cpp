@@ -69,6 +69,15 @@ namespace Maca { namespace Conversion {
 		}
 	}
 
+	TagsetConverter* TagsetConverter::clone() const
+	{
+		TagsetConverter* copy = new TagsetConverter;
+		foreach (Layer* l, layers_) {
+			copy->add_layer(l->clone());
+		}
+		return copy;
+	}
+
 	void TagsetConverter::add_layer(Layer* l)
 	{
 		if (!layers_.empty()) {

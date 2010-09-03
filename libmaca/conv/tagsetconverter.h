@@ -33,6 +33,8 @@ namespace Maca { namespace Conversion {
 		/// Destructor
 		virtual ~TagsetConverter();
 
+		TagsetConverter* clone() const;
+
 		/// Layers count accesor
 		size_t layer_count() const {
 			return layers_.size();

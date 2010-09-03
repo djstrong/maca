@@ -16,7 +16,7 @@ namespace Maca { namespace Conversion {
 	 *
 	 * @see JoinRule for details of how tokens are joined.
 	 */
-	class JoinLayer : public OneTagsetLayer
+	class JoinLayer : public OneTagsetLayer, boost::noncopyable
 	{
 	public:
 		/**
@@ -31,6 +31,12 @@ namespace Maca { namespace Conversion {
 		 * class, and then one JoinRule is created from it.
 		 */
 		JoinLayer(const Config::Node& cfg);
+
+		/// Destructor
+		~JoinLayer();
+
+		/// Cloning
+		JoinLayer* clone() const;
 
 		/**
 		 * Adds a rule to the list of join rules in this layer.

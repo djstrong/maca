@@ -6,6 +6,8 @@
 #include <libmaca/util/confignode.h>
 #include <deque>
 #include <unicode/regex.h>
+#include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 
 namespace Maca { namespace Conversion {
 
@@ -24,7 +26,7 @@ namespace Maca { namespace Conversion {
 	 *
 	 * Finally, some postcondition predicates are appliked on output token 1.
 	 */
-	class TwoSplitLayer : public OneTagsetLayer
+	class TwoSplitLayer : public OneTagsetLayer, boost::noncopyable
 	{
 	public:
 		/// Constructor for an empty TwoSplitLayer working within a tagset
@@ -47,6 +49,8 @@ namespace Maca { namespace Conversion {
 		/// Destructor
 		~TwoSplitLayer();
 
+		TwoSplitLayer* clone() const;
+
 		void set_orth_regexp(const std::string& regexp_string);
 
 		void add_precondition(const TagPredicate& tp);
@@ -66,9 +70,13 @@ namespace Maca { namespace Conversion {
 		Token* get_next_token();
 
 	protected:
+		void clone_helper(TwoSplitLayer* copy) const;
+
 		std::deque<Token*> queue_;
 
-		RegexMatcher* orth_matcher_;
+		boost::scoped_ptr<RegexMatcher> orth_matcher_;
+
+		boost::shared_ptr<RegexPattern> orth_pattern_;
 
 		std::vector<TagPredicate> pre_;
 
@@ -99,6 +107,9 @@ namespace Maca { namespace Conversion {
 		 * - t3_tag - tag of the token 3 lexeme
 		 */
 		ThreeSplitLayer(const Config::Node& cfg);
+
+		ThreeSplitLayer* clone() const;
+
 
 		void add_copy_attr_to_t3(attribute_idx_t a);
 
