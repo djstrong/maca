@@ -3,12 +3,15 @@
 #include <libmaca/morph/morfeuszcompat.h>
 #include <libmaca/util/settings.h>
 #include <libtoki/util/foreach.h>
+#include <libtoki/util/util.h>
 
 #include <morfeusz.h>
 #include <fstream>
 #include <boost/bind.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/thread/mutex.hpp>
 #include <memory>
+#include <dlfcn.h>
 
 namespace Maca {
 
@@ -16,7 +19,43 @@ namespace Maca {
 
 	bool MorfeuszAnalyser::registered = MorphAnalyser::register_analyser<MorfeuszAnalyser>();
 
-	MorfeuszError::MorfeuszError(const std::string& error, const std::string input, InterpMorf* interp)
+	namespace {
+		boost::mutex morfeusz_mutex_;
+	}
+
+
+
+	std::vector<MorfeuszResultItem> morfeusz_preprocess(InterpMorf* pmorf)
+	{
+		std::vector<MorfeuszResultItem> v;
+		int i = 0;
+		while (pmorf[i].p != -1) {
+			MorfeuszResultItem mri;
+			mri.p = pmorf[i].p;
+			mri.k = pmorf[i].k;
+			mri.orth = UnicodeString::fromUTF8(pmorf[i].forma);
+			if (pmorf[i].haslo) {
+				mri.lemma = UnicodeString::fromUTF8(pmorf[i].haslo);
+			}
+			if (pmorf[i].interp) {
+				mri.tag_string = pmorf[i].interp;
+			}
+			v.push_back(mri);
+			++i;
+		}
+		return v;
+	}
+
+	std::vector<MorfeuszResultItem> morfeusz_safe_analyse(const UnicodeString& orth)
+	{
+		std::string s = Toki::Util::to_utf8(orth);
+		//boost::mutex::scoped_lock lock(morfeusz_mutex_);
+		//InterpMorf *pmorf = morfeusz_analyse(const_cast<char*>(s.c_str()));
+		return morfeusz_preprocess(0);
+	}
+
+	MorfeuszError::MorfeuszError(const std::string& error,
+			const std::string input, const std::vector<MorfeuszResultItem>& interp)
 		: MacaError("Morfeusz error: " + error), error(error), input(input), interp(interp)
 	{
 	}
@@ -39,7 +78,29 @@ namespace Maca {
 		: MorphAnalyser(tagset), conv_(conv), warn_on_fold_failure_(true)
 	{
 		if (conv_->tagset_to().id() != tagset->id()) throw TagsetMismatch("Morfeusz analyser creation", *tagset, conv->tagset_to());
-		morfeusz_set_option(MORFOPT_ENCODING, MORFEUSZ_UTF_8);
+		//morfeusz_set_option(MORFOPT_ENCODING, MORFEUSZ_UTF_8);
+		load_morfeusz_library();
+	}
+
+	void MorfeuszAnalyser::load_morfeusz_library()
+	{
+		mhandle_ = dlmopen(LM_ID_NEWLM, "libmorfeusz.so", RTLD_NOW);
+		if (mhandle_ == NULL) {
+			const char* dle = dlerror();
+			if (dle != NULL) {
+				std::cerr << dle << "\n";
+			}
+		}
+		dlerror();
+		hhandle_ = (morfeusz_func_t)dlsym(mhandle_, "morfeusz_analyse");
+		const char* dle = dlerror();
+		if (dle != NULL) {
+			std::cerr << dle << "\n";
+		}
+
+		std::cerr << "CR" << mhandle_ << " " << (void*)hhandle_ << "\n";
+	}
+
 	MorfeuszAnalyser* MorfeuszAnalyser::clone() const
 	{
 		MorfeuszAnalyser* copy = new MorfeuszAnalyser(&tagset(), conv_->clone());
@@ -66,8 +127,8 @@ namespace Maca {
 		ign_tag_ = conv_->tagset_from().parse_simple_tag(ign_tag_string, false);
 		warn_on_ign_ = cfg.get("warn_on_ign", false);
 		warn_on_fold_failure_ =  cfg.get("warn_on_fold_failure", true);
-
-		morfeusz_set_option(MORFOPT_ENCODING, MORFEUSZ_UTF_8);
+		load_morfeusz_library();
+		//morfeusz_set_option(MORFOPT_ENCODING, MORFEUSZ_UTF_8);
 	}
 
 	MorfeuszAnalyser::~MorfeuszAnalyser()
@@ -77,25 +138,29 @@ namespace Maca {
 
 	bool MorfeuszAnalyser::process_functional(const Toki::Token &t, boost::function<void(Token *)>sink)
 	{
-		std::string s = t.orth_utf8();
-		InterpMorf *pmorf = morfeusz_analyse(const_cast<char*>(s.c_str()));
-		if (pmorf[0].p == -1) { // no analyses
+		std::vector<MorfeuszResultItem> pmorf;
+		std::string s = Toki::Util::to_utf8(t.orth());
+		//boost::mutex::scoped_lock lock(morfeusz_mutex_);
+		InterpMorf *ppmorf = hhandle_(const_cast<char*>(s.c_str()));
+		pmorf = morfeusz_preprocess(ppmorf);
+		//std::vector<MorfeuszResultItem> pmorf = morfeusz_safe_analyse(t.orth());
+		if (pmorf.empty()) { // no analyses
 			return false;
-		} else if (pmorf[1].p == -1) { // only one analysis
-			if (pmorf->interp) {
+		} else if (pmorf.size() == 1) { // only one analysis
+			if (pmorf[0].lemma.length() > 0) {
 				std::vector<Token*> vec;
-				vec.push_back(make_token(t, pmorf));
+				vec.push_back(make_token(t, pmorf[0]));
 				flush_convert(vec, sink);
 			} else {
 				return false;
 			}
 		} else { // token was split, or there are multiple analyses (lemmas)
-			int node_count = 0, edge_count = 0;
-			while (pmorf[edge_count].p != -1) {
-				node_count = std::max(node_count, pmorf[edge_count].k);
-				++edge_count;
+			int node_count = 0;
+			int edge_count = pmorf.size();
+			foreach (const MorfeuszResultItem& mri, pmorf) {
+				node_count = std::max(node_count, mri.k);
 			}
-			++node_count; //we got the last vertex id, and they start at 0, so add one
+			++node_count; // the numbering starts at 0 and we got the last valid node number
 			std::vector< std::vector< int > > succ(node_count, std::vector<int>());
 			std::vector< std::vector< int > > prec(node_count, std::vector<int>());
 			for (int i = 0; i < edge_count; ++i) { // build adjacency lists
@@ -123,7 +188,7 @@ namespace Maca {
 						int v = pmorf[tse].k;
 						while (prec[v].size() == 1) {
 							if (succ[v].size() != 1) {
-								throw MorfeuszError("path splits twice", s, pmorf);
+								throw MorfeuszError("path splits twice", t.orth_utf8(), pmorf);
 							}
 							tse = succ[v][0];
 							paths.back().push_back(tse);
@@ -131,7 +196,7 @@ namespace Maca {
 						}
 						//assume this is the merge node, check for consistency
 						if (merge_node != -1 && merge_node != v) {
-							throw MorfeuszError("path merge node ambiguity", s, pmorf);
+							throw MorfeuszError("path merge node ambiguity", t.orth_utf8(), pmorf);
 						}
 						merge_node = v;
 					}
@@ -145,18 +210,18 @@ namespace Maca {
 					for (size_t pi = 0; pi < paths.size(); ++pi) {
 						bool new_path_added = false;
 						foreach (int ei, paths[pi]) {
-							InterpMorf* im = pmorf + ei;
-							std::pair<int, int> idx = std::make_pair(im->p, im->k);
+							MorfeuszResultItem& mri = pmorf[ei];
+							std::pair<int, int> idx = std::make_pair(mri.p, mri.k);
 							alt_map_t::iterator it = alt_map.find(idx);
 							if (it == alt_map.end()) {
 								if (!new_path_added) {
 									token_paths.push_back(std::vector<Token*>());
 									new_path_added = true;
 								}
-								token_paths.back().push_back(make_token(t, pmorf + ei));
+								token_paths.back().push_back(make_token(t, mri));
 								alt_map.insert(std::make_pair(idx, token_paths.back().back()));
 							} else {
-								pmorf_into_token(it->second, im);
+								morfeusz_into_token(it->second, mri);
 							}
 						}
 					}
@@ -165,14 +230,14 @@ namespace Maca {
 					i = merge_node;
 				} else if (!succ[i].empty()) { //simple case, only one interp
 					int edge = succ[i][0];
-					unambiguous.push_back(make_token(t, pmorf + edge));
+					unambiguous.push_back(make_token(t, pmorf[edge]));
 					if (pmorf[edge].k != i + 1) {
-						throw MorfeuszError("simple path has non-consecutive nodes", s, pmorf);
+						throw MorfeuszError("simple path has non-consecutive nodes", t.orth_utf8(), pmorf);
 					}
 					++i;
 				} else { //only the last node should have no succesors
 					if (i != node_count - 1) {
-						throw MorfeuszError("node without succesors that is not the last node", s, pmorf);
+						throw MorfeuszError("node without succesors that is not the last node", t.orth_utf8(), pmorf);
 					}
 					++i;
 				}
@@ -184,31 +249,29 @@ namespace Maca {
 		return true;
 	}
 
-	Token* MorfeuszAnalyser::make_token(const Toki::Token& t, InterpMorf *im) const
+	Token* MorfeuszAnalyser::make_token(const Toki::Token& t, const MorfeuszResultItem &m) const
 	{
 		Token* tt = new Token();
-		if (im->p == 0) {
+		if (m.p == 0) {
 			tt->set_wa(t.preceeding_whitespace());
 		} else {
 			tt->set_wa(Toki::Whitespace::None);
 		}
-		pmorf_into_token(tt, im);
+		morfeusz_into_token(tt, m);
 		return tt;
 	}
 
-	void MorfeuszAnalyser::pmorf_into_token(Token *tt, InterpMorf *im) const
+	void MorfeuszAnalyser::morfeusz_into_token(Token *tt, const MorfeuszResultItem& m) const
 	{
-		tt->set_orth(UnicodeString::fromUTF8(im->forma));
-		if (im->interp) {
-			conv_->tagset_from().lexemes_into_token(*tt,
-					UnicodeString::fromUTF8(im->haslo),
-					std::make_pair(im->interp, im->interp + strlen(im->interp)));
+		tt->set_orth(m.orth);
+		if (!m.tag_string.empty()) {
+			conv_->tagset_from().lexemes_into_token(*tt, m.lemma, m.tag_string);
 		} else {
-			if (warn_on_ign_) {
-				std::cerr << "Morfeusz: tagging as ign: " << im->forma << "\n";
-			}
-			Lexeme ign_lex(tt->orth(), ign_tag_);
+			Lexeme ign_lex(m.orth, ign_tag_);
 			tt->add_lexeme(ign_lex);
+			if (warn_on_ign_) {
+				std::cerr << "Morfeusz: tagging as ign: " << ign_lex.lemma_utf8() << "\n";
+			}
 		}
 	}
 

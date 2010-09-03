@@ -111,7 +111,7 @@ if (MORFEUSZ_FOUND)
     if(MORFEUSZ_PLUGIN)
         message(STATUS "Morfeusz support will be built as a plugin")
         add_library(maca_morfeusz MODULE morph/morfeuszanalyser.cpp)
-        target_link_libraries ( maca_morfeusz maca ${MORFEUSZ_LIBRARY} )
+        #target_link_libraries ( maca_morfeusz maca ${MORFEUSZ_LIBRARY} )
         set_target_properties(maca_morfeusz PROPERTIES
             VERSION "${ver_major}.${ver_minor}"
             SOVERSION ${ver_major})

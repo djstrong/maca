@@ -8,6 +8,15 @@
 
 namespace Maca {
 
+	/// Helper struct for holding preprocessed Morfeusz results
+	struct MorfeuszResultItem
+	{
+		int p, k;
+		UnicodeString orth;
+		UnicodeString lemma;
+		std::string tag_string;
+	};
+
 	/**
 	 * Exception class for signalling Morfeusz-related errors
 	 */
@@ -15,8 +24,8 @@ namespace Maca {
 	{
 	public:
 		/// Constructor
-		MorfeuszError(const std::string& error, const std::string input = "",
-				InterpMorf* interp = NULL);
+		MorfeuszError(const std::string& error, const std::string input,
+			const std::vector<MorfeuszResultItem>& interp);
 
 		/// Destructor
 		~MorfeuszError() throw();
@@ -28,7 +37,7 @@ namespace Maca {
 		std::string error, input;
 
 		/// The structure returned by Morfeusz during the error, if available
-		InterpMorf* interp;
+		std::vector<MorfeuszResultItem> interp;
 	};
 
 	/**
@@ -53,20 +62,20 @@ namespace Maca {
 		 */
 		MorfeuszAnalyser(const Config::Node& cfg);
 
-		/// Destructor
-		~MorfeuszAnalyser();
-
 		/// Cloning
 		MorfeuszAnalyser* clone() const;
+
+		/// Destructor
+		~MorfeuszAnalyser();
 
 		/// MorphAnalyser override
 		bool process_functional(const Toki::Token &t, boost::function<void(Token *)>sink);
 
 		/// helper to create a token from a Morfeusz interpretation struct
-		Token* make_token(const Toki::Token& t, InterpMorf* im) const;
+		Token* make_token(const Toki::Token& t, const MorfeuszResultItem& m) const;
 
 		/// helper to add lexemes from a Morfeusz interp struct into a token
-		void pmorf_into_token(Token* tt,  InterpMorf* im) const;
+		void morfeusz_into_token(Token* tt,  const MorfeuszResultItem& m) const;
 
 		/// convert gathered tokens and pass them to the sink
 		void flush_convert(std::vector<Token*>& vec, boost::function<void(Token *)>sink);
@@ -82,6 +91,8 @@ namespace Maca {
 		static bool registered;
 
 	private:
+		void load_morfeusz_library();
+
 		/// the tagset converter
 		Conversion::TagsetConverter* conv_;
 
@@ -90,6 +101,12 @@ namespace Maca {
 		bool warn_on_ign_;
 
 		bool warn_on_fold_failure_;
+
+		void* mhandle_;
+
+		typedef InterpMorf* (*morfeusz_func_t)(char*);
+
+		morfeusz_func_t hhandle_;
 	};
 
 } /* end ns Maca */
