@@ -25,6 +25,11 @@ namespace Maca {
 		lower_lemma_ = cfg.get("lower_lemma", false);
 	}
 
+	ConstAnalyser* ConstAnalyser::clone() const
+	{
+		return new ConstAnalyser(*this);
+	}
+
 	bool ConstAnalyser::process_functional(const Toki::Token &t, boost::function<void (Token*)> sink)
 	{
 		Token* tt = new Token(t);

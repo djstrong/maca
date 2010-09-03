@@ -33,6 +33,9 @@ namespace Maca {
 		 */
 		explicit MorphAnalyser(const Config::Node& cfg);
 
+		/// Cloning
+		virtual MorphAnalyser* clone() const = 0;
+
 		/// Destructor
 		virtual ~MorphAnalyser();
 

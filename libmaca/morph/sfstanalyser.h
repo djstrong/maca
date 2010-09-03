@@ -3,6 +3,7 @@
 
 #include <libmaca/morph/morphanalyser.h>
 #include <libmaca/typedefs.h>
+#include <boost/thread/mutex.hpp>
 
 /// forwrd declaration of a SFST type
 class CompactTransducer;
@@ -44,6 +45,9 @@ namespace Maca {
 		/// Destructor
 		~SfstAnalyser();
 
+		/// Cloning
+		SfstAnalyser* clone() const;
+
 		/// MorphAnalyser override
 		bool process_functional(const Toki::Token& t, boost::function<void (Token*)> sink);
 
@@ -57,11 +61,17 @@ namespace Maca {
 		static bool registered;
 
 	private:
+		/// ctor for use in clone()
+		SfstAnalyser(const Tagset *tagset);
+
 		/// convenience function for loading a transducer file
 		void open_transducer(const std::string& filename);
 
-		/// the transducer
-		CompactTransducer* ct_;
+		/// the transducer, potentially shared between clones
+		boost::shared_ptr<CompactTransducer> ct_;
+
+		/// Mutex for safe access in case there are clones
+		boost::shared_ptr<boost::mutex> mutex_;
 
 		/// force lower case flag
 		bool lcase_;

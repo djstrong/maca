@@ -56,6 +56,9 @@ namespace Maca {
 		/// Destructor
 		~MorfeuszAnalyser();
 
+		/// Cloning
+		MorfeuszAnalyser* clone() const;
+
 		/// MorphAnalyser override
 		bool process_functional(const Toki::Token &t, boost::function<void(Token *)>sink);
 

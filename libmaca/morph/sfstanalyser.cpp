@@ -25,6 +25,11 @@ namespace Maca {
 		open_transducer(filename);
 	}
 
+	SfstAnalyser::SfstAnalyser(const Tagset* tagset)
+		: MorphAnalyser(tagset), lcase_(false)
+	{
+	}
+
 	SfstAnalyser::SfstAnalyser(const Config::Node &cfg)
 		: MorphAnalyser(cfg), lcase_(cfg.get("lower-case", false))
 	{
@@ -36,7 +41,15 @@ namespace Maca {
 
 	SfstAnalyser::~SfstAnalyser()
 	{
-		delete ct_;
+	}
+
+	SfstAnalyser* SfstAnalyser::clone() const
+	{
+		SfstAnalyser* copy = new SfstAnalyser(&tagset());
+		copy->lcase_ = lcase_;
+		copy->ct_ = ct_;
+		copy->mutex_ = mutex_;
+		return copy;
 	}
 
 	void SfstAnalyser::open_transducer(const std::string& filename)
@@ -46,7 +59,7 @@ namespace Maca {
 			throw MacaError("File open error");
 		}
 		try {
-			ct_ = new CompactTransducer(f);
+			ct_.reset(new CompactTransducer(f));
 		} catch (const char* e) {
 			fclose(f);
 			throw MacaError(e);

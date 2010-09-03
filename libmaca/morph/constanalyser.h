@@ -25,6 +25,9 @@ namespace Maca {
 		 */
 		explicit ConstAnalyser(const Config::Node& cfg);
 
+		/// Cloning
+		ConstAnalyser* clone() const;
+
 		/// MapAnalyser override
 		bool process_functional(const Toki::Token &t, boost::function<void (Token*)> sink);
 

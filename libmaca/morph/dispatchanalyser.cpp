@@ -180,6 +180,32 @@ namespace Maca {
 		delete fallback_;
 	}
 
+	DispatchAnalyser* DispatchAnalyser::clone() const
+	{
+		DispatchAnalyser* copy = new DispatchAnalyser(&tagset());
+		std::map<MorphAnalyser*, MorphAnalyser*> clones;
+		foreach (MorphAnalyser* m, analysers_) {
+			clones[m] = m->clone();
+			copy->analysers_.insert(clones[m]);
+		}
+		copy->type_handlers_ = type_handlers_;
+		foreach (analyser_map_t::value_type& v, copy->type_handlers_) {
+			foreach (MorphAnalyser*& m, v.second) {
+				m = clones[m];
+				assert(m);
+			}
+		}
+		copy->default_ = default_;
+		foreach (MorphAnalyser*& m, copy->default_) {
+			m = clones[m];
+			assert(m);
+		}
+		if (fallback_) {
+			copy->fallback_ = fallback_->clone();
+		}
+		return copy;
+	}
+
 	void DispatchAnalyser::add_type_handler(const std::string &type, MorphAnalyser *a)
 	{
 		if (a->tagset().id() != tagset().id()) throw TagsetMismatch("dispatch analyser handler", tagset(), a->tagset());

@@ -31,6 +31,9 @@ namespace Maca {
 		 */
 		explicit MapAnalyser(const Config::Node& cfg);
 
+		/// Cloning
+		MapAnalyser* clone() const;
+
 		/// Data file loading function
 		void load_m_dictionary(const std::string& fn);
 
@@ -131,6 +134,14 @@ namespace Maca {
 		: MorphAnalyser(cfg), map_()
 	{
 		load_m_dictionary(cfg.get<std::string>("data"));
+	}
+
+	template<typename MapT>
+	MapAnalyser<MapT>* MapAnalyser<MapT>::clone() const
+	{
+		MapAnalyser<MapT>* copy = new MapAnalyser<MapT>(&tagset());
+		copy->map_ = map_;
+		return copy;
 	}
 
 	template<typename MapT>

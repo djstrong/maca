@@ -24,6 +24,9 @@ namespace Maca {
 		/// Destructor
 		~DispatchAnalyser();
 
+		/// Cloning
+		DispatchAnalyser* clone() const;
+
 		/// MorphAnalyser override
 		bool process_functional(const Toki::Token &t, boost::function<void (Token*)> sink);
 
@@ -45,14 +48,17 @@ namespace Maca {
 		size_t handler_count() const;
 
 	private:
+		typedef std::vector<MorphAnalyser*> analyser_vector_t;
+		typedef std::map<std::string, analyser_vector_t > analyser_map_t;
+
 		/// the toki type -> analyser map
-		std::map<std::string, std::vector<MorphAnalyser*> > type_handlers_;
+		analyser_map_t type_handlers_;
 
 		/// the set of analysers this DispatchAnalyser owns
 		std::set<MorphAnalyser*> analysers_;
 
 		/// the default analysers
-		std::vector<MorphAnalyser*> default_;
+		analyser_vector_t default_;
 
 		/// the fallback analyser
 		MorphAnalyser* fallback_;

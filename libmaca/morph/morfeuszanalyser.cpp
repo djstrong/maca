@@ -40,6 +40,13 @@ namespace Maca {
 	{
 		if (conv_->tagset_to().id() != tagset->id()) throw TagsetMismatch("Morfeusz analyser creation", *tagset, conv->tagset_to());
 		morfeusz_set_option(MORFOPT_ENCODING, MORFEUSZ_UTF_8);
+	MorfeuszAnalyser* MorfeuszAnalyser::clone() const
+	{
+		MorfeuszAnalyser* copy = new MorfeuszAnalyser(&tagset(), conv_->clone());
+		copy->ign_tag_ = ign_tag_;
+		copy->warn_on_ign_ = warn_on_ign_;
+		copy->warn_on_fold_failure_ = warn_on_fold_failure_;
+		return copy;
 	}
 
 	MorfeuszAnalyser::MorfeuszAnalyser(const Config::Node& cfg)
