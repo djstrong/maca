@@ -105,64 +105,54 @@ int main(int argc, char** argv)
 			Maca::TokenTimer timer;
 			boost::scoped_ptr<Maca::Chunk> ch(new Maca::Chunk);
 
-			omp_set_num_threads(threads);
-			std::vector< boost::shared_ptr<Maca::MorphAnalyser> > analysers;
-			analysers.push_back(ma);
-			for (int i = 1; i < threads; ++i) {
-				std::cerr << "C";
-				analysers.push_back(boost::shared_ptr<Maca::MorphAnalyser>(ma->clone()));
-			}
+			if (threads > 0) {
+				omp_set_num_threads(threads);
+				std::vector< boost::shared_ptr<Maca::MorphAnalyser> > analysers;
+				analysers.push_back(ma);
+				for (int i = 1; i < threads; ++i) {
+					std::cerr << "C";
+					analysers.push_back(boost::shared_ptr<Maca::MorphAnalyser>(ma->clone()));
+				}
 
-			std::vector<Toki::Sentence*> sss;
-			while (sen.has_more()) {
-				sss.push_back(sen.get_next_sentence());
-			}
-			std::cerr << "phase 2\n";
-			ch->sentences().resize(sss.size());
+				std::vector<Toki::Sentence*> sss;
+				while (sen.has_more()) {
+					sss.push_back(sen.get_next_sentence());
+				}
+				std::cerr << "phase 2\n";
+				ch->sentences().resize(sss.size());
 #pragma omp parallel for
-			for (size_t i = 0; i < sss.size(); ++i) {
-				ch->sentences()[i] = analysers[omp_get_thread_num()]->process_dispose(sss[i]);
-				timer.count_sentence(*ch->sentences()[i]);
-				if (omp_get_thread_num() == 0 && progress) {
-					timer.check_slice();
-				}
-			}
-
-			/*
-			{
-				boost::scoped_ptr<Toki::Sentence> sentence(sen.get_next_sentence());
-				assert(!sentence->empty());
-				std::auto_ptr<Maca::Sentence> analysed(new Maca::Sentence); //(ma->process_dispose(sentence.get()));
-				std::vector< std::vector< Maca::Token* > > results;
-				results.resize(sentence->size());
-				for (size_t i = 0; i < sentence->size(); ++i) {
-					analysers[omp_get_thread_num()]->process(*(sentence->tokens()[i]), results[i]);
-				}
-				for (size_t i = 0; i < results.size(); ++i) {
-					foreach (Maca::Token* t, results[i]) {
-						analysed->append(t);
-					}
-				}
-				timer.count_sentence(*analysed);
-				if (split_chunks) {
-					if (analysed->tokens()[0]->wa() == Toki::Whitespace::ManyNewlines) {
-						if (!ch->sentences().empty()) {
-							writer->write_chunk(*ch);
-							ch.reset(new Maca::Chunk());
-							if (progress) {
-								timer.check_slice();
-							}
-						}
-					}
-					ch->append(analysed.release());
-				} else {
-					writer->write_sentence(*analysed);
-					if (progress) {
+				for (size_t i = 0; i < sss.size(); ++i) {
+					ch->sentences()[i] = analysers[omp_get_thread_num()]->process_dispose(sss[i]);
+					timer.count_sentence(*ch->sentences()[i]);
+					if (omp_get_thread_num() == 0 && progress) {
 						timer.check_slice();
 					}
 				}
+			} else {
+				while (sen.has_more()) {
+					boost::scoped_ptr<Toki::Sentence> sentence(sen.get_next_sentence());
+					assert(!sentence->empty());
+					std::auto_ptr<Maca::Sentence> analysed(ma->process_dispose(sentence.get()));
+					timer.count_sentence(*analysed);
+					if (split_chunks) {
+						if (analysed->tokens()[0]->wa() == Toki::Whitespace::ManyNewlines) {
+							if (!ch->sentences().empty()) {
+								writer->write_chunk(*ch);
+								ch.reset(new Maca::Chunk());
+								if (progress) {
+									timer.check_slice();
+								}
+							}
+						}
+						ch->append(analysed.release());
+					} else {
+						writer->write_sentence(*analysed);
+						if (progress) {
+							timer.check_slice();
+						}
+					}
+				}
 			}
-			*/
 			if (!ch->sentences().empty()) {
 				writer->write_chunk(*ch);
 			}
