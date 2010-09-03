@@ -23,6 +23,7 @@ namespace Maca { namespace Conversion {
 	JoinLayer* JoinLayer::clone() const
 	{
 		JoinLayer* copy = new JoinLayer(tagset());
+		copy->rules_ = rules_;
 		if (buf_ != NULL) {
 			copy->buf_ = buf_->clone();
 		}
