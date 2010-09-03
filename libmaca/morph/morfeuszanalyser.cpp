@@ -78,7 +78,6 @@ namespace Maca {
 		: MorphAnalyser(tagset), conv_(conv), warn_on_fold_failure_(true)
 	{
 		if (conv_->tagset_to().id() != tagset->id()) throw TagsetMismatch("Morfeusz analyser creation", *tagset, conv->tagset_to());
-		//morfeusz_set_option(MORFOPT_ENCODING, MORFEUSZ_UTF_8);
 		load_morfeusz_library();
 	}
 
@@ -96,6 +95,12 @@ namespace Maca {
 		const char* dle = dlerror();
 		if (dle != NULL) {
 			std::cerr << dle << "\n";
+		}
+
+		typedef int (*opt_func)(int, int);
+		opt_func optf = (opt_func)dlsym(mhandle_, "morfeusz_set_option");
+		if (optf != NULL) {
+			optf(MORFOPT_ENCODING, MORFEUSZ_UTF_8);
 		}
 
 		std::cerr << "CR" << mhandle_ << " " << (void*)hhandle_ << "\n";
@@ -128,7 +133,6 @@ namespace Maca {
 		warn_on_ign_ = cfg.get("warn_on_ign", false);
 		warn_on_fold_failure_ =  cfg.get("warn_on_fold_failure", true);
 		load_morfeusz_library();
-		//morfeusz_set_option(MORFOPT_ENCODING, MORFEUSZ_UTF_8);
 	}
 
 	MorfeuszAnalyser::~MorfeuszAnalyser()
