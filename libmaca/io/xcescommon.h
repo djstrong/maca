@@ -6,7 +6,7 @@
 namespace Maca {
 
 	/**
-	 * Output the token's XCES XML representation, ath the requested indent
+	 * Output the token's XCES XML representation, at the requested indent
 	 * level. Use -1 to disable indentation.
 	 */
 	void token_as_xces_xml(std::ostream& os, const Tagset& tagset
