@@ -14,6 +14,16 @@ namespace Maca {
 		}
 	}
 
+	Chunk* Chunk::clone() const
+	{
+		Chunk* copy = new Chunk;
+		foreach (Sentence* s, sentences_) {
+			copy->append(s->clone());
+		}
+		copy->attributes_ = attributes_;
+		return copy;
+	}
+
 	bool Chunk::has_attribute(const std::string &name) const
 	{
 		return attributes_.find(name) != attributes_.end();

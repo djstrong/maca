@@ -6,6 +6,10 @@
 
 namespace Maca {
 
+	/**
+	 * A chunk groups sentences together, and also has some string attributes
+	 * in key-value form.
+	 */
 	class Chunk : boost::noncopyable
 	{
 	public:
@@ -15,6 +19,8 @@ namespace Maca {
 		explicit Chunk(const T& range);
 
 		~Chunk();
+
+		Chunk* clone() const;
 
 		bool has_attribute(const std::string& name) const;
 
