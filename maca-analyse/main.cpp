@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 	bool quiet = false, progress = false, split_chunks = false;
 	using boost::program_options::value;
 
-	std::string writers = boost::algorithm::join(Maca::TokenWriter::available_writer_types(), " ");
+	std::string writers = boost::algorithm::join(Maca::TokenWriter::available_writer_types_help(), " ");
 
 	std::string writers_help = "Output format, any of: " + writers + "\n";
 

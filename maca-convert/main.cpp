@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 	bool progress = false;
 	using boost::program_options::value;
 
-	std::string writers = boost::algorithm::join(Maca::TokenWriter::available_writer_types(), " ");
+	std::string writers = boost::algorithm::join(Maca::TokenWriter::available_writer_types_help(), " ");
 	std::string writers_help = "Output format, any of: " + writers + "\n";
 
 	boost::program_options::options_description desc("Allowed options");
