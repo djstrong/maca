@@ -28,6 +28,11 @@ namespace Maca {
 		tagset_idx_t id;
 	};
 
+	/**
+	 * Singleton class for accesing tagsets by name that will load tagsets
+	 * from the data dir and cache them for future acceses.
+	 * @todo this should be a generic utility class
+	 */
 	class TagsetManager : private boost::noncopyable
 	{
 	public:

@@ -10,6 +10,9 @@ namespace Maca { namespace Conversion {
 
 	/**
 	 * Base class for conversion layers.
+	 *
+	 * Layers accept tokens in one tagset, perform some changes, and output
+	 * tokens in a possibly different tagset via the TokenSource interface.
 	 */
 	class Layer : public TokenSource
 	{
