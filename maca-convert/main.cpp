@@ -75,7 +75,8 @@ int main(int argc, char** argv)
 			Maca::XcesReader reader(tagset, std::cin, disamb);
 			boost::scoped_ptr<Maca::TokenWriter> writer;
 			writer.reset(Maca::TokenWriter::create(output_format, std::cout, tagset));
-			Maca::TokenTimer timer;
+			Maca::TokenTimer& timer = Maca::global_timer();
+			timer.register_signal_handler();
 			while (Maca::Chunk* c = reader.get_next_chunk()) {
 				writer->write_chunk(*c);
 				timer.count_chunk(*c);

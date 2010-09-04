@@ -4,6 +4,8 @@
 #include <ctime>
 #include <libmaca/chunk.h>
 
+#include <loki/Singleton.h>
+
 namespace Maca {
 
 	/**
@@ -50,6 +52,9 @@ namespace Maca {
 		/// display current stats
 		void stats();
 
+
+		void register_signal_handler();
+
 	private:
 		size_t tokens_;
 		size_t slice_tokens_;
@@ -57,6 +62,15 @@ namespace Maca {
 		clock_t start_;
 		clock_t slice_start_;
 	};
+
+
+	typedef Loki::SingletonHolder< TokenTimer > TokenTimerSingleton;
+
+	inline TokenTimer& global_timer() {
+		return TokenTimerSingleton::Instance();
+	}
+
+
 } /* end ns Maca */
 
 #endif // LIBMACA_UTIL_TOKENTIMER_H
