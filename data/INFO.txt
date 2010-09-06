@@ -3,15 +3,20 @@ This directory contains a few significant configuration and data files as well a
 Tagsets:
 • kipi — KIPI (IPI PAN Corpus) tagset enhanced with several classes as output by TaKIPI tagger,
 • morfeusz — variation of KIPI tagset, the difference being the division of neuter genders (n1...) and the presence of pluralia tantum genders (p1...),
-• ikipi — Intermediate tagset applied to KIPI, allowing for joining some of the split verb forms (praet+aglt, conjunctives) and thus reduce segmentation ambiguity.
+• ikipi — Intermediate tagset applied to KIPI, allowing for joining some of the split verb forms (praet+aglt, conjunctives) and thus reduce segmentation ambiguity
+• nkjp — NKJP (Narodowy Korpus Języka Polskiego) tagset,
+• sgjp — variation of NKJP tagset as output by Morfeusz SGJP, the same gender differences as morfeusz v. kipi.
 
 Configurations:
-• morfeusz.ini — uses Morfeusz, outputs in morfeusz tagset,
-• morfeusz-kipi.ini — uses morfpatch, Morfeusz and acro-infl+acro-uninfl, outputs in kipi tagset,
+• morfeusz.ini — uses Morfeusz SIAT, outputs in morfeusz SIAT tagset,
+• morfeusz-kipi.ini — uses morfpatch, Morfeusz SIAT and acro-infl+acro-uninfl, outputs in kipi tagset (simplified genders),
 • morfeusz-ikipi.ini — as above but outputs in ikipi tagset,
 • morfeusz-kipi-ext.ini — as morfeusz-kipi but uses the extended tagset of TaKIPI (tsym, tnum etc.),
-• morfeusz-ikipi-ext.ini — s morfeusz-ikipi but uses the extended tagset of TaKIPI.
+• morfeusz-ikipi-ext.ini — as morfeusz-ikipi but uses the extended tagset of TaKIPI,
+• sgjp.ini – assumes Morfeusz SGJP has been installed, outputs in its tagset,
+• morfeusz-nkjp.ini – assumes Morfeusz SGJP has been installed, outputs in NKJP format (simplified genders).
 
+TODO: intermediate tagset for nkjp.
 
 All these configuration use default Toki config (suited for processing Polish).
 
