@@ -1,6 +1,8 @@
 #include <libmaca/util/tokentimer.h>
 #include <iostream>
 
+#include <signal.h>
+
 namespace Maca {
 
 	TokenTimer::TokenTimer()
@@ -39,9 +41,25 @@ namespace Maca {
 		clock_t now_clock = clock();
 		double elapsed = ((double)now_clock - start_) / CLOCKS_PER_SEC;
 		double avg_rate = tokens_ / elapsed;
-		std::cerr << "\r" << "Processed " << sentences_ << " sentences, "
+		std::cerr << "" << "Processed " << sentences_ << " sentences, "
 				<< tokens_ << " tokens, "
 				<< "avg rate " << avg_rate << " t/s                    \n";
+	}
+
+	namespace {
+		void handler(int signal) {
+			global_timer().stats();
+		}
+	}
+
+	void TokenTimer::register_signal_handler()
+	{
+		struct sigaction s;
+		memset(&s, 0, sizeof(s));
+		s.sa_handler = &handler;
+		if (sigaction(SIGUSR1, &s, 0) != 0) {
+			std::cerr << "Signal handler registration error\n";
+		}
 	}
 
 } /* end ns Maca */

@@ -12,9 +12,12 @@
 
 namespace Maca {
 
-	/** A single token being processed by the analyser.
+	/**
+	 * A single token being processed by the analyser.
 	 *
-	 * The orth is stored as an ICU UnicodeString.
+	 * The orth is stored as an ICU UnicodeString, the token is also defined
+	 * by the preceeding whitespace measuere, and most importantly by the set
+	 * of possible interpretations stored as lexemes.
 	 */
 	class Token
 		: boost::equality_comparable<Token>

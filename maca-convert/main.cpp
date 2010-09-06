@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 	bool progress = false;
 	using boost::program_options::value;
 
-	std::string writers = boost::algorithm::join(Maca::TokenWriter::available_writer_types(), " ");
+	std::string writers = boost::algorithm::join(Maca::TokenWriter::available_writer_types_help(), " ");
 	std::string writers_help = "Output format, any of: " + writers + "\n";
 
 	boost::program_options::options_description desc("Allowed options");
@@ -75,7 +75,8 @@ int main(int argc, char** argv)
 			Maca::XcesReader reader(tagset, std::cin, disamb);
 			boost::scoped_ptr<Maca::TokenWriter> writer;
 			writer.reset(Maca::TokenWriter::create(output_format, std::cout, tagset));
-			Maca::TokenTimer timer;
+			Maca::TokenTimer& timer = Maca::global_timer();
+			timer.register_signal_handler();
 			while (Maca::Chunk* c = reader.get_next_chunk()) {
 				writer->write_chunk(*c);
 				timer.count_chunk(*c);

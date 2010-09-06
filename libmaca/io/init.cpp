@@ -9,9 +9,9 @@ namespace Maca {
 	{
 		static bool init_done = false;
 		if (init_done) return false;
-		TokenWriterFactory::Instance().Register("xces", writer_creator<XcesWriter>);
-		TokenWriterFactory::Instance().Register("plain", writer_creator<PlainWriter>);
-		TokenWriterFactory::Instance().Register("orth", writer_creator<OrthWriter>);
+		TokenWriter::register_writer<XcesWriter>("xces", "flat,chunk,nochunk,disamb,sort,split");
+		TokenWriter::register_writer<XcesWriter>("plain", "");
+		TokenWriter::register_writer<XcesWriter>("orth", "nl");
 		init_done = true;
 		return true;
 	}

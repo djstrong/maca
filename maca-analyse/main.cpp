@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 	bool quiet = false, progress = false, split_chunks = false;
 	using boost::program_options::value;
 
-	std::string writers = boost::algorithm::join(Maca::TokenWriter::available_writer_types(), " ");
+	std::string writers = boost::algorithm::join(Maca::TokenWriter::available_writer_types_help(), " ");
 
 	std::string writers_help = "Output format, any of: " + writers + "\n";
 
@@ -102,7 +102,8 @@ int main(int argc, char** argv)
 			Toki::SentenceSplitter sen(tok);
 			boost::scoped_ptr<Maca::TokenWriter> writer;
 			writer.reset(Maca::TokenWriter::create(output_format, std::cout, ma->tagset()));
-			Maca::TokenTimer timer;
+			Maca::TokenTimer& timer = Maca::global_timer();
+			timer.register_signal_handler();
 			boost::scoped_ptr<Maca::Chunk> ch(new Maca::Chunk);
 
 			if (threads > 0) {
