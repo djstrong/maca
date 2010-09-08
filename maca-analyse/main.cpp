@@ -20,7 +20,7 @@ int main(int argc, char** argv)
 	std::string config, toki_config;
 	std::string input_format, output_format;
 	std::vector<std::string> plugins;
-	int threads = 4;
+	int threads = 0;
 	bool quiet = false, progress = false, split_chunks = false;
 	using boost::program_options::value;
 
@@ -106,51 +106,26 @@ int main(int argc, char** argv)
 			timer.register_signal_handler();
 			boost::scoped_ptr<Maca::Chunk> ch(new Maca::Chunk);
 
-			if (threads > 0) {
-				omp_set_num_threads(threads);
-				std::vector< boost::shared_ptr<Maca::MorphAnalyser> > analysers;
-				analysers.push_back(ma);
-				for (int i = 1; i < threads; ++i) {
-					std::cerr << "C";
-					analysers.push_back(boost::shared_ptr<Maca::MorphAnalyser>(ma->clone()));
-				}
-
-				std::vector<Toki::Sentence*> sss;
-				while (sen.has_more()) {
-					sss.push_back(sen.get_next_sentence());
-				}
-				std::cerr << "phase 2\n";
-				ch->sentences().resize(sss.size());
-#pragma omp parallel for
-				for (size_t i = 0; i < sss.size(); ++i) {
-					ch->sentences()[i] = analysers[omp_get_thread_num()]->process_dispose(sss[i]);
-					timer.count_sentence(*ch->sentences()[i]);
-					if (omp_get_thread_num() == 0 && progress) {
-						timer.check_slice();
-					}
-				}
-			} else {
-				while (sen.has_more()) {
-					boost::scoped_ptr<Toki::Sentence> sentence(sen.get_next_sentence());
-					assert(!sentence->empty());
-					std::auto_ptr<Maca::Sentence> analysed(ma->process_dispose(sentence.get()));
-					timer.count_sentence(*analysed);
-					if (split_chunks) {
-						if (analysed->tokens()[0]->wa() == Toki::Whitespace::ManyNewlines) {
-							if (!ch->sentences().empty()) {
-								writer->write_chunk(*ch);
-								ch.reset(new Maca::Chunk());
-								if (progress) {
-									timer.check_slice();
-								}
+			while (sen.has_more()) {
+				boost::scoped_ptr<Toki::Sentence> sentence(sen.get_next_sentence());
+				assert(!sentence->empty());
+				std::auto_ptr<Maca::Sentence> analysed(ma->process_dispose(sentence.get()));
+				timer.count_sentence(*analysed);
+				if (split_chunks) {
+					if (analysed->tokens()[0]->wa() == Toki::Whitespace::ManyNewlines) {
+						if (!ch->sentences().empty()) {
+							writer->write_chunk(*ch);
+							ch.reset(new Maca::Chunk());
+							if (progress) {
+								timer.check_slice();
 							}
 						}
-						ch->append(analysed.release());
-					} else {
-						writer->write_sentence(*analysed);
-						if (progress) {
-							timer.check_slice();
-						}
+					}
+					ch->append(analysed.release());
+				} else {
+					writer->write_sentence(*analysed);
+					if (progress) {
+						timer.check_slice();
 					}
 				}
 			}
