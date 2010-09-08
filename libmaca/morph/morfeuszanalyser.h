@@ -18,7 +18,27 @@ namespace Maca {
 	};
 
 	/**
-	 * Exception class for signalling Morfeusz-related errors
+	 * Exception class for signalling Morfeusz startup errors
+	 */
+	class MorfeuszInitError : public MacaError
+	{
+	public:
+		/// Constructor
+		MorfeuszInitError(const std::string& error, const std::string& extra,
+				const std::string& name);
+
+		/// Destructor
+		~MorfeuszInitError() throw();
+
+		/// Info accesor
+		std::string info() const;
+
+		/// the error info, extra info and (requested) Morfeusz library name
+		std::string error, extra, name;
+	};
+
+	/**
+	 * Exception class for signalling Morfeusz-related analysis errors
 	 */
 	class MorfeuszError : public MacaError
 	{
@@ -33,7 +53,7 @@ namespace Maca {
 		/// Info accesor
 		std::string info() const;
 
-		/// the error info and Morfeusz input during th error, if available
+		/// The error info and Morfeusz input during the error, if available
 		std::string error, input;
 
 		/// The structure returned by Morfeusz during the error, if available
@@ -54,11 +74,23 @@ namespace Maca {
 		 * Constructor for a Morfeusz analyser with a given tagset and converter.
 		 * The tagset should be the output tagset of the converter.
 		 */
-		MorfeuszAnalyser(const Tagset* tagset, Conversion::TagsetConverter* conv);
+		MorfeuszAnalyser(const Tagset* tagset, Conversion::TagsetConverter* conv,
+						 const std::string& libname, const std::string& require_version);
 
 		/**
 		 * Config node constructor. Recognized keys are:
 		 * - converter - the converter to load (from standard paths)
+		 * - ign_tag - the tag to use when Morfeusz returns no analysis,
+		 *             defaults to "ign"
+		 * - warn_on_ign - warn when using the ign tag, false by default
+		 * - warn_on_fold_failure - issue a warning when folding ambiguous paths
+		 *                          is unsuccesful after conversion (on by def.)
+		 * - library - the Morfeusz library to use, defaults to a "reasonable"
+		 *             name that should work. Pass a soname or full path.
+		 * - require_version - check for the presence of the version string in
+		 *                     the output of morfeusz_about() and trigger an
+		 *                     error if it is not found.
+		 *                     "Morfeusz SIAT" by default
 		 */
 		MorfeuszAnalyser(const Config::Node& cfg);
 
@@ -102,11 +134,15 @@ namespace Maca {
 
 		bool warn_on_fold_failure_;
 
-		void* mhandle_;
+		std::string morfeusz_library_;
+
+		std::string require_version_;
+
+		void* morfeusz_lib_handle_;
 
 		typedef InterpMorf* (*morfeusz_func_t)(char*);
 
-		morfeusz_func_t hhandle_;
+		morfeusz_func_t morfeusz_analyse_handle_;
 	};
 
 } /* end ns Maca */

@@ -54,6 +54,28 @@ namespace Maca {
 		return morfeusz_preprocess(0);
 	}
 
+	MorfeuszInitError::MorfeuszInitError(const std::string& error,
+			const std::string& extra, const std::string& name)
+		: MacaError("Morfeusz init error: " + error)
+		, error(error), extra(extra), name(name)
+	{
+	}
+
+	MorfeuszInitError::~MorfeuszInitError() throw()
+	{
+	}
+
+	std::string MorfeuszInitError::info() const
+	{
+		std::stringstream ss;
+		ss << what();
+		ss << " (" << name << ")";
+		if (!extra.empty()) {
+			ss << ":\n" << extra << "\n";
+		}
+		return ss.str();
+	}
+
 	MorfeuszError::MorfeuszError(const std::string& error,
 			const std::string input, const std::vector<MorfeuszResultItem>& interp)
 		: MacaError("Morfeusz error: " + error), error(error), input(input), interp(interp)
@@ -74,8 +96,11 @@ namespace Maca {
 		return ss.str();
 	}
 
-	MorfeuszAnalyser::MorfeuszAnalyser(const Tagset* tagset, Conversion::TagsetConverter* conv)
+	MorfeuszAnalyser::MorfeuszAnalyser(const Tagset* tagset,
+			Conversion::TagsetConverter* conv, const std::string& libname,
+			const std::string& require_version)
 		: MorphAnalyser(tagset), conv_(conv), warn_on_fold_failure_(true)
+		, morfeusz_library_(libname), require_version_(require_version)
 	{
 		if (conv_->tagset_to().id() != tagset->id()) throw TagsetMismatch("Morfeusz analyser creation", *tagset, conv->tagset_to());
 		load_morfeusz_library();
@@ -83,32 +108,57 @@ namespace Maca {
 
 	void MorfeuszAnalyser::load_morfeusz_library()
 	{
-		mhandle_ = dlmopen(LM_ID_NEWLM, "libmorfeusz.so", RTLD_NOW);
-		if (mhandle_ == NULL) {
+		morfeusz_lib_handle_ = dlmopen(LM_ID_NEWLM, morfeusz_library_.c_str(), RTLD_NOW);
+		if (morfeusz_lib_handle_ == NULL) {
 			const char* dle = dlerror();
 			if (dle != NULL) {
-				std::cerr << dle << "\n";
+				throw MorfeuszInitError("Error opening library (no handle)", dle, morfeusz_library_);
 			}
 		}
+
 		dlerror();
-		hhandle_ = (morfeusz_func_t)dlsym(mhandle_, "morfeusz_analyse");
+		morfeusz_analyse_handle_ = (morfeusz_func_t)
+				dlsym(morfeusz_lib_handle_, "morfeusz_analyse");
 		const char* dle = dlerror();
 		if (dle != NULL) {
-			std::cerr << dle << "\n";
+			dlclose(morfeusz_lib_handle_);
+			throw MorfeuszInitError("Error opening library (no morfeusz_analyse symbol)",
+				dle, morfeusz_library_);
 		}
 
-		typedef int (*opt_func)(int, int);
-		opt_func optf = (opt_func)dlsym(mhandle_, "morfeusz_set_option");
-		if (optf != NULL) {
-			optf(MORFOPT_ENCODING, MORFEUSZ_UTF_8);
+		dlerror();
+		typedef char*(*about_func_t)();
+		about_func_t about_func = (about_func_t)dlsym(morfeusz_lib_handle_, "morfeusz_about");
+		if (dle != NULL) {
+			dlclose(morfeusz_lib_handle_);
+			throw MorfeuszInitError("Error opening library (no morfeusz_about symbol)",
+				dle, morfeusz_library_);
+		}
+		std::string about = about_func();
+		if (about.find(require_version_) == about.npos) {
+			dlclose(morfeusz_lib_handle_);
+			throw MorfeuszInitError("Invalid Morfeusz version. Requested " + require_version_ + ", got ",
+				about, morfeusz_library_);
 		}
 
-		std::cerr << "CR" << mhandle_ << " " << (void*)hhandle_ << "\n";
+		dlerror();
+		typedef int (*opt_func_t)(int, int);
+		opt_func_t opt_func = (opt_func_t)dlsym(morfeusz_lib_handle_, "morfeusz_set_option");
+		if (dle != NULL) {
+			dlclose(morfeusz_lib_handle_);
+			throw MorfeuszInitError("Error opening library (no morfeusz_set_option symbol)",
+				dle, morfeusz_library_);
+
+		}
+		if (opt_func != NULL) {
+			opt_func(MORFOPT_ENCODING, MORFEUSZ_UTF_8);
+		}
 	}
 
 	MorfeuszAnalyser* MorfeuszAnalyser::clone() const
 	{
-		MorfeuszAnalyser* copy = new MorfeuszAnalyser(&tagset(), conv_->clone());
+		MorfeuszAnalyser* copy = new MorfeuszAnalyser(
+				&tagset(), conv_->clone(), morfeusz_library_, require_version_);
 		copy->ign_tag_ = ign_tag_;
 		copy->warn_on_ign_ = warn_on_ign_;
 		copy->warn_on_fold_failure_ = warn_on_fold_failure_;
@@ -132,11 +182,15 @@ namespace Maca {
 		ign_tag_ = conv_->tagset_from().parse_simple_tag(ign_tag_string, false);
 		warn_on_ign_ = cfg.get("warn_on_ign", false);
 		warn_on_fold_failure_ =  cfg.get("warn_on_fold_failure", true);
+
+		morfeusz_library_ = cfg.get("library", "libmorfeusz.so");
+		require_version_ = cfg.get("require_version", "Morfeusz SIAT");
 		load_morfeusz_library();
 	}
 
 	MorfeuszAnalyser::~MorfeuszAnalyser()
 	{
+		dlclose(morfeusz_lib_handle_);
 		delete conv_;
 	}
 
@@ -145,7 +199,7 @@ namespace Maca {
 		std::vector<MorfeuszResultItem> pmorf;
 		std::string s = Toki::Util::to_utf8(t.orth());
 		//boost::mutex::scoped_lock lock(morfeusz_mutex_);
-		InterpMorf *ppmorf = hhandle_(const_cast<char*>(s.c_str()));
+		InterpMorf *ppmorf = morfeusz_analyse_handle_(const_cast<char*>(s.c_str()));
 		pmorf = morfeusz_preprocess(ppmorf);
 		//std::vector<MorfeuszResultItem> pmorf = morfeusz_safe_analyse(t.orth());
 		if (pmorf.empty()) { // no analyses
