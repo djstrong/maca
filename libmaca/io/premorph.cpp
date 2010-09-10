@@ -178,7 +178,6 @@ namespace Maca {
 	void PremorphReaderImpl::on_start_element(const Glib::ustring &name,
 			const AttributeList &attributes)
 	{
-		std::cerr << name << "\n";
 		if (name == "chunk") {
 			std::string type;
 			foreach (const Attribute& a, attributes) {

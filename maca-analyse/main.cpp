@@ -1,4 +1,5 @@
 #include <libmaca/io/writer.h>
+#include <libmaca/io/plain.h>
 #include <libmaca/io/premorph.h>
 #include <libmaca/morph/dispatchanalyser.h>
 #include <libmaca/util/settings.h>
@@ -38,7 +39,7 @@ int main(int argc, char** argv)
 			 "Tokenizer configuration file. "
 			 "Overrides config value, only used in some input modes.\n")
 			("input-format,i", value(&input_format)->default_value("plain"),
-			 "Input format, any of: plain premorph\n")
+			 "Input format, any of: plain premorph premorph-stream\n")
 			("output-format,o", value(&output_format)->default_value("plain"),
 			 writers_help.c_str())
 			("split,s", value(&split_chunks)->zero_tokens(),
@@ -89,44 +90,43 @@ int main(int argc, char** argv)
 				sa = Maca::SentenceAnalyser::create_from_named_config(config, toki_config);
 			}
 
-			if (input_format == "premorph" || input_format == "pre") {
+			if (input_format == "premorph-stream") {
 				Maca::PremorphProcessor pp(std::cout, sa);
 				pp.set_stats(progress);
 				pp.parse_stream(std::cin);
 				return 0;
 			}
 
-			sa->set_input_source(std::cin);
-			//Maca::PremorphReader pr(std::cin, sa);
+			boost::shared_ptr<Maca::TokenReader> tr;
+			if (input_format == "premorph") {
+				tr = boost::make_shared<Maca::PremorphReader>(boost::ref(std::cin), sa);
+			} else {
+				tr = boost::make_shared<Maca::PlainReader>(boost::ref(std::cin), sa);
+			}
 			boost::scoped_ptr<Maca::TokenWriter> writer;
 			writer.reset(Maca::TokenWriter::create(output_format, std::cout, sa->tagset()));
 			Maca::TokenTimer& timer = Maca::global_timer();
 			timer.register_signal_handler();
-			boost::scoped_ptr<Maca::Chunk> ch(new Maca::Chunk);
-
-			while (Maca::Sentence* sentence = sa->get_next_sentence()) {
-				assert(!sentence->empty());
-				timer.count_sentence(*sentence);
-				if (split_chunks) {
-					if (sentence->first_token()->wa() == Toki::Whitespace::ManyNewlines) {
-						if (!ch->sentences().empty()) {
-							writer->write_chunk(*ch);
-							ch.reset(new Maca::Chunk());
-							if (progress) {
-								timer.check_slice();
-							}
-						}
+			if (split_chunks) {
+				/// TODO empty chunks
+				while (Maca::Chunk* chunk = tr->get_next_chunk()) {
+					boost::scoped_ptr<Maca::Chunk> deleter(chunk);
+					writer->write_chunk(*chunk);
+					timer.count_chunk(*chunk);
+					if (progress) {
+						timer.check_slice();
 					}
-					ch->append(sentence);
-				} else {
+				}
+			} else {
+				while (Maca::Sentence* sentence = tr->get_next_sentence()) {
+					boost::scoped_ptr<Maca::Sentence> deleter(sentence);
+					assert(!sentence->empty());
+					timer.count_sentence(*sentence);
 					writer->write_sentence(*sentence);
 					if (progress) {
 						timer.check_slice();
 					}
 				}
-			}
-			if (!ch->sentences().empty()) {
-				writer->write_chunk(*ch);
 			}
 			if (progress) {
 				timer.stats();

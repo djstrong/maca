@@ -3,6 +3,7 @@
 
 #include <libmaca/io/reader.h>
 #include <libmaca/io/writer.h>
+#include <libmaca/util/sentenceanalyser.h>
 
 namespace Maca {
 
@@ -18,17 +19,25 @@ namespace Maca {
 		void write_chunk(const Chunk& c);
 	};
 
-	class PlainReader
+	class PlainReader : public TokenReader
 	{
 	public:
-		PlainReader(std::istream& is, const Tagset& tagset);
+		PlainReader(std::istream& is, boost::shared_ptr<SentenceAnalyser> sa);
 
-		Token* read_token();
+		Token* get_next_token();
 
-	private:
-		std::istream& is_;
+		Sentence* get_next_sentence();
 
-		const Tagset& tagset_;
+		Chunk* get_next_chunk();
+
+	protected:
+		boost::shared_ptr<SentenceAnalyser> sa_;
+
+		bool chunkify_;
+
+		std::deque<Sentence*> sentence_buf_;
+
+		std::deque<Token*> token_buf_;
 	};
 
 } /* end ns Maca */

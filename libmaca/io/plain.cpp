@@ -33,8 +33,61 @@ namespace Maca {
 		os() << ">>>]]]\n\n";
 	}
 
-	PlainReader::PlainReader(std::istream& is, const Tagset& tagset)
-		: is_(is), tagset_(tagset)
+	PlainReader::PlainReader(std::istream &is, boost::shared_ptr<SentenceAnalyser> sa)
+		: TokenReader(is, sa->tagset()), sa_(sa), chunkify_(true)
+		, sentence_buf_(), token_buf_()
 	{
+	}
+
+	Token* PlainReader::get_next_token()
+	{
+		bool more = true;
+		while (token_buf_.empty() && more) {
+			Sentence* s = get_next_sentence();
+			if (s != NULL) {
+				std::copy(s->tokens().begin(), s->tokens().end(), std::back_inserter(token_buf_));
+			} else {
+				more = false;
+			}
+		}
+		if (token_buf_.empty()) {
+			return NULL;
+		} else {
+			Token* t = token_buf_.front();
+			token_buf_.pop_front();
+			return t;
+		}
+	}
+
+	Sentence* PlainReader::get_next_sentence()
+	{
+		//ensure_more();
+		if (sentence_buf_.empty()) {
+			return NULL;
+		} else {
+			Sentence* s = sentence_buf_.front();
+			sentence_buf_.pop_front();
+			return s;
+		}
+	}
+
+	Chunk* PlainReader::get_next_chunk()
+	{
+		Sentence* s = get_next_sentence();
+		if (s == NULL) {
+			return NULL;
+		} else {
+			Chunk* c = new Chunk;
+			c->append(s);
+			s = get_next_sentence();
+			while (s != NULL && (!chunkify_ || s->first_token()->wa() != Toki::Whitespace::ManyNewlines)) {
+				c->append(s);
+				s = get_next_sentence();
+			}
+			if (s != NULL) {
+				sentence_buf_.push_front(s);
+			}
+			return c;
+		}
 	}
 } /* end ns Maca */
