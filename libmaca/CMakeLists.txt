@@ -13,7 +13,7 @@ include_directories( ${CMAKE_CURRENT_BINARY_DIR}/include/ )
 #include_directories("/usr/include/sfst-1.0")
 #set(LIBS ${LIBS} "sfst1")
 
-find_package(Toki 0.3.2 REQUIRED)
+find_package(Toki 0.4.0 REQUIRED)
 set(LIBS ${LIBS} ${Toki_LIBRARY})
 
 find_package(ICU REQUIRED QUIET)
@@ -73,6 +73,7 @@ SET(libmaca_STAT_SRC
     morph/morphanalyser.cpp
     util/confignode.cpp
     util/debug.cpp
+    util/sentenceanalyser.cpp
     util/settings.cpp
     util/symboldictionary.cpp
     util/tokentimer.cpp
