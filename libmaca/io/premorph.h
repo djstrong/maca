@@ -2,6 +2,7 @@
 #define LIBMACA_IO_PREMORPH_H
 
 #include <libmaca/token.h>
+#include <libmaca/io/reader.h>
 #include <libmaca/morph/morphanalyser.h>
 
 #include <libtoki/tokenizer/tokenizer.h>
@@ -14,10 +15,15 @@ namespace Maca {
 
 	class PremorphProcessorImpl;
 
+	class SentenceAnalyser;
+
 	class PremorphProcessor
 	{
 	public:
-		PremorphProcessor(std::ostream& os, Toki::Tokenizer& tok, Maca::MorphAnalyser& ma);
+		PremorphProcessor(std::ostream& os, boost::shared_ptr<Toki::Tokenizer> tok,
+				boost::shared_ptr<Maca::MorphAnalyser> ma);
+
+		PremorphProcessor(std::ostream& os, boost::shared_ptr<SentenceAnalyser> sa);
 
 		~PremorphProcessor();
 
@@ -33,6 +39,24 @@ namespace Maca {
 		size_t tokens_;
 
 		size_t sentences_;
+	};
+
+	class PremorphReaderImpl;
+
+	class PremorphReader : public BufferedTokenReader
+	{
+	public:
+		PremorphReader(std::istream& is, boost::shared_ptr<Toki::Tokenizer> tok,
+					   boost::shared_ptr<Maca::MorphAnalyser> ma);
+
+		PremorphReader(std::istream& is, boost::shared_ptr<SentenceAnalyser> sa);
+
+		~PremorphReader();
+
+	protected:
+		void ensure_more();
+
+		boost::scoped_ptr<PremorphReaderImpl> impl_;
 	};
 
 } /* end ns Maca */

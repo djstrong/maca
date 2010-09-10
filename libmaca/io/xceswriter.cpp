@@ -55,7 +55,7 @@ namespace Maca {
 		bool new_chunk = true;
 		foreach (const Sentence* s, c.sentences()) {
 			if (split_chunks_on_newlines_ && !s->tokens().empty()) {
-				const Token* first = s->tokens()[0];
+				const Token* first = s->first_token();
 				if (first->wa() == Toki::Whitespace::ManyNewlines) {
 					new_chunk = true;
 				}

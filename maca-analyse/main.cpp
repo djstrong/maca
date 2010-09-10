@@ -2,6 +2,7 @@
 #include <libmaca/io/premorph.h>
 #include <libmaca/morph/dispatchanalyser.h>
 #include <libmaca/util/settings.h>
+#include <libmaca/util/sentenceanalyser.h>
 #include <libmaca/util/tokentimer.h>
 
 #include <libtoki/sentencesplitter.h>
@@ -11,6 +12,7 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>
+#include <boost/make_shared.hpp>
 
 #include <fstream>
 #include <omp.h>
@@ -80,39 +82,33 @@ int main(int argc, char** argv)
 
 	if (!config.empty()) {
 		try {
-			Maca::Config::Node cfg = Maca::get_named_config(config);
-			boost::shared_ptr<Maca::MorphAnalyser> ma(new Maca::DispatchAnalyser(cfg));
-
+			boost::shared_ptr<Maca::SentenceAnalyser> sa;
 			if (toki_config.empty()) {
-				toki_config = cfg.get("general.toki-config", "");
+				sa = Maca::SentenceAnalyser::create_from_named_config(config);
+			} else {
+				sa = Maca::SentenceAnalyser::create_from_named_config(config, toki_config);
 			}
-			const Toki::Config::Node& conf = toki_config.empty() ?
-				Toki::default_config() :
-				Toki::get_named_config(toki_config);
-			Toki::LayerTokenizer tok(conf);
 
 			if (input_format == "premorph" || input_format == "pre") {
-				Maca::PremorphProcessor pp(std::cout, tok, *ma);
+				Maca::PremorphProcessor pp(std::cout, sa);
 				pp.set_stats(progress);
 				pp.parse_stream(std::cin);
 				return 0;
 			}
 
-			tok.set_input_source(std::cin);
-			Toki::SentenceSplitter sen(tok);
+			sa->set_input_source(std::cin);
+			//Maca::PremorphReader pr(std::cin, sa);
 			boost::scoped_ptr<Maca::TokenWriter> writer;
-			writer.reset(Maca::TokenWriter::create(output_format, std::cout, ma->tagset()));
+			writer.reset(Maca::TokenWriter::create(output_format, std::cout, sa->tagset()));
 			Maca::TokenTimer& timer = Maca::global_timer();
 			timer.register_signal_handler();
 			boost::scoped_ptr<Maca::Chunk> ch(new Maca::Chunk);
 
-			while (sen.has_more()) {
-				boost::scoped_ptr<Toki::Sentence> sentence(sen.get_next_sentence());
+			while (Maca::Sentence* sentence = sa->get_next_sentence()) {
 				assert(!sentence->empty());
-				std::auto_ptr<Maca::Sentence> analysed(ma->process_dispose(sentence.get()));
-				timer.count_sentence(*analysed);
+				timer.count_sentence(*sentence);
 				if (split_chunks) {
-					if (analysed->tokens()[0]->wa() == Toki::Whitespace::ManyNewlines) {
+					if (sentence->first_token()->wa() == Toki::Whitespace::ManyNewlines) {
 						if (!ch->sentences().empty()) {
 							writer->write_chunk(*ch);
 							ch.reset(new Maca::Chunk());
@@ -121,9 +117,9 @@ int main(int argc, char** argv)
 							}
 						}
 					}
-					ch->append(analysed.release());
+					ch->append(sentence);
 				} else {
-					writer->write_sentence(*analysed);
+					writer->write_sentence(*sentence);
 					if (progress) {
 						timer.check_slice();
 					}
