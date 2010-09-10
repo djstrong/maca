@@ -5,15 +5,6 @@
 
 namespace Maca {
 
-	XcesReaderError::XcesReaderError(const std::string &what)
-		: MacaError(what)
-	{
-	}
-
-	XcesReaderError::~XcesReaderError() throw()
-	{
-	}
-
 	class XcesReaderImpl : public xmlpp::SaxParser
 	{
 	public:
@@ -99,7 +90,7 @@ namespace Maca {
 			}
 			if (state_ == XS_NONE) {
 				if (type == "s") {
-					throw XcesReaderError("Top level <chunk> is type=\"s\"");
+					throw XcesError("Top level <chunk> is type=\"s\"");
 				}
 				state_ = XS_CHUNK;
 				chunk_ = new Chunk;
@@ -108,12 +99,12 @@ namespace Maca {
 				}
 			} else if (state_ == XS_CHUNK) {
 				if (type != "s") {
-					throw XcesReaderError("Sub level <chunk> not type=\"s\"");
+					throw XcesError("Sub level <chunk> not type=\"s\"");
 				}
 				state_ = XS_SENTENCE;
 				sent_ = new Sentence;
 			} else {
-				throw XcesReaderError("Unexpected <chunk>");
+				throw XcesError("Unexpected <chunk>");
 			}
 		} else if (state_ == XS_SENTENCE && name == "tok") {
 			state_ = XS_TOK;

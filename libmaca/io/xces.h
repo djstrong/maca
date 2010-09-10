@@ -6,8 +6,15 @@
 
 namespace Maca {
 
+	class XcesError : public MacaError
+	{
+	public:
+		/// Constructor
+		XcesError(const std::string &what);
 
-
+		/// Destructor
+		~XcesError() throw();
+	};
 
 } /* end ns Maca */
 

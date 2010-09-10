@@ -10,5 +10,13 @@
 
 namespace Maca {
 
+	XcesError::XcesError(const std::string &what)
+		: MacaError(what)
+	{
+	}
+
+	XcesError::~XcesError() throw()
+	{
+	}
 
 } /* end ns Maca */

@@ -2,6 +2,7 @@
 #define LIBMACA_IO_XCESREADER_H
 
 #include <libmaca/io/reader.h>
+#include <libmaca/io/xces.h>
 #include <libmaca/chunk.h>
 #include <deque>
 #include <boost/scoped_ptr.hpp>
@@ -9,16 +10,6 @@
 namespace Maca {
 
 	class XcesReaderImpl;
-
-	class XcesReaderError : public MacaError
-	{
-	public:
-		/// Constructor
-		XcesReaderError(const std::string &what);
-
-		/// Destructor
-		~XcesReaderError() throw();
-	};
 
 	class XcesReader : public BufferedTokenReader
 	{
