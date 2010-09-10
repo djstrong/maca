@@ -1,15 +1,23 @@
 #include <libmaca/morph/dispatchanalyser.h>
 #include <libmaca/morph/constanalyser.h>
+#include <libmaca/util/settings.h>
 
 #include <libtoki/util/foreach.h>
 
 #include <boost/algorithm/string.hpp>
+#include <boost/make_shared.hpp>
 
 namespace Maca {
 
 	DispatchAnalyser::DispatchAnalyser(const Tagset* tagset)
 		: MorphAnalyser(tagset), type_handlers_(), analysers_(), default_(), fallback_(NULL)
 	{
+	}
+
+	boost::shared_ptr<DispatchAnalyser> DispatchAnalyser::create_from_named_config(const std::string& config_name)
+	{
+		const Config::Node& cfg = get_named_config(config_name);
+		return boost::make_shared<DispatchAnalyser>(cfg);
 	}
 
 	namespace {

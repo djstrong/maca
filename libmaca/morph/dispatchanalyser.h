@@ -21,6 +21,11 @@ namespace Maca {
 		/// Constructor for a DispatchAnalyser from config
 		DispatchAnalyser(const Config::Node& cfg);
 
+		/**
+		 * Convenience creation function from a config name
+		 */
+		static boost::shared_ptr<DispatchAnalyser> create_from_named_config(const std::string& config_name);
+
 		/// Destructor
 		~DispatchAnalyser();
 
