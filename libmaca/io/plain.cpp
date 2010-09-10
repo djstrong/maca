@@ -35,8 +35,9 @@ namespace Maca {
 
 	PlainReader::PlainReader(std::istream &is, boost::shared_ptr<SentenceAnalyser> sa)
 		: TokenReader(is, sa->tagset()), sa_(sa), chunkify_(true)
-		, sentence_buf_(), token_buf_()
+		, sentence_buf_(NULL), token_buf_()
 	{
+		sa_->set_input_source(is);
 	}
 
 	Token* PlainReader::get_next_token()
@@ -61,13 +62,12 @@ namespace Maca {
 
 	Sentence* PlainReader::get_next_sentence()
 	{
-		//ensure_more();
-		if (sentence_buf_.empty()) {
-			return NULL;
-		} else {
-			Sentence* s = sentence_buf_.front();
-			sentence_buf_.pop_front();
+		if (sentence_buf_ != NULL) {
+			Sentence* s = sentence_buf_;
+			sentence_buf_ = NULL;
 			return s;
+		} else {
+			return sa_->get_next_sentence();
 		}
 	}
 
@@ -85,9 +85,10 @@ namespace Maca {
 				s = get_next_sentence();
 			}
 			if (s != NULL) {
-				sentence_buf_.push_front(s);
+				sentence_buf_ = s;
 			}
 			return c;
 		}
 	}
+
 } /* end ns Maca */

@@ -35,7 +35,7 @@ namespace Maca {
 
 		bool chunkify_;
 
-		std::deque<Sentence*> sentence_buf_;
+		Sentence* sentence_buf_;
 
 		std::deque<Token*> token_buf_;
 	};
