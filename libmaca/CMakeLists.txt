@@ -95,7 +95,7 @@ if (SFST_FOUND)
             VERSION "${ver_major}.${ver_minor}"
             SOVERSION ${ver_major})
         set_target_properties(maca_sfst PROPERTIES
-            COMPILE_FLAGS "-DSFST_AS_PLUGIN -I${SFST_INCLUDE_DIR}"
+            COMPILE_FLAGS "-DSFST_AS_PLUGIN -I${SFST_INCLUDE_DIR} -Wno-deprecated"
         )
         install(TARGETS maca_sfst
                 LIBRARY DESTINATION lib)
