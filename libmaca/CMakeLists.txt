@@ -13,7 +13,7 @@ include_directories( ${CMAKE_CURRENT_BINARY_DIR}/include/ )
 #include_directories("/usr/include/sfst-1.0")
 #set(LIBS ${LIBS} "sfst1")
 
-find_package(Toki 0.4.0 REQUIRED)
+find_package(Toki 0.4.1 REQUIRED)
 set(LIBS ${LIBS} ${Toki_LIBRARY})
 
 find_package(ICU REQUIRED QUIET)
