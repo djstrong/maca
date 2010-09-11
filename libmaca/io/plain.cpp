@@ -33,7 +33,7 @@ namespace Maca {
 		os() << ">>>]]]\n\n";
 	}
 
-	PlainReader::PlainReader(std::istream &is, boost::shared_ptr<SentenceAnalyser> sa)
+	PlainReader::PlainReader(std::istream &is, const boost::shared_ptr<SentenceAnalyser>& sa)
 		: TokenReader(is, sa->tagset()), sa_(sa), chunkify_(true)
 		, sentence_buf_(NULL), token_buf_()
 	{

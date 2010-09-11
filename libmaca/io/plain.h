@@ -22,7 +22,7 @@ namespace Maca {
 	class PlainReader : public TokenReader
 	{
 	public:
-		PlainReader(std::istream& is, boost::shared_ptr<SentenceAnalyser> sa);
+		PlainReader(std::istream& is, const boost::shared_ptr<SentenceAnalyser>& sa);
 
 		Token* get_next_token();
 

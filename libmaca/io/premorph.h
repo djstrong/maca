@@ -20,10 +20,12 @@ namespace Maca {
 	class PremorphProcessor
 	{
 	public:
-		PremorphProcessor(std::ostream& os, boost::shared_ptr<Toki::Tokenizer> tok,
-				boost::shared_ptr<Maca::MorphAnalyser> ma);
+		PremorphProcessor(std::ostream& os,
+				const boost::shared_ptr<Toki::Tokenizer>& tok,
+				const boost::shared_ptr<Maca::MorphAnalyser>& ma);
 
-		PremorphProcessor(std::ostream& os, boost::shared_ptr<SentenceAnalyser> sa);
+		PremorphProcessor(std::ostream& os,
+				const boost::shared_ptr<SentenceAnalyser>& sa);
 
 		~PremorphProcessor();
 
@@ -46,10 +48,12 @@ namespace Maca {
 	class PremorphReader : public BufferedTokenReader
 	{
 	public:
-		PremorphReader(std::istream& is, boost::shared_ptr<Toki::Tokenizer> tok,
-					   boost::shared_ptr<Maca::MorphAnalyser> ma);
+		PremorphReader(std::istream& is,
+				const boost::shared_ptr<Toki::Tokenizer>& tok,
+				const boost::shared_ptr<Maca::MorphAnalyser>& ma);
 
-		PremorphReader(std::istream& is, boost::shared_ptr<SentenceAnalyser> sa);
+		PremorphReader(std::istream& is,
+				const boost::shared_ptr<SentenceAnalyser>& sa);
 
 		~PremorphReader();
 

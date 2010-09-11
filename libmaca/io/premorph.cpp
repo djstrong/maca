@@ -15,7 +15,8 @@ namespace Maca {
 	class PremorphProcessorImpl : public BasicSaxParser
 	{
 	public:
-		PremorphProcessorImpl(std::ostream& os, boost::shared_ptr<SentenceAnalyser> sp);
+		PremorphProcessorImpl(std::ostream& os,
+				const boost::shared_ptr<SentenceAnalyser>& sp);
 
 		void set_stats(bool v) {
 			stats_ = v;
@@ -38,14 +39,15 @@ namespace Maca {
 	};
 
 	PremorphProcessor::PremorphProcessor(std::ostream &os,
-			boost::shared_ptr<Toki::Tokenizer> tok,
-			boost::shared_ptr<Maca::MorphAnalyser> ma)
-	: impl_(new PremorphProcessorImpl(os, boost::make_shared<SentenceAnalyser>(tok, ma)))
+			const boost::shared_ptr<Toki::Tokenizer>& tok,
+			const boost::shared_ptr<Maca::MorphAnalyser>& ma)
+	: impl_(new PremorphProcessorImpl(os,
+			boost::make_shared<SentenceAnalyser>(tok, ma)))
 	{
 	}
 
 	PremorphProcessor::PremorphProcessor(std::ostream &os,
-			boost::shared_ptr<SentenceAnalyser> sa)
+			const boost::shared_ptr<SentenceAnalyser>& sa)
 	: impl_(new PremorphProcessorImpl(os, sa))
 	{
 	}
@@ -65,7 +67,7 @@ namespace Maca {
 	}
 
 	PremorphProcessorImpl::PremorphProcessorImpl(std::ostream& os,
-			boost::shared_ptr<SentenceAnalyser> sa)
+			const boost::shared_ptr<SentenceAnalyser>& sa)
 		: BasicSaxParser(), os_(os), sa_(sa), stats_(false), timer_()
 	{
 	}
@@ -84,7 +86,8 @@ namespace Maca {
 		}
 	}
 
-	void PremorphProcessorImpl::on_start_element(const Glib::ustring &name, const AttributeList &attributes)
+	void PremorphProcessorImpl::on_start_element(const Glib::ustring &name,
+			const AttributeList &attributes)
 	{
 		os_ << "<" << name;
 		foreach (const xmlpp::SaxParser::Attribute& a, attributes) {
@@ -99,7 +102,8 @@ namespace Maca {
 	void PremorphProcessorImpl::on_end_element(const Glib::ustring &name)
 	{
 		sa_->set_input_source(buf_);
-		sa_->process(boost::bind(&PremorphProcessorImpl::output_sentence, this, _1));
+		sa_->process(boost::bind(
+				&PremorphProcessorImpl::output_sentence, this, _1));
 		buf_.str("");
 		buf_.clear();
 		os_ << "</" << name << ">" << "\n";
@@ -124,13 +128,15 @@ namespace Maca {
 	class PremorphReaderImpl : public BasicSaxParser
 	{
 	public:
-		PremorphReaderImpl(boost::shared_ptr<SentenceAnalyser> sa, std::deque<Chunk*>& chunks);
+		PremorphReaderImpl(const boost::shared_ptr<SentenceAnalyser>& sa,
+				std::deque<Chunk*>& chunks);
 	protected:
 		void on_start_element(const Glib::ustring & name,
 				const AttributeList& attributes);
 		void on_end_element(const Glib::ustring & name);
 	private:
-		enum state_t { XS_NONE, XS_CHUNK, XS_SENTENCE, XS_TOK, XS_ORTH, XS_LEX, XS_LEMMA, XS_TAG };
+		enum state_t { XS_NONE, XS_CHUNK, XS_SENTENCE, XS_TOK, XS_ORTH, XS_LEX,
+				XS_LEMMA, XS_TAG };
 		state_t state_;
 
 		Chunk* chunk_;
@@ -139,14 +145,16 @@ namespace Maca {
 	};
 
 	PremorphReader::PremorphReader(std::istream& is,
-			boost::shared_ptr<Toki::Tokenizer> tok,
-			boost::shared_ptr<Maca::MorphAnalyser> ma)
+			const boost::shared_ptr<Toki::Tokenizer>& tok,
+			const boost::shared_ptr<Maca::MorphAnalyser>& ma)
 		: BufferedTokenReader(is, ma->tagset())
-		, impl_(new PremorphReaderImpl(boost::make_shared<SentenceAnalyser>(tok, ma), chunk_buf_))
+		, impl_(new PremorphReaderImpl(
+				boost::make_shared<SentenceAnalyser>(tok, ma), chunk_buf_))
 	{
 	}
 
-	PremorphReader::PremorphReader(std::istream& is, boost::shared_ptr<SentenceAnalyser> sa)
+	PremorphReader::PremorphReader(std::istream& is,
+			const boost::shared_ptr<SentenceAnalyser>& sa)
 		: BufferedTokenReader(is, sa->tagset())
 		, impl_(new PremorphReaderImpl(sa, chunk_buf_))
 	{
@@ -169,9 +177,11 @@ namespace Maca {
 		}
 	}
 
-	PremorphReaderImpl::PremorphReaderImpl(boost::shared_ptr<SentenceAnalyser> sa,
+	PremorphReaderImpl::PremorphReaderImpl(
+			const boost::shared_ptr<SentenceAnalyser>& sa,
 			std::deque<Chunk*> &chunks)
-		: BasicSaxParser(), state_(XS_NONE), chunk_(NULL), sa_(sa), chunks_(chunks)
+		: BasicSaxParser(), state_(XS_NONE), chunk_(NULL), sa_(sa)
+		, chunks_(chunks)
 	{
 	}
 
