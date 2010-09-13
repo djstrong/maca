@@ -45,7 +45,7 @@ namespace Maca {
 
 	XcesReader::XcesReader(const Tagset& tagset, std::istream& is,
 			bool disamb_only)
-		: BufferedTokenReader(is, tagset)
+		: BufferedTokenReader(tagset), is_(is)
 		, impl_(new XcesReaderImpl(tagset, chunk_buf_, disamb_only))
 	{
 	}

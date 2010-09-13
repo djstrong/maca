@@ -2,8 +2,8 @@
 
 namespace Maca {
 
-	TokenReader::TokenReader(std::istream& is, const Tagset& tagset)
-		: is_(is), tagset_(tagset)
+	TokenReader::TokenReader(const Tagset& tagset)
+		: tagset_(tagset)
 	{
 	}
 
@@ -11,9 +11,8 @@ namespace Maca {
 	{
 	}
 
-	BufferedTokenReader::BufferedTokenReader(std::istream& is,
-			const Tagset& tagset)
-		: TokenReader(is, tagset)
+	BufferedTokenReader::BufferedTokenReader(const Tagset& tagset)
+		: TokenReader(tagset)
 	{
 	}
 

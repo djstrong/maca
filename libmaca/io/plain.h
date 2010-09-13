@@ -32,7 +32,13 @@ namespace Maca {
 
 		Chunk* get_next_chunk();
 
+		std::istream& is() {
+			return is_;
+		}
+
 	protected:
+		std::istream& is_;
+
 		boost::shared_ptr<SentenceAnalyser> sa_;
 
 		bool chunkify_;

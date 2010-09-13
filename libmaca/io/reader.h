@@ -20,7 +20,7 @@ namespace Maca {
 	class TokenReader : public TokenSource
 	{
 	public:
-		TokenReader(std::istream& is, const Tagset& tagset);
+		TokenReader(const Tagset& tagset);
 
 		virtual ~TokenReader();
 
@@ -29,10 +29,6 @@ namespace Maca {
 		virtual Sentence* get_next_sentence() = 0;
 
 		virtual Chunk* get_next_chunk() = 0;
-
-		std::istream& is() {
-			return is_;
-		}
 
 		const Tagset& tagset() {
 			return tagset_;
@@ -82,8 +78,6 @@ namespace Maca {
 		static bool register_reader(const std::string& class_id,
 				const std::string& help = "");
 	private:
-		std::istream& is_;
-
 		const Tagset& tagset_;
 	};
 
@@ -91,7 +85,7 @@ namespace Maca {
 		TokenReader, // The base class for objects created in the factory
 		std::string, // Identifier type
 		Loki::TL::MakeTypelist<
-			std::ostream&, const Tagset&, const string_range_vector&
+			const Tagset&, const string_range_vector&
 		>::Result // TokenLayer constructor arguments' types specification
 	> TokenReaderFactoryType;
 
@@ -151,7 +145,7 @@ namespace Maca {
 	class BufferedTokenReader : public TokenReader
 	{
 	public:
-		BufferedTokenReader(std::istream& is, const Tagset& tagset);
+		BufferedTokenReader(const Tagset& tagset);
 
 		~BufferedTokenReader();
 

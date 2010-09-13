@@ -57,7 +57,13 @@ namespace Maca {
 
 		~PremorphReader();
 
+		std::istream& is() {
+			return is_;
+		}
+
 	protected:
+		std::istream& is_;
+
 		void ensure_more();
 
 		boost::scoped_ptr<PremorphReaderImpl> impl_;

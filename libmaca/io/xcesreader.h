@@ -19,8 +19,14 @@ namespace Maca {
 
 		~XcesReader();
 
+		std::istream& is() {
+			return is_;
+		}
+
 	protected:
 		void ensure_more();
+
+		std::istream& is_;
 
 		boost::scoped_ptr<XcesReaderImpl> impl_;
 	};
