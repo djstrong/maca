@@ -235,8 +235,8 @@ namespace Maca {
 			std::vector<MorfeuszEdge>& pmorf,
 			boost::function<void(Token *)>sink)
 	{
-		int node_count = 0;
 		int edge_count = pmorf.size();
+		int node_count = 0;
 		foreach (const MorfeuszEdge& mri, pmorf) {
 			node_count = std::max(node_count, mri.node_to);
 		}
@@ -277,8 +277,8 @@ namespace Maca {
 				std::vector< std::vector< Token* > > paths;
 				// follow all paths to the merge point
 				foreach (int tse, succ[current_node]) {
-					paths.push_back(std::vector<int>());
-					paths.back().push_back(tse);
+					paths.push_back(std::vector<Token*>());
+					paths.back().push_back(pmorf[tse].token);
 					int v = pmorf[tse].node_to;
 					while (prec[v].size() == 1) {
 						if (succ[v].size() != 1) {
@@ -299,7 +299,8 @@ namespace Maca {
 
 				flush_convert(paths, sink);
 				current_node = merge_node;
-			} else if (!succ[current_node].empty()) { //simple case, only one interp
+			} else if (!succ[current_node].empty()) {
+				//simple case, only one interp
 				int edge = *succ[current_node].begin();
 				unambiguous.push_back(pmorf[edge].token);
 				if (pmorf[edge].node_to != current_node + 1) {
