@@ -9,9 +9,11 @@
 namespace Maca {
 
 	/// Helper struct for holding preprocessed Morfeusz results
-	struct MorfeuszResultItem
+	struct MorfeuszEdge
 	{
-		int p, k;
+		explicit MorfeuszEdge(const InterpMorf& morf);
+
+		int node_from, node_to;
 		UnicodeString orth;
 		UnicodeString lemma;
 		std::string tag_string;
@@ -45,7 +47,7 @@ namespace Maca {
 	public:
 		/// Constructor
 		MorfeuszError(const std::string& error, const std::string input,
-			const std::vector<MorfeuszResultItem>& interp);
+			const std::vector<MorfeuszEdge>& interp);
 
 		/// Destructor
 		~MorfeuszError() throw();
@@ -57,7 +59,7 @@ namespace Maca {
 		std::string error, input;
 
 		/// The structure returned by Morfeusz during the error, if available
-		std::vector<MorfeuszResultItem> interp;
+		std::vector<MorfeuszEdge> interp;
 	};
 
 	/**
@@ -108,10 +110,10 @@ namespace Maca {
 
 		/// helper to create a token from a Morfeusz interpretation struct
 		Token* make_token(const Toki::Token& t,
-				const MorfeuszResultItem& m) const;
+				const MorfeuszEdge& m) const;
 
 		/// helper to add lexemes from a Morfeusz interp struct into a token
-		void morfeusz_into_token(Token* tt, const MorfeuszResultItem& m) const;
+		void morfeusz_into_token(Token* tt, const MorfeuszEdge& m) const;
 
 		/// convert gathered tokens and pass them to the sink
 		void flush_convert(std::vector<Token*>& vec,
@@ -129,6 +131,10 @@ namespace Maca {
 		static bool registered;
 
 	private:
+		bool process_complex_analysis(const Toki::Token &t,
+				std::vector<MorfeuszEdge>& pmorf,
+				boost::function<void(Token *)>sink);
+
 		void load_morfeusz_library();
 
 		/// the tagset converter
