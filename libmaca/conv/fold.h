@@ -39,8 +39,8 @@ namespace Maca {
 		 * Discard all paths' tokens except for the path with the given index,
 		 * and feed the remaining path's tokens to the sink function object.
 		 */
-		std::vector<Token*> choose_path(const std::vector< std::vector<Token*> >& v,
-				size_t n);
+		std::vector<Token*> choose_path(
+				const std::vector< std::vector<Token*> >& v, size_t n);
 
 		/**
 		 * Discard all paths' tokens except for the path with the given index,
@@ -53,7 +53,8 @@ namespace Maca {
 		 * Find the shortest pathin the paths vector and return it, and dispose
 		 * of the other paths' tokens.
 		 */
-		std::vector<Token*> choose_shortest_path(const std::vector< std::vector<Token*> >& v);
+		std::vector<Token*> choose_shortest_path(
+				const std::vector< std::vector<Token*> >& v);
 
 		/**
 		 * Find the shortest pathin the paths vector and feed its tokens to the

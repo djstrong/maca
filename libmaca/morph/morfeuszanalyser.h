@@ -1,4 +1,4 @@
-#ifndef LIBMACA_MORFEUSZANALYSER_H
+#ifndef LIBMACA_MORFEUSZANALYSER_Hs
 #define LIBMACA_MORFEUSZANALYSER_H
 
 #include <libmaca/morph/morphanalyser.h>
@@ -74,8 +74,10 @@ namespace Maca {
 		 * Constructor for a Morfeusz analyser with a given tagset and converter.
 		 * The tagset should be the output tagset of the converter.
 		 */
-		MorfeuszAnalyser(const Tagset* tagset, Conversion::TagsetConverter* conv,
-						 const std::string& libname, const std::string& require_version);
+		MorfeuszAnalyser(const Tagset* tagset,
+				Conversion::TagsetConverter* conv,
+				const std::string& libname,
+				const std::string& require_version);
 
 		/**
 		 * Config node constructor. Recognized keys are:
@@ -101,20 +103,24 @@ namespace Maca {
 		~MorfeuszAnalyser();
 
 		/// MorphAnalyser override
-		bool process_functional(const Toki::Token &t, boost::function<void(Token *)>sink);
+		bool process_functional(const Toki::Token &t,
+				boost::function<void(Token *)> sink);
 
 		/// helper to create a token from a Morfeusz interpretation struct
-		Token* make_token(const Toki::Token& t, const MorfeuszResultItem& m) const;
+		Token* make_token(const Toki::Token& t,
+				const MorfeuszResultItem& m) const;
 
 		/// helper to add lexemes from a Morfeusz interp struct into a token
-		void morfeusz_into_token(Token* tt,  const MorfeuszResultItem& m) const;
+		void morfeusz_into_token(Token* tt, const MorfeuszResultItem& m) const;
 
 		/// convert gathered tokens and pass them to the sink
-		void flush_convert(std::vector<Token*>& vec, boost::function<void(Token *)>sink);
+		void flush_convert(std::vector<Token*>& vec,
+				boost::function<void(Token *)> sink);
 
 		/// convert gethered tokens (ambiguously segmented), try folding and
 		/// pass the resulting tokens to the sink
-		void flush_convert(std::vector< std::vector<Token*> >& vec, boost::function<void(Token *)>sink);
+		void flush_convert(std::vector< std::vector<Token*> >& vec,
+				boost::function<void(Token *)> sink);
 
 		/// Class identifier
 		static const char* identifier;

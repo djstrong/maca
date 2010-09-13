@@ -24,7 +24,8 @@ namespace Maca {
 		/**
 		 * Convenience creation function from a config name
 		 */
-		static boost::shared_ptr<DispatchAnalyser> create_from_named_config(const std::string& config_name);
+		static boost::shared_ptr<DispatchAnalyser> create_from_named_config(
+				const std::string& config_name);
 
 		/// Destructor
 		~DispatchAnalyser();
@@ -33,7 +34,8 @@ namespace Maca {
 		DispatchAnalyser* clone() const;
 
 		/// MorphAnalyser override
-		bool process_functional(const Toki::Token &t, boost::function<void (Token*)> sink);
+		bool process_functional(const Toki::Token &t,
+				boost::function<void (Token*)> sink);
 
 		/**
 		 * Handler adding function. The passed analyser should have the same

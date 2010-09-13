@@ -4,7 +4,8 @@
 
 namespace Maca {
 
-	XcesWriter::XcesWriter(std::ostream& os, const Tagset& tagset, const string_range_vector& params)
+	XcesWriter::XcesWriter(std::ostream& os, const Tagset& tagset,
+			const string_range_vector& params)
 		: TokenWriter(os, tagset, params), cid_(0)
 		, use_indent_(true), force_chunk_(false), force_disamb_(false)
 		, sort_tags_(false), split_chunks_on_newlines_(false)

@@ -14,7 +14,8 @@ namespace Maca {
 	class XcesReader : public BufferedTokenReader
 	{
 	public:
-		XcesReader(const Tagset& tagset, std::istream& is, bool disamb_only = false);
+		XcesReader(const Tagset& tagset, std::istream& is,
+				bool disamb_only = false);
 
 		~XcesReader();
 

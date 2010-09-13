@@ -7,7 +7,8 @@ namespace Maca {
 
 	class XcesWriter : public TokenWriter {
 	public:
-		XcesWriter(std::ostream& os, const Tagset& tagset, const string_range_vector& params);
+		XcesWriter(std::ostream& os, const Tagset& tagset,
+				const string_range_vector& params);
 
 		~XcesWriter();
 

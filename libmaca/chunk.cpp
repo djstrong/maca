@@ -40,7 +40,8 @@ namespace Maca {
 		}
 	}
 
-	void Chunk::set_attribute(const std::string &name, const std::string &value)
+	void Chunk::set_attribute(const std::string &name,
+			const std::string &value)
 	{
 		attributes_[name] = value;
 	}

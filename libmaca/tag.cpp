@@ -20,7 +20,8 @@ namespace Maca {
 	{
 	}
 
-	Tag::Tag(tagset_idx_t tagset_id, pos_idx_t pos, const std::vector<value_idx_t> &values)
+	Tag::Tag(tagset_idx_t tagset_id, pos_idx_t pos,
+			const std::vector<value_idx_t> &values)
 		: pos_id_(pos), values_(values), tagset_id_(tagset_id)
 	{
 	}
@@ -52,7 +53,8 @@ namespace Maca {
 						&& (values_.size() < other.values_.size()
 						|| (values_.size() == other.values_.size()
 							&& memcmp(&values_[0], &other.values_[0],
-								std::min(values_.size(), other.values_.size())) < 0)))));
+								std::min(values_.size(),
+									other.values_.size())) < 0)))));
 	}
 
 	bool Tag::operator ==(const Tag& other) const

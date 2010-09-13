@@ -38,7 +38,8 @@ namespace Maca {
 		void load_m_dictionary(const std::string& fn);
 
 		/// MorphAnalyser override
-		bool process_functional(const Toki::Token &t, boost::function<void (Token*)> sink);
+		bool process_functional(const Toki::Token &t,
+				boost::function<void (Token*)> sink);
 
 		/// Class identifier
 		static const char* identifier;
@@ -54,7 +55,8 @@ namespace Maca {
 	/// Helper struct for ICU string caseless compare
 	struct IcuStringCaselessCompare
 	{
-		bool operator()(const UnicodeString& u1, const UnicodeString& u2) const {
+		bool operator()(const UnicodeString& u1,
+				const UnicodeString& u2) const {
 			return u1.caseCompare(u2, 0) < 0;
 		}
 	};
@@ -71,7 +73,8 @@ namespace Maca {
 	/// Helper struct for ICU string caseless compare and hashing
 	struct IcuStringCaselessEqual
 	{
-		bool operator()(const UnicodeString& u1, const UnicodeString& u2) const {
+		bool operator()(const UnicodeString& u1,
+				const UnicodeString& u2) const {
 			return u1.caseCompare(u2, 0) == 0;
 		}
 
@@ -162,20 +165,24 @@ namespace Maca {
 			}
 			if (i + 1 < len) {
 				std::vector< std::string > v;
-				string_range r(buf + i, buf + len - 1); // do not include the trailing null
-				boost::algorithm::split(v, r, boost::is_any_of("\t "), boost::algorithm::token_compress_on);
+				// do not include the trailing null
+				string_range r(buf + i, buf + len - 1);
+				boost::algorithm::split(v, r, boost::is_any_of("\t "),
+						boost::algorithm::token_compress_on);
 				if (v.size() == 3) {
 					const UnicodeString& key = UnicodeString::fromUTF8(v[0]);
 					map_[key].push_back(std::make_pair(v[1], v[2]));
 				} else {
-					std::cerr << "Invalid map line (" << v.size() << "): " << buf << "\n";
+					std::cerr << "Invalid map line (" << v.size() << "): "
+							<< buf << "\n";
 				}
 			}
 		}
 	}
 
 	template<typename MapT>
-	bool MapAnalyser<MapT>::process_functional(const Toki::Token &t, boost::function<void (Token*)> sink)
+	bool MapAnalyser<MapT>::process_functional(const Toki::Token &t,
+			boost::function<void (Token*)> sink)
 	{
 		typename MapT::const_iterator i;
 		const UnicodeString& key = t.orth();

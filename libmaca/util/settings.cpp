@@ -19,7 +19,8 @@ namespace Maca {
 
 	Config::Node get_named_config(const std::string &id)
 	{
-		std::string fn = Path::Instance().find_file_or_throw(id + ".ini", "analyser config");
+		std::string fn = Path::Instance().find_file_or_throw(
+				id + ".ini", "analyser config");
 		return Config::from_file(fn);
 	}
 

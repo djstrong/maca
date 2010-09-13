@@ -7,7 +7,8 @@
 
 namespace Maca {
 
-	TokenWriter::TokenWriter(std::ostream& os, const Tagset& tagset, const string_range_vector& /*params*/)
+	TokenWriter::TokenWriter(std::ostream& os, const Tagset& tagset,
+			const string_range_vector& /*params*/)
 		: os_(os), tagset_(tagset), needs_footer_(true), indent_(0)
 	{
 	}
@@ -54,7 +55,8 @@ namespace Maca {
 			const Tagset& tagset,
 			const string_range_vector& params)
 	{
-		return TokenWriterFactorySingleton::Instance().factory.CreateObject(class_id, os, tagset, params);
+		return TokenWriterFactorySingleton::Instance().factory.CreateObject(
+				class_id, os, tagset, params);
 	}
 
 	TokenWriter* TokenWriter::create(const std::string class_id_params,
@@ -62,10 +64,12 @@ namespace Maca {
 			const Tagset& tagset)
 	{
 		string_range_vector params;
-		boost::algorithm::split(params, class_id_params, boost::is_any_of(","));
+		boost::algorithm::split(params, class_id_params,
+								boost::is_any_of(std::string(",")));
 		std::string class_id = boost::copy_range<std::string>(params[0]);
 		params.erase(params.begin(), params.begin() + 1);
-		return TokenWriterFactorySingleton::Instance().factory.CreateObject(class_id, os, tagset, params);
+		return TokenWriterFactorySingleton::Instance().factory.CreateObject(
+				class_id, os, tagset, params);
 	}
 
 	std::vector<std::string> TokenWriter::available_writer_types()

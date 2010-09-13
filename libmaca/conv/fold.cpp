@@ -4,7 +4,8 @@
 
 namespace Maca { namespace Conversion {
 
-	size_t find_shortest(const std::vector<std::vector<Token *> >& v, size_t& min_len_path)
+	size_t find_shortest(const std::vector<std::vector<Token *> >& v,
+			size_t& min_len_path)
 	{
 		size_t min_len = v[0].size();
 		min_len_path = 0;
@@ -53,7 +54,8 @@ namespace Maca { namespace Conversion {
 		return true;
 	}
 
-	std::vector<Token*> choose_path(const std::vector< std::vector<Token*> >& v, size_t n)
+	std::vector<Token*> choose_path(
+			const std::vector< std::vector<Token*> >& v, size_t n)
 	{
 		assert(n < v.size());
 		for (size_t i = 0; i < v.size(); ++i) {
@@ -82,7 +84,8 @@ namespace Maca { namespace Conversion {
 		}
 	}
 
-	std::vector<Token*> choose_shortest_path(const std::vector< std::vector<Token*> >& v)
+	std::vector<Token*> choose_shortest_path(
+			const std::vector< std::vector<Token*> >& v)
 	{
 		size_t min_len_path;
 		find_shortest(v, min_len_path);

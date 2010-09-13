@@ -10,11 +10,13 @@
 namespace Maca {
 
 	DispatchAnalyser::DispatchAnalyser(const Tagset* tagset)
-		: MorphAnalyser(tagset), type_handlers_(), analysers_(), default_(), fallback_(NULL)
+		: MorphAnalyser(tagset), type_handlers_(), analysers_(), default_()
+		, fallback_(NULL)
 	{
 	}
 
-	boost::shared_ptr<DispatchAnalyser> DispatchAnalyser::create_from_named_config(const std::string& config_name)
+	boost::shared_ptr<DispatchAnalyser> DispatchAnalyser::create_from_named_config(
+			const std::string& config_name)
 	{
 		const Config::Node& cfg = get_named_config(config_name);
 		return boost::make_shared<DispatchAnalyser>(cfg);
@@ -22,8 +24,9 @@ namespace Maca {
 
 	namespace {
 		/**
-		 * Helper class to cache morph analysers with the same id for the duration
-		 * of the construction of a DispatchAnalyser from a config object
+		 * Helper class to cache morph analysers with the same id for the
+		 * duration of the construction of a DispatchAnalyser from a config
+		 * object
 		 */
 		class MaCreator
 		{
@@ -31,13 +34,15 @@ namespace Maca {
 			/// Constructor
 			MaCreator(const Tagset& tagset, const Config::Node& cfg);
 
-			/// Destructor, disposes of all created analysers unless okay was called
+			/// Destructor, disposes of all created analysers unless okay was
+			/// called
 			~MaCreator();
 
 			/// caching getter for a morph analyser with a given id
 			MorphAnalyser* get_ma(const std::string& id, bool autoload);
 
-			/// Okay flag setter (do not dispose of created analysers at destruction)
+			/// Okay flag setter (do not dispose of created analysers at
+			/// destruction)
 			void okay();
 		private:
 			/// The config object
@@ -85,7 +90,8 @@ namespace Maca {
 			try {
 				cfgp = &cfg_.get_child("ma:" + id);
 			} catch (boost::property_tree::ptree_error& e) {
-				throw MacaError("Morph analyser identifier not found in config");
+				throw MacaError(
+						"Morph analyser identifier not found in config");
 			}
 			std::string id = cfgp->get("class", "");
 			MorphAnalyser* ma(NULL);
@@ -97,10 +103,12 @@ namespace Maca {
 						try {
 							ma = MorphAnalyser::create(id, *cfgp);
 						} catch (MorphAnalyserFactoryException&) {
-							throw MacaError("Unknown analyser type: " + id + " (plugin found but create failed)");
+							throw MacaError("Unknown analyser type: " + id +
+									" (plugin found but create failed)");
 						}
 					} else {
-						throw MacaError("Unknown analyser type: " + id + " (plugin not found)");
+						throw MacaError("Unknown analyser type: " + id +
+								" (plugin not found)");
 					}
 				} else {
 					throw MacaError("Unknown analyser type: " + id);
@@ -109,7 +117,8 @@ namespace Maca {
 
 			if (ma->tagset().id() != tagset_.id()) {
 				std::auto_ptr<MorphAnalyser> aptr(ma);
-				throw TagsetMismatch("Morph analyser creation : " + id, tagset_, ma->tagset());
+				throw TagsetMismatch("Morph analyser creation : " + id,
+						tagset_, ma->tagset());
 			}
 			amap_.insert(std::make_pair(id, ma));
 			return ma;
@@ -117,7 +126,8 @@ namespace Maca {
 	}
 
 	DispatchAnalyser::DispatchAnalyser(const Config::Node &cfg)
-		: MorphAnalyser(cfg.get_child("general")), type_handlers_(), analysers_(), default_(), fallback_(NULL)
+		: MorphAnalyser(cfg.get_child("general")), type_handlers_()
+		, analysers_(), default_(), fallback_(NULL)
 	{
 		const Config::Node* dnp = NULL;
 		try {
@@ -160,7 +170,8 @@ namespace Maca {
 				std::vector<std::string> ttv;
 				foreach (const Config::Node::value_type &vv, v.second) {
 					if (vv.first == "toki_type") {
-						boost::algorithm::split(ttv, vv.second.data(), boost::is_any_of(" ,"));
+						boost::algorithm::split(ttv, vv.second.data()
+								, boost::is_any_of(std::string(" ,")));
 					}
 				}
 				if (ttv.empty()) {
@@ -168,7 +179,8 @@ namespace Maca {
 				}
 				foreach (const Config::Node::value_type &vv, v.second) {
 					if (vv.first == "ma") {
-						MorphAnalyser* ma = mc.get_ma(vv.second.data(), autoload);
+						MorphAnalyser* ma = mc.get_ma(vv.second.data(),
+								autoload);
 						foreach (const std::string& s, ttv) {
 							add_type_handler(s, ma);
 						}
@@ -214,14 +226,19 @@ namespace Maca {
 		return copy;
 	}
 
-	void DispatchAnalyser::add_type_handler(const std::string &type, MorphAnalyser *a)
+	void DispatchAnalyser::add_type_handler(const std::string &type,
+			MorphAnalyser *a)
 	{
-		if (a->tagset().id() != tagset().id()) throw TagsetMismatch("dispatch analyser handler", tagset(), a->tagset());
+		if (a->tagset().id() != tagset().id()) {
+			throw TagsetMismatch("dispatch analyser handler", tagset(),
+					a->tagset());
+		}
 		analysers_.insert(a);
 		type_handlers_[type].push_back(a);
 	}
 
-	bool DispatchAnalyser::process_functional(const Toki::Token &t, boost::function<void (Token*)> sink)
+	bool DispatchAnalyser::process_functional(const Toki::Token &t,
+			boost::function<void (Token*)> sink)
 	{
 		std::map<std::string, std::vector<MorphAnalyser*> >::const_iterator i;
 		i = type_handlers_.find(t.type());
@@ -237,7 +254,9 @@ namespace Maca {
 		if (fallback_) {
 			return fallback_->process_functional(t, sink);
 		} else {
-			throw MacaError("Token was not processed by any of the analysers and there is no fallback: " + t.orth_utf8() + "");
+			throw MacaError(
+					"Token was not processed by any of the analysers "
+					"and there is no fallback: " + t.orth_utf8() + "");
 			return false;
 		}
 	}

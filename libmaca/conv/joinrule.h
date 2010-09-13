@@ -31,7 +31,8 @@ namespace Maca { namespace Conversion {
 		/**
 		 * Constructor.
 		 *
-		 * A newly created JoinRule has no conditions and will always join tokens.
+		 * A newly created JoinRule has no conditions and will always join
+		 * tokens.
 		 *
 		 */
 		explicit JoinRule(const Tagset& tagset);
@@ -71,15 +72,18 @@ namespace Maca { namespace Conversion {
 		void set_token1_preconditions(const PosOrthPredicate& pre);
 
 		/// Setter for token 1 preconditions, string version
-		void set_token1_preconditions(const std::string& pos, const UnicodeString& orth);
+		void set_token1_preconditions(const std::string& pos,
+				const UnicodeString& orth);
 
 		/// Setter for token 2 preconditions
 		void set_token2_preconditions(const PosOrthPredicate& pre);
 
 		/// Setter for token 2 preconditions, string version
-		void set_token2_preconditions(const std::string& pos, const UnicodeString& orth);
+		void set_token2_preconditions(const std::string& pos,
+				const UnicodeString& orth);
 
-		/// Setter for the list of attriutes to copy from token2 to the joined token
+		/// Setter for the list of attriutes to copy from token2 to the joined
+		/// token
 		void set_copy_attrs(const std::vector<attribute_idx_t>& v);
 
 		/// Adder for the copy attributes list, string version

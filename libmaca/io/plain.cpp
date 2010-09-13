@@ -3,7 +3,8 @@
 
 namespace Maca {
 
-	PlainWriter::PlainWriter(std::ostream& os, const Tagset& tagset, const string_range_vector& params)
+	PlainWriter::PlainWriter(std::ostream& os, const Tagset& tagset,
+			const string_range_vector& params)
 		: TokenWriter(os, tagset, params)
 	{
 	}
@@ -12,7 +13,8 @@ namespace Maca {
 	{
 		os() << t.orth_utf8() << "\n";
 		foreach (const Lexeme& lex, t.lexemes()) {
-			os() << "\t" << lex.lemma_utf8() << "\t" << tagset().tag_to_string(lex.tag()) << "\n";
+			os() << "\t" << lex.lemma_utf8() << "\t"
+				<< tagset().tag_to_string(lex.tag()) << "\n";
 		}
 	}
 	void PlainWriter::write_sentence(const Sentence &s)
@@ -33,7 +35,8 @@ namespace Maca {
 		os() << ">>>]]]\n\n";
 	}
 
-	PlainReader::PlainReader(std::istream &is, const boost::shared_ptr<SentenceAnalyser>& sa)
+	PlainReader::PlainReader(std::istream &is,
+			const boost::shared_ptr<SentenceAnalyser>& sa)
 		: TokenReader(is, sa->tagset()), sa_(sa), chunkify_(true)
 		, sentence_buf_(NULL), token_buf_()
 	{
@@ -46,7 +49,8 @@ namespace Maca {
 		while (token_buf_.empty() && more) {
 			Sentence* s = get_next_sentence();
 			if (s != NULL) {
-				std::copy(s->tokens().begin(), s->tokens().end(), std::back_inserter(token_buf_));
+				std::copy(s->tokens().begin(), s->tokens().end(),
+					std::back_inserter(token_buf_));
 			} else {
 				more = false;
 			}
@@ -80,7 +84,8 @@ namespace Maca {
 			Chunk* c = new Chunk;
 			c->append(s);
 			s = get_next_sentence();
-			while (s != NULL && (!chunkify_ || s->first_token()->wa() != Toki::Whitespace::ManyNewlines)) {
+			while (s != NULL && (!chunkify_ || s->first_token()->wa() !=
+					Toki::Whitespace::ManyNewlines)) {
 				c->append(s);
 				s = get_next_sentence();
 			}

@@ -44,7 +44,8 @@ namespace Maca { namespace Conversion {
 		 * Layer adder. The output tagset of the last layer must match the
 		 * input layer of the layer being added, the first layer's input tagset
 		 * is the input tagset of the entire converter, and similarily the
-		 * output tagset of the las layer is the output tagset of the converter.
+		 * output tagset of the las layer is the output tagset of the
+		 * converter.
 		 */
 		void add_layer(Layer* cl);
 
@@ -67,9 +68,12 @@ namespace Maca { namespace Conversion {
 		 * Helper to convert a container.
 		 */
 		template<class T>
-		void convert_container(const T& container, boost::function<void (Token*)> sink)
+		void convert_container(const T& container,
+				boost::function<void (Token*)> sink)
 		{
-			RangeSource< boost::iterator_range<typename T::const_iterator> > src(container);
+			RangeSource<
+				boost::iterator_range<typename T::const_iterator>
+			> src(container);
 			convert(&src, sink);
 		}
 
@@ -80,11 +84,12 @@ namespace Maca { namespace Conversion {
 				boost::function<void (Token*)> sink);
 
 		/**
-		 * Helper to convert a multi-path analysis, with path folding if possible
-		 * and shortest-path selection as a fallback.
+		 * Helper to convert a multi-path analysis, with path folding if
+		 * possible and shortest-path selection as a fallback.
 		 */
 		void convert_ambiguous(const std::vector< std::vector<Token*> >& v,
-				boost::function<void (Token*)> sink, bool warn_on_failure = true);
+				boost::function<void (Token*)> sink,
+				bool warn_on_failure = true);
 
 		Sentence* convert_sentence(Sentence* s);
 

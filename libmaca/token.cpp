@@ -53,7 +53,8 @@ namespace Maca {
 	{
 		size_t old_size = lexemes_.size();
 		std::sort(lexemes_.begin(), lexemes_.end());
-		lexemes_.erase(std::unique(lexemes_.begin(), lexemes_.end()), lexemes_.end());
+		lexemes_.erase(std::unique(lexemes_.begin(), lexemes_.end()),
+				lexemes_.end());
 		return old_size != lexemes_.size();
 	}
 

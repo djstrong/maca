@@ -41,7 +41,8 @@ namespace Maca {
 		Tag(tagset_idx_t tagset_id, pos_idx_t pos);
 
 		/// Tagset-POS-values constructor
-		Tag(tagset_idx_t tagset_id, pos_idx_t pos, const std::vector<value_idx_t>& values);
+		Tag(tagset_idx_t tagset_id, pos_idx_t pos,
+				const std::vector<value_idx_t>& values);
 
 		/// POS (part-of-speech) accesor
 		pos_idx_t pos_id() const {

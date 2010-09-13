@@ -42,7 +42,8 @@ namespace Maca {
 			id_cache_.insert(std::make_pair(ptr->id(), ptr));
 			ptr->set_name(name);
 			if (Path::Instance().get_verbose()) {
-				std::cerr << "Tagset '" << name << " loaded with id " << (int)ptr->id() << "\n";
+				std::cerr << "Tagset '" << name << " loaded with id "
+					<< (int)ptr->id() << "\n";
 			}
 		}
 		return *ptr;
@@ -57,7 +58,8 @@ namespace Maca {
 		return *ptr;
 	}
 
-	boost::shared_ptr<Tagset> TagsetManager::get_cache_entry(const std::string &name)
+	boost::shared_ptr<Tagset> TagsetManager::get_cache_entry(
+			const std::string &name)
 	{
 		cache_t::const_iterator i = cache_.find(name);
 		if (i == cache_.end()) {

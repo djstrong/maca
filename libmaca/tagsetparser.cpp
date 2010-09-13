@@ -19,7 +19,8 @@ namespace Maca {
 		return load_ini(ifs);
 	}
 
-	void TagsetParser::save_ini(const Tagset &tagset, const std::string &filename)
+	void TagsetParser::save_ini(const Tagset &tagset,
+			const std::string &filename)
 	{
 		std::ofstream ofs(filename.c_str());
 		save_ini(tagset, ofs);
@@ -57,7 +58,8 @@ namespace Maca {
 				boost::algorithm::split(v, line, boost::is_any_of(sep),
 						boost::algorithm::token_compress_on);
 				if (v.size() < 3) {
-					throw TagsetParseError("Attribute with less than 2 values", line_no, line);
+					throw TagsetParseError("Attribute with less than 2 values",
+							line_no, line);
 				}
 				if (!symbols.insert(v[0]).second) {
 					throw TagsetParseError("Duplicate symbol", line_no, v[0]);
@@ -75,9 +77,10 @@ namespace Maca {
 		}
 
 		std::vector<std::string> vec;
-		std::copy(values.begin(), values.end(), std::inserter(vec, vec.begin()));
+		std::copy(values.begin(), values.end(),
+				std::inserter(vec, vec.begin()));
 		if (vec[0] != "@null") {
-			throw TagsetParseError("First value is not '@null'", line_no, vec[0]);
+			throw TagsetParseError("First value not '@null'", line_no, vec[0]);
 		}
 		tagset.value_dict_.load_sorted_data(vec);
 
@@ -85,10 +88,13 @@ namespace Maca {
 		tagset.value_attribute_.resize(values.size());
 		foreach (const vmap_t::value_type v, vmap) {
 			vec.push_back(v.first);
-			tagset.attribute_values_.resize(tagset.attribute_values_.size() + 1);
+			tagset.attribute_values_.resize(
+					tagset.attribute_values_.size() + 1);
 			foreach (const std::string& s, v.second) {
-				tagset.attribute_values_.back().push_back(tagset.value_dict_.get_id(s));
-				tagset.value_attribute_[tagset.value_dict_.get_id(s)] = vec.size() - 1;
+				tagset.attribute_values_.back().push_back(
+						tagset.value_dict_.get_id(s));
+				value_idx_t v = tagset.value_dict_.get_id(s);
+				tagset.value_attribute_[v] = vec.size() - 1;
 			}
 		}
 		tagset.attribute_dict_.load_sorted_data(vec);
@@ -116,7 +122,8 @@ namespace Maca {
 					}
 					attribute_idx_t a = tagset.attribute_dict_.get_id(s);
 					if (!tagset.attribute_dict_.is_id_valid(a)) {
-						throw TagsetParseError("Attribute name invalid", line_no, s);
+						throw TagsetParseError("Attribute name invalid",
+								line_no, s);
 					}
 					pattrs.push_back(a);
 					req_mask[a] = required;
@@ -129,7 +136,8 @@ namespace Maca {
 		foreach (const pmap_t::value_type v, pmap) {
 			vec.push_back(v.first);
 			tagset.pos_attributes_.push_back(v.second);
-			tagset.pos_valid_attributes_.push_back(std::vector<bool>(tagset.attribute_values_.size(), false));
+			tagset.pos_valid_attributes_.push_back(
+					std::vector<bool>(tagset.attribute_values_.size(), false));
 			foreach (attribute_idx_t a, v.second) {
 				tagset.pos_valid_attributes_.back()[a] = true;
 			}

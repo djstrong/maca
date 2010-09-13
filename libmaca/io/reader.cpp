@@ -11,7 +11,8 @@ namespace Maca {
 	{
 	}
 
-	BufferedTokenReader::BufferedTokenReader(std::istream& is, const Tagset& tagset)
+	BufferedTokenReader::BufferedTokenReader(std::istream& is,
+			const Tagset& tagset)
 		: TokenReader(is, tagset)
 	{
 	}
@@ -36,7 +37,8 @@ namespace Maca {
 			ensure_more();
 			Sentence* s = get_next_sentence();
 			if (s != NULL) {
-				std::copy(s->tokens().begin(), s->tokens().end(), std::back_inserter(token_buf_));
+				std::copy(s->tokens().begin(), s->tokens().end(),
+						std::back_inserter(token_buf_));
 			} else {
 				more = false;
 			}
@@ -57,7 +59,8 @@ namespace Maca {
 			ensure_more();
 			Chunk* c = get_next_chunk();
 			if (c != NULL) {
-				std::copy(c->sentences().begin(), c->sentences().end(), std::back_inserter(sentence_buf_));
+				std::copy(c->sentences().begin(), c->sentences().end(),
+						std::back_inserter(sentence_buf_));
 			} else {
 				more = false;
 			}

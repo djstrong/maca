@@ -1,6 +1,7 @@
 #ifndef LIBMACA_SYMBOLDICTIONARY_H
 #define LIBMACA_SYMBOLDICTIONARY_H
 
+#include <libmaca/typedefs.h>
 #include <vector>
 #include <string>
 #include <boost/range.hpp>
@@ -17,7 +18,8 @@ namespace Maca {
 	 *
 	 * The class is templated on the index type, which should be some form of
 	 * an integer. The amount of used indices should be less than the maximum
-	 * value of the type. There should be no empty strings or duplicate strings.
+	 * value of the type. There should be no empty strings or duplicate
+	 * strings.
 	 */
 	template <typename IndexT>
 	class SymbolDictionary
@@ -29,8 +31,8 @@ namespace Maca {
 		/// Load data into the dictionary
 		void load_data(const std::vector<std::string>& data);
 
-		/// Load data into the dictionary. The strings in the vector are assumed
-		/// to be already sorted.
+		/// Load data into the dictionary. The strings in the vector are
+		/// assumed to be already sorted.
 		void load_sorted_data(const std::vector<std::string>& data);
 
 		/// Check if an index is valid in this dictionary
@@ -53,7 +55,7 @@ namespace Maca {
 		 * @returns a valid index into this dictionary, or an index equivalent
 		 * to -1
 		 */
-		IndexT get_id(const boost::iterator_range<std::string::const_iterator>& r) const;
+		IndexT get_id(const string_range& r) const;
 
 		/// Get the string identifier for a valid index into the dictionary.
 		/// If the index is not valid, an empty string is returned.
@@ -61,7 +63,8 @@ namespace Maca {
 
 		/// Plumbing allow foreach() iteration through the dictionary objects
 		typedef typename std::vector<std::string>::iterator iterator;
-		typedef typename std::vector<std::string>::const_iterator const_iterator;
+		typedef typename std::vector<std::string>::const_iterator
+				const_iterator;
 		typedef typename std::vector<std::string>::value_type value_type;
 
 		iterator begin() {
@@ -106,14 +109,16 @@ namespace Maca {
 	}
 
 	template <typename IndexT>
-	void SymbolDictionary<IndexT>::load_data(const std::vector<std::string> &data)
+	void SymbolDictionary<IndexT>::load_data(
+			const std::vector<std::string> &data)
 	{
 		data_ = data;
 		std::sort(data_.begin(), data_.end());
 	}
 
 	template <typename IndexT>
-	void SymbolDictionary<IndexT>::load_sorted_data(const std::vector<std::string> &data)
+	void SymbolDictionary<IndexT>::load_sorted_data(
+			const std::vector<std::string> &data)
 	{
 		data_ = data;
 	}
@@ -137,7 +142,7 @@ namespace Maca {
 	}
 
 	template <typename IndexT>
-	IndexT SymbolDictionary<IndexT>::get_id(const boost::iterator_range<std::string::const_iterator>& r) const
+	IndexT SymbolDictionary<IndexT>::get_id(const string_range& r) const
 	{
 		//std::cerr << "get_id called with '" << r << "' (" << r.size() << ")\n";
 		boost::sub_range< const std::vector<std::string> > sr =
@@ -161,7 +166,8 @@ namespace Maca {
 	}
 
 	template <typename IndexT>
-	void SymbolDictionary<IndexT>::create_mapping_to(const SymbolDictionary<IndexT> &other,
+	void SymbolDictionary<IndexT>::create_mapping_to(
+			const SymbolDictionary<IndexT> &other,
 			std::map<IndexT, IndexT> &map) const
 	{
 		for (IndexT i = static_cast<IndexT>(0); i < size(); ++i) {

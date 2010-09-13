@@ -20,11 +20,12 @@ U_NAMESPACE_END
 namespace Maca {
 
 	/**
-	 * A lexeme bundles together a dictionary form (lemma) and a morphosyntactic
-	 * tag (tag).
+	 * A lexeme bundles together a dictionary form (lemma) and a
+	 * morphosyntactic tag (tag).
 	 */
 	class Lexeme
-		: boost::equality_comparable<Lexeme>, boost::less_than_comparable<Lexeme>
+		: boost::equality_comparable<Lexeme>
+		, boost::less_than_comparable<Lexeme>
 	{
 	public:
 		/// Null lexeme creation

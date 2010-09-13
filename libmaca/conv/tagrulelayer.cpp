@@ -10,7 +10,8 @@ namespace Maca { namespace Conversion {
 	}
 
 	TagRuleLayer::TagRuleLayer(const Config::Node& cfg)
-		: OneTagsetLayer(get_named_tagset(cfg.get<std::string>("tagset"))), rules_()
+		: OneTagsetLayer(get_named_tagset(cfg.get<std::string>("tagset")))
+		, rules_()
 	{
 		append_rule(cfg);
 	}
@@ -69,11 +70,16 @@ namespace Maca { namespace Conversion {
 	{
 		append_rule(cfg);
 		std::string regexp_string = cfg.get("regexp", "");
+		UnicodeString u_regexp_string = UnicodeString::fromUTF8(regexp_string);
 		UErrorCode status = U_ZERO_ERROR;
-		pattern_.reset(RegexPattern::compile(UnicodeString::fromUTF8(regexp_string), 0, status));
-		if (!U_SUCCESS(status)) throw MacaError("Regexp failed to compile: " + regexp_string);
+		pattern_.reset(RegexPattern::compile(u_regexp_string, 0, status));
+		if (!U_SUCCESS(status)) {
+			throw MacaError("Regexp failed to compile: " + regexp_string);
+		}
 		matcher_.reset(pattern_->matcher(status));
-		if (!U_SUCCESS(status)) throw MacaError("Regexp failed to compile: " + regexp_string);
+		if (!U_SUCCESS(status)) {
+			throw MacaError("Regexp failed to compile: " + regexp_string);
+		}
 	}
 
 	RegexTagRuleLayer* RegexTagRuleLayer::clone() const

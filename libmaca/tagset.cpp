@@ -18,8 +18,10 @@
 
 namespace Maca {
 
-	TagParseError::TagParseError(const std::string &what, const std::string& val, const std::string& tag, const std::string& tagset)
-	 : MacaError(what), val(val), tag(tag), tagset(tagset)
+	TagParseError::TagParseError(const std::string &what,
+			const std::string& val, const std::string& tag,
+			const std::string& tagset)
+		: MacaError(what), val(val), tag(tag), tagset(tagset)
 	{
 	}
 
@@ -39,13 +41,17 @@ namespace Maca {
 		return ss.str();
 	}
 
-	TagsetMismatch::TagsetMismatch(const std::string& where, const Tagset& expected, const Tagset& actual)
-	 : MacaError("Tagset mismatch in " + where), expected_id(expected.id()), actual_id(actual.id())
+	TagsetMismatch::TagsetMismatch(const std::string& where,
+			const Tagset& expected, const Tagset& actual)
+		: MacaError("Tagset mismatch in " + where), expected_id(expected.id())
+		, actual_id(actual.id())
 	{
 	}
 
-	TagsetMismatch::TagsetMismatch(const std::string& where, tagset_idx_t expected, tagset_idx_t actual)
-	 : MacaError("Tagset mismatch in " + where), expected_id(expected), actual_id(actual)
+	TagsetMismatch::TagsetMismatch(const std::string& where,
+			tagset_idx_t expected, tagset_idx_t actual)
+		: MacaError("Tagset mismatch in " + where), expected_id(expected)
+		, actual_id(actual)
 	{
 	}
 
@@ -97,7 +103,8 @@ namespace Maca {
 	}
 
 	namespace {
-		void append_to_multi_tag(std::vector< std::vector<value_idx_t> > & current,
+		void append_to_multi_tag(
+				std::vector< std::vector<value_idx_t> > & current,
 				const std::vector<value_idx_t> & to_add)
 		{
 			foreach (std::vector<value_idx_t>& o, current) {
@@ -121,7 +128,9 @@ namespace Maca {
 		}
 		pos_idx_t pos_id = pos_dict_.get_id(fields[0]);
 		if (!pos_dict_.is_id_valid(pos_id)) {
-			throw TagParseError("Invalid POS", boost::copy_range<std::string>(fields[0]), "", id_string());
+			throw TagParseError("Invalid POS",
+					boost::copy_range<std::string>(fields[0]), "",
+					id_string());
 		}
 		std::vector< std::vector<value_idx_t> > opts(1);
 		for (size_t fi = 1; fi < fields.size(); ++fi) {
@@ -133,14 +142,18 @@ namespace Maca {
 				foreach (string_range& dot, dots) {
 					value_idx_t v = value_dict_.get_id(dot);
 					if (!value_dict_.is_id_valid(v)) {
-						throw TagParseError("Unknown attribute value", boost::copy_range<std::string>(r), "", id_string());
+						throw TagParseError("Unknown attribute value",
+								boost::copy_range<std::string>(r), "",
+								id_string());
 					}
 					values.push_back(v);
 				}
 				append_to_multi_tag(opts, values);
 			} else if (!r.empty()) { // underscore handling
 				if (fi - 1 >= pos_attributes_[pos_id].size()) {
-					throw TagParseError("Underscore beyond the last attribute for this POS", "", "", id_string());
+					throw TagParseError(
+							"Underscore beyond last attribute for this POS",
+							"", "", id_string());
 				}
 				attribute_idx_t attr = pos_attributes_[pos_id][fi - 1];
 				append_to_multi_tag(opts, attribute_values_[attr]);
@@ -151,17 +164,21 @@ namespace Maca {
 		}
 	}
 
-	std::vector<Tag> Tagset::parse_tag(const string_range& sr, bool allow_extra) const
+	std::vector<Tag> Tagset::parse_tag(const string_range& sr,
+			bool allow_extra) const
 	{
 		string_range_vector fields;
 		boost::algorithm::split(fields, sr, boost::is_any_of(":"));
 		return parse_tag(fields, allow_extra);
 	}
 
-	std::vector<Tag> Tagset::parse_tag(const string_range_vector &fields, bool allow_extra) const
+	std::vector<Tag> Tagset::parse_tag(const string_range_vector &fields,
+			bool allow_extra) const
 	{
 		std::vector<Tag> tags;
-		parse_tag(fields, allow_extra, boost::bind(&std::vector<Tag>::push_back, boost::ref(tags), _1));
+		parse_tag(fields, allow_extra,
+				  boost::bind(&std::vector<Tag>::push_back, boost::ref(tags),
+					_1));
 		return tags;
 	}
 
@@ -172,24 +189,32 @@ namespace Maca {
 		return parse_simple_tag(fields, allow_extra);
 	}
 
-	Tag Tagset::parse_simple_tag(const string_range_vector &ts, bool allow_extra) const
+	Tag Tagset::parse_simple_tag(const string_range_vector &ts,
+			bool allow_extra) const
 	{
-		if (ts.empty()) throw TagParseError("Empty POS+attribute list", "", "", id_string());
+		if (ts.empty()) {
+			throw TagParseError("Empty POS+attribute list", "", "",
+					id_string());
+		}
 		pos_idx_t pos_id = pos_dict_.get_id(ts[0]);
 		if (!pos_dict_.is_id_valid(pos_id)) {
-			throw TagParseError("Invalid POS", boost::copy_range<std::string>(ts[0]), "", id_string());
+			throw TagParseError("Invalid POS",
+					boost::copy_range<std::string>(ts[0]), "", id_string());
 		}
-		const std::vector<bool>& valid_attrs_mask = get_pos_valid_attributes(pos_id);
-
+		const std::vector<bool>& valid_attrs_mask =
+				get_pos_valid_attributes(pos_id);
 		Tag tag(id_, pos_id);
-		std::vector<value_idx_t> vvv(attribute_dict_.size(), static_cast<value_idx_t>(0));
+		std::vector<value_idx_t> vvv(attribute_dict_.size(),
+				static_cast<value_idx_t>(0));
 		tag.values().swap(vvv);
 
 		for (size_t i = 1; i < ts.size(); ++i) {
 			if (!ts[i].empty()) {
 				value_idx_t val_id = value_dict_.get_id(ts[i]);
 				if (!value_dict_.is_id_valid(val_id)) {
-					throw TagParseError("Unknown attribute value", boost::copy_range<std::string>(ts[i]), "", id_string());
+					throw TagParseError("Unknown attribute value",
+							boost::copy_range<std::string>(ts[i]), "",
+							id_string());
 				}
 				attribute_idx_t attr_id = get_value_attribute(val_id);
 				if (valid_attrs_mask[attr_id] || allow_extra) {
@@ -200,12 +225,14 @@ namespace Maca {
 		return tag;
 	}
 	
-	Tag Tagset::make_tag(pos_idx_t pos, const std::vector<value_idx_t>& values, bool allow_extra) const
+	Tag Tagset::make_tag(pos_idx_t pos, const std::vector<value_idx_t>& values,
+			bool allow_extra) const
 	{
-		const std::vector<bool>& valid_attrs_mask = get_pos_valid_attributes(pos);
-
+		const std::vector<bool>& valid_attrs_mask =
+				get_pos_valid_attributes(pos);
 		Tag tag(id_, pos);
-		std::vector<value_idx_t> vvv(attribute_dict_.size(), static_cast<value_idx_t>(0));
+		std::vector<value_idx_t> vvv(attribute_dict_.size(),
+				static_cast<value_idx_t>(0));
 		tag.values().swap(vvv);
 
 		for (size_t i = 0; i < values.size(); ++i) {
@@ -214,7 +241,9 @@ namespace Maca {
 			if (valid_attrs_mask[attr_id] || allow_extra) {
 				tag.values()[attr_id] = val_id;
 			} else {
-				throw TagParseError("Attribute not valid for this POS", attribute_dict_.get_string(attr_id), pos_dict_.get_string(pos), id_string());
+				throw TagParseError("Attribute not valid for this POS",
+						attribute_dict_.get_string(attr_id),
+						pos_dict_.get_string(pos), id_string());
 			}
 		}
 		return tag;
@@ -225,11 +254,13 @@ namespace Maca {
 		pos_idx_t ign_pos = pos_dictionary().get_id("ign");
 		assert(pos_dictionary().is_id_valid(ign_pos));
 		Tag tag(id_, ign_pos);
-		tag.values().resize(attribute_dict_.size(), static_cast<value_idx_t>(0));
+		tag.values().resize(attribute_dict_.size(),
+				static_cast<value_idx_t>(0));
 		return tag;
 	}
 
-	bool Tagset::validate_tag(const Tag &t, bool allow_extra, std::ostream* os) const
+	bool Tagset::validate_tag(const Tag &t, bool allow_extra,
+			std::ostream* os) const
 	{
 		if (!pos_dict_.is_id_valid(t.pos_id())) {
 			if (os) {
@@ -253,13 +284,15 @@ namespace Maca {
 			}
 			return false;
 		}
-		for (attribute_idx_t i = static_cast<attribute_idx_t>(0); i < t.values().size(); ++i) {
+		for (attribute_idx_t i = static_cast<attribute_idx_t>(0);
+				i < t.values().size(); ++i) {
 			value_idx_t v = t.values()[i];
 			if (v == 0) {
 				if (required[i]) {
 					if (os) {
 						(*os)  << " Required attribuite "
-							<< attribute_dictionary().get_string(i) << " missing";
+							<< attribute_dictionary().get_string(i)
+							<< " missing";
 					}
 					return false;
 				}
@@ -267,7 +300,8 @@ namespace Maca {
 				if (!valid[i] && !allow_extra) {
 					if (os) {
 						(*os) << " Extra attribute value: "
-							<< value_dictionary().get_string(v) << " (attribute "
+							<< value_dictionary().get_string(v)
+							<< " (attribute "
 							<< attribute_dictionary().get_string(i) << ")";
 					}
 					return false;
@@ -285,7 +319,8 @@ namespace Maca {
 						(*os) << " Value does not match attribute, got "
 							<< value_dictionary().get_string(v) << " ("
 							<< attribute_dictionary().get_string(a) << ") in"
-							<< attribute_dictionary().get_string(i) << "'s position";
+							<< attribute_dictionary().get_string(i)
+							<< "'s position";
 					}
 					return false;
 				}
@@ -298,9 +333,11 @@ namespace Maca {
 	{
 		std::ostringstream ss;
 		ss << pos_dict_.get_string(tag.pos_id());
-		const std::vector<attribute_idx_t>& attrs = get_pos_attributes(tag.pos_id());
+		const std::vector<attribute_idx_t>& attrs =
+				get_pos_attributes(tag.pos_id());
 		foreach (const attribute_idx_t& a, attrs) {
-			if (pos_required_attributes_[tag.pos_id()][a] || tag.values()[a] > 0) {
+			if (pos_required_attributes_[tag.pos_id()][a] ||
+					tag.values()[a] > 0) {
 				ss << ":";
 				if (tag.values()[a] > 0) {
 					ss << value_dict_.get_string(tag.values()[a]);
@@ -309,7 +346,8 @@ namespace Maca {
 		}
 		// print extra attributes
 		for (size_t i = 0; i < attribute_dict_.size(); ++i) {
-			if (tag.values()[i] > 0 && !pos_valid_attributes_[tag.pos_id()][i]) {
+			if (tag.values()[i] > 0 &&
+					!pos_valid_attributes_[tag.pos_id()][i]) {
 				ss << ":" << value_dict_.get_string(tag.values()[i]);
 			}
 		}
@@ -327,25 +365,29 @@ namespace Maca {
 		return value_attribute_[id];
 	}
 
-	const std::vector<value_idx_t>& Tagset::get_attribute_values(attribute_idx_t a) const
+	const std::vector<value_idx_t>& Tagset::get_attribute_values(
+			attribute_idx_t a) const
 	{
 		assert(attribute_dict_.is_id_valid(a));
 		return attribute_values_[a];
 	}
 
-	const std::vector<attribute_idx_t>& Tagset::get_pos_attributes(pos_idx_t pos) const
+	const std::vector<attribute_idx_t>& Tagset::get_pos_attributes(
+			pos_idx_t pos) const
 	{
 		assert(pos_dict_.is_id_valid(pos));
 		return pos_attributes_[pos];
 	}
 
-	const std::vector<bool>& Tagset::get_pos_valid_attributes(pos_idx_t pos) const
+	const std::vector<bool>& Tagset::get_pos_valid_attributes(
+			pos_idx_t pos) const
 	{
 		assert(pos_dict_.is_id_valid(pos));
 		return pos_valid_attributes_[pos];
 	}
 
-	const std::vector<bool>& Tagset::get_pos_required_attributes(pos_idx_t pos) const
+	const std::vector<bool>& Tagset::get_pos_required_attributes(
+			pos_idx_t pos) const
 	{
 		assert(pos_dict_.is_id_valid(pos));
 		return pos_required_attributes_[pos];
@@ -379,7 +421,8 @@ namespace Maca {
 		return vs;
 	}
 
-	void Tagset::lexemes_into_token(Token& tok, const UnicodeString& lemma, const string_range& tags) const
+	void Tagset::lexemes_into_token(Token& tok, const UnicodeString& lemma,
+			const string_range& tags) const
 	{
 		string_range_vector options;
 		boost::algorithm::split(options, tags, boost::is_any_of("+|"));
@@ -388,7 +431,8 @@ namespace Maca {
 		lex = boost::bind(&Lexeme::create, boost::cref(lemma), _1);
 
 		boost::function<void (const Tag&)> func;
-		func = boost::bind(&Token::add_lexeme, boost::ref(tok), boost::bind(lex, _1));
+		func = boost::bind(&Token::add_lexeme, boost::ref(tok),
+				boost::bind(lex, _1));
 
 		foreach (const string_range& o, options) {
 			parse_tag(o, true, func);

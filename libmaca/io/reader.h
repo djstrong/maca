@@ -14,8 +14,8 @@ namespace Maca {
 	 * source and always within a given tagset.
 	 *
 	 * Tokens can be read on a token-by-token basis, or in entire senteces, or
-	 * in entire chunks (paragraphs). Behavior is not defined if there are mixed
-	 * calls to differend forms of getting data.
+	 * in entire chunks (paragraphs). Behavior is not defined if there are
+	 * mixed calls to differend forms of getting data.
 	 */
 	class TokenReader : public TokenSource
 	{
@@ -41,8 +41,8 @@ namespace Maca {
 		/**
 		 * Factory interface for creating readers from string identifiers
 		 *
-		 * Mostly a convenience function to avoid having client code refer directly
-		 * to the factory instance.
+		 * Mostly a convenience function to avoid having client code refer
+		 * directly to the factory instance.
 		 *
 		 * @param class_id the unique class identifier
 		 * @param os the output stream to pass to the reader's constructor
@@ -79,7 +79,8 @@ namespace Maca {
 		 * Convenience template for registering TokenWriter derived classes.
 		 */
 		template <typename T>
-		static bool register_reader(const std::string& class_id, const std::string& help = "");
+		static bool register_reader(const std::string& class_id,
+				const std::string& help = "");
 	private:
 		std::istream& is_;
 
@@ -89,8 +90,9 @@ namespace Maca {
 	typedef Loki::Factory<
 		TokenReader, // The base class for objects created in the factory
 		std::string, // Identifier type
-		Loki::TL::MakeTypelist< std::ostream&, const Tagset&, const string_range_vector& >::Result
-		// TokenLayer constructor arguments' types specification
+		Loki::TL::MakeTypelist<
+			std::ostream&, const Tagset&, const string_range_vector&
+		>::Result // TokenLayer constructor arguments' types specification
 	> TokenReaderFactoryType;
 
 	struct TokenReaderFactory
@@ -100,14 +102,15 @@ namespace Maca {
 	};
 
 	/**
-	 * Declaration of the TokenWriter factory as a singleton Loki object factory.
-	 * The factory instance can be accessed as TokenLayerFactory::Instance().
-	 * It is assumed that all derived classes have the same constructor signature.
+	 * Declaration of the TokenWriter factory as a singleton Loki object
+	 * factory. The factory instance can be accessed as
+	 * TokenLayerFactory::Instance(). It is assumed that all derived classes
+	 * have the same constructor signature.
 	 */
 	typedef Loki::SingletonHolder<
 		TokenReaderFactory,
 		Loki::CreateUsingNew, // default, needed to change the item below
-		Loki::LongevityLifetime::DieAsSmallObjectChild // Required per libloki docs
+		Loki::LongevityLifetime::DieAsSmallObjectChild // per libloki docs
 	>
 	TokenReaderFactorySingleton;
 
@@ -124,15 +127,18 @@ namespace Maca {
 	 */
 	template <typename T>
 	inline
-	T* reader_creator(std::ostream& os, const Tagset& tagset, const string_range_vector& params)
+	T* reader_creator(std::ostream& os, const Tagset& tagset,
+			const string_range_vector& params)
 	{
 		return new T(os, tagset, params);
 	}
 
 	template <typename T>
-	bool TokenReader::register_reader(const std::string& class_id, const std::string& help)
+	bool TokenReader::register_reader(const std::string& class_id,
+			const std::string& help)
 	{
-		bool ret = TokenReaderFactorySingleton::Instance().factory.Register(class_id, reader_creator<T>);
+		bool ret = TokenReaderFactorySingleton::Instance().factory.Register(
+				class_id, reader_creator<T>);
 		if (ret) {
 			TokenReaderFactorySingleton::Instance().help[class_id] = help;
 		}

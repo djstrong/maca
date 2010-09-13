@@ -5,19 +5,23 @@ namespace Maca { namespace Conversion {
 
 	TagPredicate::TagPredicate(const std::string& name, const Tagset& tagset)
 	{
-		second = tagset.value_dictionary().get_id(name);
-		if (tagset.value_dictionary().is_id_valid(static_cast<value_idx_t>(second))) {
-			first = tagset.get_value_attribute(static_cast<value_idx_t>(second));
+		value_idx_t value = tagset.value_dictionary().get_id(name);
+		if (tagset.value_dictionary().is_id_valid(value)) {
+			first = tagset.get_value_attribute(value);
+			second = value;
 		} else {
-			first = tagset.attribute_dictionary().get_id(name);
-			if (tagset.attribute_dictionary().is_id_valid(static_cast<attribute_idx_t>(first))) {
+			attribute_idx_t attr = tagset.attribute_dictionary().get_id(name);
+			if (tagset.attribute_dictionary().is_id_valid(attr)) {
+				first = attr;
 				second = 0;
 			} else {
-				first = static_cast<idx_t>(-1);
-				second = tagset.pos_dictionary().get_id(name);
-
-				if (!tagset.pos_dictionary().is_id_valid(static_cast<pos_idx_t>(second))) {
-					throw MacaError("Predicate string invalid: '" + name + "' in tagset " + tagset.name());
+				pos_idx_t pos = tagset.pos_dictionary().get_id(name);
+				if (!tagset.pos_dictionary().is_id_valid(pos)) {
+					throw MacaError("Predicate string invalid: '" + name +
+							"' in tagset " + tagset.name());
+				} else {
+					first = static_cast<idx_t>(-1);
+					second = pos;
 				}
 			}
 		}

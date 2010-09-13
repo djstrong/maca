@@ -32,7 +32,8 @@ namespace Maca { namespace Conversion {
 			} else if (v.first == "t2_lemma") {
 				t2_lexeme_.set_lemma(UnicodeString::fromUTF8(v.second.data()));
 			} else if (v.first == "t2_tag") {
-				t2_lexeme_.set_tag(tagset().parse_simple_tag(v.second.data(), true));
+				t2_lexeme_.set_tag(
+						tagset().parse_simple_tag(v.second.data(), true));
 			}
 		}
 		if (t2_lexeme_.is_null()) {
@@ -88,7 +89,8 @@ namespace Maca { namespace Conversion {
 	void TwoSplitLayer::add_precondition(const std::string& pred_string)
 	{
 		std::vector<std::string> srv;
-		boost::algorithm::split(srv, pred_string, boost::is_any_of(": "));
+		boost::algorithm::split(srv, pred_string,
+				boost::is_any_of(std::string(": ")));
 		foreach (const std::string& sr, srv) {
 			if (!sr.empty()) {
 				pre_.push_back(TagPredicate(sr, tagset()));
@@ -104,7 +106,8 @@ namespace Maca { namespace Conversion {
 	void TwoSplitLayer::add_t1_postcondition(const std::string& pred_string)
 	{
 		std::vector<std::string> srv;
-		boost::algorithm::split(srv, pred_string, boost::is_any_of(": "));
+		boost::algorithm::split(srv, pred_string,
+				boost::is_any_of(std::string(": ")));
 		foreach (const std::string& sr, srv) {
 			if (!sr.empty()) {
 				t1_post_.push_back(TagPredicate(sr, tagset()));
@@ -115,10 +118,15 @@ namespace Maca { namespace Conversion {
 	void TwoSplitLayer::set_orth_regexp(const std::string &regexp_string)
 	{
 		UErrorCode status = U_ZERO_ERROR;
-		orth_pattern_.reset(RegexPattern::compile(UnicodeString::fromUTF8(regexp_string), 0, status));
-		if (!U_SUCCESS(status)) throw MacaError("Regexp failed to compile: " + regexp_string);
+		UnicodeString u_regexp_string = UnicodeString::fromUTF8(regexp_string);
+		orth_pattern_.reset(RegexPattern::compile(u_regexp_string, 0, status));
+		if (!U_SUCCESS(status)) {
+			throw MacaError("Regexp failed to compile: " + regexp_string);
+		}
 		orth_matcher_.reset(orth_pattern_->matcher(status));
-		if (!U_SUCCESS(status)) throw MacaError("Regexp failed to compile: " + regexp_string);
+		if (!U_SUCCESS(status)) {
+			throw MacaError("Regexp failed to compile: " + regexp_string);
+		}
 		if (orth_matcher_->groupCount() < 2) {
 			throw MacaError("Split layer regex has less than 2 groups");
 		}
@@ -144,7 +152,8 @@ namespace Maca { namespace Conversion {
 				orth_matcher_->reset(t->orth());
 				UErrorCode status = U_ZERO_ERROR;
 				if (orth_matcher_->matches(status)) {
-					Token* t2 = new Token(orth_matcher_->group(2, status), Toki::Whitespace::None);
+					Token* t2 = new Token(orth_matcher_->group(2, status),
+							Toki::Whitespace::None);
 					t2->add_lexeme(t2_lexeme_);
 					copy_attributes(*t, copy_attrs_to_t2_, *t2);
 					queue_.push_back(t2);
@@ -171,7 +180,8 @@ namespace Maca { namespace Conversion {
 			} else if (v.first == "t3_lemma") {
 				t3_lexeme_.set_lemma(UnicodeString::fromUTF8(v.second.data()));
 			} else if (v.first == "t3_tag") {
-				t3_lexeme_.set_tag(tagset().parse_simple_tag(v.second.data(), true));
+				t3_lexeme_.set_tag(
+						tagset().parse_simple_tag(v.second.data(), true));
 			}
 		}
 		if (orth_matcher_->groupCount() < 3) {
@@ -221,11 +231,13 @@ namespace Maca { namespace Conversion {
 				orth_matcher_->reset(t->orth());
 				UErrorCode status = U_ZERO_ERROR;
 				if (orth_matcher_->matches(status)) {
-					Token* t2 = new Token(orth_matcher_->group(2, status), Toki::Whitespace::None);
+					Token* t2 = new Token(orth_matcher_->group(2, status),
+							Toki::Whitespace::None);
 					t2->add_lexeme(t2_lexeme_);
 					copy_attributes(*t, copy_attrs_to_t2_, *t2);
 					queue_.push_back(t2);
-					Token* t3 = new Token(orth_matcher_->group(3, status), Toki::Whitespace::None);
+					Token* t3 = new Token(orth_matcher_->group(3, status),
+							Toki::Whitespace::None);
 					t3->add_lexeme(t3_lexeme_);
 					copy_attributes(*t, copy_attrs_to_t3_, *t3);
 					queue_.push_back(t3);

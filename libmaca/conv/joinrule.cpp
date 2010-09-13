@@ -3,6 +3,7 @@
 #include <libmaca/tagsetmanager.h>
 #include <libmaca/conv/attributecopier.h>
 #include <boost/algorithm/string.hpp>
+
 namespace Maca { namespace Conversion {
 
 	JoinRule::JoinRule(const Tagset& tagset)
@@ -39,7 +40,8 @@ namespace Maca { namespace Conversion {
 		pre1_ = pre;
 	}
 
-	void JoinRule::set_token1_preconditions(const std::string& pos, const UnicodeString& orth)
+	void JoinRule::set_token1_preconditions(const std::string& pos,
+			const UnicodeString& orth)
 	{
 		pos_idx_t p = tagset_->pos_dictionary().get_id(pos);
 		if (!tagset_->pos_dictionary().is_id_valid(p)) {
@@ -53,7 +55,8 @@ namespace Maca { namespace Conversion {
 		pre1_ = pre;
 	}
 
-	void JoinRule::set_token2_preconditions(const std::string& pos, const UnicodeString& orth)
+	void JoinRule::set_token2_preconditions(const std::string& pos,
+			const UnicodeString& orth)
 	{
 		pos_idx_t p = tagset_->pos_dictionary().get_id(pos);
 		if (!tagset_->pos_dictionary().is_id_valid(p)) {
@@ -80,7 +83,8 @@ namespace Maca { namespace Conversion {
 	void JoinRule::add_postcondition(const std::string& pred_string)
 	{
 		std::vector<std::string> srv;
-		boost::algorithm::split(srv, pred_string, boost::is_any_of(": "));
+		boost::algorithm::split(srv, pred_string,
+				boost::is_any_of(std::string(": ")));
 		foreach (const std::string& sr, srv) {
 			if (!sr.empty()) {
 				post_.push_back(TagPredicate(sr, *tagset_));

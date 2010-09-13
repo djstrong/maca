@@ -8,7 +8,8 @@ namespace Maca {
 	class TagsetParseError : public MacaError
 	{
 	public:
-		TagsetParseError(const std::string& w, int line, const std::string& data)
+		TagsetParseError(const std::string& w, int line,
+				const std::string& data)
 			: MacaError("Tagset parse error: " + w), line(line), data(data)
 		{
 		}
@@ -30,7 +31,8 @@ namespace Maca {
 
 		static Tagset load_ini(std::istream& is);
 
-		static void save_ini(const Tagset& tagset, const std::string& filename);
+		static void save_ini(const Tagset& tagset,
+				const std::string& filename);
 
 		static void save_ini(const Tagset& tagset, std::ostream& os);
 

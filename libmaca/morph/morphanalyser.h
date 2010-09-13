@@ -54,12 +54,14 @@ namespace Maca {
 		/// Convenience process_functional wrapper to process a vector of Toki
 		/// tokens and return a vector of Maca tokens. The toki tokens are
 		/// deleted.
-		std::vector<Token*> process_dispose(const std::vector<Toki::Token*>& t);
+		std::vector<Token*> process_dispose(
+				const std::vector<Toki::Token*>& t);
 
 		/// Convenience process_functional wrapper to process a vector of Toki
 		/// tokens and insert the resulting Maca tokens into the given
 		/// vector. The toki tokens are deleted.
-		void process_dispose(const std::vector<Toki::Token*>& t, std::vector<Token*>& v);
+		void process_dispose(const std::vector<Toki::Token*>& t,
+				std::vector<Token*>& v);
 
 		/// Convenience process_functional wrapper to process a vector of Toki
 		/// tokens and return a vector of Maca tokens. The toki tokens are
@@ -84,13 +86,15 @@ namespace Maca {
 		 * Should return true if the sink was called at least once, and false
 		 * of no tokens were output.
 		 */
-		virtual bool process_functional(const Toki::Token &t, boost::function<void (Token*)> sink) = 0;
+		virtual bool process_functional(const Toki::Token &t,
+				boost::function<void (Token*)> sink) = 0;
 
 		/**
 		 * Convenience function to call process_functional and then dispose of
 		 * the incoming Toki tokens.
 		 */
-		bool process_functional_dispose(const Toki::Token *t, boost::function<void (Token*)> sink) {
+		bool process_functional_dispose(const Toki::Token *t,
+				boost::function<void (Token*)> sink) {
 			bool rv = process_functional(*t, sink);
 			delete t;
 			return rv;
@@ -109,8 +113,8 @@ namespace Maca {
 		/**
 		 * Factory interface for creating analysers from string identifiers
 		 *
-		 * Mostly a convenience function to avoid having client code refer directly
-		 * to the TokenLayerFactory instance.
+		 * Mostly a convenience function to avoid having client code refer
+		 * directly to the TokenLayerFactory instance.
 		 *
 		 * @param class_id the unique class identifier
 		 * @param input the input source to pass to the layer's constructor
@@ -154,9 +158,10 @@ namespace Maca {
 	};
 
 	/**
-	 * Declaration of the MorphAnalyser factory as a singleton Loki object factory.
-	 * The factory instance can be accessed as MorphAnalyserFactory::Instance().
-	 * It is assumed that all derived classes have the same constructor signature.
+	 * Declaration of the MorphAnalyser factory as a singleton Loki object
+	 * factory. The factory instance can be accessed as
+	 * MorphAnalyserFactory::Instance(). It is assumed that all derived classes
+	 * have the same constructor signature.
 	 */
 	typedef Loki::SingletonHolder<
 		Loki::Factory<
@@ -166,7 +171,7 @@ namespace Maca {
 			// TokenLayer constructor arguments' types specification
 		>,
 		Loki::CreateUsingNew, // default, needed to change the item below
-		Loki::LongevityLifetime::DieAsSmallObjectChild // Required per libloki docs
+		Loki::LongevityLifetime::DieAsSmallObjectChild // per libloki docs
 	>
 	MorphAnalyserFactory;
 
@@ -192,13 +197,15 @@ namespace Maca {
 	template <typename T>
 	bool MorphAnalyser::register_analyser(const std::string& class_id)
 	{
-		return MorphAnalyserFactory::Instance().Register(class_id, analyser_creator<T>);
+		return MorphAnalyserFactory::Instance().Register(
+				class_id, analyser_creator<T>);
 	}
 
 	template <typename T>
 	bool MorphAnalyser::register_analyser()
 	{
-		return MorphAnalyserFactory::Instance().Register(T::identifier, analyser_creator<T>);
+		return MorphAnalyserFactory::Instance().Register(
+				T::identifier, analyser_creator<T>);
 	}
 
 } /* end ns Maca */

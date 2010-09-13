@@ -24,7 +24,8 @@ namespace Maca {
 
 	bool Lexeme::operator<(const Lexeme& other) const
 	{
-		return lemma_ < other.lemma_ || (lemma_ == other.lemma_ && tag_ < other.tag_);
+		return lemma_ < other.lemma_ ||
+				(lemma_ == other.lemma_ && tag_ < other.tag_);
 	}
 
 	bool Lexeme::operator==(const Lexeme& other) const

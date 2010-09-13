@@ -26,9 +26,10 @@ namespace Maca {
 	{
 	}
 
-	void MorphAnalyser::process(const Toki::Token &t, std::vector<Token *>& vec)
+	void MorphAnalyser::process(const Toki::Token &t, std::vector<Token*>& vec)
 	{
-		process_functional(t, boost::bind(&std::vector<Token*>::push_back, &vec, _1));
+		process_functional(t,
+				boost::bind(&std::vector<Token*>::push_back, &vec, _1));
 	}
 
 	std::vector<Token*> MorphAnalyser::process(const Toki::Token &t)
@@ -47,14 +48,16 @@ namespace Maca {
 		return ss;
 	}
 
-	std::vector<Token*> MorphAnalyser::process_dispose(const std::vector<Toki::Token*>& t)
+	std::vector<Token*> MorphAnalyser::process_dispose(
+			const std::vector<Toki::Token*>& t)
 	{
 		std::vector<Token*> v;
 		process_dispose(t, v);
 		return v;
 	}
 
-	void MorphAnalyser::process_dispose(const std::vector<Toki::Token*>& t, std::vector<Token*>& v)
+	void MorphAnalyser::process_dispose(const std::vector<Toki::Token*>& t,
+			std::vector<Token*>& v)
 	{
 		foreach (Toki::Token* tt, t) {
 			process(*tt, v);
@@ -78,7 +81,8 @@ namespace Maca {
 		t->tokens().clear();
 	}
 
-	MorphAnalyser* MorphAnalyser::create(std::string class_id, const Config::Node& props)
+	MorphAnalyser* MorphAnalyser::create(std::string class_id,
+			const Config::Node& props)
 	{
 		return MorphAnalyserFactory::Instance().CreateObject(class_id, props);
 	}
@@ -105,7 +109,8 @@ namespace Maca {
 		void* handle = dlopen(soname.c_str(), RTLD_NOW | RTLD_NOLOAD);
 		if (handle != NULL) {
 			if (!quiet) {
-				std::cerr << "Warning: " << soname << " has already been loaded\n";
+				std::cerr << "Warning: " << soname
+						<< " has already been loaded\n";
 			}
 			return false;
 		}
@@ -114,7 +119,8 @@ namespace Maca {
 		if (handle == NULL) {
 			const char* dle = dlerror();
 			if (!quiet) {
-				std::cerr << "Error: dlopen error while loading " << soname << ": ";
+				std::cerr << "Error: dlopen error while loading " << soname
+						<< ": ";
 				if (dle != NULL) {
 					std::cerr << dle << "\n";
 				}

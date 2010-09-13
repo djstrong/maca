@@ -3,7 +3,8 @@
 
 namespace Maca {
 
-	OrthWriter::OrthWriter(std::ostream& os, const Tagset& tagset, const string_range_vector& params)
+	OrthWriter::OrthWriter(std::ostream& os, const Tagset& tagset,
+			const string_range_vector& params)
 		: TokenWriter(os, tagset, params)
 	{
 	}

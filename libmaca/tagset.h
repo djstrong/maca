@@ -25,7 +25,8 @@ namespace Maca {
 	{
 	public:
 		/// Constructor
-		TagParseError(const std::string &what, const std::string& val, const std::string& tag, const std::string& tagset);
+		TagParseError(const std::string &what, const std::string& val,
+				const std::string& tag, const std::string& tagset);
 
 		/// Destructor
 		~TagParseError() throw() {}
@@ -41,10 +42,12 @@ namespace Maca {
 	{
 	public:
 		/// Constructor from Tagset objects
-		TagsetMismatch(const std::string& where, const Tagset& expected, const Tagset& actual);
+		TagsetMismatch(const std::string& where, const Tagset& expected,
+				const Tagset& actual);
 
 		/// Constructor from tagset ids
-		TagsetMismatch(const std::string& where, tagset_idx_t expected, tagset_idx_t actual);
+		TagsetMismatch(const std::string& where, tagset_idx_t expected,
+				tagset_idx_t actual);
 
 		/// Destructor
 		~TagsetMismatch() throw() {}
@@ -88,17 +91,21 @@ namespace Maca {
 		/**
 		 * Tag parsing -- functional version, whole tag string.
 		 *
-		 * A simple wrapper for string split and a call to the split string version.
+		 * A simple wrapper for string split and a call to the split string
+		 * version.
 		 */
-		void parse_tag(const string_range& s, bool allow_extra, boost::function<void (const Tag&)> sink) const;
+		void parse_tag(const string_range& s, bool allow_extra,
+				boost::function<void (const Tag&)> sink) const;
 
 		/**
 		 * Tag parsing -- functional version, whole tag string, char* overload.
 		 * TODO explain why needed
 		 *
-		 * A simple wrapper for string split and a call to the split string version.
+		 * A simple wrapper for string split and a call to the split string
+		 * version.
 		 */
-		void parse_tag(const char* c, bool allow_extra, boost::function<void (const Tag&)> sink) const {
+		void parse_tag(const char* c, bool allow_extra,
+				boost::function<void (const Tag&)> sink) const {
 			parse_tag(std::make_pair(c, c + strlen(c)), allow_extra, sink);
 		}
 
@@ -119,19 +126,23 @@ namespace Maca {
 		 * - an underscore (_) indicates that all values for the attribute at
 		 *   the underscore's position should be taken.
 		 */
-		void parse_tag(const string_range_vector& ts, bool allow_extra, boost::function<void (const Tag&)> sink) const;
+		void parse_tag(const string_range_vector& ts, bool allow_extra,
+				boost::function<void (const Tag&)> sink) const;
 
 		/**
 		 * Tag parsing -- plain version, whole string.
 		 *
-		 * A simple wrapper for string split and a call to the split string version.
+		 * A simple wrapper for string split and a call to the split string
+		 * version.
 		 */
-		std::vector<Tag> parse_tag(const string_range& s, bool allow_extra) const;
+		std::vector<Tag> parse_tag(const string_range& s,
+				bool allow_extra) const;
 
 		/**
 		 * Tag parsing -- plain version, whole string, char* overload.
 		 *
-		 * A simple wrapper for string split and a call to the split string version.
+		 * A simple wrapper for string split and a call to the split string
+		 * version.
 		 */
 		std::vector<Tag> parse_tag(const char* c, bool allow_extra) const {
 			return parse_tag(std::make_pair(c, c + strlen(c)), allow_extra);
@@ -143,31 +154,37 @@ namespace Maca {
 		 * A wrapper to the functional version that sets up parameters so that
 		 * the tags end up in a vector, which is then returned.
 		 */
-		std::vector<Tag> parse_tag(const string_range_vector& ts, bool allow_extra) const;
+		std::vector<Tag> parse_tag(const string_range_vector& ts,
+				bool allow_extra) const;
 
 		/**
 		 * Simple tag parsing -- whole string version.
 		 *
-		 A simple wrapper for string split and a call to the split string version.
+		 * A simple wrapper for string split and a call to the split string
+		 * version.
 		 */
 		Tag parse_simple_tag(const string_range& s, bool allow_extra) const;
 
 		/**
 		 * Simple tag parsing -- whole string version, char* overload.
 		 *
-		 A simple wrapper for string split and a call to the split string version.
+		 * A simple wrapper for string split and a call to the split string
+		 * version.
 		 */
 		Tag parse_simple_tag(const char* c, bool allow_extra) const {
-			return parse_simple_tag(std::make_pair(c, c + strlen(c)), allow_extra);
+			return parse_simple_tag(std::make_pair(c, c + strlen(c)),
+					allow_extra);
 		}
 
 		/**
 		 * Simple tag parsing -- split string version.
 		 *
 		 * The tag string must not contain any special characters that make the
-		 * string result on more than one actual tag object (dot or underscore).
+		 * string result on more than one actual tag object (i.e. no dots,
+		 * underscores or plus / pipe characters).
 		 */
-		Tag parse_simple_tag(const string_range_vector& ts, bool allow_extra) const;
+		Tag parse_simple_tag(const string_range_vector& ts,
+				bool allow_extra) const;
 
 
 		/**
@@ -177,7 +194,8 @@ namespace Maca {
 		 * The values are assumed to be valid in this tagset, but are checked
 		 * for correctness with regards to the POS.
 		 */
-		Tag make_tag(pos_idx_t pos, const std::vector<value_idx_t>& values, bool allow_extra) const;
+		Tag make_tag(pos_idx_t pos, const std::vector<value_idx_t>& values,
+				bool allow_extra) const;
 
 		/**
 		 * Convenience function for creating a 'ign' (ignored) tag within this
@@ -194,7 +212,8 @@ namespace Maca {
 		 * * no extra attrbutes are set, unless allow_extra is true
 		 * @return true if the tag is valid, false otherwise
 		 */
-		bool validate_tag(const Tag& t, bool allow_extra, std::ostream* os = NULL) const;
+		bool validate_tag(const Tag& t, bool allow_extra,
+				std::ostream* os = NULL) const;
 
 		/**
 		 * Create the string representation of a tag.
@@ -225,16 +244,20 @@ namespace Maca {
 		attribute_idx_t get_value_attribute(value_idx_t id) const;
 
 		/// Getter for the attribute -> valid values mapping
-		const std::vector<value_idx_t>& get_attribute_values(attribute_idx_t a) const;
+		const std::vector<value_idx_t>& get_attribute_values(
+				attribute_idx_t a) const;
 
 		/// Getter for the pos -> valid attributes (in order) mapping
-		const std::vector<attribute_idx_t>& get_pos_attributes(pos_idx_t pos) const;
+		const std::vector<attribute_idx_t>& get_pos_attributes(
+				pos_idx_t pos) const;
 
 		/// Getter for the pos -> valid attributes flag vector
-		const std::vector<bool>& get_pos_valid_attributes(pos_idx_t pos) const;
+		const std::vector<bool>& get_pos_valid_attributes(
+				pos_idx_t pos) const;
 
 		/// Getter for the pos -> required attributes flag vector
-		const std::vector<bool>& get_pos_required_attributes(pos_idx_t pos) const;
+		const std::vector<bool>& get_pos_required_attributes(
+				pos_idx_t pos) const;
 
 		/**
 		 * Tagset cardinality counter -- the number of different valid tags
@@ -284,13 +307,15 @@ namespace Maca {
 		/**
 		 * Convenience overload
 		 */
-		void lexemes_into_token(Token& tok, const std::string& lemma, const string_range& tags) const {
+		void lexemes_into_token(Token& tok, const std::string& lemma,
+				const string_range& tags) const {
 			UnicodeString u = UnicodeString::fromUTF8(lemma);
 			lexemes_into_token(tok, u, tags);
 		}
 
 	private:
-		/// Temporary solution to allow splitting the parser into a separate class
+		/// Temporary solution to allow splitting the parser into a separate
+		/// class
 		friend class TagsetParser;
 
 		/// Tagset name
@@ -314,8 +339,9 @@ namespace Maca {
 		/// mapping from attribute indices to valid value indices
 		std::vector< std::vector<value_idx_t> > attribute_values_;
 
-		/// reverse mapping, from a value index to the respective attribute index
-		/// (values are assumed to be unique and not shared between attributes)
+		/// reverse mapping, from a value index to the respective attribute
+		/// index (values are assumed to be unique and not shared between
+		/// attributes)
 		std::vector<attribute_idx_t> value_attribute_;
 
 		/// POS to valid attribute indices mapping

@@ -26,8 +26,9 @@ namespace Maca {
 		}
 	}
 
-	void token_as_xces_xml(std::ostream& os, const Tagset& tagset, const Token& t
-			, int indent, bool force_disamb /* = false */, bool sort /* = false */)
+	void token_as_xces_xml(std::ostream& os, const Tagset& tagset,
+			const Token& t, int indent, bool force_disamb /* = false */,
+			bool sort /* = false */)
 	{
 		if (t.wa() == Toki::Whitespace::None) {
 			osi(os, indent) << "<ns/>\n";

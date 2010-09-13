@@ -17,8 +17,8 @@ namespace Maca {
 		return what();
 	}
 
-	FileNotFound::FileNotFound(const std::string& filename, const std::string& paths,
-			const std::string& where)
+	FileNotFound::FileNotFound(const std::string& filename,
+			const std::string& paths, const std::string& where)
 		: MacaError("File not found: " + filename), filename(filename),
 		paths(paths), where(where)
 	{

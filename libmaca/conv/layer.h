@@ -57,7 +57,8 @@ namespace Maca { namespace Conversion {
 	public:
 		/**
 		 * Constructor.
-		 * @param tagset the tagset used for tokens coming in and out of the layer.
+		 * @param tagset the tagset used for tokens coming in and out of the
+		 *               layer.
 		 */
 		OneTagsetLayer(const Tagset& tagset);
 

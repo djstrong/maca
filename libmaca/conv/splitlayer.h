@@ -14,7 +14,7 @@ namespace Maca { namespace Conversion {
 	/**
 	 * A layer to split tokens matching specific criteria.
 	 *
-	 * Some precondition predicates are first checked, then a regular expression
+	 * Some precondition predicates are first checked, then a regexp
 	 * is matched on the token's orth. If the regexp matches, tokens will be
 	 * created with orths corresponding to the capturing groups (in this case,
 	 * the regexp should have exactly two capturing groups). The resulting
@@ -37,8 +37,8 @@ namespace Maca { namespace Conversion {
 		 * - regexp - the regular expression used for orth spliiting, should
 		 *            have exactly two capturing groups.
 		 * - pre - precondition predicates, can appear multiple times
-		 * - t1_post - postconditions predicates of token 1, can appear multiple
-		 *             times
+		 * - t1_post - postconditions predicates of token 1, can appear
+		 *             multiple times
 		 * - copy_attrs_to_t2 - attributes to copy to token 2 from the original
 		 *                      token's lexemes, can appear multiple times
 		 * - t2_lemma - lemma of the token 2 lexeme

@@ -100,13 +100,14 @@ namespace Maca {
 		bool remove_duplicate_lexemes();
 
 		/**
-		 * Check if all the lexemes of the token have the given POS, and and the
-		 * token orth caselessly matches the given orth.
+		 * Check if all the lexemes of the token have the given POS, and and
+		 * the token orth caselessly matches the given orth.
 		 *
 		 * If the given orth is empty, it is not checked.
 		 * If the given pos idx is -1, it is not checked.
 		 *
-		 * @returns true if the orth and lexemes pass the check, false otherwise
+		 * @returns true if the orth and lexemes pass the check, false
+		 * otherwise
 		 */
 		bool orth_pos_match(pos_idx_t pos, const UnicodeString& orth) const;
 

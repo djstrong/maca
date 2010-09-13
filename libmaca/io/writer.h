@@ -18,7 +18,8 @@ namespace Maca {
 		 * Constructor. A TokenWriter operates within a tagset, outputs data
 		 * to a stream and may have some options passed.
 		 */
-		TokenWriter(std::ostream& os, const Tagset& tagset, const string_range_vector& params);
+		TokenWriter(std::ostream& os, const Tagset& tagset,
+				const string_range_vector& params);
 
 		/// Destructor
 		virtual ~TokenWriter();
@@ -45,8 +46,8 @@ namespace Maca {
 		/**
 		 * Factory interface for creating writers from string identifiers
 		 *
-		 * Mostly a convenience function to avoid having client code refer directly
-		 * to the factory instance.
+		 * Mostly a convenience function to avoid having client code refer
+		 * directly to the factory instance.
 		 *
 		 * @param class_id the unique class identifier
 		 * @param os the output stream to pass to the writer's constructor
@@ -83,7 +84,8 @@ namespace Maca {
 		 * Convenience template for registering TokenWriter derived classes.
 		 */
 		template <typename T>
-		static bool register_writer(const std::string& class_id, const std::string& help = "");
+		static bool register_writer(const std::string& class_id,
+				const std::string& help = "");
 
 
 	protected:
@@ -112,7 +114,9 @@ namespace Maca {
 	typedef Loki::Factory<
 		TokenWriter, // The base class for objects created in the factory
 		std::string, // Identifier type
-		Loki::TL::MakeTypelist< std::ostream&, const Tagset&, const string_range_vector& >::Result
+		Loki::TL::MakeTypelist<
+			std::ostream&, const Tagset&, const string_range_vector&
+		>::Result
 		// TokenLayer constructor arguments' types specification
 	> TokenWriterFactoryType;
 
@@ -123,14 +127,15 @@ namespace Maca {
 	};
 
 	/**
-	 * Declaration of the TokenWriter factory as a singleton Loki object factory.
-	 * The factory instance can be accessed as TokenLayerFactory::Instance().
-	 * It is assumed that all derived classes have the same constructor signature.
+	 * Declaration of the TokenWriter factory as a singleton Loki object
+	 * factory. The factory instance can be accessed as
+	 * TokenLayerFactory::Instance(). It is assumed that all derived classes
+	 * have the same constructor signature.
 	 */
 	typedef Loki::SingletonHolder<
 		TokenWriterFactory,
 		Loki::CreateUsingNew, // default, needed to change the item below
-		Loki::LongevityLifetime::DieAsSmallObjectChild // Required per libloki docs
+		Loki::LongevityLifetime::DieAsSmallObjectChild // per libloki docs
 	>
 	TokenWriterFactorySingleton;
 
@@ -147,15 +152,18 @@ namespace Maca {
 	 */
 	template <typename T>
 	inline
-	T* writer_creator(std::ostream& os, const Tagset& tagset, const string_range_vector& params)
+	T* writer_creator(std::ostream& os, const Tagset& tagset,
+			const string_range_vector& params)
 	{
 		return new T(os, tagset, params);
 	}
 
 	template <typename T>
-	bool TokenWriter::register_writer(const std::string& class_id, const std::string& help)
+	bool TokenWriter::register_writer(const std::string& class_id,
+			const std::string& help)
 	{
-		bool ret = TokenWriterFactorySingleton::Instance().factory.Register(class_id, writer_creator<T>);
+		bool ret = TokenWriterFactorySingleton::Instance().factory.Register(
+				class_id, writer_creator<T>);
 		if (ret) {
 			TokenWriterFactorySingleton::Instance().help[class_id] = help;
 		}

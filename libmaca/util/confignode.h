@@ -16,7 +16,8 @@ namespace Maca {
 	{
 	public:
 		/// Constructor with an optional description string
-		ConfigValueMissing(const std::string& attribute, const std::string& where = "");
+		ConfigValueMissing(const std::string& attribute,
+				const std::string& where = "");
 
 		/// Destructor
 		~ConfigValueMissing() throw();

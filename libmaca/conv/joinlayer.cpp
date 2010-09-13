@@ -10,7 +10,8 @@ namespace Maca { namespace Conversion {
 	}
 
 	JoinLayer::JoinLayer(const Config::Node& cfg)
-		: OneTagsetLayer(get_named_tagset(cfg.get<std::string>("tagset"))), buf_(NULL)
+		: OneTagsetLayer(get_named_tagset(cfg.get<std::string>("tagset")))
+		, buf_(NULL)
 	{
 		append_rule(cfg);
 	}
@@ -33,7 +34,8 @@ namespace Maca { namespace Conversion {
 	void JoinLayer::append_rule(const JoinRule &rule)
 	{
 		if (rule.tagset().id() != tagset().id()) {
-			throw TagsetMismatch("appending join rule", tagset(), rule.tagset());
+			throw TagsetMismatch("appending join rule", tagset(),
+					rule.tagset());
 		}
 		rules_.push_back(rule);
 	}

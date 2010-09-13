@@ -3,7 +3,8 @@
 
 namespace Maca {
 
-	ConfigValueMissing::ConfigValueMissing(const std::string& attribute, const std::string& where)
+	ConfigValueMissing::ConfigValueMissing(const std::string& attribute,
+			const std::string& where)
 		: MacaError("Value for required attribute '" + attribute + "' missing")
 		, attribute(attribute), where(where)
 	{
@@ -16,7 +17,8 @@ namespace Maca {
 	std::string ConfigValueMissing::info() const
 	{
 		std::stringstream ss;
-		ss << "Value for required config attribute '" << attribute << "' missing";
+		ss << "Value for required config attribute '" << attribute
+			<< "' missing";
 		if (!where.empty()) {
 			ss << " in " << where;
 		}

@@ -17,9 +17,11 @@ namespace Maca {
 
 	const char* SfstAnalyser::identifier = "sfst";
 
-	bool SfstAnalyser::registered = MorphAnalyser::register_analyser<SfstAnalyser>();
+	bool SfstAnalyser::registered =
+			MorphAnalyser::register_analyser<SfstAnalyser>();
 
-	SfstAnalyser::SfstAnalyser(const Tagset* tagset, const std::string &filename)
+	SfstAnalyser::SfstAnalyser(const Tagset* tagset,
+			const std::string &filename)
 		: MorphAnalyser(tagset), lcase_(false)
 	{
 		open_transducer(filename);
@@ -67,7 +69,8 @@ namespace Maca {
 		fclose(f);
 	}
 
-	bool SfstAnalyser::process_functional(const Toki::Token &t, boost::function<void (Token*)> sink)
+	bool SfstAnalyser::process_functional(const Toki::Token &t,
+			boost::function<void (Token*)> sink)
 	{
 		std::vector< CAnalysis > a;
 		std::string s;
@@ -84,18 +87,22 @@ namespace Maca {
 		} else {
 			Token* tt = new Token(t);
 			foreach (CAnalysis& ca, a) {
-				//std::cout << s << "\t" <<<  unescape_analysis(ct_->print_analysis(ca)) << "\n";
-				std::string analysis = unescape_analysis((ct_->print_analysis(ca)));
+				//std::cout << s << "\t"
+				//	<<  unescape_analysis(ct_->print_analysis(ca)) << "\n";
+				std::string analysis = unescape_analysis(
+						ct_->print_analysis(ca));
 				// this function assumes the SFST analyses are returned the
 				// LEMMA_STRING<TAG_STRING> format, TAG_STRING may be complex
 				size_t pos = analysis.find('<');
 				if (pos != std::string::npos || analysis.size() > pos) {
 					UnicodeString lemma(analysis.c_str(), pos);
 					//strip < and > from the tag string
-					string_range sr(analysis.begin() + pos + 1, analysis.end() - 1);
+					string_range sr(analysis.begin() + pos + 1,
+							analysis.end() - 1);
 					tagset().lexemes_into_token(*tt, lemma, sr);
 				} else {
-					throw TagParseError("SFST format: < missing", "", analysis, "");
+					throw TagParseError("SFST format: < missing", "", analysis,
+							"");
 				}
 			}
 			sink(tt);
@@ -103,7 +110,8 @@ namespace Maca {
 		}
 	}
 
-	std::string SfstAnalyser::unescape_analysis(const std::string &sfst_analysis)
+	std::string SfstAnalyser::unescape_analysis(
+			const std::string &sfst_analysis)
 	{
 		std::string rv;
 		rv = boost::algorithm::replace_all_copy(sfst_analysis, "\\:", ":");

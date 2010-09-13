@@ -8,7 +8,8 @@ namespace Maca {
 	class XcesReaderImpl : public xmlpp::SaxParser
 	{
 	public:
-		XcesReaderImpl(const Tagset& tagset, std::deque<Chunk*>& obuf,  bool disamb_only);
+		XcesReaderImpl(const Tagset& tagset, std::deque<Chunk*>& obuf,
+				bool disamb_only);
 
 		~XcesReaderImpl();
 
@@ -23,7 +24,8 @@ namespace Maca {
 
 		const Tagset& tagset_;
 
-		enum state_t { XS_NONE, XS_CHUNK, XS_SENTENCE, XS_TOK, XS_ORTH, XS_LEX, XS_LEMMA, XS_TAG };
+		enum state_t { XS_NONE, XS_CHUNK, XS_SENTENCE, XS_TOK, XS_ORTH, XS_LEX,
+				XS_LEMMA, XS_TAG };
 		state_t state_;
 
 		Toki::Whitespace::Enum wa_;
@@ -41,7 +43,8 @@ namespace Maca {
 		bool disamb_only_;
 	};
 
-	XcesReader::XcesReader(const Tagset& tagset, std::istream& is, bool disamb_only)
+	XcesReader::XcesReader(const Tagset& tagset, std::istream& is,
+			bool disamb_only)
 		: BufferedTokenReader(is, tagset)
 		, impl_(new XcesReaderImpl(tagset, chunk_buf_, disamb_only))
 	{
@@ -64,7 +67,8 @@ namespace Maca {
 		}
 	}
 
-	XcesReaderImpl::XcesReaderImpl(const Tagset& tagset, std::deque<Chunk*>& obuf, bool disamb_only)
+	XcesReaderImpl::XcesReaderImpl(const Tagset& tagset,
+			std::deque<Chunk*>& obuf, bool disamb_only)
 		: xmlpp::SaxParser()
 		, tagset_(tagset), state_(XS_NONE), wa_(Toki::Whitespace::Newline)
 		, sbuf_(), tok_(NULL), sent_(NULL), chunk_(NULL), obuf_(obuf)
@@ -79,7 +83,8 @@ namespace Maca {
 		delete chunk_;
 	}
 
-	void XcesReaderImpl::on_start_element(const Glib::ustring &name, const AttributeList& attributes)
+	void XcesReaderImpl::on_start_element(const Glib::ustring &name,
+			const AttributeList& attributes)
 	{
 		if (name == "chunk") {
 			std::string type;

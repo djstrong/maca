@@ -29,7 +29,8 @@ namespace Maca {
 		ConstAnalyser* clone() const;
 
 		/// MapAnalyser override
-		bool process_functional(const Toki::Token &t, boost::function<void (Token*)> sink);
+		bool process_functional(const Toki::Token &t
+				, boost::function<void (Token*)> sink);
 
 		/// Class identifier
 		static const char* identifier;

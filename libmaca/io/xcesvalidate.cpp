@@ -58,7 +58,8 @@ namespace Maca {
 		impl_->parse_file(filename);
 	}
 
-	XcesValidatorImpl::XcesValidatorImpl(const Tagset& tagset, std::ostream& out)
+	XcesValidatorImpl::XcesValidatorImpl(const Tagset& tagset,
+			std::ostream& out)
 		: xmlpp::SaxParser()
 		, tagset_(tagset), state_(XS_NONE)
 		, last_orth_(), sbuf_(), os_(out), token_idx_(0), tag_idx_(0)
@@ -67,7 +68,8 @@ namespace Maca {
 
 
 
-	void XcesValidatorImpl::on_start_element(const Glib::ustring &name, const AttributeList& /*attributes*/)
+	void XcesValidatorImpl::on_start_element(const Glib::ustring &name,
+			const AttributeList& /*attributes*/)
 	{
 		if (name == "tok") {
 			state_ = XS_TOK;
@@ -88,8 +90,8 @@ namespace Maca {
 
 
 	namespace {
-		void error_preamble(std::ostream& os, const std::string& orth, const std::string& tag,
-				int tokenid, int tagid) {
+		void error_preamble(std::ostream& os, const std::string& orth,
+				const std::string& tag, int tokenid, int tagid) {
 			os << "Token " << tokenid << " (" << orth << "), tag " << tagid
 				<< " (" << tag << "): ";
 		}
