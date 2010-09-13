@@ -11,16 +11,20 @@ namespace Maca {
 	class SentenceAnalyser : public Toki::UnicodeSink
 	{
 	public:
-		SentenceAnalyser(boost::shared_ptr<Toki::Tokenizer> tok,
-			boost::shared_ptr<MorphAnalyser> ma);
+		SentenceAnalyser(const boost::shared_ptr<Toki::Tokenizer>& tok,
+			const boost::shared_ptr<MorphAnalyser>& ma);
 
 		SentenceAnalyser(const Config::Node& cfg);
 
-		SentenceAnalyser(const Config::Node& cfg, const Toki::Config::Node& toki_config_override);
+		SentenceAnalyser(const Config::Node& cfg,
+				const Toki::Config::Node& toki_config_override);
 
-		static boost::shared_ptr<SentenceAnalyser> create_from_named_config(const std::string config_name);
+		static boost::shared_ptr<SentenceAnalyser> create_from_named_config(
+				const std::string& config_name);
 
-		static boost::shared_ptr<SentenceAnalyser> create_from_named_config(const std::string config_name, const std::string toki_config_override);
+		static boost::shared_ptr<SentenceAnalyser> create_from_named_config(
+				const std::string& config_name,
+				const std::string& toki_config_override);
 
 		Sentence* get_next_sentence();
 
