@@ -28,7 +28,7 @@ namespace Maca {
 		: node_from(m.p), node_to(m.k)
 		, orth(UnicodeString::fromUTF8(m.forma))
 		, lemma(m.haslo ? UnicodeString::fromUTF8(m.haslo) : UnicodeString())
-		, tag_string(m.interp ? m.interp : std::string())
+		, tag_string(m.interp ? m.interp : std::string()), token(NULL)
 	{
 	}
 
@@ -210,12 +210,11 @@ namespace Maca {
 	bool MorfeuszAnalyser::process_functional(const Toki::Token &t,
 			boost::function<void(Token *)>sink)
 	{
-		std::vector<MorfeuszEdge> pmorf;
 		std::string s = Toki::Util::to_utf8(t.orth());
 		// Morfeusz demands a nonconst char*
 		InterpMorf *ppmorf = morfeusz_analyse_handle_(
 				const_cast<char*>(s.c_str()));
-		pmorf = morfeusz_preprocess(ppmorf);
+		std::vector<MorfeuszEdge> pmorf = morfeusz_preprocess(ppmorf);
 		if (pmorf.empty()) { // no analyses
 			return false;
 		} else if (pmorf.size() == 1) { // only one analysis
@@ -243,30 +242,42 @@ namespace Maca {
 		}
 		// the numbering starts at 0 and we got the last valid node number
 		++node_count;
+		// build adjacency lists, folding lemma ambiguities
 		std::vector< std::vector< int > > succ(node_count);
 		std::vector< std::vector< int > > prec(node_count);
-		for (int i = 0; i < edge_count; ++i) { // build adjacency lists
-			succ[pmorf[i].node_from].push_back(i);
-			prec[pmorf[i].node_to].push_back(i);
+		for (int i = 0; i < edge_count; ++i) {
+			MorfeuszEdge& edge = pmorf[i];
+			int actual_edge_i = -1;
+			foreach (int out_edge, succ[edge.node_from]) {
+				if (pmorf[out_edge].node_to == edge.node_to) {
+					actual_edge_i = out_edge;
+				}
+			}
+			if (actual_edge_i >= 0) {
+				// duplicate edge -- simple lemma ambiguity
+				morfeusz_into_token(pmorf[actual_edge_i].token, edge);
+			} else {
+				edge.token = make_token(t, edge);
+				succ[edge.node_from].push_back(i);
+				prec[edge.node_to].push_back(i);
+			}
 		}
 
 		std::vector<Token*> unambiguous;
-
-		int i = 0;
-		while (i < node_count) {
-			if (succ[i].size() > 1) { 
-				// complex case, many interps or segmentation ambiguity
+		int current_node = 0;
+		while (current_node < node_count) {
+			if (succ[current_node].size() > 1) {
+				// complex case, segmentation ambiguity
 				if (!unambiguous.empty()) {
 					flush_convert(unambiguous, sink);
 					unambiguous.clear();
 				}
-				int merge_node = -1;
-				std::vector< std::vector< int > > paths;
 
+				int merge_node = -1;
+				std::vector< std::vector< Token* > > paths;
 				// follow all paths to the merge point
-				for (size_t n = 0; n < succ[i].size(); ++n) {
+				foreach (int tse, succ[current_node]) {
 					paths.push_back(std::vector<int>());
-					int tse = succ[i][n];
 					paths.back().push_back(tse);
 					int v = pmorf[tse].node_to;
 					while (prec[v].size() == 1) {
@@ -274,8 +285,8 @@ namespace Maca {
 							throw MorfeuszError("path splits twice",
 									t.orth_utf8(), pmorf);
 						}
-						tse = succ[v][0];
-						paths.back().push_back(tse);
+						tse = *succ[v].begin();
+						paths.back().push_back(pmorf[tse].token);
 						v = pmorf[tse].node_to;
 					}
 					//assume this is the merge node, check for consistency
@@ -286,53 +297,24 @@ namespace Maca {
 					merge_node = v;
 				}
 
-				// the possible paths as token vectors
-				std::vector< std::vector<Token*> > token_paths;
-
-				// fill token paths, fold simple lemma ambiguities
-				typedef std::map< std::pair<int,int>, Token*> alt_map_t;
-				alt_map_t alt_map;
-				for (size_t pi = 0; pi < paths.size(); ++pi) {
-					bool new_path_added = false;
-					foreach (int ei, paths[pi]) {
-						MorfeuszEdge& mri = pmorf[ei];
-						std::pair<int, int> idx =
-								std::make_pair(mri.node_from, mri.node_to);
-						alt_map_t::iterator it = alt_map.find(idx);
-						if (it == alt_map.end()) {
-							if (!new_path_added) {
-								token_paths.push_back(
-										std::vector<Token*>());
-								new_path_added = true;
-							}
-							token_paths.back().push_back(
-									make_token(t, mri));
-							alt_map.insert(std::make_pair(idx,
-										token_paths.back().back()));
-						} else {
-							morfeusz_into_token(it->second, mri);
-						}
-					}
-				}
-
-				flush_convert(token_paths, sink);
-				i = merge_node;
-			} else if (!succ[i].empty()) { //simple case, only one interp
-				int edge = succ[i][0];
-				unambiguous.push_back(make_token(t, pmorf[edge]));
-				if (pmorf[edge].node_to != i + 1) {
+				flush_convert(paths, sink);
+				current_node = merge_node;
+			} else if (!succ[current_node].empty()) { //simple case, only one interp
+				int edge = *succ[current_node].begin();
+				unambiguous.push_back(pmorf[edge].token);
+				if (pmorf[edge].node_to != current_node + 1) {
 					throw MorfeuszError(
 							"simple path has non-consecutive nodes",
 							t.orth_utf8(), pmorf);
 				}
-				++i;
+				++current_node;
 			} else { //only the last node should have no succesors
-				if (i != node_count - 1) {
+				if (current_node != node_count - 1) {
 					throw MorfeuszError(
 							"node without succesors that not last node",
 							t.orth_utf8(), pmorf);
 				}
-				++i;
+				++current_node;
 			}
 		}
 		if (!unambiguous.empty()) {

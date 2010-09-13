@@ -17,6 +17,7 @@ namespace Maca {
 		UnicodeString orth;
 		UnicodeString lemma;
 		std::string tag_string;
+		Token* token;
 	};
 
 	/**
