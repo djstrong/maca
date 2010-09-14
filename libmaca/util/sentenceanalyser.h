@@ -42,7 +42,15 @@ namespace Maca {
 			return *tok_;
 		}
 
+		Toki::Tokenizer& tokenizer() {
+			return *tok_;
+		}
+
 		const MorphAnalyser& analyser() const {
+			return *ma_;
+		}
+
+		MorphAnalyser& analyser() {
 			return *ma_;
 		}
 
