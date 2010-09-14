@@ -9,6 +9,7 @@ namespace Maca {
 		: TokenWriter(os, tagset, params), cid_(0)
 		, use_indent_(true), force_chunk_(false), force_disamb_(false)
 		, sort_tags_(false), split_chunks_on_newlines_(false)
+		, whitespace_info_(false)
 	{
 		foreach (const string_range& param, params) {
 			std::string p = boost::copy_range<std::string>(param);
@@ -24,6 +25,8 @@ namespace Maca {
 				sort_tags_ = true;
 			} else if (p == "split") {
 				split_chunks_on_newlines_ = true;
+			} else if (p == "ws") {
+				whitespace_info_ = true;
 			}
 		}
 		do_header();
@@ -37,7 +40,7 @@ namespace Maca {
 	void XcesWriter::write_token(const Token &t)
 	{
 		token_as_xces_xml(os(), tagset(), t, use_indent_ ? indent_level() : -1,
-				force_disamb_, sort_tags_);
+				force_disamb_, sort_tags_, whitespace_info_);
 	}
 
 	void XcesWriter::write_sentence(const Sentence& s)

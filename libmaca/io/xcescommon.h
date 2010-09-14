@@ -11,7 +11,7 @@ namespace Maca {
 	 */
 	void token_as_xces_xml(std::ostream& os, const Tagset& tagset,
 			const Token& t, int indent, bool force_disamb = false,
-			bool sort = false);
+			bool sort = false, bool whitespace_info = false);
 
 	/**
 	 * Output a xml-encoded version of the given string into the given ostream.

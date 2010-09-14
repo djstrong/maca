@@ -28,12 +28,17 @@ namespace Maca {
 
 	void token_as_xces_xml(std::ostream& os, const Tagset& tagset,
 			const Token& t, int indent, bool force_disamb /* = false */,
-			bool sort /* = false */)
+			bool sort /* = false */, bool whitespace_info /* false */)
 	{
 		if (t.wa() == Toki::Whitespace::None) {
 			osi(os, indent) << "<ns/>\n";
 		}
-		osi(os, indent) << "<tok>\n";
+		if (!whitespace_info) {
+			osi(os, indent) << "<tok>\n";
+		} else {
+			osi(os, indent) << "<tok ws=\""
+				<< Toki::Whitespace::to_string(t.wa()) << "\">\n";
+		}
 		++indent;
 		osi(os, indent) << "<orth>";
 		encode_xml_entities_into(os, t.orth_utf8());

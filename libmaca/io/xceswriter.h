@@ -38,6 +38,8 @@ namespace Maca {
 		bool sort_tags_;
 
 		bool split_chunks_on_newlines_;
+
+		bool whitespace_info_;
 	};
 
 
