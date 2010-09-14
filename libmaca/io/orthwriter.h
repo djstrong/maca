@@ -17,6 +17,10 @@ namespace Maca {
 		void write_sentence(const Sentence &s);
 
 		void write_chunk(const Chunk &c);
+
+		bool actual_ws_;
+
+		bool end_nl_;
 	};
 
 } /* end ns Maca */

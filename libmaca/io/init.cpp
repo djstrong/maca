@@ -11,7 +11,7 @@ namespace Maca {
 		if (init_done) return false;
 		TokenWriter::register_writer<XcesWriter>("xces", "flat,chunk,nochunk,disamb,sort,split");
 		TokenWriter::register_writer<PlainWriter>("plain", "");
-		TokenWriter::register_writer<OrthWriter>("orth", "nl");
+		TokenWriter::register_writer<OrthWriter>("orth", "actual_ws,end_nl");
 		init_done = true;
 		return true;
 	}
