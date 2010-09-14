@@ -74,7 +74,7 @@ namespace Maca {
 
 	void PremorphProcessorImpl::on_start_document()
 	{
-		timer_.reset();
+		timer_.restart();
 		os_ << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
 		os_ << "<!DOCTYPE cesAna SYSTEM \"xcesAnaIPI.dtd\">\n";
 	}

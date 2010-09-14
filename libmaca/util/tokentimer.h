@@ -43,7 +43,7 @@ namespace Maca {
 		}
 
 		/// reset the timer
-		void reset();
+		void restart();
 
 		/// check if at least s seconds have elapsed since the last
 		/// slice began and if yes, display progress info and start a new slice

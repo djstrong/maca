@@ -11,7 +11,7 @@ namespace Maca {
 	{
 	}
 
-	void TokenTimer::reset()
+	void TokenTimer::restart()
 	{
 		tokens_ = slice_tokens_ = sentences_ = 0;
 		start_ = slice_start_ = clock();

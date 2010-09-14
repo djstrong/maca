@@ -66,7 +66,7 @@ namespace Maca {
 
 	void SentenceAnalyser::new_input_source()
 	{
-		tok_->reset();
+		tok_->restart();
 		tok_->set_input_source(get_input_source());
 	}
 
