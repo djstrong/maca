@@ -23,6 +23,7 @@ int main(int argc, char** argv)
 	std::string config, toki_config;
 	std::string input_format, output_format;
 	std::vector<std::string> plugins;
+	std::string config_path, toki_config_path, initial_wa_override;
 	int threads = 0;
 	bool quiet = false, progress = false, split_chunks = false;
 	using boost::program_options::value;
@@ -35,9 +36,15 @@ int main(int argc, char** argv)
 	desc.add_options()
 			("config,c", value(&config),
 			 "Morphological analyser configuration file\n")
+			("config-path,C", value(&config_path)->default_value(""),
+			 "Override config search path")
 			("toki-config,t", value(&toki_config),
 			 "Tokenizer configuration file. "
 			 "Overrides config value, only used in some input modes.\n")
+			("toki-config-path", value(&toki_config_path)->default_value(""),
+			 "Override toki config search path")
+			("initial-wa-override", value(&initial_wa_override),
+			 "Initial whitespace (overrides toki config file)")
 			("input-format,i", value(&input_format)->default_value("plain"),
 			 "Input format, any of: plain premorph premorph-stream\n")
 			("output-format,o", value(&output_format)->default_value("plain"),
@@ -68,6 +75,13 @@ int main(int argc, char** argv)
 	}
 	boost::program_options::notify(vm);
 
+	if (!config_path.empty()) {
+		Maca::Path::Instance().set_search_path(config_path);
+	}
+	if (!toki_config_path.empty()) {
+		Toki::Path::Instance().set_search_path(config_path);
+	}
+
 	foreach (const std::string& s, plugins) {
 		Maca::MorphAnalyser::load_plugin(s, false);
 	}
@@ -75,7 +89,8 @@ int main(int argc, char** argv)
 	if (vm.count("help")) {
 		std::cout << desc << "\n";
 		std::cout << "Available analyser types: ";
-		std::cout << boost::algorithm::join(Maca::MorphAnalyser::available_analyser_types(), " ") << "\n";
+		std::cout << boost::algorithm::join(
+				Maca::MorphAnalyser::available_analyser_types(), " ") << "\n";
 		return 1;
 	}
 	Toki::Path::Instance().set_verbose(!quiet);
@@ -87,7 +102,20 @@ int main(int argc, char** argv)
 			if (toki_config.empty()) {
 				sa = Maca::SentenceAnalyser::create_from_named_config(config);
 			} else {
-				sa = Maca::SentenceAnalyser::create_from_named_config(config, toki_config);
+				sa = Maca::SentenceAnalyser::create_from_named_config(config,
+						toki_config);
+			}
+
+			if (!initial_wa_override.empty()) {
+				Toki::Whitespace::Enum wa = Toki::Whitespace::from_string(
+						initial_wa_override);
+				if (Toki::Whitespace::is_valid(wa)) {
+					Toki::Tokenizer& tok = sa->tokenizer();
+					dynamic_cast<Toki::LayerTokenizer&>(tok).input_tokenizer().set_initial_whitespace(wa);
+				} else {
+					std::cerr << "Invalid initial whitespace: "
+							<< initial_wa_override << "\n";
+				}
 			}
 
 			if (input_format == "premorph-stream") {
