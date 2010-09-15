@@ -24,13 +24,17 @@ namespace Maca {
 
 	bool Lexeme::operator<(const Lexeme& other) const
 	{
-		return lemma_ < other.lemma_ ||
-				(lemma_ == other.lemma_ && tag_ < other.tag_);
+		return lemma_ < other.lemma_
+				|| (lemma_ == other.lemma_
+					&& (tag_ < other.tag_
+						|| (tag_ == other.tag_
+							&& disamb_ < other.disamb_)));
 	}
 
 	bool Lexeme::operator==(const Lexeme& other) const
 	{
-		return lemma_ == other.lemma_ && tag_ == other.tag_;
+		return lemma_ == other.lemma_ && tag_ == other.tag_ &&
+				disamb_ == other.disamb_;
 	}
 
 } /* end ns Maca */
