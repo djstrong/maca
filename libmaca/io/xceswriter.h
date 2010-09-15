@@ -33,7 +33,7 @@ namespace Maca {
 
 		bool force_chunk_;
 
-		bool force_disamb_;
+		bool output_disamb_;
 
 		bool sort_tags_;
 

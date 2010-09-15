@@ -121,17 +121,15 @@ namespace Maca {
 			sbuf_ = "";
 		} else if (state_ == XS_TOK && name == "lex") {
 			assert(tok_ != NULL);
-			bool okay = true;
-			if (disamb_only_) {
-				okay = false;
-				foreach (const Attribute& a, attributes) {
-					if (a.name == "disamb" && a.value == "1") {
-						okay = true;
-					}
+			bool is_disamb = false;
+			foreach (const Attribute& a, attributes) {
+				if (a.name == "disamb" && a.value == "1") {
+					is_disamb = true;
 				}
 			}
-			if (okay) {
+			if (!disamb_only_ || is_disamb) {
 				tok_->add_lexeme(Lexeme());
+				tok_->lexemes().back().set_disamb(is_disamb);
 				state_ = XS_LEX;
 			}
 		} else if (state_ == XS_LEX && name == "base") {

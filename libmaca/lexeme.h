@@ -66,6 +66,16 @@ namespace Maca {
 		/// a zero-length lemma or a tag with no tagset
 		bool is_null() const;
 
+		/// Disambiguated flag setter
+		void set_disamb(bool value) {
+			disamb_ = value;
+		}
+
+		/// Disambiguated flag getter
+		bool is_disamb() const {
+			return disamb_;
+		}
+
 		/**
 		 * Lexeme comparison. Lexemes are ordered by lemma and then by tag, see
 		 * Tag::operator< . Boost template magic provides other comparison ops.
@@ -86,6 +96,9 @@ namespace Maca {
 		/// The tag
 		//boost::flyweight<Tag> tag_;
 		Tag tag_;
+
+		/// Compatibility "disambiguated" flag
+		bool disamb_;
 	};
 
 } /* end ns Maca */

@@ -13,9 +13,13 @@ namespace Maca {
 		}
 
 		inline void lexeme_as_xces_xml(std::ostream& os, const Tagset& tagset,
-				const Lexeme& l, bool force_disamb)
+				const Lexeme& l, bool output_disamb)
 		{
-			os << (force_disamb ? "<lex disamb=\"1\">" : "<lex>");
+			if (output_disamb && l.is_disamb()) {
+				os << "<lex disamb=\"1\">";
+			} else {
+				os << "<lex>";
+			}
 			os << "<base>";
 			encode_xml_entities_into(os, l.lemma_utf8());
 			os << "</base>";
@@ -27,7 +31,7 @@ namespace Maca {
 	}
 
 	void token_as_xces_xml(std::ostream& os, const Tagset& tagset,
-			const Token& t, int indent, bool force_disamb /* = false */,
+			const Token& t, int indent, bool output_disamb /* = false */,
 			bool sort /* = false */, bool whitespace_info /* false */)
 	{
 		if (t.wa() == Toki::Whitespace::None) {
@@ -45,13 +49,13 @@ namespace Maca {
 		os << "</orth>\n";
 		if (!sort) {
 			foreach (const Lexeme& l, t.lexemes()) {
-				lexeme_as_xces_xml(osi(os, indent), tagset, l, force_disamb);
+				lexeme_as_xces_xml(osi(os, indent), tagset, l, output_disamb);
 			}
 		} else {
 			std::stringstream ss;
 			std::vector<std::string> vss;
 			foreach (const Lexeme& l, t.lexemes()) {
-				lexeme_as_xces_xml(osi(ss, indent), tagset, l, force_disamb);
+				lexeme_as_xces_xml(osi(ss, indent), tagset, l, output_disamb);
 				vss.push_back(ss.str());
 				ss.str("");
 			}

@@ -3,12 +3,12 @@
 namespace Maca {
 
 	Lexeme::Lexeme()
-		: lemma_(), tag_()
+		: lemma_(), tag_(), disamb_(false)
 	{
 	}
 
 	Lexeme::Lexeme(const UnicodeString &lemma, const Tag &tag)
-		: lemma_(lemma), tag_(tag)
+		: lemma_(lemma), tag_(tag), disamb_(false)
 	{
 	}
 

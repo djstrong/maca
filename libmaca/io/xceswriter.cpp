@@ -7,7 +7,7 @@ namespace Maca {
 	XcesWriter::XcesWriter(std::ostream& os, const Tagset& tagset,
 			const string_range_vector& params)
 		: TokenWriter(os, tagset, params), cid_(0)
-		, use_indent_(true), force_chunk_(false), force_disamb_(false)
+		, use_indent_(true), force_chunk_(false), output_disamb_(true)
 		, sort_tags_(false), split_chunks_on_newlines_(false)
 		, whitespace_info_(false)
 	{
@@ -19,8 +19,8 @@ namespace Maca {
 				force_chunk_ = true;
 			} else if (p == "nochunk") {
 				force_chunk_ = false;
-			} else if (p == "disamb") {
-				force_disamb_ = true;
+			} else if (p == "nodisamb") {
+				output_disamb_ = false;
 			} else if (p == "sorttags") {
 				sort_tags_ = true;
 			} else if (p == "split") {
@@ -40,7 +40,7 @@ namespace Maca {
 	void XcesWriter::write_token(const Token &t)
 	{
 		token_as_xces_xml(os(), tagset(), t, use_indent_ ? indent_level() : -1,
-				force_disamb_, sort_tags_, whitespace_info_);
+				output_disamb_, sort_tags_, whitespace_info_);
 	}
 
 	void XcesWriter::write_sentence(const Sentence& s)
