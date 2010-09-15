@@ -61,6 +61,7 @@ SET(libmaca_STAT_SRC
     io/plain.cpp
     io/premorph.cpp
     io/reader.cpp
+    io/rft.cpp
     io/sax.cpp
     io/writer.cpp
     io/xces.cpp
