@@ -99,6 +99,7 @@ namespace Maca {
 		}
 		tagset.attribute_dict_.load_sorted_data(vec);
 
+		std::vector<std::string> poses_plain;
 		while (std::getline(is, line)) {
 			boost::algorithm::trim(line);
 			++line_no;
@@ -109,6 +110,7 @@ namespace Maca {
 				if (!symbols.insert(v[0]).second) {
 					throw TagsetParseError("Duplicate symbol", line_no, v[0]);
 				}
+				poses_plain.push_back(v[0]);
 				std::vector<attribute_idx_t>& pattrs = pmap[v[0]];
 				std::vector<bool>& req_mask = reqmap[v[0]];
 				req_mask.resize(tagset.attribute_dict_.size());
@@ -147,6 +149,11 @@ namespace Maca {
 		if (tagset.pos_dict_.size() == 0) {
 			throw TagsetParseError("No POS in tagset", 0, "");
 		}
+		for (size_t i = 0; i < poses_plain.size(); ++i) {
+			pos_idx_t p = tagset.pos_dictionary().get_id(poses_plain[i]);
+			tagset.original_pos_indices_.insert(std::make_pair(p,i));
+		}
+
 		return tagset;
 	}
 

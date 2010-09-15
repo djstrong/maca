@@ -439,4 +439,15 @@ namespace Maca {
 		}
 	}
 
+	size_t Tagset::get_original_pos_index(pos_idx_t pos) const
+	{
+		std::map<pos_idx_t, size_t>::const_iterator i =
+				original_pos_indices_.find(pos);
+		if (i != original_pos_indices_.end()) {
+			return i->second;
+		} else {
+			return static_cast<size_t>(-1);
+		}
+	}
+
 } /* end ns Maca */

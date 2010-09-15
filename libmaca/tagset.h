@@ -313,6 +313,9 @@ namespace Maca {
 			lexemes_into_token(tok, u, tags);
 		}
 
+		/// get the original index of the POS in the tagset definition
+		size_t get_original_pos_index(pos_idx_t pos) const;
+
 	private:
 		/// Temporary solution to allow splitting the parser into a separate
 		/// class
@@ -335,6 +338,9 @@ namespace Maca {
 
 		/// String - number dictionary for the attribute values
 		SymbolDictionary<value_idx_t> value_dict_;
+
+		/// The original indices of the POSes in the tagset definition
+		std::map<pos_idx_t, size_t> original_pos_indices_;
 
 		/// mapping from attribute indices to valid value indices
 		std::vector< std::vector<value_idx_t> > attribute_values_;
