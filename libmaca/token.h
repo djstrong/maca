@@ -75,6 +75,16 @@ namespace Maca {
 			lexemes_.push_back(lex);
 		}
 
+		/**
+		 * Get the 'best' lexeme available, with best meaning disambiguated if
+		 * possible, and when there is more than one candidate, some form of
+		 * sorting is performed to always return the same lexeme.
+		 */
+		const Lexeme& get_preferred_lexeme(const Tagset& tagset) const;
+
+		/// Returns the index of the best lexeme, @see get_best_lexeme
+		size_t get_preferred_lexeme_index(const Tagset& tagset) const;
+
 		/// Clear all lexemes and add one lexeme with lemma=orth and an ign tag
 		void make_ign(const Tagset& tagset);
 

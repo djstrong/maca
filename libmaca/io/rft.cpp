@@ -30,7 +30,8 @@ namespace Maca {
 				std::cerr << "No lexemes for token!";
 			}
 		} else {
-			std::string tag_str = tagset().tag_to_string(t.lexemes()[0].tag());
+			const Lexeme& pref = t.get_preferred_lexeme(tagset());
+			std::string tag_str = tagset().tag_to_string(pref.tag());
 			os() << boost::algorithm::replace_all_copy(tag_str, ":", ".");
 		}
 		os() << "\n";
