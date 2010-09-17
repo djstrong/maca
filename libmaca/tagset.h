@@ -225,6 +225,16 @@ namespace Maca {
 		 */
 		std::string tag_to_string(const Tag& tag) const;
 
+		/**
+		 * Create the string representation of a tag with no extra attributes
+		 * and optional and missing attributes with 0 values represented as
+		 * attribute names.
+		 *
+		 * The output format is not currently valid for parsing if there are
+		 * missing attributes.
+		 */
+		std::string tag_to_no_opt_string(const Tag &tag) const;
+
 		/// POS name <-> index dictionary getter
 		const SymbolDictionary<pos_idx_t>& pos_dictionary() const {
 			return pos_dict_;

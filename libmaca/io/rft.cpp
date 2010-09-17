@@ -31,7 +31,7 @@ namespace Maca {
 			}
 		} else {
 			const Lexeme& pref = t.get_preferred_lexeme(tagset());
-			std::string tag_str = tagset().tag_to_string(pref.tag());
+			std::string tag_str = tagset().tag_to_no_opt_string(pref.tag());
 			os() << boost::algorithm::replace_all_copy(tag_str, ":", ".");
 		}
 		os() << "\n";

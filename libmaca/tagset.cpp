@@ -354,6 +354,22 @@ namespace Maca {
 		return ss.str();
 	}
 
+	std::string Tagset::tag_to_no_opt_string(const Tag &tag) const
+	{
+		std::ostringstream ss;
+		ss << pos_dict_.get_string(tag.pos_id());
+		const std::vector<attribute_idx_t>& attrs =
+				get_pos_attributes(tag.pos_id());
+		foreach (const attribute_idx_t& a, attrs) {
+			ss << ":";
+			if (tag.values()[a] > 0) {
+				ss << value_dict_.get_string(tag.values()[a]);
+			} else {
+				ss << attribute_dict_.get_string(a);
+			}
+		}
+		return ss.str();
+	}
 
 	attribute_idx_t Tagset::get_value_attribute(value_idx_t id) const
 	{
