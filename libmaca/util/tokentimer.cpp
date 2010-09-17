@@ -43,7 +43,7 @@ namespace Maca {
 		clock_t now_clock = clock();
 		double elapsed = ((double)now_clock - start_) / CLOCKS_PER_SEC;
 		double avg_rate = tokens_ / elapsed;
-		std::cerr << "" << "Processed " << sentences_ << " sentences, "
+		std::cerr << "\r" << "Processed " << sentences_ << " sentences, "
 				<< tokens_ << " tokens, "
 				<< "avg rate " << avg_rate << " t/s                    \n";
 	}
