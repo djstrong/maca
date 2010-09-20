@@ -212,13 +212,19 @@ namespace Maca {
 			if (!ts[i].empty()) {
 				value_idx_t val_id = value_dict_.get_id(ts[i]);
 				if (!value_dict_.is_id_valid(val_id)) {
-					throw TagParseError("Unknown attribute value",
-							boost::copy_range<std::string>(ts[i]), "",
-							id_string());
-				}
-				attribute_idx_t attr_id = get_value_attribute(val_id);
-				if (valid_attrs_mask[attr_id] || allow_extra) {
-					tag.values()[attr_id] = val_id;
+					attribute_idx_t a = attribute_dict_.get_id(ts[i]);
+					if (attribute_dict_.is_id_valid(a)) {
+						tag.values()[a] = 0;
+					} else {
+						throw TagParseError("Unknown attribute value",
+								boost::copy_range<std::string>(ts[i]), "",
+								id_string());
+					}
+				} else {
+					attribute_idx_t attr_id = get_value_attribute(val_id);
+					if (valid_attrs_mask[attr_id] || allow_extra) {
+						tag.values()[attr_id] = val_id;
+					}
 				}
 			}
 		}

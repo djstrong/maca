@@ -1,5 +1,6 @@
 #include <libmaca/conv/tagsetconverter.h>
 #include <libmaca/io/xcesvalidate.h>
+#include <libmaca/io/rft.h>
 #include <libmaca/io/xcesreader.h>
 #include <libmaca/io/xceswriter.h>
 #include <libmaca/util/settings.h>
@@ -36,7 +37,7 @@ int main(int argc, char** argv)
 			("tagset,t", value(&force_tagset),
 			 "Tagset override\n")
 			("input-format,i", value(&input_format)->default_value("xces"),
-			 "Input format\n")
+			 "Input format [xces,rft]\n")
 			("output-format,o", value(&output_format)->default_value("xces"),
 			 writers_help.c_str())
 			("progress,p", value(&progress)->zero_tokens(),
@@ -72,12 +73,20 @@ int main(int argc, char** argv)
 	} else if (converter == "nop") {
 		try {
 			const Maca::Tagset& tagset = Maca::get_named_tagset(force_tagset);
-			Maca::XcesReader reader(tagset, std::cin, disamb);
+			boost::scoped_ptr<Maca::TokenReader> reader;
+			if (input_format == "xces") {
+				reader.reset(new Maca::XcesReader(tagset, std::cin, disamb));
+			} else if (input_format == "rft") {
+				reader.reset(new Maca::RftReader(tagset, std::cin, disamb));
+			} else {
+				std::cerr << "Unknown inut format: " << input_format << "\n";
+				return 2;
+			}
 			boost::scoped_ptr<Maca::TokenWriter> writer;
 			writer.reset(Maca::TokenWriter::create(output_format, std::cout, tagset));
 			Maca::TokenTimer& timer = Maca::global_timer();
 			timer.register_signal_handler();
-			while (Maca::Chunk* c = reader.get_next_chunk()) {
+			while (Maca::Chunk* c = reader->get_next_chunk()) {
 				writer->write_chunk(*c);
 				timer.count_chunk(*c);
 				if (progress) {

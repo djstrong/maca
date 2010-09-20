@@ -35,6 +35,25 @@ namespace Maca {
 		bool warn_on_no_lexemes_;
 	};
 
+	class RftReader : public BufferedSentenceReader
+	{
+	public:
+		RftReader(const Tagset& tagset, std::istream& is, bool disamb);
+
+		std::istream& is() {
+			return is_;
+		}
+
+	protected:
+		/// BufferedSentenceReader override
+		Sentence* actual_next_sentence();
+
+		std::istream& is_;
+
+		bool disamb_;
+
+	};
+
 } /* end ns Maca */
 
 #endif // LIBMACA_IO_RFT_H

@@ -52,4 +52,46 @@ namespace Maca {
 		}
 	}
 
+	RftReader::RftReader(const Tagset& tagset, std::istream& is, bool disamb)
+		: BufferedSentenceReader(tagset), is_(is), disamb_(disamb)
+	{
+	}
+
+	Sentence* RftReader::actual_next_sentence()
+	{
+		std::string line;
+		Sentence* s = NULL;
+		while (is().good()) {
+			std::getline(is(), line);
+			if (line.empty()) {
+				return s;
+			} else {
+				size_t tab = line.find('\t');
+				if (tab == line.npos || tab == 0 || (tab == line.size() - 1)) {
+					std::cerr << "Invalid line: " << line << "\n";
+				} else {
+					std::string orth = line.substr(0, tab);
+					std::string tag_string = line.substr(tab + 1);
+					boost::algorithm::replace_all(tag_string, ".", ":");
+					Tag tag = tagset().parse_simple_tag(tag_string, false);
+					Token* t = new Token();
+					t->set_orth(UnicodeString::fromUTF8(orth));
+					t->set_wa(Toki::Whitespace::Space);
+					if (s == NULL) {
+						s = new Sentence();
+						t->set_wa(Toki::Whitespace::Newline);
+					}
+					t->add_lexeme(Lexeme(t->orth(), tag));
+					if (disamb_) {
+						t->lexemes().back().set_disamb(true);
+					}
+					s->append(t);
+				}
+			}
+		}
+		return s;
+	}
+
+
+
 } /* end ns Maca */
