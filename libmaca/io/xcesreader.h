@@ -11,7 +11,7 @@ namespace Maca {
 
 	class XcesReaderImpl;
 
-	class XcesReader : public BufferedTokenReader
+	class XcesReader : public BufferedChunkReader
 	{
 	public:
 		XcesReader(const Tagset& tagset, std::istream& is,

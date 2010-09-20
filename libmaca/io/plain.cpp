@@ -37,63 +37,15 @@ namespace Maca {
 
 	PlainReader::PlainReader(std::istream &is,
 			const boost::shared_ptr<SentenceAnalyser>& sa)
-		: TokenReader(sa->tagset()), is_(is), sa_(sa), chunkify_(true)
-		, sentence_buf_(NULL), token_buf_()
+		: BufferedSentenceReader(sa->tagset()), is_(is), sa_(sa)
 	{
 		sa_->set_input_source(is);
 	}
 
-	Token* PlainReader::get_next_token()
+	Sentence* PlainReader::actual_next_sentence()
 	{
-		bool more = true;
-		while (token_buf_.empty() && more) {
-			Sentence* s = get_next_sentence();
-			if (s != NULL) {
-				std::copy(s->tokens().begin(), s->tokens().end(),
-					std::back_inserter(token_buf_));
-			} else {
-				more = false;
-			}
-		}
-		if (token_buf_.empty()) {
-			return NULL;
-		} else {
-			Token* t = token_buf_.front();
-			token_buf_.pop_front();
-			return t;
-		}
+		return sa_->get_next_sentence();
 	}
 
-	Sentence* PlainReader::get_next_sentence()
-	{
-		if (sentence_buf_ != NULL) {
-			Sentence* s = sentence_buf_;
-			sentence_buf_ = NULL;
-			return s;
-		} else {
-			return sa_->get_next_sentence();
-		}
-	}
-
-	Chunk* PlainReader::get_next_chunk()
-	{
-		Sentence* s = get_next_sentence();
-		if (s == NULL) {
-			return NULL;
-		} else {
-			Chunk* c = new Chunk;
-			c->append(s);
-			s = get_next_sentence();
-			while (s != NULL && (!chunkify_ || s->first_token()->wa() !=
-					Toki::Whitespace::ManyNewlines)) {
-				c->append(s);
-				s = get_next_sentence();
-			}
-			if (s != NULL) {
-				sentence_buf_ = s;
-			}
-			return c;
-		}
-	}
 
 } /* end ns Maca */

@@ -45,7 +45,7 @@ namespace Maca {
 
 	class PremorphReaderImpl;
 
-	class PremorphReader : public BufferedTokenReader
+	class PremorphReader : public BufferedChunkReader
 	{
 	public:
 		PremorphReader(std::istream& is,

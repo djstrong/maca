@@ -34,120 +34,23 @@ namespace Maca {
 			return tagset_;
 		}
 
-		/**
-		 * Factory interface for creating readers from string identifiers
-		 *
-		 * Mostly a convenience function to avoid having client code refer
-		 * directly to the factory instance.
-		 *
-		 * @param class_id the unique class identifier
-		 * @param os the output stream to pass to the reader's constructor
-		 * @param tagset the tagset to pass to the reader's constructor
-		 */
-		static TokenReader* create(const std::string class_id,
-				std::ostream& os,
-				const Tagset& tagset,
-				const string_range_vector& params);
-
-		/**
-		 * Factory interface for creating readers from string identifiers.
-		 *
-		 * Params are split from the class id and then the more general version
-		 * is called. Parameters are expected to be comma-separated from the
-		 * class id.
-		 */
-		static TokenReader* create(const std::string class_id_params,
-				std::ostream& os,
-				const Tagset& tagset);
-
-		/**
-		 * Function to get a vector of available reader type strings.
-		 */
-		static std::vector<std::string> available_reader_types();
-
-		/**
-		 * Function to get a vector of available reader type strings with help
-		 * strings appended
-		 */
-		static std::vector<std::string> available_reader_types_help();
-
-		/**
-		 * Convenience template for registering TokenWriter derived classes.
-		 */
-		template <typename T>
-		static bool register_reader(const std::string& class_id,
-				const std::string& help = "");
 	private:
 		const Tagset& tagset_;
 	};
 
-	typedef Loki::Factory<
-		TokenReader, // The base class for objects created in the factory
-		std::string, // Identifier type
-		Loki::TL::MakeTypelist<
-			const Tagset&, const string_range_vector&
-		>::Result // TokenLayer constructor arguments' types specification
-	> TokenReaderFactoryType;
-
-	struct TokenReaderFactory
-	{
-		TokenReaderFactoryType factory;
-		std::map<std::string, std::string> help;
-	};
-
 	/**
-	 * Declaration of the TokenWriter factory as a singleton Loki object
-	 * factory. The factory instance can be accessed as
-	 * TokenLayerFactory::Instance(). It is assumed that all derived classes
-	 * have the same constructor signature.
+	 * Convenience class for readers that keep a buffer of chunks. Sentence
+	 * and token accesors are based upon the chunk buffer.
+	 *
+	 * A dervied class only neds to override ensure_more with a function that
+	 * fills the chunk buffer.
 	 */
-	typedef Loki::SingletonHolder<
-		TokenReaderFactory,
-		Loki::CreateUsingNew, // default, needed to change the item below
-		Loki::LongevityLifetime::DieAsSmallObjectChild // per libloki docs
-	>
-	TokenReaderFactorySingleton;
-
-	/**
-	 * Convenience typedef for the exception type the factory throws
-	 */
-	typedef Loki::DefaultFactoryError<
-		std::string, TokenReader
-	>::Exception
-	TokenReaderFactoryException;
-
-	/**
-	 * Convenience template TokenWriter creation function
-	 */
-	template <typename T>
-	inline
-	T* reader_creator(std::ostream& os, const Tagset& tagset,
-			const string_range_vector& params)
-	{
-		return new T(os, tagset, params);
-	}
-
-	template <typename T>
-	bool TokenReader::register_reader(const std::string& class_id,
-			const std::string& help)
-	{
-		bool ret = TokenReaderFactorySingleton::Instance().factory.Register(
-				class_id, reader_creator<T>);
-		if (ret) {
-			TokenReaderFactorySingleton::Instance().help[class_id] = help;
-		}
-		return ret;
-	}
-
-	/**
-	 * Convenience class for readers that keep a buffer of chunks
-	 */
-	class BufferedTokenReader : public TokenReader
+	class BufferedChunkReader : public TokenReader
 	{
 	public:
-		BufferedTokenReader(const Tagset& tagset);
+		BufferedChunkReader(const Tagset& tagset);
 
-		~BufferedTokenReader();
+		~BufferedChunkReader();
 
 		Token* get_next_token();
 
@@ -162,6 +65,38 @@ namespace Maca {
 		std::deque<Sentence*> sentence_buf_;
 		std::deque<Token*> token_buf_;
 	};
+
+	/**
+	 * Convenience class for readers that internally read sentences. The token
+	 * accesor is based on the sentence buffer, so is the chunk accesor.
+	 *
+	 * A dervied class only neds to override actual_next_sentence with a
+	 * function that returns a new sentence.
+	 *
+	 * Note that the chunk accesor might well read the entire input and return
+	 * one huge chunk with all the sentences.
+	 */
+	class BufferedSentenceReader : public TokenReader
+	{
+	public:
+		BufferedSentenceReader(const Tagset& tagset);
+
+		Token* get_next_token();
+
+		Sentence* get_next_sentence();
+
+		Chunk* get_next_chunk();
+
+	protected:
+		virtual Sentence* actual_next_sentence() = 0;
+
+		bool chunkify_;
+
+		Sentence* sentence_buf_;
+
+		std::deque<Token*> token_buf_;
+	};
+
 
 } /* end ns Maca */
 

@@ -147,7 +147,7 @@ namespace Maca {
 	PremorphReader::PremorphReader(std::istream& is,
 			const boost::shared_ptr<Toki::Tokenizer>& tok,
 			const boost::shared_ptr<Maca::MorphAnalyser>& ma)
-		: BufferedTokenReader(ma->tagset()), is_(is)
+		: BufferedChunkReader(ma->tagset()), is_(is)
 		, impl_(new PremorphReaderImpl(
 				boost::make_shared<SentenceAnalyser>(tok, ma), chunk_buf_))
 	{
@@ -155,7 +155,7 @@ namespace Maca {
 
 	PremorphReader::PremorphReader(std::istream& is,
 			const boost::shared_ptr<SentenceAnalyser>& sa)
-		: BufferedTokenReader(sa->tagset()), is_(is)
+		: BufferedChunkReader(sa->tagset()), is_(is)
 		, impl_(new PremorphReaderImpl(sa, chunk_buf_))
 	{
 	}

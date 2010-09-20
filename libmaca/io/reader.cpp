@@ -11,12 +11,12 @@ namespace Maca {
 	{
 	}
 
-	BufferedTokenReader::BufferedTokenReader(const Tagset& tagset)
+	BufferedChunkReader::BufferedChunkReader(const Tagset& tagset)
 		: TokenReader(tagset)
 	{
 	}
 
-	BufferedTokenReader::~BufferedTokenReader()
+	BufferedChunkReader::~BufferedChunkReader()
 	{
 		foreach (Token* t, token_buf_) {
 			delete t;
@@ -29,7 +29,7 @@ namespace Maca {
 		}
 	}
 
-	Token* BufferedTokenReader::get_next_token()
+	Token* BufferedChunkReader::get_next_token()
 	{
 		bool more = true;
 		while (token_buf_.empty() && more) {
@@ -51,7 +51,7 @@ namespace Maca {
 		}
 	}
 
-	Sentence* BufferedTokenReader::get_next_sentence()
+	Sentence* BufferedChunkReader::get_next_sentence()
 	{
 		bool more = true;
 		while (sentence_buf_.empty() && more) {
@@ -73,7 +73,7 @@ namespace Maca {
 		}
 	}
 
-	Chunk* BufferedTokenReader::get_next_chunk()
+	Chunk* BufferedChunkReader::get_next_chunk()
 	{
 		ensure_more();
 		if (chunk_buf_.empty()) {
@@ -84,5 +84,66 @@ namespace Maca {
 			return t;
 		}
 	}
+
+	BufferedSentenceReader::BufferedSentenceReader(const Tagset& tagset)
+		: TokenReader(tagset), chunkify_(true)
+		, sentence_buf_(NULL), token_buf_()
+	{
+	}
+
+	Token* BufferedSentenceReader::get_next_token()
+	{
+		bool more = true;
+		while (token_buf_.empty() && more) {
+			Sentence* s = get_next_sentence();
+			if (s != NULL) {
+				std::copy(s->tokens().begin(), s->tokens().end(),
+					std::back_inserter(token_buf_));
+			} else {
+				more = false;
+			}
+		}
+		if (token_buf_.empty()) {
+			return NULL;
+		} else {
+			Token* t = token_buf_.front();
+			token_buf_.pop_front();
+			return t;
+		}
+	}
+
+	Sentence* BufferedSentenceReader::get_next_sentence()
+	{
+		if (sentence_buf_ != NULL) {
+			Sentence* s = sentence_buf_;
+			sentence_buf_ = NULL;
+			return s;
+		} else {
+			return actual_next_sentence();
+		}
+	}
+
+	Chunk* BufferedSentenceReader::get_next_chunk()
+	{
+		Sentence* s = get_next_sentence();
+		if (s == NULL) {
+			return NULL;
+		} else {
+			Chunk* c = new Chunk;
+			c->append(s);
+			s = get_next_sentence();
+			while (s != NULL && (!chunkify_ || s->first_token()->wa() !=
+					Toki::Whitespace::ManyNewlines)) {
+				c->append(s);
+				s = get_next_sentence();
+			}
+			if (s != NULL) {
+				sentence_buf_ = s;
+			}
+			return c;
+		}
+	}
+
+
 
 } /* end ns Maca */
