@@ -4,14 +4,21 @@
 #include <libmaca/morph/morphanalyser.h>
 #include <libmaca/conv/tagsetconverter.h>
 
-#include <morfeusz.h>
-
 namespace Maca {
+
+	/// Compatibility structure for data returned by Morfeusz
+	struct MorfeuszData {
+		int node_from;
+		int node_to;
+		char* orth;
+		char* lemma;
+		char* tag_string;
+	};
 
 	/// Helper struct for holding preprocessed Morfeusz results
 	struct MorfeuszEdge
 	{
-		explicit MorfeuszEdge(const InterpMorf& morf);
+		explicit MorfeuszEdge(const MorfeuszData& morf);
 
 		int node_from, node_to;
 		UnicodeString orth;
@@ -153,7 +160,7 @@ namespace Maca {
 
 		void* morfeusz_lib_handle_;
 
-		typedef InterpMorf* (*morfeusz_func_t)(char*);
+		typedef MorfeuszData* (*morfeusz_func_t)(char*);
 
 		morfeusz_func_t morfeusz_analyse_handle_;
 	};

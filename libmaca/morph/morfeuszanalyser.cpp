@@ -21,22 +21,23 @@ namespace Maca {
 			MorphAnalyser::register_analyser<MorfeuszAnalyser>();
 
 	namespace {
-		boost::mutex morfeusz_mutex_;
+		static const int morfeusz_option_encoding = 1;
+		static const int morfeusz_option_encoding_utf8 = 8;
 	}
 
-	MorfeuszEdge::MorfeuszEdge(const InterpMorf& m)
-		: node_from(m.p), node_to(m.k)
-		, orth(UnicodeString::fromUTF8(m.forma))
-		, lemma(m.haslo ? UnicodeString::fromUTF8(m.haslo) : UnicodeString())
-		, tag_string(m.interp ? m.interp : std::string()), token(NULL)
+	MorfeuszEdge::MorfeuszEdge(const MorfeuszData& m)
+		: node_from(m.node_from), node_to(m.node_to)
+		, orth(UnicodeString::fromUTF8(m.orth))
+		, lemma(m.lemma ? UnicodeString::fromUTF8(m.lemma) : UnicodeString())
+		, tag_string(m.tag_string ? m.tag_string : std::string()), token(NULL)
 	{
 	}
 
-	std::vector<MorfeuszEdge> morfeusz_preprocess(InterpMorf* pmorf)
+	std::vector<MorfeuszEdge> morfeusz_preprocess(MorfeuszData* pmorf)
 	{
 		std::vector<MorfeuszEdge> v;
 		int i = 0;
-		while (pmorf[i].p != -1) {
+		while (pmorf[i].node_from != -1) {
 			v.push_back(MorfeuszEdge(pmorf[i]));
 			++i;
 		}
@@ -159,7 +160,7 @@ namespace Maca {
 				dle, morfeusz_library_);
 		}
 		if (opt_func != NULL) {
-			opt_func(MORFOPT_ENCODING, MORFEUSZ_UTF_8);
+			opt_func(morfeusz_option_encoding, morfeusz_option_encoding_utf8);
 		}
 	}
 
@@ -212,7 +213,7 @@ namespace Maca {
 	{
 		std::string s = Toki::Util::to_utf8(t.orth());
 		// Morfeusz demands a nonconst char*
-		InterpMorf *ppmorf = morfeusz_analyse_handle_(
+		MorfeuszData *ppmorf = morfeusz_analyse_handle_(
 				const_cast<char*>(s.c_str()));
 		std::vector<MorfeuszEdge> pmorf = morfeusz_preprocess(ppmorf);
 		if (pmorf.empty()) { // no analyses
