@@ -16,6 +16,9 @@ include_directories( ${CMAKE_CURRENT_BINARY_DIR}/include/ )
 find_package(Toki 0.4.2 REQUIRED)
 set(LIBS ${LIBS} ${Toki_LIBRARY})
 
+find_package(Corpus2 REQUIRED)
+set(LIBS ${LIBS} ${Corpus2_LIBRARY})
+
 find_package(ICU REQUIRED QUIET)
 include_directories(${ICU_INCLUDE_DIR})
 link_directories(${ICU_LIBRARY_DIRS})
@@ -46,7 +49,7 @@ SET(libmaca_STAT_SRC
     conv/tagrule.cpp
     conv/tagrulelayer.cpp
     conv/tagsetconverter.cpp
-    io/plain.cpp
+    io/text.cpp
     io/premorph.cpp
     morph/constanalyser.cpp
     morph/dispatchanalyser.cpp
@@ -148,7 +151,7 @@ if(UNIX)
                  PATTERN "*.conv"
                  PATTERN "*.xml"
                  PATTERN "*.txt"
-				 PATTERN "*.fst"
+                 PATTERN "*.fst"
                 PATTERN ".svn" EXCLUDE
                 PATTERN "local/*" EXCLUDE
         )

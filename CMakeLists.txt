@@ -61,6 +61,5 @@ add_subdirectory(libmaca)
 add_subdirectory(maca-analyse)
 add_subdirectory(maca-app)
 add_subdirectory(maca-convert)
-add_subdirectory(tagset-tool)
 add_subdirectory(tests)
 

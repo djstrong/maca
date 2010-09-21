@@ -19,7 +19,7 @@ public:
 	/**
 	 * Create a rule that operates within a tagset
 	 */
-	TagRule(const Tagset& tagset);
+	TagRule(const Corpus2::Tagset& tagset);
 
 	/**
 	 * Add a precondition predicate
@@ -47,17 +47,17 @@ public:
 	 * Apply the rule on a tag -- check preconditions and if all match,
 	 * apply the postconditions.
 	 */
-	void apply(Tag& tag) const;
+	void apply(Corpus2::Tag& tag) const;
 
 	/**
 	 * Apply the rule on a tag -- check preconditions and if all match,
 	 * apply the postconditions, tag copying version.
 	 */
-	Tag apply_copy(const Tag& tag) const;
+	Corpus2::Tag apply_copy(const Corpus2::Tag& tag) const;
 
 private:
 	/// The tagset, used for string condition adders
-	const Tagset* tagset_;
+	const Corpus2::Tagset* tagset_;
 
 	/// The precondition predicates
 	std::vector<TagPredicate> pre_;

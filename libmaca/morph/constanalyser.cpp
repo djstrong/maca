@@ -7,12 +7,12 @@ const char* ConstAnalyser::identifier = "const";
 bool ConstAnalyser::registered =
 		MorphAnalyser::register_analyser<ConstAnalyser>();
 
-ConstAnalyser::ConstAnalyser(const Tagset *tagset, const std::string &tag)
+ConstAnalyser::ConstAnalyser(const Corpus2::Tagset *tagset, const std::string &tag)
 	: MorphAnalyser(tagset), tag_(tagset->parse_simple_tag(tag, false))
 {
 }
 
-ConstAnalyser::ConstAnalyser(const Tagset *tagset, const Tag &tag)
+ConstAnalyser::ConstAnalyser(const Corpus2::Tagset *tagset, const Corpus2::Tag &tag)
 	: MorphAnalyser(tagset), tag_(tag)
 {
 }
@@ -34,14 +34,14 @@ ConstAnalyser* ConstAnalyser::clone() const
 }
 
 bool ConstAnalyser::process_functional(const Toki::Token &t,
-		boost::function<void (Token*)> sink)
+		boost::function<void (Corpus2::Token*)> sink)
 {
-	Token* tt = new Token(t);
+	Corpus2::Token* tt = create_from_toki(t);
 	UnicodeString lemma = t.orth();
 	if (lower_lemma_) {
 		lemma.toLower();
 	};
-	tt->add_lexeme(Lexeme(lemma, tag_));
+	tt->add_lexeme(Corpus2::Lexeme(lemma, tag_));
 	sink(tt);
 	return true;
 }

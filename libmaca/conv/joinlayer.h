@@ -25,7 +25,7 @@ public:
 	 *
 	 * An empty JoinLayer has no rules so it simply will never join tokens.
 	 */
-	JoinLayer(const Tagset& tagset);
+	JoinLayer(const Corpus2::Tagset& tagset);
 
 	/**
 	 * Config node constructor. The config node is passed to the parent
@@ -53,14 +53,14 @@ public:
 	void append_rule(const Config::Node& cfg);
 
 	/// Layer override
-	Token* get_next_token();
+	Corpus2::Token* get_next_token();
 
 private:
 	/// The rules
 	std::vector<JoinRule> rules_;
 
 	/// buffer for the token that might be joined with the next one
-	Token* buf_;
+	Corpus2::Token* buf_;
 };
 
 } /* end ns Conversion */

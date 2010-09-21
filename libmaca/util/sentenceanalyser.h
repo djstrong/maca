@@ -26,9 +26,9 @@ public:
 			const std::string& config_name,
 			const std::string& toki_config_override);
 
-	Sentence* get_next_sentence();
+	Corpus2::Sentence* get_next_sentence();
 
-	typedef boost::function<void (Sentence*)> sentence_sink_t;
+	typedef boost::function<void (Corpus2::Sentence*)> sentence_sink_t;
 
 	/**
 	 * Convenience function to process all sentences that can be gathered
@@ -54,7 +54,7 @@ public:
 		return *ma_;
 	}
 
-	const Tagset& tagset() const {
+	const Corpus2::Tagset& tagset() const {
 		return ma_->tagset();
 	}
 

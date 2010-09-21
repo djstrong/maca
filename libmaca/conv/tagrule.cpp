@@ -6,7 +6,7 @@
 namespace Maca {
 namespace Conversion {
 
-TagRule::TagRule(const Tagset& tagset)
+TagRule::TagRule(const Corpus2::Tagset& tagset)
 	: tagset_(&tagset)
 {
 }
@@ -43,7 +43,7 @@ void TagRule::add_postcondition(const std::string &pred_string)
 	}
 }
 
-void TagRule::apply(Tag &tag) const
+void TagRule::apply(Corpus2::Tag &tag) const
 {
 	foreach (const TagPredicate& tp, pre_) {
 		if (!tp.check(tag)) return;
@@ -53,9 +53,9 @@ void TagRule::apply(Tag &tag) const
 	}
 }
 
-Tag TagRule::apply_copy(const Tag &tag) const
+Corpus2::Tag TagRule::apply_copy(const Corpus2::Tag &tag) const
 {
-	Tag tag2(tag);
+	Corpus2::Tag tag2(tag);
 	apply(tag2);
 	return tag2;
 }

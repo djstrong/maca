@@ -9,7 +9,7 @@
 
 namespace Maca {
 
-DispatchAnalyser::DispatchAnalyser(const Tagset* tagset)
+DispatchAnalyser::DispatchAnalyser(const Corpus2::Tagset* tagset)
 	: MorphAnalyser(tagset), type_handlers_(), analysers_(), default_()
 	, fallback_(NULL)
 {
@@ -32,7 +32,7 @@ namespace {
 	{
 	public:
 		/// Constructor
-		MaCreator(const Tagset& tagset, const Config::Node& cfg);
+		MaCreator(const Corpus2::Tagset& tagset, const Config::Node& cfg);
 
 		/// Destructor, disposes of all created analysers unless okay was
 		/// called
@@ -52,13 +52,13 @@ namespace {
 		std::map<std::string, MorphAnalyser*> amap_;
 
 		/// The tagset all analysers should output
-		const Tagset& tagset_;
+		const Corpus2::Tagset& tagset_;
 
 		/// okay flag
 		bool okay_;
 	};
 
-	MaCreator::MaCreator(const Tagset& tagset, const Config::Node &cfg)
+	MaCreator::MaCreator(const Corpus2::Tagset& tagset, const Config::Node &cfg)
 		: cfg_(cfg), amap_(), tagset_(tagset), okay_(false)
 	{
 	}
@@ -117,7 +117,7 @@ MorphAnalyser* MaCreator::get_ma(const std::string &id, bool autoload)
 
 		if (ma->tagset().id() != tagset_.id()) {
 			std::auto_ptr<MorphAnalyser> aptr(ma);
-			throw TagsetMismatch("Morph analyser creation : " + id,
+			throw Corpus2::TagsetMismatch("Morph analyser creation : " + id,
 					tagset_, ma->tagset());
 		}
 		amap_.insert(std::make_pair(id, ma));
@@ -230,7 +230,7 @@ void DispatchAnalyser::add_type_handler(const std::string &type,
 		MorphAnalyser *a)
 {
 	if (a->tagset().id() != tagset().id()) {
-		throw TagsetMismatch("dispatch analyser handler", tagset(),
+		throw Corpus2::TagsetMismatch("dispatch analyser handler", tagset(),
 				a->tagset());
 	}
 	analysers_.insert(a);
@@ -238,7 +238,7 @@ void DispatchAnalyser::add_type_handler(const std::string &type,
 }
 
 bool DispatchAnalyser::process_functional(const Toki::Token &t,
-		boost::function<void (Token*)> sink)
+		boost::function<void (Corpus2::Token*)> sink)
 {
 	std::map<std::string, std::vector<MorphAnalyser*> >::const_iterator i;
 	i = type_handlers_.find(t.type());
@@ -255,7 +255,7 @@ bool DispatchAnalyser::process_functional(const Toki::Token &t,
 		return fallback_->process_functional(t, sink);
 	} else {
 		throw MacaError(
-				"Token was not processed by any of the analysers "
+				"Corpus2::Token was not processed by any of the analysers "
 				"and there is no fallback: " + t.orth_utf8() + "");
 		return false;
 	}

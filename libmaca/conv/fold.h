@@ -19,7 +19,7 @@ namespace Conversion {
  * @param min_len_path output parameter where the index of the shortest
  *                     path is put
  */
-size_t find_shortest(const std::vector<std::vector<Token *> >& v,
+size_t find_shortest(const std::vector<std::vector<Corpus2::Token *> >& v,
 		size_t& min_len_path);
 
 /**
@@ -33,36 +33,36 @@ size_t find_shortest(const std::vector<std::vector<Token *> >& v,
  * the resulting tokens are fed to the sink function object. All tokens
  * not fed to the sink are disposed of in that case.
  */
-bool try_fold_paths(const std::vector< std::vector<Token*> >& v,
-					boost::function<void (Token*)> sink);
+bool try_fold_paths(const std::vector< std::vector<Corpus2::Token*> >& v,
+					boost::function<void (Corpus2::Token*)> sink);
 
 /**
  * Discard all paths' tokens except for the path with the given index,
  * and feed the remaining path's tokens to the sink function object.
  */
-std::vector<Token*> choose_path(
-		const std::vector< std::vector<Token*> >& v, size_t n);
+std::vector<Corpus2::Token*> choose_path(
+		const std::vector< std::vector<Corpus2::Token*> >& v, size_t n);
 
 /**
  * Discard all paths' tokens except for the path with the given index,
  * and return the remaining path.
  */
-void choose_path(const std::vector< std::vector<Token*> >& v, size_t n,
-		boost::function<void (Token*)> sink);
+void choose_path(const std::vector< std::vector<Corpus2::Token*> >& v, size_t n,
+		boost::function<void (Corpus2::Token*)> sink);
 
 /**
  * Find the shortest pathin the paths vector and return it, and dispose
  * of the other paths' tokens.
  */
-std::vector<Token*> choose_shortest_path(
-		const std::vector< std::vector<Token*> >& v);
+std::vector<Corpus2::Token*> choose_shortest_path(
+		const std::vector< std::vector<Corpus2::Token*> >& v);
 
 /**
  * Find the shortest pathin the paths vector and feed its tokens to the
  * sink function, and delete other paths' tokens
  */
-void choose_shortest_path(const std::vector< std::vector<Token*> >& v,
-		boost::function<void (Token*)> sink);
+void choose_shortest_path(const std::vector< std::vector<Corpus2::Token*> >& v,
+		boost::function<void (Corpus2::Token*)> sink);
 
 } /* end ns Conversion */
 } /* end ns Maca */

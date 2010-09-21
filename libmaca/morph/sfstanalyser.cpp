@@ -20,14 +20,14 @@ const char* SfstAnalyser::identifier = "sfst";
 bool SfstAnalyser::registered =
 		MorphAnalyser::register_analyser<SfstAnalyser>();
 
-SfstAnalyser::SfstAnalyser(const Tagset* tagset,
+SfstAnalyser::SfstAnalyser(const Corpus2::Tagset* tagset,
 		const std::string &filename)
 	: MorphAnalyser(tagset), lcase_(false)
 {
 	open_transducer(filename);
 }
 
-SfstAnalyser::SfstAnalyser(const Tagset* tagset)
+SfstAnalyser::SfstAnalyser(const Corpus2::Tagset* tagset)
 	: MorphAnalyser(tagset), lcase_(false)
 {
 }
@@ -70,7 +70,7 @@ void SfstAnalyser::open_transducer(const std::string& filename)
 }
 
 bool SfstAnalyser::process_functional(const Toki::Token &t,
-		boost::function<void (Token*)> sink)
+		boost::function<void (Corpus2::Token*)> sink)
 {
 	std::vector< CAnalysis > a;
 	std::string s;
@@ -85,7 +85,7 @@ bool SfstAnalyser::process_functional(const Toki::Token &t,
 	if (a.empty()) {
 		return false;
 	} else {
-		Token* tt = new Token(t);
+		Corpus2::Token* tt = create_from_toki(t);
 		foreach (CAnalysis& ca, a) {
 			//std::cout << s << "\t"
 			//	<<  unescape_analysis(ct_->print_analysis(ca)) << "\n";
@@ -101,7 +101,7 @@ bool SfstAnalyser::process_functional(const Toki::Token &t,
 						analysis.end() - 1);
 				tagset().lexemes_into_token(*tt, lemma, sr);
 			} else {
-				throw TagParseError("SFST format: < missing", "", analysis,
+				throw Corpus2::TagParseError("SFST format: < missing", "", analysis,
 						"");
 			}
 		}

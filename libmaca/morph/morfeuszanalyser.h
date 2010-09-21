@@ -24,7 +24,7 @@ struct MorfeuszEdge
 	UnicodeString orth;
 	UnicodeString lemma;
 	std::string tag_string;
-	Token* token;
+	Corpus2::Token* token;
 };
 
 /**
@@ -84,7 +84,7 @@ public:
 	 * Constructor for a Morfeusz analyser with a given tagset and converter.
 	 * The tagset should be the output tagset of the converter.
 	 */
-	MorfeuszAnalyser(const Tagset* tagset,
+	MorfeuszAnalyser(const Corpus2::Tagset* tagset,
 			Conversion::TagsetConverter* conv,
 			const std::string& libname,
 			const std::string& require_version);
@@ -114,23 +114,23 @@ public:
 
 	/// MorphAnalyser override
 	bool process_functional(const Toki::Token &t,
-			boost::function<void(Token *)> sink);
+			boost::function<void(Corpus2::Token *)> sink);
 
 	/// helper to create a token from a Morfeusz interpretation struct
-	Token* make_token(const Toki::Token& t,
+	Corpus2::Token* make_token(const Toki::Token& t,
 			const MorfeuszEdge& m) const;
 
 	/// helper to add lexemes from a Morfeusz interp struct into a token
-	void morfeusz_into_token(Token* tt, const MorfeuszEdge& m) const;
+	void morfeusz_into_token(Corpus2::Token* tt, const MorfeuszEdge& m) const;
 
 	/// convert gathered tokens and pass them to the sink
-	void flush_convert(std::vector<Token*>& vec,
-			boost::function<void(Token *)> sink);
+	void flush_convert(std::vector<Corpus2::Token*>& vec,
+			boost::function<void(Corpus2::Token *)> sink);
 
 	/// convert gethered tokens (ambiguously segmented), try folding and
 	/// pass the resulting tokens to the sink
-	void flush_convert(std::vector< std::vector<Token*> >& vec,
-			boost::function<void(Token *)> sink);
+	void flush_convert(std::vector< std::vector<Corpus2::Token*> >& vec,
+			boost::function<void(Corpus2::Token *)> sink);
 
 	/// Class identifier
 	static const char* identifier;
@@ -141,14 +141,14 @@ public:
 private:
 	bool process_complex_analysis(const Toki::Token &t,
 			std::vector<MorfeuszEdge>& pmorf,
-			boost::function<void(Token *)>sink);
+			boost::function<void(Corpus2::Token *)>sink);
 
 	void load_morfeusz_library();
 
 	/// the tagset converter
 	Conversion::TagsetConverter* conv_;
 
-	Tag ign_tag_;
+	Corpus2::Tag ign_tag_;
 
 	bool warn_on_ign_;
 

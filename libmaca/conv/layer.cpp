@@ -12,27 +12,27 @@ Layer::~Layer()
 {
 }
 
-void Layer::set_source(TokenSource *src)
+void Layer::set_source(Corpus2::TokenSource *src)
 {
 	source_ = src;
 }
 
-TokenSource* Layer::source()
+Corpus2::TokenSource* Layer::source()
 {
 	return source_;
 }
 
-OneTagsetLayer::OneTagsetLayer(const Tagset& tagset)
+OneTagsetLayer::OneTagsetLayer(const Corpus2::Tagset& tagset)
 	: tagset_(tagset)
 {
 }
 
-const Tagset& OneTagsetLayer::tagset_from() const
+const Corpus2::Tagset& OneTagsetLayer::tagset_from() const
 {
 	return tagset_;
 }
 
-const Tagset& OneTagsetLayer::tagset_to() const
+const Corpus2::Tagset& OneTagsetLayer::tagset_to() const
 {
 	return tagset_;
 }

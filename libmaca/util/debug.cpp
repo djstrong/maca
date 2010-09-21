@@ -6,14 +6,14 @@
 
 namespace Maca {
 
-std::string lexeme_string(const Lexeme& l)
+std::string lexeme_string(const Corpus2::Lexeme& l)
 {
 	std::stringstream ss;
 	ss << l.lemma_utf8() << "\t" << l.tag().raw_dump();
 	return ss.str();
 }
 
-std::string token_string(const Token& t)
+std::string token_string(const Corpus2::Token& t)
 {
 	std::stringstream ss;
 	ss << t.orth_utf8() << "\t";
@@ -28,7 +28,7 @@ std::string token_string(const Token& t)
 	return ss.str();
 }
 
-void token_output(const Tagset& tagset, std:: ostream& os, Token* t)
+void token_output(const Corpus2::Tagset& tagset, std:: ostream& os, Corpus2::Token* t)
 {
 	os << (int)tagset.id() << "#" << t->orth_utf8() << "";
 	os << "";
@@ -36,7 +36,7 @@ void token_output(const Tagset& tagset, std:: ostream& os, Token* t)
 		//if (i > 0) {
 			os << "\n\t";
 		//}
-		const Lexeme& lex = t->lexemes()[i];
+		const Corpus2::Lexeme& lex = t->lexemes()[i];
 		os << lex.lemma_utf8();
 		os << " ";
 		os << tagset.tag_to_string(lex.tag());

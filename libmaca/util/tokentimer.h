@@ -29,14 +29,14 @@ public:
 	}
 
 	/// count a sentence with tokens
-	void count_sentence(const Sentence& s) {
+	void count_sentence(const Corpus2::Sentence& s) {
 		++sentences_;
 		tokens_ += s.size();
 		slice_tokens_ += s.size();
 	}
 
 	/// count a chunk with sentences with tokens
-	void count_chunk(const Chunk& c) {
+	void count_chunk(const Corpus2::Chunk& c) {
 		for (size_t i = 0; i < c.sentences().size(); ++i) {
 			count_sentence(*c.sentences()[i]);
 		}

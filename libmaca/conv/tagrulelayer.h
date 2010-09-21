@@ -20,7 +20,7 @@ public:
 	/**
 	 * Empty layer constructor
 	 */
-	TagRuleLayer(const Tagset& tagset);
+	TagRuleLayer(const Corpus2::Tagset& tagset);
 
 	/**
 	 * Constructor from a config node. Creates a layer and uses the config
@@ -48,11 +48,11 @@ public:
 	 * Layer override -- get tokens from source, pass them through the
 	 * tag rules and return.
 	 */
-	Token* get_next_token();
+	Corpus2::Token* get_next_token();
 
 protected:
 	/// Pass a token through the rules
-	void process(Token*);
+	void process(Corpus2::Token*);
 
 private:
 	/// The TagRules used by this layer
@@ -65,7 +65,7 @@ public:
 	/**
 	 * Empty layer constructor
 	 */
-	RegexTagRuleLayer(const Tagset& tagset);
+	RegexTagRuleLayer(const Corpus2::Tagset& tagset);
 
 	/**
 	 * Constructor from a config node. Creates a layer and uses the config
@@ -83,7 +83,7 @@ public:
 	 * Layer override -- get tokens from source, pass them through the
 	 * tag rules and return.
 	 */
-	Token* get_next_token();
+	Corpus2::Token* get_next_token();
 
 private:
 	boost::scoped_ptr<RegexMatcher> matcher_;

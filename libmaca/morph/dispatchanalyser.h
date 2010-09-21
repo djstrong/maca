@@ -16,7 +16,7 @@ class DispatchAnalyser : public MorphAnalyser
 {
 public:
 	/// Constructor for a DispatchAnalyser working with a tagset
-	DispatchAnalyser(const Tagset* tagset);
+	DispatchAnalyser(const Corpus2::Tagset* tagset);
 
 	/// Constructor for a DispatchAnalyser from config
 	DispatchAnalyser(const Config::Node& cfg);
@@ -35,7 +35,7 @@ public:
 
 	/// MorphAnalyser override
 	bool process_functional(const Toki::Token &t,
-			boost::function<void (Token*)> sink);
+			boost::function<void (Corpus2::Token*)> sink);
 
 	/**
 	 * Handler adding function. The passed analyser should have the same

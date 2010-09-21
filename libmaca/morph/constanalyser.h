@@ -13,10 +13,10 @@ class ConstAnalyser : public MorphAnalyser
 {
 public:
 	/// Constructor for a ConstAnalyser with a tagset and a tag string
-	ConstAnalyser(const Tagset* tagset, const std::string& tag);
+	ConstAnalyser(const Corpus2::Tagset* tagset, const std::string& tag);
 
 	/// Constructor for a ConstAnalyser with a tagset and a tag string
-	ConstAnalyser(const Tagset* tagset, const Tag& tag);
+	ConstAnalyser(const Corpus2::Tagset* tagset, const Corpus2::Tag& tag);
 
 	/**
 	 * Config node constructor. Recognized keys are:
@@ -30,7 +30,7 @@ public:
 
 	/// MapAnalyser override
 	bool process_functional(const Toki::Token &t
-			, boost::function<void (Token*)> sink);
+			, boost::function<void (Corpus2::Token*)> sink);
 
 	/// Class identifier
 	static const char* identifier;
@@ -39,7 +39,7 @@ public:
 	static bool registered;
 private:
 	/// The tag
-	Tag tag_;
+	Corpus2::Tag tag_;
 
 	/// flag to lowercase lemma
 	bool lower_lemma_;

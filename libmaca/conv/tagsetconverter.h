@@ -3,7 +3,7 @@
 
 #include <libcorpus2/sentence.h>
 #include <libcorpus2/tagset.h>
-#include <libmaca/tokensource.h>
+#include <libcorpus2/tokensource.h>
 #include <libmaca/util/confignode.h>
 #include <boost/function.hpp>
 
@@ -53,26 +53,26 @@ public:
 	/**
 	 * Input tagset, equivalent to the input tagset of the first layer.
 	 */
-	const Tagset& tagset_from() const;
+	const Corpus2::Tagset& tagset_from() const;
 
 	/**
 	 * Output tagset, equivalent to the output tagset of the last layer.
 	 */
-	const Tagset& tagset_to() const;
+	const Corpus2::Tagset& tagset_to() const;
 
 	/**
 	 * The main conversion function, output tokens are fed into the sink.
 	 */
-	void convert(TokenSource* src, boost::function<void (Token*)> sink);
+	void convert(Corpus2::TokenSource* src, boost::function<void (Corpus2::Token*)> sink);
 
 	/**
 	 * Helper to convert a container.
 	 */
 	template<class T>
 	void convert_container(const T& container,
-			boost::function<void (Token*)> sink)
+			boost::function<void (Corpus2::Token*)> sink)
 	{
-		RangeSource<
+		Corpus2::RangeSource<
 			boost::iterator_range<typename T::const_iterator>
 		> src(container);
 		convert(&src, sink);
@@ -81,18 +81,18 @@ public:
 	/**
 	 * Helper to convert a single path
 	 */
-	void convert_simple(const std::vector<Token*>& v,
-			boost::function<void (Token*)> sink);
+	void convert_simple(const std::vector<Corpus2::Token*>& v,
+			boost::function<void (Corpus2::Token*)> sink);
 
 	/**
 	 * Helper to convert a multi-path analysis, with path folding if
 	 * possible and shortest-path selection as a fallback.
 	 */
-	void convert_ambiguous(const std::vector< std::vector<Token*> >& v,
-			boost::function<void (Token*)> sink,
+	void convert_ambiguous(const std::vector< std::vector<Corpus2::Token*> >& v,
+			boost::function<void (Corpus2::Token*)> sink,
 			bool warn_on_failure = true);
 
-	Sentence* convert_sentence(Sentence* s);
+	Corpus2::Sentence* convert_sentence(Corpus2::Sentence* s);
 
 private:
 	/// The conversion layers

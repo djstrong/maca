@@ -85,7 +85,7 @@ void TagsetConverter::add_layer(Layer* l)
 {
 	if (!layers_.empty()) {
 		if (l->tagset_from().id() != layers_.back()->tagset_to().id()) {
-			throw TagsetMismatch("TagsetConverter::add_layer",
+			throw Corpus2::TagsetMismatch("TagsetConverter::add_layer",
 				layers_.back()->tagset_to().id(),
 				l->tagset_from().id());
 		}
@@ -94,26 +94,26 @@ void TagsetConverter::add_layer(Layer* l)
 	layers_.push_back(l);
 }
 
-const Tagset& TagsetConverter::tagset_from() const
+const Corpus2::Tagset& TagsetConverter::tagset_from() const
 {
 	assert(!layers_.empty());
 	return layers_.front()->tagset_from();
 }
 
-const Tagset& TagsetConverter::tagset_to() const
+const Corpus2::Tagset& TagsetConverter::tagset_to() const
 {
 	assert(!layers_.empty());
 	return layers_.back()->tagset_to();
 }
 
-void TagsetConverter::convert(TokenSource* src,
-		boost::function<void (Token*)> sink)
+void TagsetConverter::convert(Corpus2::TokenSource* src,
+		boost::function<void (Corpus2::Token*)> sink)
 {
 	assert(!layers_.empty());
 	assert((layers_.front()->source() == NULL) ||
 			(layers_.back()->get_next_token() == NULL));
 	layers_.front()->set_source(src);
-	while (Token* t = layers_.back()->get_next_token()) {
+	while (Corpus2::Token* t = layers_.back()->get_next_token()) {
 		assert(t->lexemes()[0].tag().tagset_id() ==
 				layers_.back()->tagset_to().id());
 		sink(t);
@@ -121,21 +121,21 @@ void TagsetConverter::convert(TokenSource* src,
 	layers_.front()->set_source(NULL);
 }
 
-void TagsetConverter::convert_simple(const std::vector<Token *>& v,
-		boost::function<void(Token *)>sink)
+void TagsetConverter::convert_simple(const std::vector<Corpus2::Token *>& v,
+		boost::function<void(Corpus2::Token *)>sink)
 {
 	convert_container(v, sink);
 }
 
 void TagsetConverter::convert_ambiguous(
-		const std::vector<std::vector<Token *> >& v,
-		boost::function<void(Token *)>sink, bool warn_on_failure /*=true*/)
+		const std::vector<std::vector<Corpus2::Token *> >& v,
+		boost::function<void(Corpus2::Token *)>sink, bool warn_on_failure /*=true*/)
 {
-	std::vector< std::vector<Token *> > conv_v;
-	foreach (const std::vector<Token*>& path, v) {
-		conv_v.push_back(std::vector<Token*>());
-		boost::function<void (Token*)> sink = boost::bind(
-				&std::vector<Token*>::push_back, boost::ref(conv_v.back()),
+	std::vector< std::vector<Corpus2::Token *> > conv_v;
+	foreach (const std::vector<Corpus2::Token*>& path, v) {
+		conv_v.push_back(std::vector<Corpus2::Token*>());
+		boost::function<void (Corpus2::Token*)> sink = boost::bind(
+				&std::vector<Corpus2::Token*>::push_back, boost::ref(conv_v.back()),
 				_1);
 		convert_container(path, sink);
 	}
@@ -143,9 +143,9 @@ void TagsetConverter::convert_ambiguous(
 		if (warn_on_failure) {
 			std::cerr << "!!! Path folding failed,"
 				<< " returning shortest from: ";
-			foreach (const std::vector<Token*>& path, v) {
+			foreach (const std::vector<Corpus2::Token*>& path, v) {
 				std::cerr << " >> ";
-				foreach (Token* t, path) {
+				foreach (Corpus2::Token* t, path) {
 					std::cerr << t->orth_utf8() << " ";
 				}
 			}
@@ -155,27 +155,27 @@ void TagsetConverter::convert_ambiguous(
 	}
 }
 
-Sentence* TagsetConverter::convert_sentence(Sentence* s)
+Corpus2::Sentence* TagsetConverter::convert_sentence(Corpus2::Sentence* s)
 {
-	Sentence* res = new Sentence;
-	boost::function<void (Token*)> adder = boost::bind(&Sentence::append,
+	Corpus2::Sentence* res = new Corpus2::Sentence;
+	boost::function<void (Corpus2::Token*)> adder = boost::bind(&Corpus2::Sentence::append,
 			res, _1);
-	std::vector<Token*>::iterator i = s->tokens().begin();
+	std::vector<Corpus2::Token*>::iterator i = s->tokens().begin();
 	if (i != s->tokens().end()) {
-		std::vector<Token*>::iterator b = i;
+		std::vector<Corpus2::Token*>::iterator b = i;
 		++i;
 		while (i != s->tokens().end()) {
-			const Token& t = **i;
-			if (t.wa() != Toki::Whitespace::None) {
+			const Corpus2::Token& t = **i;
+			if (t.wa() != PwrNlp::Whitespace::None) {
 				convert_container(
-						boost::sub_range< std::vector<Token*> >(b, i),
+						boost::sub_range< std::vector<Corpus2::Token*> >(b, i),
 						adder);
 				b = i;
 			}
 			++i;
 		}
 		convert_container(
-				boost::sub_range< std::vector<Token*> >(b, i),
+				boost::sub_range< std::vector<Corpus2::Token*> >(b, i),
 				adder);
 	}
 	s->tokens().clear();

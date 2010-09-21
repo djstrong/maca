@@ -1,10 +1,11 @@
-#include <libmaca/io/writer.h>
-#include <libmaca/io/plain.h>
+#include <libcorpus2/io/writer.h>
+#include <libmaca/io/text.h>
 #include <libmaca/io/premorph.h>
 #include <libmaca/morph/dispatchanalyser.h>
 #include <libmaca/util/settings.h>
+#include <libcorpus2/util/settings.h>
 #include <libmaca/util/sentenceanalyser.h>
-#include <libmaca/util/tokentimer.h>
+#include <libcorpus2/util/tokentimer.h>
 
 #include <libtoki/sentencesplitter.h>
 #include <libtoki/tokenizer/layertokenizer.h>
@@ -28,7 +29,7 @@ int main(int argc, char** argv)
 	bool quiet = false, progress = false, split_chunks = false;
 	using boost::program_options::value;
 
-	std::string writers = boost::algorithm::join(Maca::TokenWriter::available_writer_types_help(), " ");
+	std::string writers = boost::algorithm::join(Corpus2::TokenWriter::available_writer_types_help(), " ");
 
 	std::string writers_help = "Output format, any of: " + writers + "\n";
 
@@ -45,8 +46,8 @@ int main(int argc, char** argv)
 			 "Override toki config search path")
 			("initial-wa-override", value(&initial_wa_override),
 			 "Initial whitespace (overrides toki config file)")
-			("input-format,i", value(&input_format)->default_value("plain"),
-			 "Input format, any of: plain premorph premorph-stream\n")
+			("input-format,i", value(&input_format)->default_value("text"),
+			 "Input format, any of: text premorph premorph-stream\n")
 			("output-format,o", value(&output_format)->default_value("plain"),
 			 writers_help.c_str())
 			("split,s", value(&split_chunks)->zero_tokens(),
@@ -95,6 +96,7 @@ int main(int argc, char** argv)
 	}
 	Toki::Path::Instance().set_verbose(!quiet);
 	Maca::Path::Instance().set_verbose(!quiet);
+	Corpus2::Path::Instance().set_verbose(!quiet);
 
 	if (!config.empty()) {
 		try {
@@ -107,9 +109,9 @@ int main(int argc, char** argv)
 			}
 
 			if (!initial_wa_override.empty()) {
-				Toki::Whitespace::Enum wa = Toki::Whitespace::from_string(
+				PwrNlp::Whitespace::Enum wa = PwrNlp::Whitespace::from_string(
 						initial_wa_override);
-				if (Toki::Whitespace::is_valid(wa)) {
+				if (PwrNlp::Whitespace::is_valid(wa)) {
 					Toki::Tokenizer& tok = sa->tokenizer();
 					dynamic_cast<Toki::LayerTokenizer&>(tok).input_tokenizer().set_initial_whitespace(wa);
 				} else {
@@ -124,21 +126,21 @@ int main(int argc, char** argv)
 				pp.parse_stream(std::cin);
 				return 0;
 			}
+			boost::scoped_ptr<Corpus2::TokenWriter> writer;
+			writer.reset(Corpus2::TokenWriter::create(output_format, std::cout, sa->tagset()));
 
-			boost::shared_ptr<Maca::TokenReader> tr;
+			boost::shared_ptr<Corpus2::TokenReader> tr;
 			if (input_format == "premorph") {
 				tr = boost::make_shared<Maca::PremorphReader>(boost::ref(std::cin), sa);
 			} else {
-				tr = boost::make_shared<Maca::PlainReader>(boost::ref(std::cin), sa);
+				tr = boost::make_shared<Maca::TextReader>(boost::ref(std::cin), sa);
 			}
-			boost::scoped_ptr<Maca::TokenWriter> writer;
-			writer.reset(Maca::TokenWriter::create(output_format, std::cout, sa->tagset()));
-			Maca::TokenTimer& timer = Maca::global_timer();
+			Corpus2::TokenTimer& timer = Corpus2::global_timer();
 			timer.register_signal_handler();
 			if (split_chunks) {
 				/// TODO empty chunks
-				while (Maca::Chunk* chunk = tr->get_next_chunk()) {
-					boost::scoped_ptr<Maca::Chunk> deleter(chunk);
+				while (Corpus2::Chunk* chunk = tr->get_next_chunk()) {
+					boost::scoped_ptr<Corpus2::Chunk> deleter(chunk);
 					writer->write_chunk(*chunk);
 					timer.count_chunk(*chunk);
 					if (progress) {
@@ -146,8 +148,8 @@ int main(int argc, char** argv)
 					}
 				}
 			} else {
-				while (Maca::Sentence* sentence = tr->get_next_sentence()) {
-					boost::scoped_ptr<Maca::Sentence> deleter(sentence);
+				while (Corpus2::Sentence* sentence = tr->get_next_sentence()) {
+					boost::scoped_ptr<Corpus2::Sentence> deleter(sentence);
 					assert(!sentence->empty());
 					timer.count_sentence(*sentence);
 					writer->write_sentence(*sentence);
@@ -162,7 +164,7 @@ int main(int argc, char** argv)
 		} catch (Maca::MacaError& e) {
 			std::cerr << "Maca Error: " << e.info() << "\n";
 			return 4;
-		} catch (Toki::TokenizerLibError& e) {
+		} catch (Toki::Error& e) {
 			std::cerr << "Tokenizer Error: " << e.info() << "\n";
 			return 6;
 		}

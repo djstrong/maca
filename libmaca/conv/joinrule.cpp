@@ -7,13 +7,13 @@
 namespace Maca {
 namespace Conversion {
 
-JoinRule::JoinRule(const Tagset& tagset)
+JoinRule::JoinRule(const Corpus2::Tagset& tagset)
 	: tagset_(&tagset)
 {
 }
 
 JoinRule::JoinRule(const Config::Node& cfg)
-	: tagset_(&get_named_tagset(cfg.get<std::string>("tagset")))
+	: tagset_(&Corpus2::get_named_tagset(cfg.get<std::string>("tagset")))
 {
 	std::string pos1, pos2;
 	UnicodeString orth1, orth2;
@@ -44,9 +44,9 @@ void JoinRule::set_token1_preconditions(const PosOrthPredicate &pre)
 void JoinRule::set_token1_preconditions(const std::string& pos,
 		const UnicodeString& orth)
 {
-	pos_idx_t p = tagset_->pos_dictionary().get_id(pos);
+	Corpus2::pos_idx_t p = tagset_->pos_dictionary().get_id(pos);
 	if (!tagset_->pos_dictionary().is_id_valid(p)) {
-		p = static_cast<pos_idx_t>(-1);
+		p = static_cast<Corpus2::pos_idx_t>(-1);
 	}
 	pre1_ = PosOrthPredicate(p, orth);
 }
@@ -59,14 +59,14 @@ void JoinRule::set_token2_preconditions(const PosOrthPredicate &pre)
 void JoinRule::set_token2_preconditions(const std::string& pos,
 		const UnicodeString& orth)
 {
-	pos_idx_t p = tagset_->pos_dictionary().get_id(pos);
+	Corpus2::pos_idx_t p = tagset_->pos_dictionary().get_id(pos);
 	if (!tagset_->pos_dictionary().is_id_valid(p)) {
-		p = static_cast<pos_idx_t>(-1);
+		p = static_cast<Corpus2::pos_idx_t>(-1);
 	}
 	pre2_ = PosOrthPredicate(p, orth);
 }
 
-void JoinRule::set_copy_attrs(const std::vector<attribute_idx_t> &v)
+void JoinRule::set_copy_attrs(const std::vector<Corpus2::attribute_idx_t> &v)
 {
 	copy_t2_attrs_ = v;
 }
@@ -93,7 +93,7 @@ void JoinRule::add_postcondition(const std::string& pred_string)
 	}
 }
 
-Token* JoinRule::try_join(Token* t1, Token* t2) const
+Corpus2::Token* JoinRule::try_join(Corpus2::Token* t1, Corpus2::Token* t2) const
 {
 	if (pre1_.check(*t1) && pre2_.check(*t2)) {
 		t1->set_orth(t1->orth() + t2->orth());

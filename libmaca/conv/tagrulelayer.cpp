@@ -5,13 +5,13 @@
 namespace Maca {
 namespace Conversion {
 
-TagRuleLayer::TagRuleLayer(const Tagset& tagset)
+TagRuleLayer::TagRuleLayer(const Corpus2::Tagset& tagset)
 	: OneTagsetLayer(tagset), rules_()
 {
 }
 
 TagRuleLayer::TagRuleLayer(const Config::Node& cfg)
-	: OneTagsetLayer(get_named_tagset(cfg.get<std::string>("tagset")))
+	: OneTagsetLayer(Corpus2::get_named_tagset(cfg.get<std::string>("tagset")))
 	, rules_()
 {
 	append_rule(cfg);
@@ -40,19 +40,19 @@ void TagRuleLayer::append_rule(const Config::Node& cfg)
 	append_rule(tr);
 }
 
-Token* TagRuleLayer::get_next_token()
+Corpus2::Token* TagRuleLayer::get_next_token()
 {
-	Token* t = source()->get_next_token();
+	Corpus2::Token* t = source()->get_next_token();
 	if (t != NULL) {
 		process(t);
 	}
 	return t;
 }
 
-void TagRuleLayer::process(Token* t)
+void TagRuleLayer::process(Corpus2::Token* t)
 {
-	foreach (Lexeme& lex, t->lexemes()) {
-		Tag newtag = lex.tag();
+	foreach (Corpus2::Lexeme& lex, t->lexemes()) {
+		Corpus2::Tag newtag = lex.tag();
 		foreach (const TagRule& tr, rules_) {
 			tr.apply(newtag);
 		}
@@ -61,7 +61,7 @@ void TagRuleLayer::process(Token* t)
 }
 
 
-RegexTagRuleLayer::RegexTagRuleLayer(const Tagset& tagset)
+RegexTagRuleLayer::RegexTagRuleLayer(const Corpus2::Tagset& tagset)
 	: TagRuleLayer(tagset), matcher_(), pattern_()
 {
 }
@@ -98,9 +98,9 @@ RegexTagRuleLayer::~RegexTagRuleLayer()
 {
 }
 
-Token* RegexTagRuleLayer::get_next_token()
+Corpus2::Token* RegexTagRuleLayer::get_next_token()
 {
-	Token* t = source()->get_next_token();
+	Corpus2::Token* t = source()->get_next_token();
 	if (t != NULL) {
 		if (matcher_) {
 			UErrorCode e = U_ZERO_ERROR;

@@ -6,7 +6,7 @@
 namespace Maca {
 namespace Conversion {
 
-TagConverter::TagConverter(const Tagset& from, const Tagset& to)
+TagConverter::TagConverter(const Corpus2::Tagset& from, const Corpus2::Tagset& to)
 	: tagset_from_(from), tagset_to_(to), late_check_(true)
 {
 	from.pos_dictionary().create_mapping_to(
@@ -17,20 +17,20 @@ TagConverter::TagConverter(const Tagset& from, const Tagset& to)
 			to.value_dictionary(), value_mapping_);
 }
 
-Tag TagConverter::cast(const Tag& from) const
+Corpus2::Tag TagConverter::cast(const Corpus2::Tag& from) const
 {
 	pos_map_t::const_iterator pi = pos_mapping_.find(from.pos_id());
 	assert(pi != pos_mapping_.end());
-	Tag to(tagset_to_.id(), pi->second);
+	Corpus2::Tag to(tagset_to_.id(), pi->second);
 	to.values().resize(tagset_to_.attribute_dictionary().size());
 	memset(&to.values()[0], 0, to.values().size());
 
-	foreach (value_idx_t v, from.values()) {
+	foreach (Corpus2::value_idx_t v, from.values()) {
 		if (v > 0) {
-			std::map<value_idx_t, value_idx_t>::const_iterator i;
+			std::map<Corpus2::value_idx_t, Corpus2::value_idx_t>::const_iterator i;
 			i = value_mapping_.find(v);
 			if (i != value_mapping_.end()) {
-				attribute_idx_t a = tagset_to_.get_value_attribute(
+				Corpus2::attribute_idx_t a = tagset_to_.get_value_attribute(
 					i->second);
 				to.values()[a] = i->second;
 			} else {
@@ -48,9 +48,9 @@ Tag TagConverter::cast(const Tag& from) const
 void TagConverter::add_override(const std::string& from,
 		const std::string& to)
 {
-	pos_idx_t pos = tagset_from_.pos_dictionary().get_id(from);
+	Corpus2::pos_idx_t pos = tagset_from_.pos_dictionary().get_id(from);
 	if (tagset_from_.pos_dictionary().is_id_valid(pos)) {
-		pos_idx_t pos2 = tagset_to_.pos_dictionary().get_id(to);
+		Corpus2::pos_idx_t pos2 = tagset_to_.pos_dictionary().get_id(to);
 		if (tagset_to_.pos_dictionary().is_id_valid(pos2)) {
 			pos_mapping_[pos] = pos2;
 		} else {
@@ -59,17 +59,17 @@ void TagConverter::add_override(const std::string& from,
 				<< tagset_to().id_string() << "\n";
 		}
 	} else {
-		value_idx_t vto = tagset_to_.value_dictionary().get_id(to);
+		Corpus2::value_idx_t vto = tagset_to_.value_dictionary().get_id(to);
 		if (tagset_to_.value_dictionary().is_id_valid(vto)) {
-			attribute_idx_t a;
+			Corpus2::attribute_idx_t a;
 			a = tagset_from_.attribute_dictionary().get_id(from);
 			if (tagset_from_.attribute_dictionary().is_id_valid(a)) {
-				foreach (value_idx_t vfrom,
+				foreach (Corpus2::value_idx_t vfrom,
 						tagset_from_.get_attribute_values(a)) {
 					value_mapping_[vfrom] = vto;
 				}
 			} else {
-				value_idx_t vfrom;
+				Corpus2::value_idx_t vfrom;
 				vfrom = tagset_from_.value_dictionary().get_id(from);
 				if (tagset_to_.value_dictionary().is_id_valid(vfrom)) {
 					value_mapping_[vfrom] = vto;
@@ -90,7 +90,7 @@ void TagConverter::add_override(const std::string& from,
 bool TagConverter::is_complete(std::ostream* os, bool all /*=false*/) const
 {
 	bool rv = true;
-	for (pos_idx_t p = static_cast<pos_idx_t>(0);
+	for (Corpus2::pos_idx_t p = static_cast<Corpus2::pos_idx_t>(0);
 			p < tagset_from().pos_dictionary().size(); ++p) {
 		pos_map_t::const_iterator pi = pos_mapping_.find(p);
 		if (pi == pos_mapping_.end()) {
@@ -110,11 +110,11 @@ bool TagConverter::is_complete(std::ostream* os, bool all /*=false*/) const
 			if (os) (*os) << "\n";
 		}
 	}
-	for (attribute_idx_t p = static_cast<attribute_idx_t>(0);
+	for (Corpus2::attribute_idx_t p = static_cast<Corpus2::attribute_idx_t>(0);
 			p < tagset_from().attribute_dictionary().size(); ++p) {
 		attribute_map_t::const_iterator pi = attribute_mapping_.find(p);
 		if (pi != attribute_mapping_.end()) {
-			attribute_idx_t to = pi->second;
+			Corpus2::attribute_idx_t to = pi->second;
 			if (!tagset_to().attribute_dictionary().is_id_valid(to)) {
 				if (os) (*os) << "Mapping for attribute "
 					<< tagset_from().attribute_dictionary().get_string(p)
@@ -126,7 +126,7 @@ bool TagConverter::is_complete(std::ostream* os, bool all /*=false*/) const
 			}
 		}
 	}
-	for (value_idx_t p = static_cast<value_idx_t>(0);
+	for (Corpus2::value_idx_t p = static_cast<Corpus2::value_idx_t>(0);
 			p < tagset_from().value_dictionary().size(); ++p) {
 		value_map_t::const_iterator pi = value_mapping_.find(p);
 		if (pi == value_mapping_.end()) {
@@ -160,8 +160,8 @@ TagConvertLayer* TagConvertLayer::clone() const
 }
 
 TagConvertLayer::TagConvertLayer(const Config::Node& cfg)
-	: tc_(get_named_tagset(cfg.get<std::string>("tagset_from")),
-		get_named_tagset(cfg.get<std::string>("tagset_to")))
+	: tc_(Corpus2::get_named_tagset(cfg.get<std::string>("tagset_from")),
+		Corpus2::get_named_tagset(cfg.get<std::string>("tagset_to")))
 {
 	foreach (const Config::Node::value_type &v, cfg) {
 		if (v.first == "override") {
@@ -188,11 +188,11 @@ TagConvertLayer::TagConvertLayer(const Config::Node& cfg)
 	tc_.set_late_check(cfg.get("late-check", true));
 }
 
-Token* TagConvertLayer::get_next_token()
+Corpus2::Token* TagConvertLayer::get_next_token()
 {
-	Token* t = source()->get_next_token();
+	Corpus2::Token* t = source()->get_next_token();
 	if (t != NULL) {
-		foreach (Lexeme& lex, t->lexemes()) {
+		foreach (Corpus2::Lexeme& lex, t->lexemes()) {
 			if (lex.tag().tagset_id() != tagset_from().id()) {
 				std::cerr << lex.tag().tagset_id()
 					<< " vs " << tagset_from().id();
@@ -206,12 +206,12 @@ Token* TagConvertLayer::get_next_token()
 	return t;
 }
 
-const Tagset& TagConvertLayer::tagset_from() const
+const Corpus2::Tagset& TagConvertLayer::tagset_from() const
 {
 	return tc_.tagset_from();
 }
 
-const Tagset& TagConvertLayer::tagset_to() const
+const Corpus2::Tagset& TagConvertLayer::tagset_to() const
 {
 	return tc_.tagset_to();
 }

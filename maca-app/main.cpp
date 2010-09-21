@@ -20,13 +20,12 @@
 #include <libtoki/util/confignode.h>
 #include <libmaca/util/settings.h>
 #include <libcorpus2/tagsetmanager.h>
-#include <libmaca/tagsetparser.h>
+#include <libcorpus2/tagsetparser.h>
 #include <libmaca/conv/tagsetconverter.h>
 
-#include <libmaca/io/plain.h>
-#include <libmaca/io/xces.h>
-#include <libmaca/io/xceswriter.h>
-#include <libmaca/io/xcesreader.h>
+#include <libcorpus2/io/xces.h>
+#include <libcorpus2/io/xceswriter.h>
+#include <libcorpus2/io/xcesreader.h>
 
 #include <libmaca/util/debug.h>
 #include <fstream>
@@ -64,10 +63,10 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	boost::shared_ptr<Maca::Tagset> tagset(new Maca::Tagset);
+	boost::shared_ptr<Corpus2::Tagset> tagset(new Corpus2::Tagset);
 	try {
 		if (!tagset_load.empty()) {
-			*tagset = Maca::get_named_tagset(tagset_load);
+			*tagset = Corpus2::get_named_tagset(tagset_load);
 		}
 		foreach (const std::string& s, plugins) {
 			Maca::MorphAnalyser::load_plugin(s, false);
@@ -80,15 +79,15 @@ int main(int argc, char** argv)
 				std::cerr << "File open error\n";
 				return 8;
 			}
-			Maca::XcesReader xr(*tagset, ifs);
-			std::vector<Maca::Chunk*> chunks;
-			Maca::Chunk* ch = NULL;
+			Corpus2::XcesReader xr(*tagset, ifs);
+			std::vector<Corpus2::Chunk*> chunks;
+			Corpus2::Chunk* ch = NULL;
 			int sc = 0;
 			int tc = 0;
 			while ((ch = xr.get_next_chunk())) {
 				chunks.push_back(ch);
 				sc += ch->sentences().size();
-				foreach (Maca::Sentence* s, ch->sentences()) {
+				foreach (Corpus2::Sentence* s, ch->sentences()) {
 					tc += s->size();
 				}
 			}
@@ -96,7 +95,7 @@ int main(int argc, char** argv)
 					<< sc << " sentences, " << tc << " tokens\n";
 			std::string x;
 			std::cin >> x;
-			foreach (Maca::Chunk* c, chunks) {
+			foreach (Corpus2::Chunk* c, chunks) {
 				delete c;
 			}
 			std::cerr << "Deleted\n";

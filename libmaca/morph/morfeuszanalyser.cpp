@@ -1,6 +1,5 @@
 #include <libmaca/morph/morfeuszanalyser.h>
 #include <libcorpus2/token.h>
-#include <libmaca/morph/morfeuszcompat.h>
 #include <libmaca/util/settings.h>
 #include <libpwrutils/foreach.h>
 #include <libpwrutils/util.h>
@@ -96,14 +95,14 @@ std::string MorfeuszError::info() const
 	return ss.str();
 }
 
-MorfeuszAnalyser::MorfeuszAnalyser(const Tagset* tagset,
+MorfeuszAnalyser::MorfeuszAnalyser(const Corpus2::Tagset* tagset,
 		Conversion::TagsetConverter* conv, const std::string& libname,
 		const std::string& require_version)
 	: MorphAnalyser(tagset), conv_(conv), warn_on_fold_failure_(true)
 	, morfeusz_library_(libname), require_version_(require_version)
 {
 	if (conv_->tagset_to().id() != tagset->id()) {
-		throw TagsetMismatch("Morfeusz analyser creation", *tagset,
+		throw Corpus2::TagsetMismatch("Morfeusz analyser creation", *tagset,
 				conv->tagset_to());
 	}
 	load_morfeusz_library();
@@ -186,7 +185,7 @@ MorfeuszAnalyser::MorfeuszAnalyser(const Config::Node& cfg)
 			new Conversion::TagsetConverter(conv_cfg));
 
 	if (c->tagset_to().id() != tagset().id()) {
-		throw TagsetMismatch("Morfeusz analyser creation", tagset(),
+		throw Corpus2::TagsetMismatch("Morfeusz analyser creation", tagset(),
 				c->tagset_to());
 	}
 	conv_ = c.release();
@@ -209,9 +208,9 @@ MorfeuszAnalyser::~MorfeuszAnalyser()
 }
 
 bool MorfeuszAnalyser::process_functional(const Toki::Token &t,
-		boost::function<void(Token *)>sink)
+		boost::function<void(Corpus2::Token *)>sink)
 {
-	std::string s = Toki::Util::to_utf8(t.orth());
+	std::string s = PwrNlp::to_utf8(t.orth());
 	// Morfeusz demands a nonconst char*
 	MorfeuszData *ppmorf = morfeusz_analyse_handle_(
 			const_cast<char*>(s.c_str()));
@@ -220,7 +219,7 @@ bool MorfeuszAnalyser::process_functional(const Toki::Token &t,
 		return false;
 	} else if (pmorf.size() == 1) { // only one analysis
 		if (pmorf[0].lemma.length() > 0) {
-			std::vector<Token*> vec;
+			std::vector<Corpus2::Token*> vec;
 			vec.push_back(make_token(t, pmorf[0]));
 			flush_convert(vec, sink);
 			return true;
@@ -234,7 +233,7 @@ bool MorfeuszAnalyser::process_functional(const Toki::Token &t,
 
 bool MorfeuszAnalyser::process_complex_analysis(const Toki::Token &t,
 		std::vector<MorfeuszEdge>& pmorf,
-		boost::function<void(Token *)>sink)
+		boost::function<void(Corpus2::Token *)>sink)
 {
 	int edge_count = pmorf.size();
 	int node_count = 0;
@@ -264,7 +263,7 @@ bool MorfeuszAnalyser::process_complex_analysis(const Toki::Token &t,
 		}
 	}
 
-	std::vector<Token*> unambiguous;
+	std::vector<Corpus2::Token*> unambiguous;
 	int current_node = 0;
 	while (current_node < node_count) {
 		if (succ[current_node].size() > 1) {
@@ -275,10 +274,10 @@ bool MorfeuszAnalyser::process_complex_analysis(const Toki::Token &t,
 			}
 
 			int merge_node = -1;
-			std::vector< std::vector< Token* > > paths;
+			std::vector< std::vector< Corpus2::Token* > > paths;
 			// follow all paths to the merge point
 			foreach (int tse, succ[current_node]) {
-				paths.push_back(std::vector<Token*>());
+				paths.push_back(std::vector<Corpus2::Token*>());
 				paths.back().push_back(pmorf[tse].token);
 				int v = pmorf[tse].node_to;
 				while (prec[v].size() == 1) {
@@ -325,20 +324,20 @@ bool MorfeuszAnalyser::process_complex_analysis(const Toki::Token &t,
 	return true;
 }
 
-Token* MorfeuszAnalyser::make_token(const Toki::Token& t,
+Corpus2::Token* MorfeuszAnalyser::make_token(const Toki::Token& t,
 		const MorfeuszEdge &m) const
 {
-	Token* tt = new Token();
+	Corpus2::Token* tt = new Corpus2::Token();
 	if (m.node_from == 0) {
 		tt->set_wa(t.preceeding_whitespace());
 	} else {
-		tt->set_wa(Toki::Whitespace::None);
+		tt->set_wa(PwrNlp::Whitespace::None);
 	}
 	morfeusz_into_token(tt, m);
 	return tt;
 }
 
-void MorfeuszAnalyser::morfeusz_into_token(Token *tt,
+void MorfeuszAnalyser::morfeusz_into_token(Corpus2::Token *tt,
 		const MorfeuszEdge& m) const
 {
 	tt->set_orth(m.orth);
@@ -346,7 +345,7 @@ void MorfeuszAnalyser::morfeusz_into_token(Token *tt,
 		conv_->tagset_from().lexemes_into_token(*tt, m.lemma,
 				m.tag_string);
 	} else {
-		Lexeme ign_lex(m.orth, ign_tag_);
+		Corpus2::Lexeme ign_lex(m.orth, ign_tag_);
 		tt->add_lexeme(ign_lex);
 		if (warn_on_ign_) {
 			std::cerr << "Morfeusz: tagging as ign: "
@@ -355,15 +354,15 @@ void MorfeuszAnalyser::morfeusz_into_token(Token *tt,
 	}
 }
 
-void MorfeuszAnalyser::flush_convert(std::vector<Token *> &vec,
-		boost::function<void(Token *)>sink)
+void MorfeuszAnalyser::flush_convert(std::vector<Corpus2::Token *> &vec,
+		boost::function<void(Corpus2::Token *)>sink)
 {
 	conv_->convert_simple(vec, sink);
 }
 
 void MorfeuszAnalyser::flush_convert(
-		std::vector<std::vector<Token *> > &vec,
-		boost::function<void(Token *)>sink)
+		std::vector<std::vector<Corpus2::Token *> > &vec,
+		boost::function<void(Corpus2::Token *)>sink)
 {
 	conv_->convert_ambiguous(vec, sink, warn_on_fold_failure_);
 }

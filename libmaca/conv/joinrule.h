@@ -36,7 +36,7 @@ public:
 	 * tokens.
 	 *
 	 */
-	explicit JoinRule(const Tagset& tagset);
+	explicit JoinRule(const Corpus2::Tagset& tagset);
 
 	/**
 	 * Constructor from a Config::Node.
@@ -55,7 +55,7 @@ public:
 	 */
 	explicit JoinRule(const Config::Node& cfg);
 
-	const Tagset& tagset() const {
+	const Corpus2::Tagset& tagset() const {
 		return *tagset_;
 	}
 
@@ -67,7 +67,7 @@ public:
 	 * JoinRule. Otherwise, the return value is NULL and the passed tokens
 	 * are unchanged.
 	 */
-	Token* try_join(Token* t1, Token* t2) const;
+	Corpus2::Token* try_join(Corpus2::Token* t1, Corpus2::Token* t2) const;
 
 	/// Setter for token 1 preconditions
 	void set_token1_preconditions(const PosOrthPredicate& pre);
@@ -85,7 +85,7 @@ public:
 
 	/// Setter for the list of attriutes to copy from token2 to the joined
 	/// token
-	void set_copy_attrs(const std::vector<attribute_idx_t>& v);
+	void set_copy_attrs(const std::vector<Corpus2::attribute_idx_t>& v);
 
 	/// Adder for the copy attributes list, string version
 	void append_copy_attrs(const std::string& names);
@@ -98,7 +98,7 @@ public:
 
 private:
 	/// The tagset the joining takes place in
-	const Tagset* tagset_;
+	const Corpus2::Tagset* tagset_;
 
 	/// Precondition for token 1
 	PosOrthPredicate pre1_;
@@ -107,7 +107,7 @@ private:
 	PosOrthPredicate pre2_;
 
 	/// Attributes to copy from token 2 tags into the resulting token tags
-	std::vector<attribute_idx_t> copy_t2_attrs_;
+	std::vector<Corpus2::attribute_idx_t> copy_t2_attrs_;
 
 	/// Postconditions to apply on the resulting token's tags
 	std::vector<TagPredicate> post_;

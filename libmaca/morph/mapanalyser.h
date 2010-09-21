@@ -10,6 +10,7 @@
 #include <boost/unordered_map.hpp>
 #include <fstream>
 #include <boost/algorithm/string.hpp>
+#include <libmaca/typedefs.h>
 
 namespace Maca {
 
@@ -23,7 +24,7 @@ class MapAnalyser : public MorphAnalyser
 {
 public:
 	/// Constructor for an empty analyser working with a tagset
-	explicit MapAnalyser(const Tagset* tagset);
+	explicit MapAnalyser(const Corpus2::Tagset* tagset);
 
 	/**
 	 * Config node constructor. Recognized keys are:
@@ -39,7 +40,7 @@ public:
 
 	/// MorphAnalyser override
 	bool process_functional(const Toki::Token &t,
-			boost::function<void (Token*)> sink);
+			boost::function<void (Corpus2::Token*)> sink);
 
 	/// Class identifier
 	static const char* identifier;
@@ -127,7 +128,7 @@ typedef MapAnalyser<
 /* implementation */
 
 template<typename MapT>
-MapAnalyser<MapT>::MapAnalyser(const Tagset* tagset)
+MapAnalyser<MapT>::MapAnalyser(const Corpus2::Tagset* tagset)
 	: MorphAnalyser(tagset), map_()
 {
 }
@@ -182,13 +183,13 @@ void MapAnalyser<MapT>::load_m_dictionary(const std::string &fn)
 
 template<typename MapT>
 bool MapAnalyser<MapT>::process_functional(const Toki::Token &t,
-		boost::function<void (Token*)> sink)
+		boost::function<void (Corpus2::Token*)> sink)
 {
 	typename MapT::const_iterator i;
 	const UnicodeString& key = t.orth();
 	i = map_.find(key);
 	if (i != map_.end()) {
-		Token* tt = new Token(t);
+		Corpus2::Token* tt = create_from_toki(t);
 		typedef std::pair<std::string, std::string> sp;
 		foreach (const sp& o, i->second) {
 			tagset().lexemes_into_token(*tt, o.first, o.second);

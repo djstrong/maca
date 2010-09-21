@@ -7,7 +7,7 @@
 namespace Maca {
 namespace Conversion {
 
-TwoSplitLayer::TwoSplitLayer(const Tagset& tagset)
+TwoSplitLayer::TwoSplitLayer(const Corpus2::Tagset& tagset)
 	: OneTagsetLayer(tagset)
 	, queue_()
 	, orth_matcher_(), orth_pattern_()
@@ -16,7 +16,7 @@ TwoSplitLayer::TwoSplitLayer(const Tagset& tagset)
 }
 
 TwoSplitLayer::TwoSplitLayer(const Config::Node& cfg)
-	: OneTagsetLayer(get_named_tagset(cfg.get<std::string>("tagset")))
+	: OneTagsetLayer(Corpus2::get_named_tagset(cfg.get<std::string>("tagset")))
 	, queue_()
 	, orth_matcher_(NULL) , pre_(), t1_post_(), copy_attrs_to_t2_()
 {
@@ -44,7 +44,7 @@ TwoSplitLayer::TwoSplitLayer(const Config::Node& cfg)
 
 TwoSplitLayer::~TwoSplitLayer()
 {
-	foreach (const Token* t, queue_) {
+	foreach (const Corpus2::Token* t, queue_) {
 		delete t;
 	}
 }
@@ -67,12 +67,12 @@ void TwoSplitLayer::clone_helper(TwoSplitLayer* copy) const
 	copy->t1_post_ = t1_post_;
 	copy->copy_attrs_to_t2_ = copy_attrs_to_t2_;
 	copy->t2_lexeme_ = copy->t2_lexeme_;
-	foreach (const Token* t, queue_) {
+	foreach (const Corpus2::Token* t, queue_) {
 		copy->queue_.push_back(t->clone());
 	}
 }
 
-void TwoSplitLayer::add_copy_attr_to_t2(attribute_idx_t a)
+void TwoSplitLayer::add_copy_attr_to_t2(Corpus2::attribute_idx_t a)
 {
 	copy_attrs_to_t2_.push_back(a);
 }
@@ -133,14 +133,14 @@ void TwoSplitLayer::set_orth_regexp(const std::string &regexp_string)
 	}
 }
 
-void TwoSplitLayer::set_t2_lexeme(const Lexeme &lex)
+void TwoSplitLayer::set_t2_lexeme(const Corpus2::Lexeme &lex)
 {
 	t2_lexeme_ = lex;
 }
 
-Token* TwoSplitLayer::get_next_token()
+Corpus2::Token* TwoSplitLayer::get_next_token()
 {
-	Token* t;
+	Corpus2::Token* t;
 	if (!queue_.empty()) {
 		t = queue_.front();
 		queue_.pop_front();
@@ -153,8 +153,8 @@ Token* TwoSplitLayer::get_next_token()
 			orth_matcher_->reset(t->orth());
 			UErrorCode status = U_ZERO_ERROR;
 			if (orth_matcher_->matches(status)) {
-				Token* t2 = new Token(orth_matcher_->group(2, status),
-						Toki::Whitespace::None);
+				Corpus2::Token* t2 = new Corpus2::Token(orth_matcher_->group(2, status),
+						PwrNlp::Whitespace::None);
 				t2->add_lexeme(t2_lexeme_);
 				copy_attributes(*t, copy_attrs_to_t2_, *t2);
 				queue_.push_back(t2);
@@ -167,7 +167,7 @@ Token* TwoSplitLayer::get_next_token()
 	return t;
 }
 
-ThreeSplitLayer::ThreeSplitLayer(const Tagset &tagset)
+ThreeSplitLayer::ThreeSplitLayer(const Corpus2::Tagset &tagset)
 	: TwoSplitLayer(tagset)
 {
 }
@@ -202,7 +202,7 @@ ThreeSplitLayer* ThreeSplitLayer::clone() const
 	return copy;
 }
 
-void ThreeSplitLayer::add_copy_attr_to_t3(attribute_idx_t a)
+void ThreeSplitLayer::add_copy_attr_to_t3(Corpus2::attribute_idx_t a)
 {
 	copy_attrs_to_t3_.push_back(a);
 }
@@ -212,14 +212,14 @@ void ThreeSplitLayer::append_copy_attrs_to_t3(const std::string& s)
 	append_attribute_list(copy_attrs_to_t3_, tagset(), s);
 }
 
-void ThreeSplitLayer::set_t3_lexeme(const Lexeme &lex)
+void ThreeSplitLayer::set_t3_lexeme(const Corpus2::Lexeme &lex)
 {
 	t3_lexeme_ = lex;
 }
 
-Token* ThreeSplitLayer::get_next_token()
+Corpus2::Token* ThreeSplitLayer::get_next_token()
 {
-	Token* t;
+	Corpus2::Token* t;
 	if (!queue_.empty()) {
 		t = queue_.front();
 		queue_.pop_front();
@@ -232,13 +232,13 @@ Token* ThreeSplitLayer::get_next_token()
 			orth_matcher_->reset(t->orth());
 			UErrorCode status = U_ZERO_ERROR;
 			if (orth_matcher_->matches(status)) {
-				Token* t2 = new Token(orth_matcher_->group(2, status),
-						Toki::Whitespace::None);
+				Corpus2::Token* t2 = new Corpus2::Token(orth_matcher_->group(2, status),
+						PwrNlp::Whitespace::None);
 				t2->add_lexeme(t2_lexeme_);
 				copy_attributes(*t, copy_attrs_to_t2_, *t2);
 				queue_.push_back(t2);
-				Token* t3 = new Token(orth_matcher_->group(3, status),
-						Toki::Whitespace::None);
+				Corpus2::Token* t3 = new Corpus2::Token(orth_matcher_->group(3, status),
+						PwrNlp::Whitespace::None);
 				t3->add_lexeme(t3_lexeme_);
 				copy_attributes(*t, copy_attrs_to_t3_, *t3);
 				queue_.push_back(t3);

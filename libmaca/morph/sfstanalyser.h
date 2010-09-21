@@ -33,7 +33,7 @@ class SfstAnalyser : public MorphAnalyser, private boost::noncopyable
 public:
 	/// Constructor for a SFST analyser working with a tagset and using
 	/// a transducer loaded from thegiven file
-	SfstAnalyser(const Tagset* tagset, const std::string& filename);
+	SfstAnalyser(const Corpus2::Tagset* tagset, const std::string& filename);
 
 	/**
 	 * Config node constructor. recognized keys are:
@@ -50,7 +50,7 @@ public:
 
 	/// MorphAnalyser override
 	bool process_functional(const Toki::Token& t,
-			boost::function<void (Token*)> sink);
+			boost::function<void (Corpus2::Token*)> sink);
 
 	/// helper function for interfacing with the transducer output
 	static std::string unescape_analysis(const std::string& sfst_analysis);
@@ -63,7 +63,7 @@ public:
 
 private:
 	/// ctor for use in clone()
-	SfstAnalyser(const Tagset *tagset);
+	SfstAnalyser(const Corpus2::Tagset *tagset);
 
 	/// convenience function for loading a transducer file
 	void open_transducer(const std::string& filename);

@@ -2,35 +2,35 @@
 
 #include <libmaca/morph/constanalyser.h>
 #include <libmaca/morph/dispatchanalyser.h>
-#include <libmaca/tagsetparser.h>
+#include <libcorpus2/tagsetparser.h>
 
 struct F {
-	F() : t(UnicodeString::fromUTF8("aaa"), "t", Toki::Whitespace::ManySpaces)
+	F() : t(UnicodeString::fromUTF8("aaa"), "t", PwrNlp::Whitespace::ManySpaces)
 	{
 		const char tagset_string[] = "[ATTR]\nA a1 a2 a3\nB b1 b2 b3\n[POS]\n P1 A [B]\n P2 A\n";
 		try {
-			tagset.reset(new Maca::Tagset(tagset_string));
-		} catch (Maca::TagsetParseError& e) {
+			tagset.reset(new Corpus2::Tagset(tagset_string));
+		} catch (Corpus2::TagsetParseError& e) {
 			BOOST_FAIL(e.info());
 		}
 	}
 	~F() {
 	}
 
-	boost::shared_ptr<Maca::Tagset> tagset;
+	boost::shared_ptr<Corpus2::Tagset> tagset;
 	Toki::Token t;
 };
 
 BOOST_FIXTURE_TEST_CASE( morph_const, F )
 {
 	Maca::ConstAnalyser a(tagset.get(), "P1:a1");
-	std::vector<Maca::Token*> tv = a.process(t);
+	std::vector<Corpus2::Token*> tv = a.process(t);
 	BOOST_REQUIRE_EQUAL(tv.size(), 1);
-	Maca::Token* tt = tv[0];
+	Corpus2::Token* tt = tv[0];
 	BOOST_CHECK_EQUAL(tt->orth_utf8(), t.orth_utf8());
 	BOOST_CHECK_EQUAL(tt->wa(), t.preceeding_whitespace());
 	BOOST_REQUIRE_EQUAL(tt->lexemes().size(), 1);
-	const Maca::Lexeme& lex = tt->lexemes()[0];
+	const Corpus2::Lexeme& lex = tt->lexemes()[0];
 	BOOST_CHECK(lex.lemma() == t.orth());
 	BOOST_CHECK_EQUAL(tagset->tag_to_string(lex.tag()), "P1:a1");
 	delete tt;
@@ -59,11 +59,11 @@ struct Fd : public F
 
 BOOST_FIXTURE_TEST_CASE( morph_dispatch1, Fd )
 {
-	std::vector<Maca::Token*> tv = a.process(t);
+	std::vector<Corpus2::Token*> tv = a.process(t);
 	BOOST_REQUIRE_EQUAL(tv.size(), 1);
-	Maca::Token* tt = tv[0];
+	Corpus2::Token* tt = tv[0];
 	BOOST_REQUIRE_EQUAL(tt->lexemes().size(), 1);
-	const Maca::Lexeme& lex = tt->lexemes()[0];
+	const Corpus2::Lexeme& lex = tt->lexemes()[0];
 	BOOST_CHECK(lex.lemma() == t.orth());
 	BOOST_CHECK_EQUAL(tagset->tag_to_string(lex.tag()), tag1s);
 	delete tt;
@@ -72,11 +72,11 @@ BOOST_FIXTURE_TEST_CASE( morph_dispatch1, Fd )
 BOOST_FIXTURE_TEST_CASE( morph_dispatch2, Fd )
 {
 	t.set_type("a");
-	std::vector<Maca::Token*> tv = a.process(t);
+	std::vector<Corpus2::Token*> tv = a.process(t);
 	BOOST_REQUIRE_EQUAL(tv.size(), 1);
-	Maca::Token* tt = tv[0];
+	Corpus2::Token* tt = tv[0];
 	BOOST_REQUIRE_EQUAL(tt->lexemes().size(), 1);
-	const Maca::Lexeme& lex2 = tt->lexemes()[0];
+	const Corpus2::Lexeme& lex2 = tt->lexemes()[0];
 	BOOST_CHECK(lex2.lemma() == t.orth());
 	BOOST_CHECK_EQUAL(tagset->tag_to_string(lex2.tag()), tag2s);
 	delete tt;
@@ -85,11 +85,11 @@ BOOST_FIXTURE_TEST_CASE( morph_dispatch2, Fd )
 BOOST_FIXTURE_TEST_CASE( morph_dispatch3, Fd )
 {
 	t.set_type("b");
-	std::vector<Maca::Token*> tv = a.process(t);
+	std::vector<Corpus2::Token*> tv = a.process(t);
 	BOOST_REQUIRE_EQUAL(tv.size(), 1);
-	Maca::Token* tt = tv[0];
+	Corpus2::Token* tt = tv[0];
 	BOOST_REQUIRE_EQUAL(tt->lexemes().size(), 1);
-	const Maca::Lexeme& lex = tt->lexemes()[0];
+	const Corpus2::Lexeme& lex = tt->lexemes()[0];
 	BOOST_CHECK(lex.lemma() == t.orth());
 	BOOST_CHECK_EQUAL(tagset->tag_to_string(lex.tag()), tag2s);
 	delete tt;

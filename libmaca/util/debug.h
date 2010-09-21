@@ -6,11 +6,11 @@
 
 namespace Maca {
 
-std::string lexeme_string(const Lexeme& l);
+std::string lexeme_string(const Corpus2::Lexeme& l);
 
-std::string token_string(const Token& t);
+std::string token_string(const Corpus2::Token& t);
 
-void token_output(const Tagset& tagset, std::ostream& os, Token* t);
+void token_output(const Corpus2::Tagset& tagset, std::ostream& os, Corpus2::Token* t);
 
 } /* end ns Maca */
 

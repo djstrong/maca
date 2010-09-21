@@ -21,7 +21,7 @@ namespace Conversion {
  * the regexp should have exactly two capturing groups). The resulting
  * tokens are referred to as token 1 and token 2.
  *
- * Token 1 retains the lexemes of the original token. Token 2 is created
+ * Corpus2::Token 1 retains the lexemes of the original token. Token 2 is created
  * with a pre-set lexeme, with some attributes possibly copied from the
  * original token's lexemes.
  *
@@ -31,7 +31,7 @@ class TwoSplitLayer : public OneTagsetLayer, boost::noncopyable
 {
 public:
 	/// Constructor for an empty TwoSplitLayer working within a tagset
-	TwoSplitLayer(const Tagset& tagset);
+	TwoSplitLayer(const Corpus2::Tagset& tagset);
 
 	/**
 	 * Config node constructor. Recognized keys are:
@@ -62,18 +62,18 @@ public:
 
 	void add_t1_postcondition(const std::string& pred_string);
 
-	void add_copy_attr_to_t2(attribute_idx_t a);
+	void add_copy_attr_to_t2(Corpus2::attribute_idx_t a);
 
 	void append_copy_attrs_to_t2(const std::string& a);
 
-	void set_t2_lexeme(const Lexeme& lex);
+	void set_t2_lexeme(const Corpus2::Lexeme& lex);
 
-	Token* get_next_token();
+	Corpus2::Token* get_next_token();
 
 protected:
 	void clone_helper(TwoSplitLayer* copy) const;
 
-	std::deque<Token*> queue_;
+	std::deque<Corpus2::Token*> queue_;
 
 	boost::scoped_ptr<RegexMatcher> orth_matcher_;
 
@@ -83,9 +83,9 @@ protected:
 
 	std::vector<TagPredicate> t1_post_;
 
-	std::vector<attribute_idx_t> copy_attrs_to_t2_;
+	std::vector<Corpus2::attribute_idx_t> copy_attrs_to_t2_;
 
-	Lexeme t2_lexeme_;
+	Corpus2::Lexeme t2_lexeme_;
 };
 
 /**
@@ -98,7 +98,7 @@ class ThreeSplitLayer : public TwoSplitLayer
 {
 public:
 	/// Constructor for an empty ThreeSplitLayer working within a tagset
-	ThreeSplitLayer(const Tagset& tagset);
+	ThreeSplitLayer(const Corpus2::Tagset& tagset);
 
 	/**
 	 * Config node constructor. Recognized keys are:
@@ -112,18 +112,18 @@ public:
 	ThreeSplitLayer* clone() const;
 
 
-	void add_copy_attr_to_t3(attribute_idx_t a);
+	void add_copy_attr_to_t3(Corpus2::attribute_idx_t a);
 
 	void append_copy_attrs_to_t3(const std::string& a);
 
-	void set_t3_lexeme(const Lexeme& lex);
+	void set_t3_lexeme(const Corpus2::Lexeme& lex);
 
-	Token* get_next_token();
+	Corpus2::Token* get_next_token();
 
 protected:
-	std::vector<attribute_idx_t> copy_attrs_to_t3_;
+	std::vector<Corpus2::attribute_idx_t> copy_attrs_to_t3_;
 
-	Lexeme t3_lexeme_;
+	Corpus2::Lexeme t3_lexeme_;
 };
 
 } /* end ns Conversion */

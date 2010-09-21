@@ -12,13 +12,13 @@
 
 namespace Maca {
 
-MorphAnalyser::MorphAnalyser(const Tagset *tagset)
+MorphAnalyser::MorphAnalyser(const Corpus2::Tagset *tagset)
 	: tagset_(tagset)
 {
 }
 
 MorphAnalyser::MorphAnalyser(const Config::Node& cfg)
-	: tagset_(&get_named_tagset(cfg.get<std::string>("tagset")))
+	: tagset_(&Corpus2::get_named_tagset(cfg.get<std::string>("tagset")))
 {
 }
 
@@ -26,38 +26,38 @@ MorphAnalyser::~MorphAnalyser()
 {
 }
 
-void MorphAnalyser::process(const Toki::Token &t, std::vector<Token*>& vec)
+void MorphAnalyser::process(const Toki::Token &t, std::vector<Corpus2::Token*>& vec)
 {
 	process_functional(t,
-			boost::bind(&std::vector<Token*>::push_back, &vec, _1));
+			boost::bind(&std::vector<Corpus2::Token*>::push_back, &vec, _1));
 }
 
-std::vector<Token*> MorphAnalyser::process(const Toki::Token &t)
+std::vector<Corpus2::Token*> MorphAnalyser::process(const Toki::Token &t)
 {
-	std::vector<Token*> v;
+	std::vector<Corpus2::Token*> v;
 	process(t, v);
 	return v;
 }
 
-Sentence* MorphAnalyser::process(const Toki::Sentence &s)
+Corpus2::Sentence* MorphAnalyser::process(const Toki::Sentence &s)
 {
-	Sentence* ss = new Sentence;
+	Corpus2::Sentence* ss = new Corpus2::Sentence;
 	foreach (Toki::Token* t, s.tokens()) {
 		process(*t, ss->tokens());
 	}
 	return ss;
 }
 
-std::vector<Token*> MorphAnalyser::process_dispose(
+std::vector<Corpus2::Token*> MorphAnalyser::process_dispose(
 		const std::vector<Toki::Token*>& t)
 {
-	std::vector<Token*> v;
+	std::vector<Corpus2::Token*> v;
 	process_dispose(t, v);
 	return v;
 }
 
 void MorphAnalyser::process_dispose(const std::vector<Toki::Token*>& t,
-		std::vector<Token*>& v)
+		std::vector<Corpus2::Token*>& v)
 {
 	foreach (Toki::Token* tt, t) {
 		process(*tt, v);
@@ -65,20 +65,26 @@ void MorphAnalyser::process_dispose(const std::vector<Toki::Token*>& t,
 	}
 }
 
-Sentence* MorphAnalyser::process_dispose(Toki::Sentence* t)
+Corpus2::Sentence* MorphAnalyser::process_dispose(Toki::Sentence* t)
 {
-	std::auto_ptr<Sentence> s(new Sentence);
+	std::auto_ptr<Corpus2::Sentence> s(new Corpus2::Sentence);
 	process_dispose(t, s.get());
 	return s.release();
 }
 
-void MorphAnalyser::process_dispose(Toki::Sentence* t, Sentence* v)
+void MorphAnalyser::process_dispose(Toki::Sentence* t, Corpus2::Sentence* v)
 {
 	foreach (Toki::Token* tt, t->tokens()) {
 		process(*tt, v->tokens());
 		delete tt;
 	}
 	t->tokens().clear();
+}
+
+Corpus2::Token* create_from_toki(const Toki::Token &t)
+{
+	Corpus2::Token* tt = new Corpus2::Token(t.orth(), t.preceeding_whitespace());
+	return tt;
 }
 
 MorphAnalyser* MorphAnalyser::create(std::string class_id,

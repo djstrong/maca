@@ -1,7 +1,7 @@
 #ifndef LIBMACA_MORPHANALYSER_H
 #define LIBMACA_MORPHANALYSER_H
 
-#include <libtoki/token.h>
+#include <libtoki/sentence.h>
 #include <libmaca/util/confignode.h>
 #include <libcorpus2/sentence.h>
 #include <libcorpus2/token.h>
@@ -25,7 +25,7 @@ class MorphAnalyser
 {
 public:
 	/// Constructor for a MorphAnalyser working within a given tagset
-	explicit MorphAnalyser(const Tagset* tagset);
+	explicit MorphAnalyser(const Corpus2::Tagset* tagset);
 
 	/**
 	 * Config node constructor. Recognized keys are:
@@ -41,37 +41,37 @@ public:
 
 	/// Convenience process_functional wrapper to process a Toki token
 	/// and return a vector of Maca tokens.
-	std::vector<Token*> process(const Toki::Token& t);
+	std::vector<Corpus2::Token*> process(const Toki::Token& t);
 
 	/// Convenience process_functional wrapper to process a Toki sentence
 	/// and return a Maca sentence of analysed tokens
-	Sentence* process(const Toki::Sentence& s);
+	Corpus2::Sentence* process(const Toki::Sentence& s);
 
 	/// Convenience process_functional wrapper  to process a Toki token
 	/// and insert the resulting Maca tokens into the given vector.
-	void process(const Toki::Token &t, std::vector<Token*>& vec);
+	void process(const Toki::Token &t, std::vector<Corpus2::Token*>& vec);
 
 	/// Convenience process_functional wrapper to process a vector of Toki
 	/// tokens and return a vector of Maca tokens. The toki tokens are
 	/// deleted.
-	std::vector<Token*> process_dispose(
+	std::vector<Corpus2::Token*> process_dispose(
 			const std::vector<Toki::Token*>& t);
 
 	/// Convenience process_functional wrapper to process a vector of Toki
 	/// tokens and insert the resulting Maca tokens into the given
 	/// vector. The toki tokens are deleted.
 	void process_dispose(const std::vector<Toki::Token*>& t,
-			std::vector<Token*>& v);
+			std::vector<Corpus2::Token*>& v);
 
 	/// Convenience process_functional wrapper to process a vector of Toki
 	/// tokens and return a vector of Maca tokens. The toki tokens are
 	/// deleted.
-	Sentence* process_dispose(Toki::Sentence* s);
+	Corpus2::Sentence* process_dispose(Toki::Sentence* s);
 
 	/// Convenience process_functional wrapper to process a Toki Sentence
 	/// tokens and insert the resulting Maca tokens into a Maca
 	/// Sentence. The Toki sentence and tokens are deleted.
-	void process_dispose(Toki::Sentence* t, Sentence* v);
+	void process_dispose(Toki::Sentence* t, Corpus2::Sentence* v);
 
 	/**
 	 * The main token analysis function to be implemented in derived
@@ -87,26 +87,26 @@ public:
 	 * of no tokens were output.
 	 */
 	virtual bool process_functional(const Toki::Token &t,
-			boost::function<void (Token*)> sink) = 0;
+			boost::function<void (Corpus2::Token*)> sink) = 0;
 
 	/**
 	 * Convenience function to call process_functional and then dispose of
 	 * the incoming Toki tokens.
 	 */
 	bool process_functional_dispose(const Toki::Token *t,
-			boost::function<void (Token*)> sink) {
+			boost::function<void (Corpus2::Token*)> sink) {
 		bool rv = process_functional(*t, sink);
 		delete t;
 		return rv;
 	}
 
-	/// Tagset accesor
-	const Tagset& tagset() const {
+	/// Corpus2::Tagset accesor
+	const Corpus2::Tagset& tagset() const {
 		return *tagset_;
 	}
 
-	/// Tagset setter
-	void set_tagset(const Tagset* tagset) {
+	/// Corpus2::Tagset setter
+	void set_tagset(const Corpus2::Tagset* tagset) {
 		tagset_ = tagset;
 	}
 
@@ -154,8 +154,13 @@ public:
 
 private:
 	/// The tagset used by this analyser
-	const Tagset* tagset_;
+	const Corpus2::Tagset* tagset_;
 };
+
+/**
+ * Helper function to create a Corpus2 Token from a Toki Token.
+ */
+Corpus2::Token* create_from_toki(const Toki::Token&);
 
 /**
  * Declaration of the MorphAnalyser factory as a singleton Loki object

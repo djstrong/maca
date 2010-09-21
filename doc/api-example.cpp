@@ -24,12 +24,12 @@ int main(int argc, char** argv)
 	while (sentr.has_more()) {
 		boost::scoped_ptr<Toki::Sentence> sentence(sentr.get_next_sentence());
 		assert(!sentence->empty());
-		boost::scoped_ptr<Maca::Sentence> analysed_sentence(analyser.process_dispose(sentence.get()));
+		boost::scoped_ptr<Corpus2::Sentence> analysed_sentence(analyser.process_dispose(sentence.get()));
 		std::cout << "{\n";
-		foreach (Maca::Token *tok, analysed_sentence->tokens())
+		foreach (Corpus2::Token *tok, analysed_sentence->tokens())
 		{
 			std::cout << "\t" << tok->orth_utf8();
-			foreach(const Maca::Lexeme &lex, tok->lexemes())
+			foreach(const Corpus2::Lexeme &lex, tok->lexemes())
 			{
 				std::cout << "\n\t\t" << lex.lemma_utf8();
 			}

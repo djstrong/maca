@@ -15,7 +15,7 @@ namespace Conversion {
  * Applying the predicate has teh effect of setting the appropriate value
  * or POS so that the tag matches the predicate.
  */
-class TagPredicate : public std::pair<idx_t, idx_t>
+class TagPredicate : public std::pair<Corpus2::idx_t, Corpus2::idx_t>
 {
 public:
 	/**
@@ -27,37 +27,37 @@ public:
 	 * match tags with that attribute not set. Finally, if the name
 	 * resolves to a POS, the predicate will check for that POS.
 	 */
-	TagPredicate(const std::string& name, const Tagset& tagset);
+	TagPredicate(const std::string& name, const Corpus2::Tagset& tagset);
 
 	/**
 	 * Check the tag matches this predicate
 	 */
-	bool check(const Tag& tag) const;
+	bool check(const Corpus2::Tag& tag) const;
 
 	/**
 	 * Check all tags of the token match this predicate
 	 */
-	bool token_match(const Token& t) const;
+	bool token_match(const Corpus2::Token& t) const;
 
 	/**
 	 * Apply the predicate to the tag, modyfying it so it matches the predicate
 	 */
-	void apply(Tag& tag) const;
+	void apply(Corpus2::Tag& tag) const;
 };
 
 /**
  * Helper function to apply a number of predicates on a token
  */
-void apply_predicates(const std::vector<TagPredicate>& v, Token& t);
+void apply_predicates(const std::vector<TagPredicate>& v, Corpus2::Token& t);
 
-class PosOrthPredicate : public std::pair<pos_idx_t, UnicodeString>
+class PosOrthPredicate : public std::pair<Corpus2::pos_idx_t, UnicodeString>
 {
 public:
 	PosOrthPredicate();
 
-	PosOrthPredicate(pos_idx_t pos, const UnicodeString& orth);
+	PosOrthPredicate(Corpus2::pos_idx_t pos, const UnicodeString& orth);
 
-	bool check(const Token& token) const;
+	bool check(const Corpus2::Token& token) const;
 };
 
 } /* end ns Conversion */

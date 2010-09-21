@@ -27,10 +27,10 @@ struct F {
 		s = "<" + s + ">";
 		Maca::SfstAnalyser::split_analysis_into(s, lex, *tagset);
 		//} catch (Maca::TagParseError& e) {
-		//	BOOST_FAIL("Tag parse error! " << e.what());
+		//	BOOST_FAIL("Corpus2::Tag parse error! " << e.what());
 		//}
 
-		foreach (const Maca::Lexeme& l, lex) {
+		foreach (const Corpus2::Lexeme& l, lex) {
 			BOOST_WARN(tagset->validate_tag(l.tag(), false));
 			actual.insert(tagset->tag_to_string(l.tag()));
 			tags.push_back(l.tag());

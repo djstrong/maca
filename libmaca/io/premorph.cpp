@@ -29,7 +29,7 @@ protected:
 			const AttributeList& attributes);
 	void on_end_element(const Glib::ustring & name);
 
-	void output_sentence(Sentence* s);
+	void output_sentence(Corpus2::Sentence* s);
 
 private:
 	std::ostream& os_;
@@ -93,7 +93,7 @@ void PremorphProcessorImpl::on_start_element(const Glib::ustring &name,
 	os_ << "<" << name;
 	foreach (const xmlpp::SaxParser::Attribute& a, attributes) {
 		os_ << " " << a.name << "=\"";
-		encode_xml_entities_into(os_, a.value);
+		Corpus2::encode_xml_entities_into(os_, a.value);
 		os_ << "\"";
 	}
 	os_ << ">";
@@ -109,12 +109,12 @@ void PremorphProcessorImpl::on_end_element(const Glib::ustring &name)
 	os_ << "</" << name << ">" << "\n";
 }
 
-void PremorphProcessorImpl::output_sentence(Sentence* s)
+void PremorphProcessorImpl::output_sentence(Corpus2::Sentence* s)
 {
-	boost::scoped_ptr<Sentence> deleter(s);
+	boost::scoped_ptr<Corpus2::Sentence> deleter(s);
 	if (!s->empty()) {
 		os_ << " <chunk type=\"s\">\n";
-		foreach (Token* t, s->tokens()) {
+		foreach (Corpus2::Token* t, s->tokens()) {
 			token_as_xces_xml(os_, sa_->tagset(), *t, 1);
 		}
 		os_ << " </chunk>\n";
@@ -129,7 +129,7 @@ class PremorphReaderImpl : public Corpus2::BasicSaxParserT<std::stringstream>
 {
 public:
 	PremorphReaderImpl(const boost::shared_ptr<SentenceAnalyser>& sa,
-			std::deque<Chunk*>& chunks);
+			std::deque<Corpus2::Chunk*>& chunks);
 protected:
 	void on_start_element(const Glib::ustring & name,
 			const AttributeList& attributes);
@@ -139,15 +139,15 @@ private:
 			XS_LEMMA, XS_TAG };
 	state_t state_;
 
-	Chunk* chunk_;
+	Corpus2::Chunk* chunk_;
 	boost::shared_ptr<SentenceAnalyser> sa_;
-	std::deque<Chunk*>& chunks_;
+	std::deque<Corpus2::Chunk*>& chunks_;
 };
 
 PremorphReader::PremorphReader(std::istream& is,
 		const boost::shared_ptr<Toki::Tokenizer>& tok,
 		const boost::shared_ptr<Maca::MorphAnalyser>& ma)
-	: BufferedChunkReader(ma->tagset()), is_(is)
+	: Corpus2::BufferedChunkReader(ma->tagset()), is_(is)
 	, impl_(new PremorphReaderImpl(
 			boost::make_shared<SentenceAnalyser>(tok, ma), chunk_buf_))
 {
@@ -179,7 +179,7 @@ void PremorphReader::ensure_more()
 
 PremorphReaderImpl::PremorphReaderImpl(
 		const boost::shared_ptr<SentenceAnalyser>& sa,
-		std::deque<Chunk*> &chunks)
+		std::deque<Corpus2::Chunk*> &chunks)
 	: Corpus2::BasicSaxParserT<std::stringstream>(), state_(XS_NONE)
 	, chunk_(NULL), sa_(sa)
 	, chunks_(chunks)
@@ -198,17 +198,17 @@ void PremorphReaderImpl::on_start_element(const Glib::ustring &name,
 		}
 		if (state_ == XS_NONE) {
 			if (type == "s") {
-				throw XcesError("Top level <chunk> is type=\"s\"");
+				throw Corpus2::XcesError("Top level <chunk> is type=\"s\"");
 			}
 			state_ = XS_CHUNK;
-			chunk_ = new Chunk;
+			chunk_ = new Corpus2::Chunk;
 			foreach (const Attribute& a, attributes) {
 				chunk_->set_attribute(a.name, a.value);
 			}
 		} else if (state_ == XS_CHUNK) {
-			throw XcesError("More than one level of <chunk>s in premorph");
+			throw Corpus2::XcesError("More than one level of <chunk>s in premorph");
 		} else {
-			throw XcesError("Unexpected <chunk>");
+			throw Corpus2::XcesError("Unexpected <chunk>");
 		}
 	}
 }
@@ -218,7 +218,7 @@ void PremorphReaderImpl::on_end_element(const Glib::ustring &name)
 	if (state_ == XS_CHUNK && name == "chunk") {
 		assert(chunk_);
 		sa_->set_input_source(buf_);
-		sa_->process(boost::bind(&Chunk::append, chunk_, _1));
+		sa_->process(boost::bind(&Corpus2::Chunk::append, chunk_, _1));
 		clear_buf();
 		chunks_.push_back(chunk_);
 		chunk_ = NULL;

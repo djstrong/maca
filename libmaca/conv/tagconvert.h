@@ -20,24 +20,24 @@ class TagConverter
 {
 public:
 	/**
-	 * Tag converter constructor, fills the action maps with name-based
+	 * Corpus2::Tag converter constructor, fills the action maps with name-based
 	 * defaults.
 	 */
-	TagConverter(const Tagset& from, const Tagset& to);
+	TagConverter(const Corpus2::Tagset& from, const Corpus2::Tagset& to);
 
 	/**
 	 * The actual conversion function which takes a tag from one tagset
 	 * and returns a converted tag in another tagset.
 	 */
-	Tag cast(const Tag& from) const;
+	Corpus2::Tag cast(const Corpus2::Tag& from) const;
 
 	/// The input tagset
-	const Tagset& tagset_from() const {
+	const Corpus2::Tagset& tagset_from() const {
 		return tagset_from_;
 	}
 
 	/// The output tagset
-	const Tagset& tagset_to() const {
+	const Corpus2::Tagset& tagset_to() const {
 		return tagset_to_;
 	}
 
@@ -61,20 +61,20 @@ public:
 
 protected:
 	/// Input tagset
-	const Tagset& tagset_from_;
+	const Corpus2::Tagset& tagset_from_;
 	/// Output tagset
-	const Tagset& tagset_to_;
+	const Corpus2::Tagset& tagset_to_;
 
 	/// Value mapping
-	typedef std::map<value_idx_t, value_idx_t> value_map_t;
+	typedef std::map<Corpus2::value_idx_t, Corpus2::value_idx_t> value_map_t;
 	value_map_t value_mapping_;
 
 	/// Attribute mapping
-	typedef std::map<attribute_idx_t, attribute_idx_t> attribute_map_t;
+	typedef std::map<Corpus2::attribute_idx_t, Corpus2::attribute_idx_t> attribute_map_t;
 	attribute_map_t attribute_mapping_;
 
 	/// POS mapping
-	typedef std::map<pos_idx_t, pos_idx_t> pos_map_t;
+	typedef std::map<Corpus2::pos_idx_t, Corpus2::pos_idx_t> pos_map_t;
 	pos_map_t pos_mapping_;
 
 	bool late_check_;
@@ -100,13 +100,13 @@ public:
 	TagConvertLayer* clone() const;
 
 	/// TokeSource override
-	Token* get_next_token();
+	Corpus2::Token* get_next_token();
 
 	/// Layer override -- the input tagset
-	const Tagset& tagset_from() const;
+	const Corpus2::Tagset& tagset_from() const;
 
 	/// Layer override -- the output tagset
-	const Tagset& tagset_to() const;
+	const Corpus2::Tagset& tagset_to() const;
 
 private:
 	/// The tag converter object
