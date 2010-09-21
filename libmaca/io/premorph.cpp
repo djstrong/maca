@@ -70,6 +70,7 @@ namespace Maca {
 			const boost::shared_ptr<SentenceAnalyser>& sa)
 		: BasicSaxParser(), os_(os), sa_(sa), stats_(false), timer_()
 	{
+		grab_characters_ = true;
 	}
 
 	void PremorphProcessorImpl::on_start_document()
@@ -101,11 +102,10 @@ namespace Maca {
 
 	void PremorphProcessorImpl::on_end_element(const Glib::ustring &name)
 	{
-		sa_->set_input_source(buf_);
+		sa_->set_input_source(UnicodeString::fromUTF8(buf_));
 		sa_->process(boost::bind(
 				&PremorphProcessorImpl::output_sentence, this, _1));
-		buf_.str("");
-		buf_.clear();
+		clear_buf();
 		os_ << "</" << name << ">" << "\n";
 	}
 
@@ -125,7 +125,7 @@ namespace Maca {
 		}
 	}
 
-	class PremorphReaderImpl : public BasicSaxParser
+	class PremorphReaderImpl : public BasicSaxParserT<std::stringstream>
 	{
 	public:
 		PremorphReaderImpl(const boost::shared_ptr<SentenceAnalyser>& sa,
@@ -180,7 +180,8 @@ namespace Maca {
 	PremorphReaderImpl::PremorphReaderImpl(
 			const boost::shared_ptr<SentenceAnalyser>& sa,
 			std::deque<Chunk*> &chunks)
-		: BasicSaxParser(), state_(XS_NONE), chunk_(NULL), sa_(sa)
+		: BasicSaxParserT<std::stringstream>(), state_(XS_NONE)
+		, chunk_(NULL), sa_(sa)
 		, chunks_(chunks)
 	{
 	}
@@ -218,8 +219,7 @@ namespace Maca {
 			assert(chunk_);
 			sa_->set_input_source(buf_);
 			sa_->process(boost::bind(&Chunk::append, chunk_, _1));
-			buf_.str("");
-			buf_.clear();
+			clear_buf();
 			chunks_.push_back(chunk_);
 			chunk_ = NULL;
 			state_ = XS_NONE;
