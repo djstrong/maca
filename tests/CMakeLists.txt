@@ -4,7 +4,7 @@ include_directories( ${CMAKE_SOURCE_DIR} )
 
 add_definitions(-DLIBTOKI_TEST_DATA_DIR="${PROJECT_SOURCE_DIR}/")
 
-add_executable( tests
+add_executable(tests
 	main.cpp
 	basic.cpp
 	conv.cpp

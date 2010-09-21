@@ -19,8 +19,6 @@ endif(OPENMP_FOUND)
 
 
 if(UNIX)
-
-        install(TARGETS maca-analyse
-                RUNTIME DESTINATION bin)
-        
+	install(TARGETS maca-analyse
+		RUNTIME DESTINATION bin)
 endif(UNIX)

@@ -10,8 +10,6 @@ include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
 if(UNIX)
-
-        install(TARGETS maca-app
-                RUNTIME DESTINATION bin)
-        
+	install(TARGETS maca-app
+		RUNTIME DESTINATION bin)
 endif(UNIX)
