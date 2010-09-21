@@ -1,6 +1,6 @@
 #include <libtoki/tokenizer/layertokenizer.h>
 #include <libtoki/sentencesplitter.h>
-#include <libtoki/util/foreach.h>
+#include <libpwrutils/foreach.h>
 
 #include <libmaca/morph/dispatchanalyser.h>
 #include <libmaca/util/settings.h>

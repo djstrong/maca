@@ -1,9 +1,9 @@
 #include <libmaca/util/settings.h>
 #include <libmaca/tagsetparser.h>
-#include <libmaca/tagsetmanager.h>
-#include <libmaca/token.h>
+#include <libcorpus2/tagsetmanager.h>
+#include <libcorpus2/token.h>
 
-#include <libtoki/util/foreach.h>
+#include <libpwrutils/foreach.h>
 
 #include <boost/program_options.hpp>
 

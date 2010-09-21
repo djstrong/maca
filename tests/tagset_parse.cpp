@@ -1,8 +1,8 @@
 #include <boost/test/unit_test.hpp>
 #include <set>
-#include <libtoki/util/foreach.h>
+#include <libpwrutils/foreach.h>
 #include <libmaca/tagsetparser.h>
-#include <libmaca/tagsetmanager.h>
+#include <libcorpus2/tagsetmanager.h>
 #include <iostream>
 
 BOOST_AUTO_TEST_SUITE( tagset_parse );

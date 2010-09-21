@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 
-#include <libmaca/token.h>
+#include <libcorpus2/token.h>
 
 const char tagsetstr1[] = "[ATTR]\n"
 	"A tag tog other a3 \n"

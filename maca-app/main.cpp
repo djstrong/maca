@@ -16,10 +16,10 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>
 
-#include <libtoki/util/foreach.h>
+#include <libpwrutils/foreach.h>
 #include <libtoki/util/confignode.h>
 #include <libmaca/util/settings.h>
-#include <libmaca/tagsetmanager.h>
+#include <libcorpus2/tagsetmanager.h>
 #include <libmaca/tagsetparser.h>
 #include <libmaca/conv/tagsetconverter.h>
 

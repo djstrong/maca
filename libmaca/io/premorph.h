@@ -1,8 +1,8 @@
 #ifndef LIBMACA_IO_PREMORPH_H
 #define LIBMACA_IO_PREMORPH_H
 
-#include <libmaca/token.h>
-#include <libmaca/io/reader.h>
+#include <libcorpus2/token.h>
+#include <libcorpus2/io/reader.h>
 #include <libmaca/morph/morphanalyser.h>
 
 #include <libtoki/tokenizer/tokenizer.h>

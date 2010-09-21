@@ -3,23 +3,23 @@
 
 #include <libmaca/util/confignode.h>
 #include <libmaca/exception.h>
-#include <libtoki/util/pathsearch.h>
+#include <libpwrutils/pathsearch.h>
 #include <loki/Singleton.h>
 
 namespace Maca {
 
-	class MacaPathSearcher : public Toki::PathSearcher<FileNotFound>
-	{
-	public:
-		MacaPathSearcher();
-	};
+class MacaPathSearcher : public PwrNlp::PathSearcher<FileNotFound>
+{
+public:
+	MacaPathSearcher();
+};
 
-	typedef Loki::SingletonHolder<MacaPathSearcher> Path;
+typedef Loki::SingletonHolder<MacaPathSearcher> Path;
 
-	/**
-	 * Get a config from standard directories by name, shorthand function.
-	 */
-	Config::Node get_named_config(const std::string& id);
+/**
+ * Get a config from standard directories by name, shorthand function.
+ */
+Config::Node get_named_config(const std::string& id);
 
 } /* end ns Maca */
 

@@ -6,164 +6,164 @@
 
 namespace Maca {
 
-	/// Compatibility structure for data returned by Morfeusz
-	struct MorfeuszData {
-		int node_from;
-		int node_to;
-		char* orth;
-		char* lemma;
-		char* tag_string;
-	};
+/// Compatibility structure for data returned by Morfeusz
+struct MorfeuszData {
+	int node_from;
+	int node_to;
+	char* orth;
+	char* lemma;
+	char* tag_string;
+};
 
-	/// Helper struct for holding preprocessed Morfeusz results
-	struct MorfeuszEdge
-	{
-		explicit MorfeuszEdge(const MorfeuszData& morf);
+/// Helper struct for holding preprocessed Morfeusz results
+struct MorfeuszEdge
+{
+	explicit MorfeuszEdge(const MorfeuszData& morf);
 
-		int node_from, node_to;
-		UnicodeString orth;
-		UnicodeString lemma;
-		std::string tag_string;
-		Token* token;
-	};
+	int node_from, node_to;
+	UnicodeString orth;
+	UnicodeString lemma;
+	std::string tag_string;
+	Token* token;
+};
+
+/**
+ * Exception class for signalling Morfeusz startup errors
+ */
+class MorfeuszInitError : public MacaError
+{
+public:
+	/// Constructor
+	MorfeuszInitError(const std::string& error, const std::string& extra,
+			const std::string& name);
+
+	/// Destructor
+	~MorfeuszInitError() throw();
+
+	/// Info accesor
+	std::string info() const;
+
+	/// the error info, extra info and (requested) Morfeusz library name
+	std::string error, extra, name;
+};
+
+/**
+ * Exception class for signalling Morfeusz-related analysis errors
+ */
+class MorfeuszError : public MacaError
+{
+public:
+	/// Constructor
+	MorfeuszError(const std::string& error, const std::string input,
+		const std::vector<MorfeuszEdge>& interp);
+
+	/// Destructor
+	~MorfeuszError() throw();
+
+	/// Info accesor
+	std::string info() const;
+
+	/// The error info and Morfeusz input during the error, if available
+	std::string error, input;
+
+	/// The structure returned by Morfeusz during the error, if available
+	std::vector<MorfeuszEdge> interp;
+};
+
+/**
+ * A morphological analyser class that interfaces with the Morfeusz library.
+ *
+ * Morfeusz requires a tagset converter since it sometimes returns ambiguous
+ * token segmentation. The converter should modify tokens coming from
+ * Morfeusz so that an unambiguous segmentation is possible.
+ */
+class MorfeuszAnalyser : public MorphAnalyser
+{
+public:
+	/**
+	 * Constructor for a Morfeusz analyser with a given tagset and converter.
+	 * The tagset should be the output tagset of the converter.
+	 */
+	MorfeuszAnalyser(const Tagset* tagset,
+			Conversion::TagsetConverter* conv,
+			const std::string& libname,
+			const std::string& require_version);
 
 	/**
-	 * Exception class for signalling Morfeusz startup errors
+	 * Config node constructor. Recognized keys are:
+	 * - converter - the converter to load (from standard paths)
+	 * - ign_tag - the tag to use when Morfeusz returns no analysis,
+	 *             defaults to "ign"
+	 * - warn_on_ign - warn when using the ign tag, false by default
+	 * - warn_on_fold_failure - issue a warning when folding ambiguous paths
+	 *                          is unsuccesful after conversion (on by def.)
+	 * - library - the Morfeusz library to use, defaults to a "reasonable"
+	 *             name that should work. Pass a soname or full path.
+	 * - require_version - check for the presence of the version string in
+	 *                     the output of morfeusz_about() and trigger an
+	 *                     error if it is not found.
+	 *                     "Morfeusz SIAT" by default
 	 */
-	class MorfeuszInitError : public MacaError
-	{
-	public:
-		/// Constructor
-		MorfeuszInitError(const std::string& error, const std::string& extra,
-				const std::string& name);
+	MorfeuszAnalyser(const Config::Node& cfg);
 
-		/// Destructor
-		~MorfeuszInitError() throw();
+	/// Cloning
+	MorfeuszAnalyser* clone() const;
 
-		/// Info accesor
-		std::string info() const;
+	/// Destructor
+	~MorfeuszAnalyser();
 
-		/// the error info, extra info and (requested) Morfeusz library name
-		std::string error, extra, name;
-	};
+	/// MorphAnalyser override
+	bool process_functional(const Toki::Token &t,
+			boost::function<void(Token *)> sink);
 
-	/**
-	 * Exception class for signalling Morfeusz-related analysis errors
-	 */
-	class MorfeuszError : public MacaError
-	{
-	public:
-		/// Constructor
-		MorfeuszError(const std::string& error, const std::string input,
-			const std::vector<MorfeuszEdge>& interp);
+	/// helper to create a token from a Morfeusz interpretation struct
+	Token* make_token(const Toki::Token& t,
+			const MorfeuszEdge& m) const;
 
-		/// Destructor
-		~MorfeuszError() throw();
+	/// helper to add lexemes from a Morfeusz interp struct into a token
+	void morfeusz_into_token(Token* tt, const MorfeuszEdge& m) const;
 
-		/// Info accesor
-		std::string info() const;
+	/// convert gathered tokens and pass them to the sink
+	void flush_convert(std::vector<Token*>& vec,
+			boost::function<void(Token *)> sink);
 
-		/// The error info and Morfeusz input during the error, if available
-		std::string error, input;
+	/// convert gethered tokens (ambiguously segmented), try folding and
+	/// pass the resulting tokens to the sink
+	void flush_convert(std::vector< std::vector<Token*> >& vec,
+			boost::function<void(Token *)> sink);
 
-		/// The structure returned by Morfeusz during the error, if available
-		std::vector<MorfeuszEdge> interp;
-	};
+	/// Class identifier
+	static const char* identifier;
 
-	/**
-	 * A morphological analyser class that interfaces with the Morfeusz library.
-	 *
-	 * Morfeusz requires a tagset converter since it sometimes returns ambiguous
-	 * token segmentation. The converter should modify tokens coming from
-	 * Morfeusz so that an unambiguous segmentation is possible.
-	 */
-	class MorfeuszAnalyser : public MorphAnalyser
-	{
-	public:
-		/**
-		 * Constructor for a Morfeusz analyser with a given tagset and converter.
-		 * The tagset should be the output tagset of the converter.
-		 */
-		MorfeuszAnalyser(const Tagset* tagset,
-				Conversion::TagsetConverter* conv,
-				const std::string& libname,
-				const std::string& require_version);
+	/// Registered flag
+	static bool registered;
 
-		/**
-		 * Config node constructor. Recognized keys are:
-		 * - converter - the converter to load (from standard paths)
-		 * - ign_tag - the tag to use when Morfeusz returns no analysis,
-		 *             defaults to "ign"
-		 * - warn_on_ign - warn when using the ign tag, false by default
-		 * - warn_on_fold_failure - issue a warning when folding ambiguous paths
-		 *                          is unsuccesful after conversion (on by def.)
-		 * - library - the Morfeusz library to use, defaults to a "reasonable"
-		 *             name that should work. Pass a soname or full path.
-		 * - require_version - check for the presence of the version string in
-		 *                     the output of morfeusz_about() and trigger an
-		 *                     error if it is not found.
-		 *                     "Morfeusz SIAT" by default
-		 */
-		MorfeuszAnalyser(const Config::Node& cfg);
+private:
+	bool process_complex_analysis(const Toki::Token &t,
+			std::vector<MorfeuszEdge>& pmorf,
+			boost::function<void(Token *)>sink);
 
-		/// Cloning
-		MorfeuszAnalyser* clone() const;
+	void load_morfeusz_library();
 
-		/// Destructor
-		~MorfeuszAnalyser();
+	/// the tagset converter
+	Conversion::TagsetConverter* conv_;
 
-		/// MorphAnalyser override
-		bool process_functional(const Toki::Token &t,
-				boost::function<void(Token *)> sink);
+	Tag ign_tag_;
 
-		/// helper to create a token from a Morfeusz interpretation struct
-		Token* make_token(const Toki::Token& t,
-				const MorfeuszEdge& m) const;
+	bool warn_on_ign_;
 
-		/// helper to add lexemes from a Morfeusz interp struct into a token
-		void morfeusz_into_token(Token* tt, const MorfeuszEdge& m) const;
+	bool warn_on_fold_failure_;
 
-		/// convert gathered tokens and pass them to the sink
-		void flush_convert(std::vector<Token*>& vec,
-				boost::function<void(Token *)> sink);
+	std::string morfeusz_library_;
 
-		/// convert gethered tokens (ambiguously segmented), try folding and
-		/// pass the resulting tokens to the sink
-		void flush_convert(std::vector< std::vector<Token*> >& vec,
-				boost::function<void(Token *)> sink);
+	std::string require_version_;
 
-		/// Class identifier
-		static const char* identifier;
+	void* morfeusz_lib_handle_;
 
-		/// Registered flag
-		static bool registered;
+	typedef MorfeuszData* (*morfeusz_func_t)(char*);
 
-	private:
-		bool process_complex_analysis(const Toki::Token &t,
-				std::vector<MorfeuszEdge>& pmorf,
-				boost::function<void(Token *)>sink);
-
-		void load_morfeusz_library();
-
-		/// the tagset converter
-		Conversion::TagsetConverter* conv_;
-
-		Tag ign_tag_;
-
-		bool warn_on_ign_;
-
-		bool warn_on_fold_failure_;
-
-		std::string morfeusz_library_;
-
-		std::string require_version_;
-
-		void* morfeusz_lib_handle_;
-
-		typedef MorfeuszData* (*morfeusz_func_t)(char*);
-
-		morfeusz_func_t morfeusz_analyse_handle_;
-	};
+	morfeusz_func_t morfeusz_analyse_handle_;
+};
 
 } /* end ns Maca */
 

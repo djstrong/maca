@@ -1,24 +1,10 @@
 #ifndef LIBMACA_IO_PLAIN_H
 #define LIBMACA_IO_PLAIN_H
 
-#include <libmaca/io/reader.h>
-#include <libmaca/io/writer.h>
+#include <libcorpus2/io/reader.h>
 #include <libmaca/util/sentenceanalyser.h>
 
 namespace Maca {
-
-	class PlainWriter : public TokenWriter
-	{
-	public:
-		PlainWriter(std::ostream& os, const Tagset& tagset,
-				const string_range_vector& params);
-
-		void write_token(const Token& t);
-
-		void write_sentence(const Sentence& t);
-
-		void write_chunk(const Chunk& c);
-	};
 
 	class PlainReader : public BufferedSentenceReader
 	{

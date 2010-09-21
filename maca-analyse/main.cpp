@@ -8,7 +8,7 @@
 
 #include <libtoki/sentencesplitter.h>
 #include <libtoki/tokenizer/layertokenizer.h>
-#include <libtoki/util/foreach.h>
+#include <libpwrutils/foreach.h>
 #include <libtoki/util/settings.h>
 
 #include <boost/algorithm/string.hpp>

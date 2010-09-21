@@ -5,9 +5,9 @@
 #include <libmaca/io/xceswriter.h>
 #include <libmaca/util/settings.h>
 #include <libmaca/util/tokentimer.h>
-#include <libmaca/tagsetmanager.h>
+#include <libcorpus2/tagsetmanager.h>
 
-#include <libtoki/util/foreach.h>
+#include <libpwrutils/foreach.h>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>

@@ -33,18 +33,8 @@ link_directories(${Boost_LIBRARY_DIRS})
 set(LIBS ${LIBS} ${Boost_LIBRARIES})
 
 SET(libmaca_STAT_SRC
-    chunk.cpp
     exception.cpp
-    iob.cpp
-    lexeme.cpp
     main.cpp
-    sentence.cpp
-    tag.cpp
-    tagset.cpp
-    tagsetmanager.cpp
-    tagsetparser.cpp
-    token.cpp
-    tokensource.cpp
     conv/attributecopier.cpp
     conv/fold.cpp
     conv/joinlayer.cpp
@@ -56,19 +46,8 @@ SET(libmaca_STAT_SRC
     conv/tagrule.cpp
     conv/tagrulelayer.cpp
     conv/tagsetconverter.cpp
-    io/init.cpp
-    io/orthwriter.cpp
     io/plain.cpp
     io/premorph.cpp
-    io/reader.cpp
-    io/rft.cpp
-    io/sax.cpp
-    io/writer.cpp
-    io/xces.cpp
-    io/xcescommon.cpp
-    io/xcesreader.cpp
-    io/xcesvalidate.cpp
-    io/xceswriter.cpp
     morph/constanalyser.cpp
     morph/dispatchanalyser.cpp
     morph/mapanalyser.cpp
@@ -132,7 +111,9 @@ if (MORFEUSZ_FOUND)
     endif(MORFEUSZ_PLUGIN)
 endif (MORFEUSZ_FOUND)
 
-add_library(maca SHARED ${libmaca_STAT_SRC})
+file(GLOB_RECURSE INCS "*.h")
+
+add_library(maca SHARED ${libmaca_STAT_SRC} ${INCS})
 target_link_libraries ( maca ${LIBS} )
 set_target_properties(maca PROPERTIES
         VERSION "${ver_major}.${ver_minor}"
