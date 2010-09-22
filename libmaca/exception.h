@@ -20,6 +20,9 @@ public:
 	MacaError(const std::string &what);
 
 	~MacaError() throw();
+
+	/// PwrNlpError override
+	std::string scope() const;
 };
 
 class FileNotFound : public MacaError

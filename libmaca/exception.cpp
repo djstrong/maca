@@ -13,6 +13,11 @@ MacaError::~MacaError() throw()
 {
 }
 
+std::string MacaError::scope() const
+{
+	return "Maca";
+}
+
 FileNotFound::FileNotFound(const std::string& filename,
 		const std::string& paths, const std::string& where)
 	: MacaError("File not found: " + filename), filename(filename),
