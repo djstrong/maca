@@ -24,3 +24,5 @@ for i in $PROJECTS; do
 	make test > /dev/null || fail "make test error in"
 done
 cd $CURDIR
+sudo ldconfig
+
