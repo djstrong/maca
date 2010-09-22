@@ -2,6 +2,10 @@
 
 PROJECT(maca)
 
+if(NOT LIBMACA_SRC_DATA_DIR)
+	message(FATAL_ERROR "There is no data for libmaca")
+endif(NOT LIBMACA_SRC_DATA_DIR)
+
 set(LIBMACA_PATH_SEPARATOR ";")
 set(LIBMACA_DATA_DIR ".;${CMAKE_INSTALL_PREFIX}/${LIBMACA_INSTALL_DATA_DIR}")
 configure_file(config_d.in include/libmaca/config_d.h)
