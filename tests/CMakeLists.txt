@@ -2,10 +2,11 @@ PROJECT( test )
 
 include_directories( ${CMAKE_SOURCE_DIR} )
 
-add_definitions(-DLIBTOKI_TEST_DATA_DIR="${PROJECT_SOURCE_DIR}/")
+add_definitions(-DLIBMACA_TEST_DATA_DIR="${PROJECT_SOURCE_DIR}/")
 
 add_executable(tests
 	main.cpp
+	compareconv.cpp
 	conv.cpp
 	morph_basic.cpp
 )
