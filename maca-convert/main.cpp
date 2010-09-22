@@ -123,8 +123,8 @@ int main(int argc, char** argv)
 				timer.stats();
 			}
 		} else {
-			std::cerr << "Usage: tagset-convert [OPTIONS] <converter>\n";
-			std::cerr << "See tagset-convert --help\n";
+			std::cerr << "Usage: maca-convert [OPTIONS] <converter>\n";
+			std::cerr << "See maca-convert --help\n";
 			return 1;
 		}
 	} catch (PwrNlp::PwrNlpError& e) {
