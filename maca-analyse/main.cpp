@@ -164,9 +164,12 @@ int main(int argc, char** argv)
 		} catch (Maca::MacaError& e) {
 			std::cerr << "Maca Error: " << e.info() << "\n";
 			return 4;
-		} catch (Toki::Error& e) {
+		} catch (Toki::TokiError& e) {
 			std::cerr << "Tokenizer Error: " << e.info() << "\n";
 			return 6;
+		} catch (Corpus2::Corpus2Error& e) {
+			std::cerr << "Corpus2 Error: " << e.info() << "\n";
+			return 8;
 		}
 	} else {
 		std::cerr << "Usage: analyse -c CONFIG [OPTIONS]\n";
