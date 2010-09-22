@@ -66,43 +66,39 @@ int main(int argc, char** argv)
 	}
 	Maca::Path::Instance().set_verbose(!quiet);
 
-	if (!verify_tagset.empty()) {
-		const Corpus2::Tagset& tagset = Corpus2::get_named_tagset(verify_tagset);
-		Corpus2::XcesValidator xv(tagset, std::cout);
-		xv.validate_stream(std::cin);
-	} else if (converter == "nop") {
-		try {
-			const Corpus2::Tagset& tagset = Corpus2::get_named_tagset(force_tagset);
-			boost::scoped_ptr<Corpus2::TokenReader> reader;
-			if (input_format == "xces") {
-				reader.reset(new Corpus2::XcesReader(tagset, std::cin, disamb));
-			} else if (input_format == "rft") {
-				reader.reset(new Corpus2::RftReader(tagset, std::cin, disamb));
-			} else {
-				std::cerr << "Unknown inut format: " << input_format << "\n";
-				return 2;
-			}
-			boost::scoped_ptr<Corpus2::TokenWriter> writer;
-			writer.reset(Corpus2::TokenWriter::create(output_format, std::cout, tagset));
-			Corpus2::TokenTimer& timer = Corpus2::global_timer();
-			timer.register_signal_handler();
-			while (Corpus2::Chunk* c = reader->get_next_chunk()) {
-				writer->write_chunk(*c);
-				timer.count_chunk(*c);
-				if (progress) {
-					timer.check_slice();
+	try {
+		if (!verify_tagset.empty()) {
+			const Corpus2::Tagset& tagset = Corpus2::get_named_tagset(verify_tagset);
+			Corpus2::XcesValidator xv(tagset, std::cout);
+			xv.validate_stream(std::cin);
+		} else if (converter == "nop") {
+				const Corpus2::Tagset& tagset = Corpus2::get_named_tagset(force_tagset);
+				boost::scoped_ptr<Corpus2::TokenReader> reader;
+				if (input_format == "xces") {
+					reader.reset(new Corpus2::XcesReader(tagset, std::cin, disamb));
+				} else if (input_format == "rft") {
+					reader.reset(new Corpus2::RftReader(tagset, std::cin, disamb));
+				} else {
+					std::cerr << "Unknown inut format: " << input_format << "\n";
+					return 2;
 				}
-				delete c;
-			}
-			if (progress) {
-				timer.stats();
-			}
-		} catch (Maca::MacaError& e) {
-			std::cerr << "Error: " << e.info() << "\n";
-		}
-	} else if (!converter.empty()) {
-		try {
-			//const Corpus2::Tagset& tagset = Maca::get_named_tagset(converter);
+				boost::scoped_ptr<Corpus2::TokenWriter> writer;
+				writer.reset(Corpus2::TokenWriter::create(output_format, std::cout, tagset));
+				Corpus2::TokenTimer& timer = Corpus2::global_timer();
+				timer.register_signal_handler();
+				while (Corpus2::Chunk* c = reader->get_next_chunk()) {
+					writer->write_chunk(*c);
+					timer.count_chunk(*c);
+					if (progress) {
+						timer.check_slice();
+					}
+					delete c;
+				}
+				if (progress) {
+					timer.stats();
+				}
+		} else if (!converter.empty()) {
+			//const Corpus2::Tagset& tagset = Corpus2::get_named_tagset(converter);
 			std::string fn = Maca::Path::Instance().find_file_or_throw(
 					converter, "converter");
 			std::cerr << "Loading converter from " << fn << "\n";
@@ -126,13 +122,13 @@ int main(int argc, char** argv)
 			if (progress) {
 				timer.stats();
 			}
-		} catch (Maca::MacaError& e) {
-			std::cerr << "Error: " << e.info() << "\n";
+		} else {
+			std::cerr << "Usage: maca-convert [OPTIONS] <converter>\n";
+			std::cerr << "See maca-convert --help\n";
+			return 1;
 		}
-	} else {
-                std::cerr << "Usage: maca-convert [OPTIONS] <converter>\n";
-                std::cerr << "See maca-convert --help\n";
-		return 1;
+	} catch (PwrNlp::PwrNlpError& e) {
+		std::cerr << "Error: " << e.info() << "\n";
 	}
 	return 0;
 }

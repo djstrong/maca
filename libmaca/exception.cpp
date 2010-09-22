@@ -5,7 +5,7 @@
 namespace Maca {
 
 MacaError::MacaError(const std::string &what)
- : PwrNlp::Error(what)
+ : PwrNlp::PwrNlpError(what)
 {
 }
 

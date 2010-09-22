@@ -46,7 +46,7 @@ include_directories( ${MorphAnalyser_SOURCE_DIR} )
 
 
 
-set(LIBMACA_INSTALL_DATA_DIR lib/maca)
+set(LIBMACA_INSTALL_DATA_DIR share/maca)
 set(LIBMACA_VERSION "${ver_major}.${ver_minor}.${ver_patch}")
 FIND_PATH(LIBMACA_SRC_DATA_DIR
 	test.tagset

@@ -10,7 +10,7 @@ namespace Maca {
  * @c std::runtime_error. Call member function @c what to get a
  * human-readable message associated with the error.
  */
-class MacaError : public PwrNlp::Error
+class MacaError : public PwrNlp::PwrNlpError
 {
 public:
 	/**
