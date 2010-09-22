@@ -34,10 +34,7 @@ JoinLayer* JoinLayer::clone() const
 
 void JoinLayer::append_rule(const JoinRule &rule)
 {
-	if (rule.tagset().id() != tagset().id()) {
-		throw Corpus2::TagsetMismatch("appending join rule", tagset(),
-				rule.tagset());
-	}
+	require_matching_tagsets(rule, *this, "appending join rule");
 	rules_.push_back(rule);
 }
 

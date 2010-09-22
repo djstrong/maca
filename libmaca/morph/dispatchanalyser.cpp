@@ -114,14 +114,11 @@ MorphAnalyser* MaCreator::get_ma(const std::string &id, bool autoload)
 				throw MacaError("Unknown analyser type: " + id);
 			}
 		}
-
-		if (ma->tagset().id() != tagset_.id()) {
-			std::auto_ptr<MorphAnalyser> aptr(ma);
-			throw Corpus2::TagsetMismatch("Morph analyser creation : " + id,
-					tagset_, ma->tagset());
-		}
+		std::auto_ptr<MorphAnalyser> aptr(ma);
+		require_matching_tagsets(*ma, tagset_,
+			"Morph analyser creation : " + id);
 		amap_.insert(std::make_pair(id, ma));
-		return ma;
+		return aptr.release();
 	}
 }
 
@@ -229,10 +226,7 @@ DispatchAnalyser* DispatchAnalyser::clone() const
 void DispatchAnalyser::add_type_handler(const std::string &type,
 		MorphAnalyser *a)
 {
-	if (a->tagset().id() != tagset().id()) {
-		throw Corpus2::TagsetMismatch("dispatch analyser handler", tagset(),
-				a->tagset());
-	}
+	Corpus2::require_matching_tagsets(*a, *this, "dispatch analyser handler");
 	analysers_.insert(a);
 	type_handlers_[type].push_back(a);
 }

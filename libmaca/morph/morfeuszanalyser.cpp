@@ -101,10 +101,8 @@ MorfeuszAnalyser::MorfeuszAnalyser(const Corpus2::Tagset* tagset,
 	: MorphAnalyser(tagset), conv_(conv), warn_on_fold_failure_(true)
 	, morfeusz_library_(libname), require_version_(require_version)
 {
-	if (conv_->tagset_to().id() != tagset->id()) {
-		throw Corpus2::TagsetMismatch("Morfeusz analyser creation", *tagset,
-				conv->tagset_to());
-	}
+	require_matching_tagsets(conv_->tagset_to(), *tagset,
+		"Morfeusz analyser creation");
 	load_morfeusz_library();
 }
 
@@ -184,10 +182,8 @@ MorfeuszAnalyser::MorfeuszAnalyser(const Config::Node& cfg)
 	std::auto_ptr<Conversion::TagsetConverter> c(
 			new Conversion::TagsetConverter(conv_cfg));
 
-	if (c->tagset_to().id() != tagset().id()) {
-		throw Corpus2::TagsetMismatch("Morfeusz analyser creation", tagset(),
-				c->tagset_to());
-	}
+	require_matching_tagsets(c->tagset_to(), *this,
+			"Morfeusz analyser creation");
 	conv_ = c.release();
 
 	std::string ign_tag_string = cfg.get("ign_tag", "ign");

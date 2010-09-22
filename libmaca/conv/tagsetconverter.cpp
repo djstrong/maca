@@ -7,7 +7,8 @@
 #include <libmaca/conv/tagconvert.h>
 #include <libpwrutils/foreach.h>
 
-namespace Maca { namespace Conversion {
+namespace Maca {
+namespace Conversion {
 
 TagsetConverter::TagsetConverter()
 	: layers_()
@@ -84,11 +85,8 @@ TagsetConverter* TagsetConverter::clone() const
 void TagsetConverter::add_layer(Layer* l)
 {
 	if (!layers_.empty()) {
-		if (l->tagset_from().id() != layers_.back()->tagset_to().id()) {
-			throw Corpus2::TagsetMismatch("TagsetConverter::add_layer",
-				layers_.back()->tagset_to().id(),
-				l->tagset_from().id());
-		}
+		require_matching_tagsets(l->tagset_from(), layers_.back()->tagset_to(),
+			"TagsetConverter::add_layer");
 		l->set_source(layers_.back());
 	}
 	layers_.push_back(l);
@@ -183,4 +181,5 @@ Corpus2::Sentence* TagsetConverter::convert_sentence(Corpus2::Sentence* s)
 	return res;
 }
 
-} /* end ns Conversion */ } /* end ns Maca */
+} /* end ns Conversion */
+} /* end ns Maca */
