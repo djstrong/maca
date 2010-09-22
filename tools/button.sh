@@ -13,11 +13,14 @@ function fail() {
 }
 
 for i in $PROJECTS; do
-	echo "Building $i..."
+	echo
+	echo "--- Building $i..."
 	cd $BASEDIR/$i/$BUILDDIR || fail  "cd error"
 	cmake .. > /dev/null || fail "cmake error"
 	make -j4 > /dev/null || fail  "make error"
+	echo "--- Installing $i..."
 	sudo make install > /dev/null || fail "make install error"
+	echo "--- Testing $i..."
 	make test > /dev/null || fail "make test error in"
 done
 cd $CURDIR
