@@ -130,8 +130,8 @@ int main(int argc, char** argv)
 			std::cerr << "Error: " << e.info() << "\n";
 		}
 	} else {
-		std::cerr << "Usage: tagset-convert [OPTIONS] <converter>\n";
-		std::cerr << "See tagset-convert --help\n";
+                std::cerr << "Usage: maca-convert [OPTIONS] <converter>\n";
+                std::cerr << "See maca-convert --help\n";
 		return 1;
 	}
 	return 0;
