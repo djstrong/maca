@@ -6,8 +6,8 @@
   <chunk type="s">
    <tok>
     <orth>Robiłem</orth>
-    <lex><base>robić</base><ctag>fin:sg:m1:pri:imperf:prt</ctag></lex>
     <lex disamb="1"><base>robić</base><ctag>fin:sg:m2:pri:imperf:prt</ctag></lex>
+    <lex><base>robić</base><ctag>fin:sg:m1:pri:imperf:prt</ctag></lex>
     <lex><base>robić</base><ctag>fin:sg:m3:pri:imperf:prt</ctag></lex>
    </tok>
    <ns/>
@@ -29,9 +29,9 @@
    <tok>
     <orth>RoBiŁyByŚmY</orth>
     <lex disamb="1"><base>robić</base><ctag>conjt:pl:f:pri:imperf</ctag></lex>
+    <lex disamb="1"><base>robić</base><ctag>conjt:pl:n:pri:imperf</ctag></lex>
     <lex><base>robić</base><ctag>conjt:pl:m2:pri:imperf</ctag></lex>
     <lex><base>robić</base><ctag>conjt:pl:m3:pri:imperf</ctag></lex>
-    <lex disamb="1"><base>robić</base><ctag>conjt:pl:n:pri:imperf</ctag></lex>
    </tok>
    <ns/>
    <tok>

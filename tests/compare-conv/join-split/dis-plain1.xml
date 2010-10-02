@@ -6,8 +6,8 @@
   <chunk type="s">
    <tok>
     <orth>Robił</orth>
-    <lex><base>robić</base><ctag>praet:sg:m1:imperf</ctag></lex>
     <lex disamb="1"><base>robić</base><ctag>praet:sg:m2:imperf</ctag></lex>
+    <lex><base>robić</base><ctag>praet:sg:m1:imperf</ctag></lex>
     <lex><base>robić</base><ctag>praet:sg:m3:imperf</ctag></lex>
    </tok>
    <ns/>
@@ -39,9 +39,9 @@
    <tok>
     <orth>RoBiŁy</orth>
     <lex disamb="1"><base>robić</base><ctag>praet:pl:f:imperf</ctag></lex>
+    <lex disamb="1"><base>robić</base><ctag>praet:pl:n:imperf</ctag></lex>
     <lex><base>robić</base><ctag>praet:pl:m2:imperf</ctag></lex>
     <lex><base>robić</base><ctag>praet:pl:m3:imperf</ctag></lex>
-    <lex disamb="1"><base>robić</base><ctag>praet:pl:n:imperf</ctag></lex>
    </tok>
    <ns/>
    <tok>
