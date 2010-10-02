@@ -20,6 +20,7 @@ TwoSplitLayer::TwoSplitLayer(const Config::Node& cfg)
 	, queue_()
 	, orth_matcher_(NULL) , pre_(), t1_post_(), copy_attrs_to_t2_()
 {
+	t2_lexeme_.set_disamb(true);
 	std::string re = cfg.get<std::string>("regexp");
 	if (re.empty()) throw ConfigValueMissing("regexp", "split layer");
 	set_orth_regexp(re);
@@ -175,6 +176,7 @@ ThreeSplitLayer::ThreeSplitLayer(const Corpus2::Tagset &tagset)
 ThreeSplitLayer::ThreeSplitLayer(const Config::Node &cfg)
 	: TwoSplitLayer(cfg)
 {
+	t3_lexeme_.set_disamb(true);
 	foreach (const Config::Node::value_type &v, cfg) {
 		if (v.first == "copy_attrs_to_t3") {
 			append_copy_attrs_to_t3(v.second.data());

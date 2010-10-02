@@ -48,7 +48,11 @@ void copy_attributes(const Corpus2::Token& from,
 		foreach (const Corpus2::Lexeme& lex2, from.lexemes()) {
 			Corpus2::Tag tag = lex1.tag();
 			copy_attributes(lex2.tag(), alist, tag);
-			new_lexemes.push_back(Corpus2::Lexeme(lex1.lemma(), tag));
+			Corpus2::Lexeme lex3(lex1.lemma(), tag);
+			if (lex1.is_disamb() && lex2.is_disamb()) {
+				lex3.set_disamb(true);
+			}
+			new_lexemes.push_back(lex3);
 		}
 	}
 	to.lexemes() = new_lexemes;
