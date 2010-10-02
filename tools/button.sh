@@ -74,9 +74,9 @@ for i in $PROJECTS; do
 		echo "--- Installing $i..."
 		sudo make install > /dev/null || fail "make install error"
 	fi
+	sudo ldconfig
 	echo "--- Testing $i..."
 	make test > /dev/null || fail "make test error in"
 done
 cd $CURDIR
-sudo ldconfig
 
