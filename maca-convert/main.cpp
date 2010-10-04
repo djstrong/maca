@@ -101,7 +101,6 @@ int main(int argc, char** argv)
 			//const Corpus2::Tagset& tagset = Corpus2::get_named_tagset(converter);
 			std::string fn = Maca::Path::Instance().find_file_or_throw(
 					converter, "converter");
-			std::cerr << "Loading converter from " << fn << "\n";
 			Maca::Config::Node n = Maca::Config::from_file(fn);
 			Maca::Conversion::TagsetConverter conv(n);
 			Corpus2::XcesReader reader(conv.tagset_from(), std::cin, disamb);
