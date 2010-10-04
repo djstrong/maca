@@ -79,7 +79,7 @@ int main(int argc, char** argv)
 				} else if (input_format == "rft") {
 					reader.reset(new Corpus2::RftReader(tagset, std::cin, disamb));
 				} else {
-					std::cerr << "Unknown inut format: " << input_format << "\n";
+					std::cerr << "Unknown input format: " << input_format << "\n";
 					return 2;
 				}
 				boost::scoped_ptr<Corpus2::TokenWriter> writer;
