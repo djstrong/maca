@@ -13,7 +13,7 @@
    <ns/>
    <tok>
     <orth>.</orth>
-    <lex><base>.</base><ctag>interp</ctag></lex>
+    <lex disamb="1"><base>.</base><ctag>interp</ctag></lex>
    </tok>
   </chunk>
   <chunk type="s">
@@ -23,7 +23,7 @@
    </tok>
    <tok>
     <orth>(</orth>
-    <lex><base>(</base><ctag>interp</ctag></lex>
+    <lex disamb="1"><base>(</base><ctag>interp</ctag></lex>
    </tok>
    <ns/>
    <tok>
