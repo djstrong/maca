@@ -8,7 +8,7 @@ tests/tests
 /tmp/
 CMakeCache.txt
 CMakeFiles
-CMakeLists.txt.user
+CMakeLists.txt.user*
 cmake_install.cmake
 /bin/
 /*-build/
