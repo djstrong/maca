@@ -8,12 +8,12 @@ bool ConstAnalyser::registered =
 		MorphAnalyser::register_analyser<ConstAnalyser>();
 
 ConstAnalyser::ConstAnalyser(const Corpus2::Tagset *tagset, const std::string &tag)
-	: MorphAnalyser(tagset), tag_(tagset->parse_simple_tag(tag, false))
+	: MorphAnalyser(tagset), tag_(tagset->parse_simple_tag(tag, false)), lower_lemma_(false)
 {
 }
 
 ConstAnalyser::ConstAnalyser(const Corpus2::Tagset *tagset, const Corpus2::Tag &tag)
-	: MorphAnalyser(tagset), tag_(tag)
+	: MorphAnalyser(tagset), tag_(tag), lower_lemma_(false)
 {
 }
 
