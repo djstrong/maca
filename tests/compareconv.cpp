@@ -72,17 +72,26 @@ void test_one_item_actual(const compare_test& c)
 	writer.reset();
 	std::string expected, actual;
 	int line = 0;
+	bool failed = false;
 	while (ifs_out.good() && ss.good()) {
 		++line;
 		std::getline(ifs_out, expected);
 		std::getline(ss, actual);
 		if (actual != expected) {
-			BOOST_ERROR(
+			if (!failed) {
+				BOOST_ERROR("Difference in " << c.out_file);
+				failed = true;
+			}
+			BOOST_MESSAGE(
 				"\nline " << line << " got: " << actual << "\n" <<
 				line << " expected: " << expected);
 		}
 	}
-	BOOST_CHECK_EQUAL(ifs_out.good(), ss.good());
+	if (failed) {
+		BOOST_WARN_EQUAL(ifs_out.good(), ss.good());
+	} else {
+		BOOST_CHECK_EQUAL(ifs_out.good(), ss.good());
+	}
 }
 
 
