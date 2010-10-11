@@ -37,7 +37,7 @@ int main(int argc, char** argv)
 			("tagset,t", value(&force_tagset),
 			 "Corpus2::Tagset override\n")
 			("input-format,i", value(&input_format)->default_value("xces"),
-			 "Input format [xces,rft]\n")
+			 "Input format [xces,rft,xces-sh]\n")
 			("output-format,o", value(&output_format)->default_value("xces"),
 			 writers_help.c_str())
 			("progress,p", value(&progress)->zero_tokens(),
@@ -76,6 +76,8 @@ int main(int argc, char** argv)
 				boost::scoped_ptr<Corpus2::TokenReader> reader;
 				if (input_format == "xces") {
 					reader.reset(new Corpus2::XcesReader(tagset, std::cin, disamb));
+				} else if (input_format == "xces-sh") {
+					reader.reset(new Corpus2::XcesReader(tagset, std::cin, disamb, true));
 				} else if (input_format == "rft") {
 					reader.reset(new Corpus2::RftReader(tagset, std::cin, disamb));
 				} else {
