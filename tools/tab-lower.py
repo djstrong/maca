@@ -13,7 +13,7 @@ case-insensitive (these reps will be removed). Unfortunately, it doesn't
 understand tags, so implicit repetitions will not be spotted (e.g. subst:_:_:_
 and subst:m1:pl:nom).
 
-By default only lemmas are converted.
+By default only forms are converted.
 
 NOTE: this script loads all the entries into memory; it may take long if the
 input is large.
