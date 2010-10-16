@@ -87,8 +87,4 @@ if __name__ == '__main__':
 	t = timeit.Timer(work)
 
 	print t.timeit(1), "seconds elapsed"
-	print
-	print "Now create a helper file containing just the quoted filename:"
-	print '"%s"' % sys.argv[2]
-	print "and run:"
-	print 'fst-compiler-utf8 -c helper.txt output.fst'
+

@@ -26,6 +26,8 @@ NOTE ON CASE SENSITIVITY: if the morphological data are intended to be used in c
 
 2. Converting to SFST input format.
 
+NOTE: the rest of this section explains how to do the conversion manually. If you want to have it done quickly, use tools/tab-to-sfst-now script.
+
 Use the tab-to-sfst.py script (tools dir) to get the file converted into SFST-readable format:
 
 cd data
