@@ -21,8 +21,7 @@ TagConverter::TagConverter(const Corpus2::Tagset& from, const Corpus2::Tagset& t
 	from.attribute_dictionary().create_mapping_to(
 			to.attribute_dictionary(), attribute_mapping_);
 
-	for (Corpus2::idx_t v = 0; v < from.value_count(); ++v) {
-		Corpus2::mask_t from_mask = (Corpus2::mask_t)1 << v;
+	foreach (Corpus2::mask_t from_mask, from.all_value_masks()) {
 		const std::string& name = from.get_value_name(from_mask);
 		if (name.empty()) {
 			//std::cerr << "WUT " << bs << "\n";
