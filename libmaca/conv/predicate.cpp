@@ -7,23 +7,16 @@ namespace Conversion {
 
 TagPredicate::TagPredicate(const std::string& name, const Corpus2::Tagset& tagset)
 {
-	Corpus2::value_idx_t value = tagset.value_dictionary().get_id(name);
-	if (tagset.value_dictionary().is_id_valid(value)) {
-		first = tagset.get_value_attribute(value);
-		second = value;
+	second = tagset.get_value_mask(name);
+	if (second) {
+		first = tagset.get_attribute_mask(tagset.get_value_attribute_index(second));
 	} else {
-		Corpus2::attribute_idx_t attr = tagset.attribute_dictionary().get_id(name);
-		if (tagset.attribute_dictionary().is_id_valid(attr)) {
-			first = attr;
-			second = 0;
-		} else {
-			Corpus2::pos_idx_t pos = tagset.pos_dictionary().get_id(name);
-			if (!tagset.pos_dictionary().is_id_valid(pos)) {
+		first = tagset.get_attribute_mask(name);
+		if (!first) {
+			second = tagset.get_pos_mask(name);
+			if (!second) {
 				throw MacaError("Predicate string invalid: '" + name +
 						"' in tagset " + tagset.name());
-			} else {
-				first = static_cast<Corpus2::idx_t>(-1);
-				second = pos;
 			}
 		}
 	}
@@ -31,22 +24,22 @@ TagPredicate::TagPredicate(const std::string& name, const Corpus2::Tagset& tagse
 
 bool TagPredicate::check(const Corpus2::Tag &tag) const
 {
-	if (first != static_cast<Corpus2::idx_t>(-1)) {
-		return tag.values()[first] == second;
+	if (first) {
+		return tag.get_values_for(first) == second;
 	} else {
-		return tag.pos_id() == second;
+		return tag.get_pos() == second;
 	}
 }
 
 bool TagPredicate::token_match(const Corpus2::Token& t) const
 {
-	if (first != static_cast<Corpus2::idx_t>(-1)) {
+	if (first) {
 		foreach (const Corpus2::Lexeme& lex, t.lexemes()) {
-			if (lex.tag().values()[first] != second) return false;
+			if (lex.tag().get_values_for(first) != second) return false;
 		}
 	} else {
 		foreach (const Corpus2::Lexeme& lex, t.lexemes()) {
-			if (lex.tag().pos_id() != second) return false;
+			if (lex.tag().get_pos() != second) return false;
 		}
 	}
 	return true;
@@ -54,10 +47,10 @@ bool TagPredicate::token_match(const Corpus2::Token& t) const
 
 void TagPredicate::apply(Corpus2::Tag &tag) const
 {
-	if (first != static_cast<Corpus2::idx_t>(-1)) {
-		tag.values()[first] = static_cast<Corpus2::value_idx_t>(second);
+	if (first) {
+		tag.add_values_masked(second, first);
 	} else {
-		tag.set_pos_id(static_cast<Corpus2::pos_idx_t>(second));
+		tag.set_pos(second);
 	}
 }
 
@@ -76,8 +69,8 @@ PosOrthPredicate::PosOrthPredicate()
 {
 }
 
-PosOrthPredicate::PosOrthPredicate(Corpus2::pos_idx_t pos, const UnicodeString &orth)
-	: std::pair<Corpus2::pos_idx_t, UnicodeString>(pos, orth)
+PosOrthPredicate::PosOrthPredicate(Corpus2::mask_t pos, const UnicodeString &orth)
+	: std::pair<Corpus2::mask_t, UnicodeString>(pos, orth)
 {
 }
 

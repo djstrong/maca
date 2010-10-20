@@ -9,11 +9,13 @@ namespace Conversion {
 
 JoinRule::JoinRule(const Corpus2::Tagset& tagset)
 	: tagset_(&tagset)
+	, copy_t2_attrs_(0)
 {
 }
 
 JoinRule::JoinRule(const Config::Node& cfg)
 	: tagset_(&Corpus2::get_named_tagset(cfg.get<std::string>("tagset")))
+	, copy_t2_attrs_(0)
 {
 	std::string pos1, pos2;
 	UnicodeString orth1, orth2;
@@ -44,10 +46,7 @@ void JoinRule::set_token1_preconditions(const PosOrthPredicate &pre)
 void JoinRule::set_token1_preconditions(const std::string& pos,
 		const UnicodeString& orth)
 {
-	Corpus2::pos_idx_t p = tagset_->pos_dictionary().get_id(pos);
-	if (!tagset_->pos_dictionary().is_id_valid(p)) {
-		p = static_cast<Corpus2::pos_idx_t>(-1);
-	}
+	Corpus2::mask_t p = tagset_->get_pos_mask(pos);
 	pre1_ = PosOrthPredicate(p, orth);
 }
 
@@ -59,21 +58,18 @@ void JoinRule::set_token2_preconditions(const PosOrthPredicate &pre)
 void JoinRule::set_token2_preconditions(const std::string& pos,
 		const UnicodeString& orth)
 {
-	Corpus2::pos_idx_t p = tagset_->pos_dictionary().get_id(pos);
-	if (!tagset_->pos_dictionary().is_id_valid(p)) {
-		p = static_cast<Corpus2::pos_idx_t>(-1);
-	}
+	Corpus2::mask_t p = tagset_->get_pos_mask(pos);
 	pre2_ = PosOrthPredicate(p, orth);
 }
 
-void JoinRule::set_copy_attrs(const std::vector<Corpus2::attribute_idx_t> &v)
+void JoinRule::set_copy_attrs(Corpus2::mask_t mask)
 {
-	copy_t2_attrs_ = v;
+	copy_t2_attrs_ = mask;
 }
 
 void JoinRule::append_copy_attrs(const std::string& names)
 {
-	append_attribute_list(copy_t2_attrs_, tagset(), names);
+	append_attributes_mask(copy_t2_attrs_, tagset(), names);
 }
 
 void JoinRule::add_postcondition(const TagPredicate &tp)
@@ -102,6 +98,8 @@ Corpus2::Token* JoinRule::try_join(Corpus2::Token* t1, Corpus2::Token* t2) const
 		delete t2;
 		return t1;
 	} else {
+		//std::cerr << pre1_.check(*t1) << " " << pre2_.check(*t2) << "\n";
+		//std::cerr << pre2_.dump() << "\n";
 		return NULL;
 	}
 }

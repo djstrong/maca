@@ -11,14 +11,14 @@ TwoSplitLayer::TwoSplitLayer(const Corpus2::Tagset& tagset)
 	: OneTagsetLayer(tagset)
 	, queue_()
 	, orth_matcher_(), orth_pattern_()
-	, pre_(), t1_post_(), copy_attrs_to_t2_()
+	, pre_(), t1_post_(), copy_attrs_to_t2_(0)
 {
 }
 
 TwoSplitLayer::TwoSplitLayer(const Config::Node& cfg)
 	: OneTagsetLayer(Corpus2::get_named_tagset(cfg.get<std::string>("tagset")))
 	, queue_()
-	, orth_matcher_(NULL) , pre_(), t1_post_(), copy_attrs_to_t2_()
+	, orth_matcher_(NULL) , pre_(), t1_post_(), copy_attrs_to_t2_(0)
 {
 	t2_lexeme_.set_disamb(true);
 	std::string re = cfg.get<std::string>("regexp");
@@ -73,14 +73,14 @@ void TwoSplitLayer::clone_helper(TwoSplitLayer* copy) const
 	}
 }
 
-void TwoSplitLayer::add_copy_attr_to_t2(Corpus2::attribute_idx_t a)
+void TwoSplitLayer::add_copy_attr_to_t2(Corpus2::idx_t a)
 {
-	copy_attrs_to_t2_.push_back(a);
+	copy_attrs_to_t2_ |= tagset().get_attribute_mask(a);
 }
 
 void TwoSplitLayer::append_copy_attrs_to_t2(const std::string& s)
 {
-	append_attribute_list(copy_attrs_to_t2_, tagset(), s);
+	append_attributes_mask(copy_attrs_to_t2_, tagset(), s);
 }
 
 void TwoSplitLayer::add_precondition(const TagPredicate &tp)
@@ -169,12 +169,12 @@ Corpus2::Token* TwoSplitLayer::get_next_token()
 }
 
 ThreeSplitLayer::ThreeSplitLayer(const Corpus2::Tagset &tagset)
-	: TwoSplitLayer(tagset)
+	: TwoSplitLayer(tagset), copy_attrs_to_t3_(0)
 {
 }
 
 ThreeSplitLayer::ThreeSplitLayer(const Config::Node &cfg)
-	: TwoSplitLayer(cfg)
+	: TwoSplitLayer(cfg), copy_attrs_to_t3_(0)
 {
 	t3_lexeme_.set_disamb(true);
 	foreach (const Config::Node::value_type &v, cfg) {
@@ -204,14 +204,14 @@ ThreeSplitLayer* ThreeSplitLayer::clone() const
 	return copy;
 }
 
-void ThreeSplitLayer::add_copy_attr_to_t3(Corpus2::attribute_idx_t a)
+void ThreeSplitLayer::add_copy_attr_to_t3(Corpus2::idx_t a)
 {
-	copy_attrs_to_t3_.push_back(a);
+	copy_attrs_to_t3_ |= tagset().get_attribute_mask(a);
 }
 
 void ThreeSplitLayer::append_copy_attrs_to_t3(const std::string& s)
 {
-	append_attribute_list(copy_attrs_to_t3_, tagset(), s);
+	append_attributes_mask(copy_attrs_to_t3_, tagset(), s);
 }
 
 void ThreeSplitLayer::set_t3_lexeme(const Corpus2::Lexeme &lex)

@@ -62,7 +62,7 @@ public:
 
 	void add_t1_postcondition(const std::string& pred_string);
 
-	void add_copy_attr_to_t2(Corpus2::attribute_idx_t a);
+	void add_copy_attr_to_t2(Corpus2::idx_t a);
 
 	void append_copy_attrs_to_t2(const std::string& a);
 
@@ -83,7 +83,7 @@ protected:
 
 	std::vector<TagPredicate> t1_post_;
 
-	std::vector<Corpus2::attribute_idx_t> copy_attrs_to_t2_;
+	Corpus2::mask_t copy_attrs_to_t2_;
 
 	Corpus2::Lexeme t2_lexeme_;
 };
@@ -112,7 +112,7 @@ public:
 	ThreeSplitLayer* clone() const;
 
 
-	void add_copy_attr_to_t3(Corpus2::attribute_idx_t a);
+	void add_copy_attr_to_t3(Corpus2::idx_t a);
 
 	void append_copy_attrs_to_t3(const std::string& a);
 
@@ -121,7 +121,7 @@ public:
 	Corpus2::Token* get_next_token();
 
 protected:
-	std::vector<Corpus2::attribute_idx_t> copy_attrs_to_t3_;
+	Corpus2::mask_t copy_attrs_to_t3_;
 
 	Corpus2::Lexeme t3_lexeme_;
 };
