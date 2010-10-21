@@ -22,7 +22,7 @@ Corpus2::mask_t append_attributes_mask(Corpus2::mask_t& v,
 	foreach (const string_range& sr, srv) {
 		if (!sr.empty()) {
 			Corpus2::mask_t a = tagset.get_attribute_mask(sr);
-			if (a) {
+			if (a.any()) {
 				v |= a;
 			} else {
 				throw MacaError("Invalid attribute in copy_attrs: " + str);

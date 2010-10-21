@@ -14,7 +14,7 @@ TagConverter::TagConverter(const Corpus2::Tagset& from, const Corpus2::Tagset& t
 		Corpus2::mask_t from_mask = from.get_pos_mask(pos);
 		const std::string& name = from.get_pos_name(pos);
 		Corpus2::mask_t to_mask = to.get_pos_mask(name);
-		if (to_mask) {
+		if (to_mask.any()) {
 			pos_mapping_.insert(std::make_pair(from_mask, to_mask));
 		}
 	}
@@ -27,7 +27,7 @@ TagConverter::TagConverter(const Corpus2::Tagset& from, const Corpus2::Tagset& t
 			//std::cerr << "WUT " << bs << "\n";
 		}
 		Corpus2::mask_t to_mask = to.get_value_mask(name);
-		if (to_mask) {
+		if (to_mask.any()) {
 			value_mapping_.insert(std::make_pair(from_mask, to_mask));
 		}
 	}
@@ -43,14 +43,14 @@ Corpus2::Tag TagConverter::cast(const Corpus2::Tag& from) const
 	foreach (const attribute_map_t::value_type& v, attribute_mapping_) {
 		Corpus2::mask_t amask = tagset_from().get_attribute_mask(v.first);
 		Corpus2::mask_t value = from.get_values_for(amask);
-		if (value) {
+		if (value.any()) {
 			value_map_t::const_iterator vi = value_mapping_.find(value);
 			if (vi != value_mapping_.end()) {
 				to.add_values(vi->second);
 			} else {
 				if (late_check_) {
 					std::cerr << "TagConverter: Value not found in map: "
-						<< (void*)(value) << " "
+						<< (value) << " "
 						<< tagset_from().get_value_name(value)
 						<< "\n";
 				}
@@ -65,9 +65,9 @@ void TagConverter::add_override(const std::string& from,
 		const std::string& to)
 {
 	Corpus2::mask_t pos = tagset_from_.get_pos_mask(from);
-	if (pos) {
+	if (pos.any()) {
 		Corpus2::mask_t pos2 = tagset_to_.get_pos_mask(to);
-		if (pos2) {
+		if (pos2.any()) {
 			pos_mapping_[pos] = pos2;
 		} else {
 			std::cerr << "Invalid POS/POS mapping override, "
@@ -76,16 +76,16 @@ void TagConverter::add_override(const std::string& from,
 		}
 	} else {
 		Corpus2::mask_t vto = tagset_to_.get_value_mask(to);
-		if (vto) {
-			Corpus2::mask_t a = tagset_from_.get_attribute_mask(from);
-			if (a) {
+		if (vto.any()) {
+			Corpus2::idx_t aidx = tagset_from_.get_attribute_index(from);
+			if (aidx >= 0) {
 				foreach (Corpus2::mask_t vfrom,
-						tagset_from_.get_attribute_values(a)) {
+						tagset_from_.get_attribute_values(aidx)) {
 					value_mapping_[vfrom] = vto;
 				}
 			} else {
 				Corpus2::mask_t vfrom = tagset_from_.get_value_mask(from);
-				if (vfrom) {
+				if (vfrom.any()) {
 					value_mapping_[vfrom] = vto;
 				} else {
 					std::cerr << "Invalid value mapping override, "

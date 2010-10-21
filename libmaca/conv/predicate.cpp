@@ -8,13 +8,13 @@ namespace Conversion {
 TagPredicate::TagPredicate(const std::string& name, const Corpus2::Tagset& tagset)
 {
 	second = tagset.get_value_mask(name);
-	if (second) {
+	if (second.any()) {
 		first = tagset.get_attribute_mask(tagset.get_value_attribute_index(second));
 	} else {
 		first = tagset.get_attribute_mask(name);
-		if (!first) {
+		if (first.none()) {
 			second = tagset.get_pos_mask(name);
-			if (!second) {
+			if (second.none()) {
 				throw MacaError("Predicate string invalid: '" + name +
 						"' in tagset " + tagset.name());
 			}
@@ -24,7 +24,7 @@ TagPredicate::TagPredicate(const std::string& name, const Corpus2::Tagset& tagse
 
 bool TagPredicate::check(const Corpus2::Tag &tag) const
 {
-	if (first) {
+	if (first.any()) {
 		return tag.get_values_for(first) == second;
 	} else {
 		return tag.get_pos() == second;
@@ -33,7 +33,7 @@ bool TagPredicate::check(const Corpus2::Tag &tag) const
 
 bool TagPredicate::token_match(const Corpus2::Token& t) const
 {
-	if (first) {
+	if (first.any()) {
 		foreach (const Corpus2::Lexeme& lex, t.lexemes()) {
 			if (lex.tag().get_values_for(first) != second) return false;
 		}
@@ -47,7 +47,7 @@ bool TagPredicate::token_match(const Corpus2::Token& t) const
 
 void TagPredicate::apply(Corpus2::Tag &tag) const
 {
-	if (first) {
+	if (first.any()) {
 		tag.add_values_masked(second, first);
 	} else {
 		tag.set_pos(second);
