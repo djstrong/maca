@@ -57,11 +57,11 @@ def entries(infname, options):
 			assert len(entry) == 3, ('unexpected line format: %s' % line)
 			num_lines += 1
 			if options.verbose and num_lines % 10000 == 0:
-				print ('%d lines read...\r' % num_lines),
+				_print_now('%d lines read...       \r' % num_lines)
 			yield entry
 	f.close()
 	if options.verbose:
-		print
+		_print_now('\n')
 
 def xform(entry, options):
 	"""Returns an entry subjected to lowercase transformation as specd in
@@ -215,14 +215,19 @@ def compact(taglist):
 	"""
 	return [_compact_group(gr) for gr in _groups(taglist)]
 
+def _print_now(what):
+	sys.stderr.write(what)
+	sys.stderr.flush()
+
 def convert(infname, outfname, options):
 	with codecs.open(outfname, 'wb', options.output_enc) as out:
 		# read the whole input and memorise decomposed entries
 		# (will take loads of time and memory)
 		data = get_decomp_data(infname, options)
 		if options.verbose:
-			print 'Now writing...'
+			_print_now('Now writing...\n')
 		# now have it saved
+		num_lines = 0
 		for key in sorted(data):
 			set_of_tags = data[key]
 			if set_of_tags: # just in case
@@ -231,9 +236,12 @@ def convert(infname, outfname, options):
 				# (each beaing a string to store under (form, lemma))
 				tagreprs = compact(set_of_tags)
 				for tagrepr in tagreprs:
+					num_lines += 1
+					if options.verbose and num_lines % 10000 == 0:
+						_print_now('%d lines written...       \r' % num_lines)
 					out.write(u'%s\t%s\t%s\n' % (form, lemma, tagrepr))
 		if options.verbose:
-			print 'Done.'
+			_print_now('\nDone.\n')
 
 if __name__ == '__main__':
 	def_enc = 'utf-8'
@@ -247,8 +255,8 @@ if __name__ == '__main__':
 	(options, args) = parser.parse_args()
 	
 	if len(args) != 2:
-		print 'You need to provide input and output filenames'
 		print
+		print 'You need to provide input and output filenames'
 		parser.print_help()
 		sys.exit(1)
 	
