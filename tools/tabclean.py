@@ -18,7 +18,6 @@
 
 
 import sys, codecs
-from collections import defaultdict as dd
 from optparse import OptionParser
 from copy import deepcopy
 import itertools
@@ -35,8 +34,8 @@ conversion, compact resulting entries and write back to outfile. Because of the
 decompose-compact procedure, the output dictionary may look different even if
 there are no repetitions.
 
-NOTE: this script loads all the entries into memory; it may take long if the
-input is large.
+NOTE: this script loads all the entries into memory; it may take a horrible
+amount of memory and processing time if the input is large.
 
 Maca -- copyright (C) 2010 Tomasz Sniatowski and Adam Radziszewski
 This program comes with ABSOLUTELY NO WARRANTY.
@@ -44,19 +43,25 @@ This is free software, and you are welcome to redistribute it
 under certain conditions (see LICENSE and COPYING).
 """
 
-def entries(infname):
+def entries(infname, options):
 	"""Reads the given whitespace-separated file and generates
 	(form, lemma, tagrepr) entries. Note: tagrepr is textual representation
 	of tag or multiple tags, just as in input.
 	"""
-	f = codecs.open(infname, 'rb', 'utf-8')
+	num_lines = 0
+	f = codecs.open(infname, 'rb', options.input_enc)
 	for line in f:
 		line = line.strip()
 		if line:
 			entry = line.split() # form, lemma, tagrepr
 			assert len(entry) == 3, ('unexpected line format: %s' % line)
+			num_lines += 1
+			if options.verbose and num_lines % 10000 == 0:
+				print ('%d lines read...\r' % num_lines),
 			yield entry
 	f.close()
+	if options.verbose:
+		print
 
 def xform(entry, options):
 	"""Returns an entry subjected to lowercase transformation as specd in
@@ -113,15 +118,23 @@ def decomp(tagrepr):
 				app_to_tagv(tags, alters)
 			alltags.extend(tags)
 	return [':'.join(t) for t in alltags]
-	
+
+def _update(data, key, taglist):
+	"""Updates data[key] with set(taglist) whether key in data or not.
+	Runs slightly faster than defaultdict(set)."""
+	if key not in data:
+		data[key] = set(taglist)
+	else:
+		data[key].update(taglist)
+
 def get_decomp_data(infname, options):
 	"""Reads the given whitespace-separated file and gets a dict
 	(form, lemma) -> set of simple tags (decomposed)."""
-	data = dd(set)
-	for entry in entries(infname):
+	data = {}
+	for entry in entries(infname, options):
 		form, lemma, tagrepr = xform(entry, options)
 		taglist = decomp(tagrepr)
-		data[(form, lemma)].update(taglist)
+		_update(data, (form, lemma), taglist)
 	return data
 
 def _groups(taglist):
@@ -203,26 +216,33 @@ def compact(taglist):
 	return [_compact_group(gr) for gr in _groups(taglist)]
 
 def convert(infname, outfname, options):
-	with codecs.open(outfname, 'wb', 'utf-8') as out:
+	with codecs.open(outfname, 'wb', options.output_enc) as out:
 		# read the whole input and memorise decomposed entries
 		# (will take loads of time and memory)
 		data = get_decomp_data(infname, options)
+		if options.verbose:
+			print 'Now writing...'
 		# now have it saved
 		for key in sorted(data):
 			set_of_tags = data[key]
-			if set_of_tags: # it's a defaultdict(set) after all
+			if set_of_tags: # just in case
 				form, lemma = key
 				# now generate a list of compact tag representations
 				# (each beaing a string to store under (form, lemma))
 				tagreprs = compact(set_of_tags)
 				for tagrepr in tagreprs:
 					out.write(u'%s\t%s\t%s\n' % (form, lemma, tagrepr))
+		if options.verbose:
+			print 'Done.'
 
 if __name__ == '__main__':
+	def_enc = 'utf-8'
 	parser = OptionParser(usage=descr)
 	parser.add_option('-f', '--lower-forms', action='store_true', dest='lower_forms', default=False, help='convert forms to lowercase')
 	parser.add_option('-l', '--lower-lemmas', action='store_true', dest='lower_lemmas', default=False, help='convert forms to lowercase')
-	parser.add_option('-v', '--verbose', action='store_true', dest='verbose', default=False, help='report on duplications')
+	parser.add_option('--input-encoding', type='string', action='store', default=def_enc, dest='input_enc', help='set character encoding of input (default: %s)' % def_enc)
+	parser.add_option('--output-encoding', type='string', action='store', default=def_enc, dest='output_enc', help='set character encoding of output (default: %s)' % def_enc)
+	parser.add_option('-v', '--verbose', action='store_true', dest='verbose', default=False, help='show progress information')
 	
 	(options, args) = parser.parse_args()
 	
@@ -236,4 +256,3 @@ if __name__ == '__main__':
 	outfname = args[1]
 	
 	convert(infname, outfname, options)
-	print 'Done.'
