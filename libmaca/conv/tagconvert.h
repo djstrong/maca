@@ -66,15 +66,15 @@ protected:
 	const Corpus2::Tagset& tagset_to_;
 
 	/// Value mapping
-	typedef std::map<Corpus2::value_idx_t, Corpus2::value_idx_t> value_map_t;
+	typedef std::map<Corpus2::mask_t, Corpus2::mask_t> value_map_t;
 	value_map_t value_mapping_;
 
 	/// Attribute mapping
-	typedef std::map<Corpus2::attribute_idx_t, Corpus2::attribute_idx_t> attribute_map_t;
+	typedef std::map<Corpus2::idx_t, Corpus2::idx_t> attribute_map_t;
 	attribute_map_t attribute_mapping_;
 
 	/// POS mapping
-	typedef std::map<Corpus2::pos_idx_t, Corpus2::pos_idx_t> pos_map_t;
+	typedef std::map<Corpus2::mask_t, Corpus2::mask_t> pos_map_t;
 	pos_map_t pos_mapping_;
 
 	bool late_check_;

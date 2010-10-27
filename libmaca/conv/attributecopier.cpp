@@ -7,41 +7,39 @@
 namespace Maca {
 namespace Conversion {
 
-std::vector<Corpus2::attribute_idx_t> make_attribute_list(const Corpus2::Tagset& tagset,
+Corpus2::mask_t make_attributes_mask(const Corpus2::Tagset& tagset,
 		const std::string& str)
 {
-	std::vector<Corpus2::attribute_idx_t> v;
-	append_attribute_list(v, tagset, str);
-	return v;
+	Corpus2::mask_t v = 0;
+	return append_attributes_mask(v, tagset, str);
 }
 
-void append_attribute_list(std::vector<Corpus2::attribute_idx_t>& v,
+Corpus2::mask_t append_attributes_mask(Corpus2::mask_t& v,
 		const Corpus2::Tagset& tagset, const std::string& str)
 {
 	string_range_vector srv;
 	boost::algorithm::split(srv, str, boost::is_any_of(std::string(": ")));
 	foreach (const string_range& sr, srv) {
 		if (!sr.empty()) {
-			Corpus2::attribute_idx_t a = tagset.attribute_dictionary().get_id(sr);
-			if (tagset.attribute_dictionary().is_id_valid(a)) {
-				v.push_back(a);
+			Corpus2::mask_t a = tagset.get_attribute_mask(sr);
+			if (a.any()) {
+				v |= a;
 			} else {
 				throw MacaError("Invalid attribute in copy_attrs: " + str);
 			}
 		}
 	}
+	return v;
 }
 
 void copy_attributes(const Corpus2::Tag& from,
-		const std::vector<Corpus2::attribute_idx_t>& alist, Corpus2::Tag& to)
+		const Corpus2::mask_t& amask, Corpus2::Tag& to)
 {
-	foreach (Corpus2::attribute_idx_t a, alist) {
-		to.values()[a] = from.values()[a];
-	}
+	to.add_values_masked(from.get_values(), amask);
 }
 
 void copy_attributes(const Corpus2::Token& from,
-		const std::vector<Corpus2::attribute_idx_t>& alist, Corpus2::Token& to)
+		const Corpus2::mask_t& alist, Corpus2::Token& to)
 {
 	std::vector<Corpus2::Lexeme> new_lexemes;
 	foreach (const Corpus2::Lexeme& lex1, to.lexemes()) {

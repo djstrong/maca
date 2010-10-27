@@ -112,8 +112,6 @@ void TagsetConverter::convert(Corpus2::TokenSource* src,
 			(layers_.back()->get_next_token() == NULL));
 	layers_.front()->set_source(src);
 	while (Corpus2::Token* t = layers_.back()->get_next_token()) {
-		assert(t->lexemes()[0].tag().tagset_id() ==
-				layers_.back()->tagset_to().id());
 		sink(t);
 	}
 	layers_.front()->set_source(NULL);

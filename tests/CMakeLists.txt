@@ -18,4 +18,5 @@ link_directories(${Boost_LIBRARY_DIRS})
 
 configure_file(test-sanity.sh ${CMAKE_CURRENT_BINARY_DIR})
 add_custom_target(test tests COMMAND ./test-sanity.sh small)
+add_custom_target(test-verbose ./tests --log_level=message)
 add_custom_target(test-large ./test-sanity.sh large)

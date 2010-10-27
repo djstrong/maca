@@ -20,7 +20,7 @@ include_directories( ${CMAKE_CURRENT_BINARY_DIR}/include/ )
 find_package(Toki 0.4.2 REQUIRED)
 set(LIBS ${LIBS} ${Toki_LIBRARY})
 
-find_package(Corpus2 0.0.2 REQUIRED)
+find_package(Corpus2 0.1.0 REQUIRED)
 set(LIBS ${LIBS} ${Corpus2_LIBRARY})
 
 find_package(ICU REQUIRED QUIET)

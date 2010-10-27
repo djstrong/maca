@@ -35,8 +35,10 @@ struct Fxz {
 			"P1 A B \n"
 			"P2 A B C\n"
 			;
-		tagset1.reset(new Corpus2::Tagset(tagset1_string));
-		tagset2.reset(new Corpus2::Tagset(tagset2_string));
+		tagset1.reset(new Corpus2::Tagset());
+		*tagset1 = Corpus2::Tagset::from_data(tagset1_string);
+		tagset2.reset(new Corpus2::Tagset());
+		*tagset2 = Corpus2::Tagset::from_data(tagset2_string);
 	}
 
 	boost::shared_ptr<Corpus2::Tagset> tagset1, tagset2;
@@ -85,11 +87,14 @@ BOOST_FIXTURE_TEST_CASE(tagpred, Fxz)
 	tr.apply(tag);
 	BOOST_CHECK_EQUAL(tagset1->tag_to_string(tag), "P2:a2:b1:c2");
 
-	tag = tagset1->parse_simple_tag("P1::b1", false);
-	tr.apply(tag);
-	BOOST_CHECK_EQUAL(tagset1->tag_to_string(tag), "P1::b1");
+	BOOST_CHECK_THROW(
+		tag = tagset1->parse_simple_tag("P1::b1", false),
+		Corpus2::TagParseError);
 
-	tag = tagset1->parse_simple_tag("P1:a2", false);
+	//tr.apply(tag);Tag(get_pos_mask(pos_idx), values
+	//BOOST_CHECK_EQUAL(tagset1->tag_to_string(tag), "P1::b1");
+
+	tag = tagset1->parse_simple_tag("P1:a2:b2", false);
 	tr.apply(tag);
 	BOOST_CHECK_EQUAL(tagset1->tag_to_string(tag), "P1:a2:b2");
 }
@@ -145,6 +150,7 @@ BOOST_FIXTURE_TEST_CASE(join, Fxz)
 	BOOST_CHECK_EQUAL(t->lexemes()[0].lemma_utf8(), "lex2");
 	BOOST_CHECK_EQUAL(tagset1->tag_to_string(t->lexemes()[0].tag()), "P1::b1:c2");
 	//std::cerr << t->lexemes()[0].tag().raw_dump() << tagset1->tag_to_string(t->lexemes()[0].tag());
+	delete t;
 }
 
 BOOST_AUTO_TEST_SUITE_END()

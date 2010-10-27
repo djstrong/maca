@@ -85,7 +85,7 @@ public:
 
 	/// Setter for the list of attriutes to copy from token2 to the joined
 	/// token
-	void set_copy_attrs(const std::vector<Corpus2::attribute_idx_t>& v);
+	void set_copy_attrs(Corpus2::mask_t mask);
 
 	/// Adder for the copy attributes list, string version
 	void append_copy_attrs(const std::string& names);
@@ -107,7 +107,7 @@ private:
 	PosOrthPredicate pre2_;
 
 	/// Attributes to copy from token 2 tags into the resulting token tags
-	std::vector<Corpus2::attribute_idx_t> copy_t2_attrs_;
+	Corpus2::mask_t copy_t2_attrs_;
 
 	/// Postconditions to apply on the resulting token's tags
 	std::vector<TagPredicate> post_;

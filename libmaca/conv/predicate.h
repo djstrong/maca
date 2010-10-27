@@ -15,7 +15,7 @@ namespace Conversion {
  * Applying the predicate has teh effect of setting the appropriate value
  * or POS so that the tag matches the predicate.
  */
-class TagPredicate : public std::pair<Corpus2::idx_t, Corpus2::idx_t>
+class TagPredicate : public std::pair<Corpus2::mask_t, Corpus2::mask_t>
 {
 public:
 	/**
@@ -50,12 +50,12 @@ public:
  */
 void apply_predicates(const std::vector<TagPredicate>& v, Corpus2::Token& t);
 
-class PosOrthPredicate : public std::pair<Corpus2::pos_idx_t, UnicodeString>
+class PosOrthPredicate : public std::pair<Corpus2::mask_t, UnicodeString>
 {
 public:
 	PosOrthPredicate();
 
-	PosOrthPredicate(Corpus2::pos_idx_t pos, const UnicodeString& orth);
+	PosOrthPredicate(Corpus2::mask_t pos, const UnicodeString& orth);
 
 	bool check(const Corpus2::Token& token) const;
 };
