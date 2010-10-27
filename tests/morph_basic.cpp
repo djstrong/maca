@@ -5,13 +5,15 @@
 #include <libcorpus2/tagsetparser.h>
 
 struct F {
-	F() : t(UnicodeString::fromUTF8("aaa"), "t", PwrNlp::Whitespace::ManySpaces)
+	F() : tagset(), t(UnicodeString::fromUTF8("aaa"), "t", PwrNlp::Whitespace::ManySpaces)
 	{
 		const char tagset_string[] = "[ATTR]\nA a1 a2 a3\nB b1 b2 b3\n[POS]\n P1 A [B]\n P2 A\n";
 		try {
-			tagset.reset(new Corpus2::Tagset(tagset_string));
+			tagset.reset(new Corpus2::Tagset);
+			*tagset = Corpus2::Tagset::from_data(tagset_string);
 		} catch (Corpus2::TagsetParseError& e) {
-			BOOST_FAIL(e.info());
+			std::cerr << e.info();
+			throw;
 		}
 	}
 	~F() {
