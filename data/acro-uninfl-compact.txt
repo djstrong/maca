@@ -63,7 +63,6 @@ ake	ake	subst:_:_:_
 akm	akm	subst:_:_:_
 akpa	akpa	subst:_:_:_
 al	al	subst:_:_:_
-al	al	subst:_:_:f.m1
 albacore	albacore	subst:_:_:_
 albee	albee	subst:_:_:f.m1
 albemarle	albemarle	subst:_:_:_
@@ -738,7 +737,6 @@ béber	béber	subst:_:_:_
 böhme	böhme	subst:_:_:f.m1
 bę	bę	subst:_:_:_
 c	c	subst:_:_:_
-c	c	subst:_:_:f.m1
 ca	ca	subst:_:_:f.m1
 cabery	cabery	subst:_:_:f.m1
 cable	cable	subst:_:_:_
@@ -753,7 +751,6 @@ cadderty	cadderty	subst:_:_:f.m1
 cadderły	cadderły	subst:_:_:f.m1
 caddy	caddy	subst:_:_:f.m1
 cade	cade	subst:_:_:_
-cade	cade	subst:_:_:f.m1
 cady	cady	subst:_:_:f.m1
 caf	caf	subst:_:_:_
 cag	cag	subst:_:_:_
@@ -909,7 +906,6 @@ chereko	chereko	subst:_:_:_
 cherney	cherney	subst:_:_:_
 chesapeake	chesapeake	subst:_:_:_
 chevy	chevy	subst:_:_:_
-chevy	chevy	subst:_:_:f.m1
 chewie	chewie	subst:_:_:f.m1
 chic	chic	subst:_:_:_
 chiddy	chiddy	subst:_:_:f.m1
@@ -1027,7 +1023,6 @@ cokol	cokol	subst:_:_:_
 colb	colb	subst:_:_:f.m1
 colby	colby	subst:_:_:f.m1
 cole	cole	subst:_:_:_
-cole	cole	subst:_:_:f.m1
 coleridge	coleridge	subst:_:_:_
 colgate	colgate	subst:_:_:_
 collage	collage	subst:_:_:f.m1
@@ -1400,7 +1395,6 @@ dockside	dockside	subst:_:_:_
 docre	docre	subst:_:_:_
 dodat	dodat	subst:_:_:f.m1
 dodge	dodge	subst:_:_:_
-dodge	dodge	subst:_:_:f.m1
 dogde	dogde	subst:_:_:_
 doggly	doggly	subst:_:_:f.m1
 doggy	doggy	subst:_:_:f.m1
@@ -1487,7 +1481,6 @@ drugstore	drugstore	subst:_:_:_
 drury	drury	subst:_:_:f.m1
 drysdale	drysdale	subst:_:_:_
 ds	ds	subst:_:_:_
-ds	ds	subst:_:_:f.m1
 dsv	dsv	subst:_:_:_
 dts	dts	subst:_:_:_
 du	du	subst:_:_:_
@@ -1510,7 +1503,6 @@ dufy	dufy	subst:_:_:f.m1
 dugarry	dugarry	subst:_:_:f.m1
 dugdale	dugdale	subst:_:_:_
 duke	duke	subst:_:_:_
-duke	duke	subst:_:_:f.m1
 dumbledore	dumbledore	subst:_:_:f.m1
 dumdledore	dumdledore	subst:_:_:_
 dume	dume	subst:_:_:_
@@ -1578,7 +1570,6 @@ dżadei	dżadei	subst:_:_:_
 dżaferi	dżaferi	subst:_:_:f.m1
 dżato	dżato	subst:_:_:_
 e	e	subst:_:_:_
-e	e	subst:_:_:f.m1
 eagle	eagle	subst:_:_:_
 early	early	subst:_:_:f.m1
 eastemouse	eastemouse	subst:_:_:_
@@ -1921,7 +1912,6 @@ fwp	fwp	subst:_:_:_
 fy	fy	subst:_:_:f.m1
 fyre	fyre	subst:_:_:_
 g	g	subst:_:_:_
-g	g	subst:_:_:f.m1
 gabe	gabe	subst:_:_:_
 gabily	gabily	subst:_:_:f.m1
 gaby	gaby	subst:_:_:f.m1
@@ -2007,7 +1997,6 @@ georege	georege	subst:_:_:_
 georg	georg	subst:_:_:_
 georga	georga	subst:_:_:_
 george	george	subst:_:_:_
-george	george	subst:_:_:f.m1
 georges	georges	subst:_:_:_
 georgie	georgie	subst:_:_:f.m1
 georgy	georgy	subst:_:_:f.m1
@@ -2516,7 +2505,6 @@ igraine	igraine	subst:_:_:_
 ihars	ihars	subst:_:_:_
 ii	ii	subst:_:_:f.m1
 iii	iii	subst:_:_:_
-iii	iii	subst:_:_:f.m1
 iiizwn	iiizwn	subst:_:_:f.m1
 iim	iim	subst:_:_:_
 iisu	iisu	subst:_:_:_
@@ -2681,7 +2669,6 @@ jeżowo	jeżowo	subst:_:_:_
 jfje	jfje	subst:_:_:f.m1
 jhare	jhare	subst:_:_:f.m1
 ji	ji	subst:_:_:_
-ji	ji	subst:_:_:f.m1
 jiffy	jiffy	subst:_:_:f.m1
 jim	jim	subst:_:_:_
 jimie	jimie	subst:_:_:f.m1
@@ -2692,7 +2679,6 @@ jive	jive	subst:_:_:_
 jjj	jjj	subst:_:_:_
 jl	jl	subst:_:_:f.m1
 jo	jo	subst:_:_:_
-jo	jo	subst:_:_:f.m1
 jockey	jockey	subst:_:_:_
 jodelle	jodelle	subst:_:_:_
 jody	jody	subst:_:_:f.m1
@@ -2731,7 +2717,6 @@ josep	josep	subst:_:_:_
 journe	journe	subst:_:_:_
 jousse	jousse	subst:_:_:_
 joyce	joyce	subst:_:_:_
-joyce	joyce	subst:_:_:f.m1
 jpeg	jpeg	subst:_:_:_
 ju	ju	subst:_:_:_
 judaso	judaso	subst:_:_:_
@@ -3010,7 +2995,6 @@ kza	kza	subst:_:_:_
 kzm	kzm	subst:_:_:_
 l	l	subst:_:_:f.m1
 la	la	subst:_:_:_
-la	la	subst:_:_:f.m1
 labarre	labarre	subst:_:_:_
 labby	labby	subst:_:_:f.m1
 labiche	labiche	subst:_:_:_
@@ -3044,7 +3028,6 @@ lagrene	lagrene	subst:_:_:_
 lague	lague	subst:_:_:_
 lahiri	lahiri	subst:_:_:f.m1
 lake	lake	subst:_:_:_
-lake	lake	subst:_:_:f.m1
 lakestone	lakestone	subst:_:_:_
 lalique	lalique	subst:_:_:_
 lally	lally	subst:_:_:f.m1
@@ -3116,7 +3099,6 @@ layne	layne	subst:_:_:_
 lcs	lcs	subst:_:_:_
 ldl	ldl	subst:_:_:_
 le	le	subst:_:_:_
-le	le	subst:_:_:f.m1
 leadbelly	leadbelly	subst:_:_:f.m1
 leadbury	leadbury	subst:_:_:f.m1
 leaders	leaders	subst:_:_:_
@@ -3277,7 +3259,6 @@ ludzkos	ludzkos	subst:_:_:_
 luge	luge	subst:_:_:_
 lukacs	lukacs	subst:_:_:_
 luke	luke	subst:_:_:_
-luke	luke	subst:_:_:f.m1
 luksuso	luksuso	subst:_:_:_
 lully	lully	subst:_:_:f.m1
 lullye	lullye	subst:_:_:f.m1
@@ -3650,7 +3631,6 @@ mondale	mondale	subst:_:_:_
 monde	monde	subst:_:_:_
 monge	monge	subst:_:_:_
 monroe	monroe	subst:_:_:_
-monroe	monroe	subst:_:_:f.m1
 monsignore	monsignore	subst:_:_:_
 montague	montague	subst:_:_:_
 montaigne	montaigne	subst:_:_:_
@@ -3902,7 +3882,6 @@ nihon	nihon	subst:_:_:f.m1
 nii	nii	subst:_:_:_
 nik	nik	subst:_:_:_
 nike	nike	subst:_:_:_
-nike	nike	subst:_:_:f.m1
 niki	niki	subst:_:_:_
 nikolay	nikolay	subst:_:_:_
 nikołaje	nikołaje	subst:_:_:_
@@ -4215,7 +4194,6 @@ pawełko	pawełko	subst:_:_:_
 pawk	pawk	subst:_:_:_
 pax	pax	subst:_:_:_
 pay	pay	subst:_:_:_
-pay	pay	subst:_:_:f.m1
 paye	paye	subst:_:_:_
 payne	payne	subst:_:_:_
 pbr	pbr	subst:_:_:_
@@ -4327,7 +4305,6 @@ piatako	piatako	subst:_:_:_
 pick	pick	subst:_:_:_
 picock	picock	subst:_:_:_
 pierce	pierce	subst:_:_:_
-pierce	pierce	subst:_:_:f.m1
 pierre	pierre	subst:_:_:_
 pietropawłowskie	pietropawłowskie	subst:_:_:f.m1
 pietrowiczo	pietrowiczo	subst:_:_:_
@@ -4417,7 +4394,6 @@ podróźy	podróźy	subst:_:_:_
 podskaki	podskaki	subst:_:_:_
 podśmieszna	podśmieszna	subst:_:_:_
 poe	poe	subst:_:_:_
-poe	poe	subst:_:_:f.m1
 poggle	poggle	subst:_:_:_
 pogrzmo	pogrzmo	subst:_:_:_
 poincare	poincare	subst:_:_:_
@@ -4598,7 +4574,6 @@ przyszpilone	przyszpilone	subst:_:_:f.m1
 próbowa	próbowa	subst:_:_:_
 prędkos	prędkos	subst:_:_:_
 psl	psl	subst:_:_:_
-psl	psl	subst:_:_:f.m1
 psop	psop	subst:_:_:_
 psr	psr	subst:_:_:_
 pss	pss	subst:_:_:_
@@ -4669,7 +4644,6 @@ quincy	quincy	subst:_:_:f.m1
 quine	quine	subst:_:_:_
 quran	quran	subst:_:_:_
 r	r	subst:_:_:_
-r	r	subst:_:_:f.m1
 raa	raa	subst:_:_:f.m1
 raaf	raaf	subst:_:_:_
 rabanne	rabanne	subst:_:_:_
@@ -5370,7 +5344,6 @@ spence	spence	subst:_:_:_
 sperry	sperry	subst:_:_:f.m1
 spesk	spesk	subst:_:_:_
 spice	spice	subst:_:_:_
-spice	spice	subst:_:_:f.m1
 spike	spike	subst:_:_:_
 spillane	spillane	subst:_:_:_
 spitfire	spitfire	subst:_:_:_
@@ -5862,7 +5835,6 @@ tws	tws	subst:_:_:_
 tye	tye	subst:_:_:_
 tygranoker	tygranoker	subst:_:_:_
 tyl	tyl	subst:_:_:_
-tyl	tyl	subst:_:_:f.m1
 tyndale	tyndale	subst:_:_:_
 tyne	tyne	subst:_:_:_
 tyrice	tyrice	subst:_:_:_
@@ -6374,7 +6346,6 @@ wła	wła	subst:_:_:_
 włas	włas	subst:_:_:f.m1
 własnos	własnos	subst:_:_:_
 x	x	subst:_:_:_
-x	x	subst:_:_:f.m1
 xanteno	xanteno	subst:_:_:_
 xanth	xanth	subst:_:_:_
 xawery	xawery	subst:_:_:f.m1
@@ -6385,7 +6356,6 @@ xj	xj	subst:_:_:_
 xml	xml	subst:_:_:_
 xvi	xvi	subst:_:_:_
 xx	xx	subst:_:_:_
-xx	xx	subst:_:_:f.m1
 xxi	xxi	subst:_:_:f.m1
 xxx	xxx	subst:_:_:_
 y	y	subst:_:_:_

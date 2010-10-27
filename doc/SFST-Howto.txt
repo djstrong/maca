@@ -22,9 +22,13 @@ Note that it is the same format than may be read by tagset-tool with -p switch.
 
 For more examples, see the .txt files included in the data directory.
 
-NOTE ON CASE SENSITIVITY: if the morphological data are intended to be used in case-insensitive manner, either prepare it that way (e.g. all forms should be lower case) or use tab-lower.py script to convert the data (all the scripts are inside the tools directory). Remember to switch the SFSTAnalyser to lower-case=true in the config (if using MapAnalyser, you have to choose a class with desired case-sensitivity).
+NOTE ON DUPLICATES: if the morphological data contain duplicated tags (specified explicitely or using wildcard representations that evaluate to duplicates), this will result in duplicated tags in the analyser output. To clean such duplicates, use tabclean.py script.
+
+NOTE ON CASE SENSITIVITY: if the morphological data are intended to be used in case-insensitive manner, either prepare it that way (e.g. all forms should be lower case) or use tabclean.py script to convert the data (all the scripts are inside the tools directory). Remember to switch the SFSTAnalyser to lower-case=true in the config (if using MapAnalyser, you have to choose a class with desired case-sensitivity).
 
 2. Converting to SFST input format.
+
+NOTE: the rest of this section explains how to do the conversion manually. If you want to have it done quickly, use tools/tab-to-sfst-now script.
 
 Use the tab-to-sfst.py script (tools dir) to get the file converted into SFST-readable format:
 
