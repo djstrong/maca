@@ -53,14 +53,15 @@ do
 done
 
 for i in $PROJECTS; do
-	echo
+	cd $BASEDIR/$i/$BUILDDIR || fail  "cd error"
+	pwd
 	if [[ ! -z $OPT_PULL ]]; then
 		echo "--- Pulling $i..."
 		git pull
 	fi
 	echo "--- Configuring $i..."
-	cd $BASEDIR/$i/$BUILDDIR || fail  "cd error"
 	if [[ ! -z $OPT_CACHE ]]; then
+		echo "--- rm CMakeCache.txt in $i ..."
 		rm CMakeCache.txt
 	fi
 	cmake .. > /dev/null || fail "cmake error"
