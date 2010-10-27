@@ -115,16 +115,15 @@ bool TagConverter::is_complete(std::ostream* os, bool all /*=false*/) const
 			if (!all) return rv;
 			if (os) (*os) << "\n";
 		}
-		/* TODO
-		if (!tagset_to().pos_dictionary().is_id_valid(pi->second)) {
+
+		if (tagset_to().get_pos_name(pi->second).empty()) {
 			if (os) (*os) << "Mapping for POS "
-				<< tagset_from().pos_dictionary().get_string(p) << " ("
-				<< (int)p << ") is invalid (" << (int)pi->second << ")";
+				<< tagset_from().get_pos_name(p) << " ("
+				<< p << ") is invalid (" << pi->second << ")";
 			rv = false;
 			if (!all) return rv;
 			if (os) (*os) << "\n";
 		}
-		*/
 	}
 	for (Corpus2::idx_t p = 0; p < tagset_from().attribute_count(); ++p) {
 		attribute_map_t::const_iterator pi = attribute_mapping_.find(p);
@@ -136,18 +135,16 @@ bool TagConverter::is_complete(std::ostream* os, bool all /*=false*/) const
 			if (!all) return rv;
 			if (os) (*os) << "\n";
 		} else {
-			/* TODO
-			Corpus2::attribute_idx_t to = pi->second;
-			if (!tagset_to().attribute_dictionary().is_id_valid(to)) {
+			Corpus2::idx_t to = pi->second;
+			if (tagset_to().get_attribute_name(to).empty()) {
 				if (os) (*os) << "Mapping for attribute "
 					<< tagset_from().attribute_dictionary().get_string(p)
-					<< " (" << (int)p << ")" << " is invalid"
-					<< " (" << (int)to << ")";
+					<< " (" << p << ")" << " is invalid"
+					<< " (" << to << ")";
 				rv = false;
 				if (!all) return rv;
 				if (os) (*os) << "\n";
 			}
-			*/
 		}
 	}
 	for (Corpus2::idx_t p = 0; p < tagset_from().value_count(); ++p) {
@@ -161,16 +158,14 @@ bool TagConverter::is_complete(std::ostream* os, bool all /*=false*/) const
 			if (!all) return rv;
 			if (os) (*os) << "\n";
 		}
-		/* TODO
-		if (!tagset_to().value_dictionary().is_id_valid(pi->second)) {
+		if (tagset_to().get_value_name(pi->second).empty()) {
 			if (os) (*os) << "Mapping for value "
-				<< tagset_from().value_dictionary().get_string(p) << " ("
-				<< (int)p << ") is invalid (" << (int)pi->second << ")";
+				<< tagset_from().get_value_name(p) << " ("
+				<< p << ") is invalid (" << pi->second << ")";
 			rv = false;
 			if (!all) return rv;
 			if (os) (*os) << "\n";
 		}
-		*/
 	}
 	return rv;
 }

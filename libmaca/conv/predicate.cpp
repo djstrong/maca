@@ -9,7 +9,7 @@ TagPredicate::TagPredicate(const std::string& name, const Corpus2::Tagset& tagse
 {
 	second = tagset.get_value_mask(name);
 	if (second.any()) {
-		first = tagset.get_attribute_mask(tagset.get_value_attribute_index(second));
+		first = tagset.get_attribute_mask(tagset.get_value_attribute(second));
 	} else {
 		first = tagset.get_attribute_mask(name);
 		if (first.none()) {
