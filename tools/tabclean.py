@@ -34,8 +34,12 @@ conversion, compact resulting entries and write back to outfile. Because of the
 decompose-compact procedure, the output dictionary may look different even if
 there are no repetitions.
 
-NOTE: this script loads all the entries into memory; it may take a horrible
-amount of memory and processing time if the input is large.
+NOTE: this script assumes that the input is sorted by the two first columns
+(form and lemma). This is important as entries for a form-lemma pair may be
+broken into several lines. If this doesn't hold for your input, either have it
+sorted with the sort command or run the script with -u (will load all the
+entries into memory before processing; this may take a horrible amount of
+memory).
 
 Maca -- copyright (C) 2010 Tomasz Sniatowski and Adam Radziszewski
 This program comes with ABSOLUTELY NO WARRANTY.
@@ -128,14 +132,22 @@ def _update(data, key, taglist):
 		data[key].update(taglist)
 
 def get_decomp_data(infname, options):
-	"""Reads the given whitespace-separated file and gets a dict
-	(form, lemma) -> set of simple tags (decomposed)."""
+	"""Reads the given whitespace-separated file and generates dictionaries
+	(form, lemma) -> set of simple tags (decomposed).
+	If options.memorise is set, will yield one dict will all the entries;
+	otherwise will keep yielding one-key dicts with sequences of entries
+	having the same key."""
 	data = {}
+	last_key = None
 	for entry in entries(infname, options):
 		form, lemma, tagrepr = xform(entry, options)
+		if not options.memorise and last_key != (form, lemma):
+			yield data
+			data = {}
+			last_key = (form, lemma)
 		taglist = decomp(tagrepr)
 		_update(data, (form, lemma), taglist)
-	return data
+	yield data
 
 def _groups(taglist):
 	"""Divides the given taglist into groups, according to their wordclass
@@ -234,34 +246,31 @@ def _print_now(what):
 
 def convert(infname, outfname, options):
 	with codecs.open(outfname, 'wb', options.output_enc) as out:
-		# read the whole input and memorise decomposed entries
-		# (will take loads of time and memory)
-		data = get_decomp_data(infname, options)
-		if options.verbose:
-			_print_now('Now writing...\n')
-		# now have it saved
-		num_lines = 0
-		for key in sorted(data):
-			set_of_tags = data[key]
-			if set_of_tags: # just in case
-				form, lemma = key
-				# now generate a list of compact tag representations
-				# (each beaing a string to store under (form, lemma))
-				if options.write_groups:
-					for disc, taggroup in _group_disc(set_of_tags):
-						groupname = '%s/%d' % (disc[0], disc[1] - 1)
-						tagrepr = _compact_group(taggroup)
-						num_lines += 1
-						if options.verbose and num_lines % 10000 == 0:
-							_print_now('%d lines written...       \r' % num_lines)
-						out.write(u'%s\t%s\t%s\t%s\n' % (groupname, form, lemma, tagrepr))
-				else:
-					tagreprs = compact(set_of_tags)
-					for tagrepr in tagreprs:
-						num_lines += 1
-						if options.verbose and num_lines % 10000 == 0:
-							_print_now('%d lines written...       \r' % num_lines)
-						out.write(u'%s\t%s\t%s\n' % (form, lemma, tagrepr))
+		for data in get_decomp_data(infname, options):
+			print '*'
+			# now have it saved
+			num_lines = 0
+			for key in sorted(data):
+				set_of_tags = data[key]
+				if set_of_tags: # just in case
+					form, lemma = key
+					# now generate a list of compact tag representations
+					# (each beaing a string to store under (form, lemma))
+					if options.write_groups:
+						for disc, taggroup in _group_disc(set_of_tags):
+							groupname = '%s/%d' % (disc[0], disc[1] - 1)
+							tagrepr = _compact_group(taggroup)
+							num_lines += 1
+							if options.verbose and num_lines % 10000 == 0:
+								_print_now('%d lines written...       \r' % num_lines)
+							out.write(u'%s\t%s\t%s\t%s\n' % (groupname, form, lemma, tagrepr))
+					else:
+						tagreprs = compact(set_of_tags)
+						for tagrepr in tagreprs:
+							num_lines += 1
+							if options.verbose and num_lines % 10000 == 0:
+								_print_now('%d lines written...       \r' % num_lines)
+							out.write(u'%s\t%s\t%s\n' % (form, lemma, tagrepr))
 		if options.verbose:
 			_print_now('\nDone.\n')
 
@@ -273,6 +282,7 @@ if __name__ == '__main__':
 	parser.add_option('--input-encoding', type='string', action='store', default=def_enc, dest='input_enc', help='set character encoding of input (default: %s)' % def_enc)
 	parser.add_option('--output-encoding', type='string', action='store', default=def_enc, dest='output_enc', help='set character encoding of output (default: %s)' % def_enc)
 	parser.add_option('-v', '--verbose', action='store_true', dest='verbose', default=False, help='show progress information')
+	parser.add_option('-u', '--unsorted', action='store_true', dest='memorise', default=False, help='treat input as unsorted and read whole into memory before processing')
 	parser.add_option('-g', '--write-groups', action='store_true', dest='write_groups', default=False, help='enrich output with groupname column')
 	
 	(options, args) = parser.parse_args()
