@@ -3,7 +3,7 @@ tagset=ikipi
 pre=fin:prt
 regexp=(?i:(.+ł)(e[mś]))
 copy_attrs_to_t2=nmb:per
-t2_tag=aglt:imperf:wok
+t2_tag=aglt:sg:pri:imperf:wok
 t2_lemma=być
 t1_post=praet:per:vcl:tns
 
@@ -11,7 +11,7 @@ t1_post=praet:per:vcl:tns
 pre=fin:prt
 regexp=(?i:(.+ł[ao])([mś]))
 copy_attrs_to_t2=nmb:per
-t2_tag=aglt:imperf:nwok
+t2_tag=aglt:sg:pri:imperf:nwok
 t2_lemma=być
 t1_post=praet:per:vcl:tns
 
@@ -19,7 +19,7 @@ t1_post=praet:per:vcl:tns
 pre=fin:prt
 regexp=(.+)(?i:(śmy|ście))
 copy_attrs_to_t2=nmb:per
-t2_tag=aglt:imperf:nwok
+t2_tag=aglt:sg:pri:imperf:nwok
 t2_lemma=być
 t1_post=praet:per:vcl:tns
 
@@ -36,7 +36,7 @@ regexp=(.+)(?i:(by)(m|ś|śmy|ście))
 copy_attrs_to_t3=nmb:per
 t2_tag=qub
 t2_lemma=by
-t3_tag=aglt:imperf:nwok
+t3_tag=aglt:sg:pri:imperf:nwok
 t3_lemma=być
 t1_post=praet:per:vcl:tns
 
