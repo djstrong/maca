@@ -247,7 +247,6 @@ def _print_now(what):
 def convert(infname, outfname, options):
 	with codecs.open(outfname, 'wb', options.output_enc) as out:
 		for data in get_decomp_data(infname, options):
-			print '*'
 			# now have it saved
 			num_lines = 0
 			for key in sorted(data):
