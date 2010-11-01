@@ -57,26 +57,13 @@ def tagreprs(infname, options):
 	if options.verbose:
 		tabclean._print_now('Read all %d lines\n' % num_lines)
 
-def _group_disc(taglist):
-	"""Returns a list of pairs (group_discriminator, group elements).
-	This corresponds to tabclean._groups but also returns discriminators."""
-	def discr(t):
-		return (t[0], len(t))
-	
-	# get a vector of list representations
-	tagv = [tag.split(':') for tag in taglist]
-	# get group discriminators: (wordclass, length) pairs
-	gr_discrs = sorted(set(discr(t) for t in tagv))
-	# now return a list of taglists, each corresponding to a disciminator
-	return [(disc, [':'.join(t) for t in tagv if discr(t) == disc]) for disc in gr_discrs]
-
 def process(infname, outfname, options):
 	total = 0
 	tagcount = dd(int) # (group name, tag) -> value
 	classattrs = dd(lambda: dd(set)) # group name -> attr pos -> value set
 	for tagrepr in tagreprs(infname, options):
 		taglist = tabclean.decomp(tagrepr)
-		for disc, taggroup in _group_disc(taglist):
+		for disc, taggroup in tabclean._group_disc(taglist):
 			# gram class + number of attrs
 			groupname = '%s/%d' % (disc[0], disc[1] - 1)
 			for tag in taggroup:

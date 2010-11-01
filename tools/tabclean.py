@@ -156,6 +156,19 @@ def _groups(taglist):
 	# now return a list of taglists, each corresponding to a disciminator
 	return [[':'.join(t) for t in tagv if discr(t) == disc] for disc in gr_discrs]
 
+def _group_disc(taglist):
+	"""Returns a list of pairs (group_discriminator, group elements).
+	This corresponds to _groups but also returns discriminators."""
+	def discr(t):
+		return (t[0], len(t))
+	
+	# get a vector of list representations
+	tagv = [tag.split(':') for tag in taglist]
+	# get group discriminators: (wordclass, length) pairs
+	gr_discrs = sorted(set(discr(t) for t in tagv))
+	# now return a list of taglists, each corresponding to a disciminator
+	return [(disc, [':'.join(t) for t in tagv if discr(t) == disc]) for disc in gr_discrs]
+
 def _compact_attr(tagv, a_id):
 	"""Transforms the given list reprs of tags by compacting on the given attr
 	index.
@@ -234,12 +247,21 @@ def convert(infname, outfname, options):
 				form, lemma = key
 				# now generate a list of compact tag representations
 				# (each beaing a string to store under (form, lemma))
-				tagreprs = compact(set_of_tags)
-				for tagrepr in tagreprs:
-					num_lines += 1
-					if options.verbose and num_lines % 10000 == 0:
-						_print_now('%d lines written...       \r' % num_lines)
-					out.write(u'%s\t%s\t%s\n' % (form, lemma, tagrepr))
+				if options.write_groups:
+					for disc, taggroup in _group_disc(set_of_tags):
+						groupname = '%s/%d' % (disc[0], disc[1] - 1)
+						tagrepr = _compact_group(taggroup)
+						num_lines += 1
+						if options.verbose and num_lines % 10000 == 0:
+							_print_now('%d lines written...       \r' % num_lines)
+						out.write(u'%s\t%s\t%s\t%s\n' % (groupname, form, lemma, tagrepr))
+				else:
+					tagreprs = compact(set_of_tags)
+					for tagrepr in tagreprs:
+						num_lines += 1
+						if options.verbose and num_lines % 10000 == 0:
+							_print_now('%d lines written...       \r' % num_lines)
+						out.write(u'%s\t%s\t%s\n' % (form, lemma, tagrepr))
 		if options.verbose:
 			_print_now('\nDone.\n')
 
@@ -251,6 +273,7 @@ if __name__ == '__main__':
 	parser.add_option('--input-encoding', type='string', action='store', default=def_enc, dest='input_enc', help='set character encoding of input (default: %s)' % def_enc)
 	parser.add_option('--output-encoding', type='string', action='store', default=def_enc, dest='output_enc', help='set character encoding of output (default: %s)' % def_enc)
 	parser.add_option('-v', '--verbose', action='store_true', dest='verbose', default=False, help='show progress information')
+	parser.add_option('-g', '--write-groups', action='store_true', dest='write_groups', default=False, help='enrich output with groupname column')
 	
 	(options, args) = parser.parse_args()
 	
