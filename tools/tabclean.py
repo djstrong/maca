@@ -141,10 +141,10 @@ def get_decomp_data(infname, options):
 	last_key = None
 	for entry in entries(infname, options):
 		form, lemma, tagrepr = xform(entry, options)
-		if not options.memorise and last_key != (form, lemma):
+		if not options.memorise and last_key != (form, lemma) and last_key is not None:
 			yield data
 			data = {}
-			last_key = (form, lemma)
+		last_key = (form, lemma)
 		taglist = decomp(tagrepr)
 		_update(data, (form, lemma), taglist)
 	yield data
