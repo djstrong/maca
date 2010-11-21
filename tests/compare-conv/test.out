@@ -6,9 +6,9 @@
   <chunk type="s">
    <tok>
     <orth>byłem</orth>
-    <lex><base>być</base><ctag>fin:sg:pri:imperf:m1:prt</ctag></lex>
-    <lex><base>być</base><ctag>fin:sg:pri:imperf:m2:prt</ctag></lex>
-    <lex><base>być</base><ctag>fin:sg:pri:imperf:m3:prt</ctag></lex>
+    <lex><base>być</base><ctag>fin:sg:pri:imperf:prt:m1</ctag></lex>
+    <lex><base>być</base><ctag>fin:sg:pri:imperf:prt:m2</ctag></lex>
+    <lex><base>być</base><ctag>fin:sg:pri:imperf:prt:m3</ctag></lex>
    </tok>
   </chunk>
  </chunk>
