@@ -41,6 +41,11 @@ t1_pos=conjt
 t2_pos=aglt
 copy_attr=per
 
+[join]
+t1_pos=winien
+t2_pos=aglt
+copy_attr=per
+
 [tag]
 pre=fin:gnd:perf
 post=fut
