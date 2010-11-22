@@ -1,10 +1,6 @@
 PROJECT(MorphAnalyser)
 cmake_minimum_required(VERSION 2.8.0)
 
-set(ver_major "0")
-set(ver_minor "1")
-set(ver_patch "1")
-
 # use some of our own Find* scripts
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeScripts)
 
@@ -44,10 +40,6 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 set(LIBS "")
 include_directories(${MorphAnalyser_SOURCE_DIR})
 
-
-
-set(LIBMACA_INSTALL_DATA_DIR share/maca)
-set(LIBMACA_VERSION "${ver_major}.${ver_minor}.${ver_patch}")
 FIND_PATH(LIBMACA_SRC_DATA_DIR
 	test.ini
 	${CMAKE_SOURCE_DIR}/data
