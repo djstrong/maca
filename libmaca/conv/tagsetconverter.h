@@ -15,8 +15,11 @@ class Layer;
 /**
  * The master tagset converter class which accepts tokens with tags in one
  * tagset and outputs tokens in another tagset. The processing is layer
- * based, with each layer capable of modyfying tagis of a token and also
+ * based, with each layer capable of modyfying tags of a token and also
  * possibly joining tokens together or splitting them.
+ *
+ * Note that converters are stateful, use clone() if you need a converter in
+ * more than one place.
  */
 class TagsetConverter : private boost::noncopyable
 {

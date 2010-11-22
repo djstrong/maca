@@ -8,6 +8,8 @@ namespace Maca {
 /**
  * A simple analyser that always returns the same interpretation for any
  * token. The tag is pre-set, and the lemma is the token's orth.
+ *
+ * Configuration class key: \b const
  */
 class ConstAnalyser : public MorphAnalyser
 {

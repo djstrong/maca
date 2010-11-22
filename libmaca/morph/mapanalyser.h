@@ -18,6 +18,14 @@ namespace Maca {
  * A standard-container-based analyser template for use with map-like
  * containers. Data is loaded from a file in tab-separated format of
  * orth, lemma and tag-string triplets.
+ *
+ * Distinct variants of this template are provided for case sensitive and
+ * cas insensitive analysis, and std::map or boost::unordered_map backend.
+ *
+ * std::map, case-sensitive configuration class key: \b map-case
+ * std::map, case-insensitive configuration class key: \b map
+ * unordered_map, case-sensitive configuration class key: \b hashmap-case
+ * unordered_map, case-insensitive configuration class key: \b hashmap
  */
 template<typename MapT>
 class MapAnalyser : public MorphAnalyser

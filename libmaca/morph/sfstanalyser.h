@@ -27,6 +27,8 @@ namespace Maca {
  * Input for the fst-compiler tool can be prepared from an orth-lemma-tag
  * tab-separated dictionary by the tab-to-sfst tool which should be bundled
  * with the library.
+ *
+ * Configuration class key: \b sfst
  */
 class SfstAnalyser : public MorphAnalyser, private boost::noncopyable
 {
