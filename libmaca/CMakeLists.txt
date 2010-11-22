@@ -56,6 +56,7 @@ SET(libmaca_STAT_SRC
 	io/text.cpp
 	io/premorph.cpp
 	morph/constanalyser.cpp
+	morph/convertinganalyser.cpp
 	morph/dispatchanalyser.cpp
 	morph/mapanalyser.cpp
 	morph/morphanalyser.cpp
