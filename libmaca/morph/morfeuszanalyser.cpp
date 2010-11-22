@@ -305,10 +305,10 @@ bool MorfeuszAnalyser::process_complex_analysis(const Toki::Token &t,
 						t.orth_utf8(), pmorf);
 			}
 			++current_node;
-		} else { //only the last node should have no succesors
+		} else { //only the last node should have no successors
 			if (current_node != node_count - 1) {
 				throw MorfeuszError(
-						"node without succesors that not last node",
+						"node without successors is not the last node",
 						t.orth_utf8(), pmorf);
 			}
 			++current_node;

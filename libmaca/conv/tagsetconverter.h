@@ -39,7 +39,7 @@ public:
 
 	TagsetConverter* clone() const;
 
-	/// Layers count accesor
+	/// Layers count accessor
 	size_t layer_count() const {
 		return layers_.size();
 	}

@@ -70,7 +70,7 @@ public:
 	const Corpus2::Tagset& tagset_to() const;
 
 	/**
-	 * Redundant tagset accesor for consistency and to avoid having to
+	 * Redundant tagset accessor for consistency and to avoid having to
 	 * choose between _from and _to in derived classes.
 	 */
 	const Corpus2::Tagset& tagset() const {

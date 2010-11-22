@@ -100,7 +100,7 @@ public:
 		return rv;
 	}
 
-	/// Corpus2::Tagset accesor
+	/// Corpus2::Tagset accessor
 	const Corpus2::Tagset& tagset() const {
 		return *tagset_;
 	}

@@ -40,7 +40,7 @@ public:
 	/// Destructor
 	~MorfeuszInitError() throw();
 
-	/// Info accesor
+	/// Info accessor
 	std::string info() const;
 
 	/// the error info, extra info and (requested) Morfeusz library name
@@ -60,7 +60,7 @@ public:
 	/// Destructor
 	~MorfeuszError() throw();
 
-	/// Info accesor
+	/// Info accessor
 	std::string info() const;
 
 	/// The error info and Morfeusz input during the error, if available
