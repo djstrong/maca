@@ -27,8 +27,56 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>
+#include <boost/make_shared.hpp>
 
 #include <fstream>
+#include <iomanip>
+
+void write_folds(Corpus2::TokenReader& reader,
+		const std::string& output_format, const std::string& prefix, int folds)
+{
+	std::vector< boost::shared_ptr<std::ofstream> > streams;
+	std::vector< boost::shared_ptr<Corpus2::TokenWriter> > writers;
+	std::vector< boost::shared_ptr<std::ofstream> > streams2;
+	std::vector< boost::shared_ptr<Corpus2::TokenWriter> > writers2;
+	std::vector<int> sentences, tokens;
+	for (int i = 0; i < folds; ++i) {
+		std::stringstream fn, fn2;
+		fn << prefix << std::setw(2) << std::setfill('0') << i + 1 << ".xml";
+		fn2 << prefix << "x"<< std::setw(2) << std::setfill('0') << i + 1 << ".xml";
+		std::string s = fn.str();
+		std::string s2 = fn2.str();
+		streams.push_back(boost::make_shared<std::ofstream>(s.c_str()));
+		streams2.push_back(boost::make_shared<std::ofstream>(s2.c_str()));
+		boost::shared_ptr<Corpus2::TokenWriter> w;
+		w.reset(Corpus2::TokenWriter::create(output_format, *streams.back(), reader.tagset()));
+		writers.push_back(w);
+		w.reset(Corpus2::TokenWriter::create(output_format, *streams2.back(), reader.tagset()));
+		writers2.push_back(w);
+		sentences.push_back(0);
+		tokens.push_back(0);
+	}
+	while (Corpus2::Sentence* s = reader.get_next_sentence()) {
+		int f = rand() % folds;
+		writers[f]->write_sentence(*s);
+		for (int i = 0; i < folds; ++i) {
+			if (i != f) {
+				writers2[i]->write_sentence(*s);
+			}
+		}
+		sentences[f]++;
+		tokens[f] += s->size();
+		delete s;
+	}
+	std::cout << "Folds created:";
+	for (int i = 0; i < folds; ++i) {
+		std::cout << "Fold Sentences Tokens\n";
+		std::cout << std::setw(2) << std::setfill('0') << i << "   ";
+		std::cout << std::setfill(' ');
+		std::cout << std::setw(9) << sentences[i] << " ";
+		std::cout << std::setw(9) << tokens[i] << "\n";
+	}
+}
 
 int main(int argc, char** argv)
 {
@@ -37,6 +85,8 @@ int main(int argc, char** argv)
 	bool quiet = false;
 	bool disamb = false;
 	bool progress = false;
+	int folds = 0;
+	std::string folds_file_prefix;
 	using boost::program_options::value;
 
 	std::string writers = boost::algorithm::join(Corpus2::TokenWriter::available_writer_types_help(), " ");
@@ -58,6 +108,10 @@ int main(int argc, char** argv)
 			 writers_help.c_str())
 			("progress,p", value(&progress)->zero_tokens(),
 			 "Show progress info")
+			("folds,F", value(&folds),
+			 "Spread sentences accros folds (only if nop conversion)")
+			("folds-file-name,f", value(&folds_file_prefix),
+			 "Prefix for fold filenames")
 			("quiet,q", value(&quiet)->zero_tokens(),
 			 "Suppress startup info \n")
 			("help,h", "Show help")
@@ -99,6 +153,10 @@ int main(int argc, char** argv)
 				} else {
 					std::cerr << "Unknown input format: " << input_format << "\n";
 					return 2;
+				}
+				if (folds > 0) {
+					write_folds(*reader, output_format, folds_file_prefix, folds);
+					return 0;
 				}
 				boost::scoped_ptr<Corpus2::TokenWriter> writer;
 				writer.reset(Corpus2::TokenWriter::create(output_format, std::cout, tagset));
