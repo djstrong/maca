@@ -211,7 +211,7 @@ int main(int argc, char** argv)
 			return 1;
 		}
 	} catch (PwrNlp::PwrNlpError& e) {
-		std::cerr << "Error: " << e.info() << "\n";
+		std::cerr << "Error: " << e.scope() << " " << e.info() << "\n";
 	}
 	return 0;
 }
