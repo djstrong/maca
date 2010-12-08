@@ -33,7 +33,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <iomanip>
 
 void write_folds(Corpus2::TokenReader& reader,
-		const std::string& output_format, const std::string& prefix, int folds)
+		const std::string& output_format, const std::string& prefix, int folds,
+		Maca::Conversion::TagsetConverter* conv = NULL)
 {
 	std::vector< boost::shared_ptr<std::ofstream> > streams;
 	std::vector< boost::shared_ptr<Corpus2::TokenWriter> > writers;
@@ -58,6 +59,9 @@ void write_folds(Corpus2::TokenReader& reader,
 	}
 	while (Corpus2::Sentence* s = reader.get_next_sentence()) {
 		int f = rand() % folds;
+		if (conv) {
+			s = conv->convert_sentence(s);
+		}
 		writers[f]->write_sentence(*s);
 		for (int i = 0; i < folds; ++i) {
 			if (i != f) {
@@ -109,7 +113,7 @@ int main(int argc, char** argv)
 			("progress,p", value(&progress)->zero_tokens(),
 			 "Show progress info")
 			("folds,F", value(&folds),
-			 "Spread sentences accros folds (only if nop conversion)")
+			 "Spread sentences across folds")
 			("folds-file-name,f", value(&folds_file_prefix),
 			 "Prefix for fold filenames")
 			("quiet,q", value(&quiet)->zero_tokens(),
@@ -180,6 +184,10 @@ int main(int argc, char** argv)
 			Maca::Config::Node n = Maca::Config::from_file(fn);
 			Maca::Conversion::TagsetConverter conv(n);
 			Corpus2::XcesReader reader(conv.tagset_from(), std::cin, disamb);
+			if (folds > 0) {
+				write_folds(reader, output_format, folds_file_prefix, folds, &conv);
+				return 0;
+			}
 			boost::scoped_ptr<Corpus2::TokenWriter> writer;
 			writer.reset(Corpus2::TokenWriter::create(output_format, std::cout, conv.tagset_to()));
 			Corpus2::TokenTimer timer;
