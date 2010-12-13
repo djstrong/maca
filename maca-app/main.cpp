@@ -80,14 +80,14 @@ int main(int argc, char** argv)
 				return 8;
 			}
 			Corpus2::XcesReader xr(*tagset, ifs);
-			std::vector<Corpus2::Chunk*> chunks;
-			Corpus2::Chunk* ch = NULL;
+			std::vector< boost::shared_ptr<Corpus2::Chunk> > chunks;
+			boost::shared_ptr<Corpus2::Chunk> ch;
 			int sc = 0;
 			int tc = 0;
 			while ((ch = xr.get_next_chunk())) {
 				chunks.push_back(ch);
 				sc += ch->sentences().size();
-				foreach (Corpus2::Sentence* s, ch->sentences()) {
+				foreach (const Corpus2::Sentence::Ptr& s, ch->sentences()) {
 					tc += s->size();
 				}
 			}
@@ -95,9 +95,7 @@ int main(int argc, char** argv)
 					<< sc << " sentences, " << tc << " tokens\n";
 			std::string x;
 			std::cin >> x;
-			foreach (Corpus2::Chunk* c, chunks) {
-				delete c;
-			}
+			chunks.clear();
 			std::cerr << "Deleted\n";
 			std::cin >> x;
 		}

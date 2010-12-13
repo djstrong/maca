@@ -10,7 +10,7 @@ TextReader::TextReader(std::istream &is,
 	sa_->set_input_source(is);
 }
 
-Corpus2::Sentence* TextReader::actual_next_sentence()
+Corpus2::Sentence::Ptr TextReader::actual_next_sentence()
 {
 	return sa_->get_next_sentence();
 }

@@ -26,9 +26,9 @@ public:
 			const std::string& config_name,
 			const std::string& toki_config_override);
 
-	Corpus2::Sentence* get_next_sentence();
+	Corpus2::Sentence::Ptr get_next_sentence();
 
-	typedef boost::function<void (Corpus2::Sentence*)> sentence_sink_t;
+	typedef boost::function<void (const Corpus2::Sentence::Ptr&)> sentence_sink_t;
 
 	/**
 	 * Convenience function to process all sentences that can be gathered

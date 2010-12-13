@@ -139,8 +139,7 @@ int main(int argc, char** argv)
 			timer.register_signal_handler();
 			if (split_chunks) {
 				/// TODO empty chunks
-				while (Corpus2::Chunk* chunk = tr->get_next_chunk()) {
-					boost::scoped_ptr<Corpus2::Chunk> deleter(chunk);
+				while (boost::shared_ptr<Corpus2::Chunk> chunk = tr->get_next_chunk()) {
 					writer->write_chunk(*chunk);
 					timer.count_chunk(*chunk);
 					if (progress) {
@@ -148,8 +147,7 @@ int main(int argc, char** argv)
 					}
 				}
 			} else {
-				while (Corpus2::Sentence* sentence = tr->get_next_sentence()) {
-					boost::scoped_ptr<Corpus2::Sentence> deleter(sentence);
+				while (Corpus2::Sentence::Ptr sentence = tr->get_next_sentence()) {
 					assert(!sentence->empty());
 					timer.count_sentence(*sentence);
 					writer->write_sentence(*sentence);

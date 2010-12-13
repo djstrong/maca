@@ -92,7 +92,7 @@ public:
 			boost::function<void (Corpus2::Token*)> sink,
 			bool warn_on_failure = true);
 
-	Corpus2::Sentence* convert_sentence(Corpus2::Sentence* s);
+	Corpus2::Sentence::Ptr convert_sentence(Corpus2::Sentence::Ptr s);
 
 private:
 	/// The conversion layers

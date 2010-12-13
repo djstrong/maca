@@ -6,6 +6,7 @@
 #include <libmaca/conv/tagrulelayer.h>
 #include <libmaca/conv/tagconvert.h>
 #include <libpwrutils/foreach.h>
+#include <boost/make_shared.hpp>
 
 namespace Maca {
 namespace Conversion {
@@ -151,9 +152,9 @@ void TagsetConverter::convert_ambiguous(
 	}
 }
 
-Corpus2::Sentence* TagsetConverter::convert_sentence(Corpus2::Sentence* s)
+Corpus2::Sentence::Ptr TagsetConverter::convert_sentence(Corpus2::Sentence::Ptr s)
 {
-	Corpus2::Sentence* res = new Corpus2::Sentence;
+	Corpus2::Sentence::Ptr res = boost::make_shared<Corpus2::Sentence>();
 	boost::function<void (Corpus2::Token*)> adder = boost::bind(&Corpus2::Sentence::append,
 			res, _1);
 	std::vector<Corpus2::Token*>::iterator i = s->tokens().begin();
@@ -174,8 +175,7 @@ Corpus2::Sentence* TagsetConverter::convert_sentence(Corpus2::Sentence* s)
 				boost::sub_range< std::vector<Corpus2::Token*> >(b, i),
 				adder);
 	}
-	s->tokens().clear();
-	delete s;
+	s->release_tokens();
 	return res;
 }
 

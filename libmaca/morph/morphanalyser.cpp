@@ -6,7 +6,7 @@
 
 #include <boost/bind.hpp>
 #include <boost/algorithm/string.hpp>
-
+#include <boost/make_shared.hpp>
 #include <memory>
 #include <dlfcn.h>
 
@@ -39,9 +39,9 @@ std::vector<Corpus2::Token*> MorphAnalyser::process(const Toki::Token &t)
 	return v;
 }
 
-Corpus2::Sentence* MorphAnalyser::process(const Toki::Sentence &s)
+Corpus2::Sentence::Ptr MorphAnalyser::process(const Toki::Sentence &s)
 {
-	Corpus2::Sentence* ss = new Corpus2::Sentence;
+	Corpus2::Sentence::Ptr ss = boost::make_shared<Corpus2::Sentence>();
 	foreach (Toki::Token* t, s.tokens()) {
 		process(*t, ss->tokens());
 	}
@@ -65,14 +65,14 @@ void MorphAnalyser::process_dispose(const std::vector<Toki::Token*>& t,
 	}
 }
 
-Corpus2::Sentence* MorphAnalyser::process_dispose(Toki::Sentence* t)
+Corpus2::Sentence::Ptr MorphAnalyser::process_dispose(Toki::Sentence* t)
 {
-	std::auto_ptr<Corpus2::Sentence> s(new Corpus2::Sentence);
-	process_dispose(t, s.get());
-	return s.release();
+	Corpus2::Sentence::Ptr s = boost::make_shared<Corpus2::Sentence>();
+	process_dispose(t, s);
+	return s;
 }
 
-void MorphAnalyser::process_dispose(Toki::Sentence* t, Corpus2::Sentence* v)
+void MorphAnalyser::process_dispose(Toki::Sentence* t, Corpus2::Sentence::Ptr v)
 {
 	foreach (Toki::Token* tt, t->tokens()) {
 		process(*tt, v->tokens());

@@ -18,7 +18,7 @@ public:
 
 protected:
 	/// BufferedSentenceReader override
-	Corpus2::Sentence* actual_next_sentence();
+	Corpus2::Sentence::Ptr actual_next_sentence();
 
 	std::istream& is_;
 

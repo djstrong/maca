@@ -51,7 +51,7 @@ SentenceAnalyser::create_from_named_config(
 	return boost::make_shared<SentenceAnalyser>(cfg, toki_cfg);
 }
 
-Corpus2::Sentence* SentenceAnalyser::get_next_sentence()
+Corpus2::Sentence::Ptr SentenceAnalyser::get_next_sentence()
 {
 	if (sp_.has_more()) {
 		boost::scoped_ptr<Toki::Sentence> toki_sentence(
@@ -60,7 +60,7 @@ Corpus2::Sentence* SentenceAnalyser::get_next_sentence()
 		assert(!toki_sentence->empty());
 		return ma_->process(*toki_sentence);
 	} else {
-		return NULL;
+		return Corpus2::Sentence::Ptr();
 	}
 }
 
@@ -73,7 +73,7 @@ void SentenceAnalyser::new_input_source()
 bool SentenceAnalyser::process(sentence_sink_t sink)
 {
 	bool had_sentences = false;
-	while (Corpus2::Sentence* s = get_next_sentence()) {
+	while (Corpus2::Sentence::Ptr s = get_next_sentence()) {
 		sink(s);
 		had_sentences = true;
 	}

@@ -29,7 +29,7 @@ protected:
 			const AttributeList& attributes);
 	void on_end_element(const Glib::ustring & name);
 
-	void output_sentence(Corpus2::Sentence* s);
+	void output_sentence(const Corpus2::Sentence::Ptr& s);
 
 private:
 	std::ostream& os_;
@@ -109,9 +109,8 @@ void PremorphProcessorImpl::on_end_element(const Glib::ustring &name)
 	os_ << "</" << name << ">" << "\n";
 }
 
-void PremorphProcessorImpl::output_sentence(Corpus2::Sentence* s)
+void PremorphProcessorImpl::output_sentence(const Corpus2::Sentence::Ptr& s)
 {
-	boost::scoped_ptr<Corpus2::Sentence> deleter(s);
 	if (!s->empty()) {
 		os_ << " <chunk type=\"s\">\n";
 		foreach (Corpus2::Token* t, s->tokens()) {
@@ -129,7 +128,7 @@ class PremorphReaderImpl : public Corpus2::BasicSaxParserT<std::stringstream>
 {
 public:
 	PremorphReaderImpl(const boost::shared_ptr<SentenceAnalyser>& sa,
-			std::deque<Corpus2::Chunk*>& chunks);
+		std::deque< boost::shared_ptr<Corpus2::Chunk> >& chunks);
 protected:
 	void on_start_element(const Glib::ustring & name,
 			const AttributeList& attributes);
@@ -139,9 +138,9 @@ private:
 			XS_LEMMA, XS_TAG };
 	state_t state_;
 
-	Corpus2::Chunk* chunk_;
+	boost::shared_ptr<Corpus2::Chunk> chunk_;
 	boost::shared_ptr<SentenceAnalyser> sa_;
-	std::deque<Corpus2::Chunk*>& chunks_;
+	std::deque< boost::shared_ptr<Corpus2::Chunk> >& chunks_;
 };
 
 PremorphReader::PremorphReader(std::istream& is,
@@ -179,9 +178,9 @@ void PremorphReader::ensure_more()
 
 PremorphReaderImpl::PremorphReaderImpl(
 		const boost::shared_ptr<SentenceAnalyser>& sa,
-		std::deque<Corpus2::Chunk*> &chunks)
+		std::deque< boost::shared_ptr<Corpus2::Chunk> > &chunks)
 	: Corpus2::BasicSaxParserT<std::stringstream>(), state_(XS_NONE)
-	, chunk_(NULL), sa_(sa)
+	, chunk_(), sa_(sa)
 	, chunks_(chunks)
 {
 }
@@ -201,7 +200,7 @@ void PremorphReaderImpl::on_start_element(const Glib::ustring &name,
 				throw Corpus2::XcesError("Top level <chunk> is type=\"s\"");
 			}
 			state_ = XS_CHUNK;
-			chunk_ = new Corpus2::Chunk;
+			chunk_ = boost::make_shared<Corpus2::Chunk>();
 			foreach (const Attribute& a, attributes) {
 				chunk_->set_attribute(a.name, a.value);
 			}
@@ -221,7 +220,7 @@ void PremorphReaderImpl::on_end_element(const Glib::ustring &name)
 		sa_->process(boost::bind(&Corpus2::Chunk::append, chunk_, _1));
 		clear_buf();
 		chunks_.push_back(chunk_);
-		chunk_ = NULL;
+		chunk_.reset();
 		state_ = XS_NONE;
 	}
 }

@@ -45,7 +45,7 @@ public:
 
 	/// Convenience process_functional wrapper to process a Toki sentence
 	/// and return a Maca sentence of analysed tokens
-	Corpus2::Sentence* process(const Toki::Sentence& s);
+	Corpus2::Sentence::Ptr process(const Toki::Sentence& s);
 
 	/// Convenience process_functional wrapper  to process a Toki token
 	/// and insert the resulting Maca tokens into the given vector.
@@ -66,12 +66,12 @@ public:
 	/// Convenience process_functional wrapper to process a vector of Toki
 	/// tokens and return a vector of Maca tokens. The toki tokens are
 	/// deleted.
-	Corpus2::Sentence* process_dispose(Toki::Sentence* s);
+	Corpus2::Sentence::Ptr process_dispose(Toki::Sentence* s);
 
 	/// Convenience process_functional wrapper to process a Toki Sentence
 	/// tokens and insert the resulting Maca tokens into a Maca
 	/// Sentence. The Toki sentence and tokens are deleted.
-	void process_dispose(Toki::Sentence* t, Corpus2::Sentence* v);
+	void process_dispose(Toki::Sentence* t, Corpus2::Sentence::Ptr v);
 
 	/**
 	 * The main token analysis function to be implemented in derived

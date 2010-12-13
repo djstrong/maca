@@ -88,13 +88,12 @@ int main(int argc, char** argv)
 				writer.reset(Corpus2::TokenWriter::create(output_format, std::cout, tagset));
 				Corpus2::TokenTimer& timer = Corpus2::global_timer();
 				timer.register_signal_handler();
-				while (Corpus2::Chunk* c = reader->get_next_chunk()) {
+				while (boost::shared_ptr<Corpus2::Chunk> c = reader->get_next_chunk()) {
 					writer->write_chunk(*c);
 					timer.count_chunk(*c);
 					if (progress) {
 						timer.check_slice();
 					}
-					delete c;
 				}
 				if (progress) {
 					timer.stats();
@@ -109,8 +108,8 @@ int main(int argc, char** argv)
 			boost::scoped_ptr<Corpus2::TokenWriter> writer;
 			writer.reset(Corpus2::TokenWriter::create(output_format, std::cout, conv.tagset_to()));
 			Corpus2::TokenTimer timer;
-			while (Corpus2::Chunk* c = reader.get_next_chunk()) {
-				foreach (Corpus2::Sentence*& s, c->sentences()) {
+			while (boost::shared_ptr<Corpus2::Chunk> c = reader.get_next_chunk()) {
+				foreach (boost::shared_ptr<Corpus2::Sentence>& s, c->sentences()) {
 					s = conv.convert_sentence(s);
 					timer.count_sentence(*s);
 					if (progress) {
@@ -118,7 +117,6 @@ int main(int argc, char** argv)
 					}
 				}
 				writer->write_chunk(*c);
-				delete c;
 			}
 			if (progress) {
 				timer.stats();
