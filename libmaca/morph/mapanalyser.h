@@ -1,3 +1,19 @@
+/*
+    Copyright (C) 2010 Tomasz Śniatowski, Adam Radziszewski
+    Part of the libmaca project
+
+    This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the Free
+Software Foundation; either version 3 of the License, or (at your option)
+any later version.
+
+    This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE. 
+
+    See the LICENSE and COPYING files for more details.
+*/
+
 #ifndef LIBMACA_MAPANALYSER_H
 #define LIBMACA_MAPANALYSER_H
 
@@ -18,6 +34,14 @@ namespace Maca {
  * A standard-container-based analyser template for use with map-like
  * containers. Data is loaded from a file in tab-separated format of
  * orth, lemma and tag-string triplets.
+ *
+ * Distinct variants of this template are provided for case sensitive and
+ * cas insensitive analysis, and std::map or boost::unordered_map backend.
+ *
+ * std::map, case-sensitive configuration class key: \b map-case
+ * std::map, case-insensitive configuration class key: \b map
+ * unordered_map, case-sensitive configuration class key: \b hashmap-case
+ * unordered_map, case-insensitive configuration class key: \b hashmap
  */
 template<typename MapT>
 class MapAnalyser : public MorphAnalyser

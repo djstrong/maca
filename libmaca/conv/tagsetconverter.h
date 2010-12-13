@@ -1,3 +1,19 @@
+/*
+    Copyright (C) 2010 Tomasz Śniatowski, Adam Radziszewski
+    Part of the libmaca project
+
+    This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the Free
+Software Foundation; either version 3 of the License, or (at your option)
+any later version.
+
+    This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE. 
+
+    See the LICENSE and COPYING files for more details.
+*/
+
 #ifndef LIBMACA_TAGSETCONVERTER_H
 #define LIBMACA_TAGSETCONVERTER_H
 
@@ -15,8 +31,11 @@ class Layer;
 /**
  * The master tagset converter class which accepts tokens with tags in one
  * tagset and outputs tokens in another tagset. The processing is layer
- * based, with each layer capable of modyfying tagis of a token and also
+ * based, with each layer capable of modyfying tags of a token and also
  * possibly joining tokens together or splitting them.
+ *
+ * Note that converters are stateful, use clone() if you need a converter in
+ * more than one place.
  */
 class TagsetConverter : private boost::noncopyable
 {
@@ -36,7 +55,7 @@ public:
 
 	TagsetConverter* clone() const;
 
-	/// Layers count accesor
+	/// Layers count accessor
 	size_t layer_count() const {
 		return layers_.size();
 	}

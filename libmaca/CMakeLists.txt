@@ -2,14 +2,22 @@
 
 PROJECT(maca)
 
+set(maca_ver_major "1")
+set(maca_ver_minor "0")
+set(maca_ver_patch "0")
+
 if(NOT LIBMACA_SRC_DATA_DIR)
 	message(FATAL_ERROR "There is no data for libmaca")
 endif(NOT LIBMACA_SRC_DATA_DIR)
 
 set(LIBMACA_PATH_SEPARATOR ";")
+set(LIBMACA_INSTALL_DATA_DIR share/maca)
 set(LIBMACA_DATA_DIR ".;${CMAKE_INSTALL_PREFIX}/${LIBMACA_INSTALL_DATA_DIR}")
+set(LIBMACA_VERSION "${maca_ver_major}.${maca_ver_minor}.${maca_ver_patch}")
 configure_file(config_d.in include/libmaca/config_d.h)
+configure_file(version.in include/libtoki/version.h)
 add_definitions(-DHAVE_CONFIG_D_H)
+add_definitions(-DHAVE_VERSION_H)
 
 include_directories( ${CMAKE_CURRENT_BINARY_DIR}/include/ )
 
@@ -56,6 +64,7 @@ SET(libmaca_STAT_SRC
 	io/text.cpp
 	io/premorph.cpp
 	morph/constanalyser.cpp
+	morph/convertinganalyser.cpp
 	morph/dispatchanalyser.cpp
 	morph/mapanalyser.cpp
 	morph/morphanalyser.cpp
@@ -79,8 +88,8 @@ if (SFST_FOUND)
 		add_library(maca_sfst MODULE morph/sfstanalyser.cpp)
 		target_link_libraries(maca_sfst maca ${SFST_LIBRARY} )
 		set_target_properties(maca_sfst PROPERTIES
-			VERSION "${ver_major}.${ver_minor}"
-			SOVERSION ${ver_major})
+			VERSION "${maca_ver_major}.${maca_ver_minor}"
+			SOVERSION ${maca_ver_major})
 		set_target_properties(maca_sfst PROPERTIES
 			COMPILE_FLAGS "-DSFST_AS_PLUGIN -I${SFST_INCLUDE_DIR} -Wno-deprecated"
 		)
@@ -102,8 +111,8 @@ if (MORFEUSZ_FOUND)
 		add_library(maca_morfeusz MODULE morph/morfeuszanalyser.cpp)
 		#target_link_libraries ( maca_morfeusz maca ${MORFEUSZ_LIBRARY} )
 		set_target_properties(maca_morfeusz PROPERTIES
-			VERSION "${ver_major}.${ver_minor}"
-			SOVERSION ${ver_major})
+			VERSION "${maca_ver_major}.${maca_ver_minor}"
+			SOVERSION ${maca_ver_major})
 		set_target_properties(maca_morfeusz PROPERTIES
 			COMPILE_FLAGS "-DMORFEUSZ_AS_PLUGIN -I${MORFEUSZ_INCLUDE_DIR}"
 		)
@@ -123,8 +132,8 @@ file(GLOB_RECURSE INCS "*.h")
 add_library(maca SHARED ${libmaca_STAT_SRC} ${INCS})
 target_link_libraries ( maca ${LIBS} )
 set_target_properties(maca PROPERTIES
-	VERSION "${ver_major}.${ver_minor}"
-	SOVERSION ${ver_major})
+	VERSION "${maca_ver_major}.${maca_ver_minor}"
+	SOVERSION ${maca_ver_major})
 
 if(UNIX)
 	set_target_properties(maca PROPERTIES
@@ -146,6 +155,11 @@ if(UNIX)
 		PATTERN "bin" EXCLUDE
 		PATTERN "build" EXCLUDE
 		PATTERN "CMake*" EXCLUDE
+	)
+	install(
+		DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/
+		DESTINATION include
+		FILES_MATCHING PATTERN "version.h"
 	)
 	install(
 		DIRECTORY ${LIBMACA_SRC_DATA_DIR}/

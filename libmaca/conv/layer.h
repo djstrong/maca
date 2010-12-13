@@ -1,3 +1,19 @@
+/*
+    Copyright (C) 2010 Tomasz Śniatowski, Adam Radziszewski
+    Part of the libmaca project
+
+    This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the Free
+Software Foundation; either version 3 of the License, or (at your option)
+any later version.
+
+    This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE. 
+
+    See the LICENSE and COPYING files for more details.
+*/
+
 #ifndef LIBMACA_TOKEN_LAYER_H
 #define LIBMACA_TOKEN_LAYER_H
 
@@ -70,7 +86,7 @@ public:
 	const Corpus2::Tagset& tagset_to() const;
 
 	/**
-	 * Redundant tagset accesor for consistency and to avoid having to
+	 * Redundant tagset accessor for consistency and to avoid having to
 	 * choose between _from and _to in derived classes.
 	 */
 	const Corpus2::Tagset& tagset() const {

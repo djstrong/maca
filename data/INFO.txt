@@ -8,6 +8,7 @@ Tagsets:
 • sgjp — variation of NKJP tagset as output by Morfeusz SGJP, the same gender differences as morfeusz v. kipi.
 
 Configurations:
+• morfo1104-ikipi.ini — uses free data (most obtained from Morfologik, the rest gathered by Maziarz&Radziszewski, see below), outputs in ikipi tagset,
 • morfeusz.ini — uses Morfeusz SIAT, outputs in morfeusz SIAT tagset,
 • morfeusz-kipi.ini — uses morfpatch, Morfeusz SIAT and acro-infl+acro-uninfl, outputs in kipi tagset (simplified genders),
 • morfeusz-ikipi.ini — as above but outputs in ikipi tagset,
@@ -21,9 +22,12 @@ TODO: intermediate tagset for nkjp.
 All these configuration use default Toki config (suited for processing Polish).
 
 Data sets:
-• acro-infl.fst, acro-infl.txt — semi-automatically gathered inflected acronyms and expression with apostrophes; contain only subst and adj tags, hence suitable for all the three tagsets (even should be fine for NKJP)
+• morfo-1104-lower.fst — data from Morfologik 1.7 RC2 converted to IKIPI tagset by Radziszewski and Maziarz; licensed under LGPL or CC Share Alike (you are free to choose, the same applies to original Morfologik data); “sources” (tab-delimited text file) should be available within this package or on the project website; if they are not, contact the authors and we will send it
+• acro-infl.fst, acro-infl.txt — semi-automatically gathered inflected acronyms and expression with apostrophes; contain only subst and adj tags, hence suitable for all the three tagsets (even should be fine for NKJP); credit: Marek Maziarz, Adam Radziszewski, licensed on the terms of LGPL or Creative Commons Share Alike (you are free to chose)
 • acro-uninfl.fst, acro-uninfl.txt — the stems of the above expressions assigned guessed tags (pretty many of possible tags); only subst and adj tags
 • morfpatch-kipi.txt — a couple of corrections of Morfeusz SIAT errors; currently using subst and pred tags only (this may have changed)
+
+Note: acro-infl, acro-uninfl and morfpatch-kipi have been created by Marek Maziarz, Adam Radziszewski (2010), licensed on the terms of LGPL or Creative Commons Share Alike (you are free to choose).
 
 Tagset conversion configs (used by the above configs):
 • mm.conv — just morfeusz tagset, no conversion

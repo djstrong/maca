@@ -1,3 +1,19 @@
+/*
+    Copyright (C) 2010 Tomasz Śniatowski, Adam Radziszewski
+    Part of the libmaca project
+
+    This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the Free
+Software Foundation; either version 3 of the License, or (at your option)
+any later version.
+
+    This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE. 
+
+    See the LICENSE and COPYING files for more details.
+*/
+
 #include <libmaca/morph/morfeuszanalyser.h>
 #include <libcorpus2/token.h>
 #include <libmaca/util/settings.h>
@@ -305,10 +321,10 @@ bool MorfeuszAnalyser::process_complex_analysis(const Toki::Token &t,
 						t.orth_utf8(), pmorf);
 			}
 			++current_node;
-		} else { //only the last node should have no succesors
+		} else { //only the last node should have no successors
 			if (current_node != node_count - 1) {
 				throw MorfeuszError(
-						"node without succesors that not last node",
+						"node without successors is not the last node",
 						t.orth_utf8(), pmorf);
 			}
 			++current_node;
