@@ -4,7 +4,7 @@ PROJECT(maca)
 
 set(maca_ver_major "1")
 set(maca_ver_minor "0")
-set(maca_ver_patch "0")
+set(maca_ver_patch "1")
 
 if(NOT LIBMACA_SRC_DATA_DIR)
 	message(FATAL_ERROR "There is no data for libmaca")
@@ -25,10 +25,10 @@ include_directories( ${CMAKE_CURRENT_BINARY_DIR}/include/ )
 #include_directories("/usr/include/sfst-1.0")
 #set(LIBS ${LIBS} "sfst1")
 
-find_package(Toki 0.4.2 REQUIRED)
+find_package(Toki 1.0.0 REQUIRED)
 set(LIBS ${LIBS} ${Toki_LIBRARY})
 
-find_package(Corpus2 0.1.0 REQUIRED)
+find_package(Corpus2 1.0.4 REQUIRED)
 set(LIBS ${LIBS} ${Corpus2_LIBRARY})
 
 find_package(ICU REQUIRED QUIET)
