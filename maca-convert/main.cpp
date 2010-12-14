@@ -57,7 +57,7 @@ void write_folds(Corpus2::TokenReader& reader,
 		sentences.push_back(0);
 		tokens.push_back(0);
 	}
-	while (Corpus2::Sentence* s = reader.get_next_sentence()) {
+	while (Corpus2::Sentence::Ptr s = reader.get_next_sentence()) {
 		int f = rand() % folds;
 		if (conv) {
 			s = conv->convert_sentence(s);
@@ -70,7 +70,6 @@ void write_folds(Corpus2::TokenReader& reader,
 		}
 		sentences[f]++;
 		tokens[f] += s->size();
-		delete s;
 	}
 	std::cout << "Folds created:";
 	for (int i = 0; i < folds; ++i) {
