@@ -15,7 +15,7 @@ set(LIBMACA_INSTALL_DATA_DIR share/maca)
 set(LIBMACA_DATA_DIR ".;${CMAKE_INSTALL_PREFIX}/${LIBMACA_INSTALL_DATA_DIR}")
 set(LIBMACA_VERSION "${maca_ver_major}.${maca_ver_minor}.${maca_ver_patch}")
 configure_file(config_d.in include/libmaca/config_d.h)
-configure_file(version.in include/libtoki/version.h)
+configure_file(version.in include/libmaca/version.h)
 add_definitions(-DHAVE_CONFIG_D_H)
 add_definitions(-DHAVE_VERSION_H)
 
