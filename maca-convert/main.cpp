@@ -32,53 +32,124 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <fstream>
 #include <iomanip>
 
-void write_folds(Corpus2::TokenReader& reader,
-		const std::string& output_format, const std::string& prefix, int folds,
-		Maca::Conversion::TagsetConverter* conv = NULL)
+class Folder
 {
-	std::vector< boost::shared_ptr<std::ofstream> > streams;
-	std::vector< boost::shared_ptr<Corpus2::TokenWriter> > writers;
-	std::vector< boost::shared_ptr<std::ofstream> > streams2;
-	std::vector< boost::shared_ptr<Corpus2::TokenWriter> > writers2;
-	std::vector<int> sentences, tokens;
+public:
+	Folder(Corpus2::TokenReader& reader,
+		const std::string& output_format, const std::string& prefix,
+		Maca::Conversion::TagsetConverter* conv = NULL);
+
+	void init_writers(int folds);
+	void stats() const;
+	void write_seq_folds();
+	void write_random_folds(double train_ratio);
+
+private:
+	Corpus2::TokenReader& reader_;
+	Maca::Conversion::TagsetConverter *conv_;
+	std::string prefix_;
+	std::string output_format_;
+
+	std::vector< boost::shared_ptr<std::ofstream> > streams_train_;
+	std::vector< boost::shared_ptr<Corpus2::TokenWriter> > writers_train_;
+	std::vector< boost::shared_ptr<std::ofstream> > streams_test_;
+	std::vector< boost::shared_ptr<Corpus2::TokenWriter> > writers_test_;
+	std::vector<int> sentences_train_, tokens_train_;
+	std::vector<int> sentences_test_, tokens_test_;
+};
+
+Folder::Folder(Corpus2::TokenReader &reader, const std::string &output_format,
+	const std::string &prefix, Maca::Conversion::TagsetConverter *conv)
+ : reader_(reader), conv_(conv), prefix_(prefix), output_format_(output_format)
+{
+}
+
+void Folder::init_writers(int folds)
+{
 	for (int i = 0; i < folds; ++i) {
-		std::stringstream fn, fn2;
-		fn << prefix << std::setw(2) << std::setfill('0') << i + 1 << ".xml";
-		fn2 << prefix << "x"<< std::setw(2) << std::setfill('0') << i + 1 << ".xml";
-		std::string s = fn.str();
-		std::string s2 = fn2.str();
-		streams.push_back(boost::make_shared<std::ofstream>(s.c_str()));
-		streams2.push_back(boost::make_shared<std::ofstream>(s2.c_str()));
+		std::stringstream fntrain, fntest;
+		fntrain << prefix_ << "train"
+			<< std::setw(2) << std::setfill('0') << i + 1 << ".xml";
+		fntest << prefix_ << "test"
+			<< std::setw(2) << std::setfill('0') << i + 1 << ".xml";
+		std::string strain = fntrain.str();
+		std::string stest = fntest.str();
+		streams_train_.push_back(boost::make_shared<std::ofstream>(strain.c_str()));
+		streams_test_.push_back(boost::make_shared<std::ofstream>(stest.c_str()));
 		boost::shared_ptr<Corpus2::TokenWriter> w;
-		w.reset(Corpus2::TokenWriter::create(output_format, *streams.back(), reader.tagset()));
-		writers.push_back(w);
-		w.reset(Corpus2::TokenWriter::create(output_format, *streams2.back(), reader.tagset()));
-		writers2.push_back(w);
-		sentences.push_back(0);
-		tokens.push_back(0);
+		w.reset(Corpus2::TokenWriter::create(output_format_, *streams_train_.back(), reader_.tagset()));
+		writers_train_.push_back(w);
+		w.reset(Corpus2::TokenWriter::create(output_format_, *streams_test_.back(), reader_.tagset()));
+		writers_test_.push_back(w);
+		sentences_train_.push_back(0);
+		tokens_train_.push_back(0);
+		sentences_test_.push_back(0);
+		tokens_test_.push_back(0);
 	}
-	while (Corpus2::Sentence::Ptr s = reader.get_next_sentence()) {
-		int f = rand() % folds;
-		if (conv) {
-			s = conv->convert_sentence(s);
+}
+
+void Folder::stats() const
+{
+	std::cout << "    |          Sentences            |              Tokens               |\n";
+	std::cout << "Fold|Train   Test    Train%   Test% |Train     Test      Train%   Test% |\n";
+	for (size_t i = 0; i < writers_test_.size(); ++i) {
+		std::cout << " " << std::setw(2) << std::setfill('0') << (i+1) << " |";
+		std::cout << std::setfill(' ');
+		std::cout << std::setw(7) << sentences_test_[i] << " ";
+		std::cout << std::setw(7) << sentences_train_[i] << " ";
+		std::cout << std::setw(7) << 100 * static_cast<double>(sentences_train_[i]) / (sentences_test_[i] + sentences_train_[i]);
+		std::cout << " ";
+		std::cout << std::setw(7) << 100 * static_cast<double>(sentences_test_[i]) / (sentences_test_[i] + sentences_train_[i]);
+		std::cout << "|";
+		std::cout << std::setw(9) << tokens_test_[i] << " ";
+		std::cout << std::setw(9) << tokens_train_[i] << " ";
+		std::cout << std::setw(7) << 100 * static_cast<double>(tokens_train_[i]) / (tokens_test_[i] + tokens_train_[i]);
+		std::cout << " ";
+		std::cout << std::setw(7) << 100 * static_cast<double>(tokens_test_[i]) / (tokens_test_[i] + tokens_train_[i]);
+		std::cout << "|\n";
+	}
+}
+
+void Folder::write_seq_folds()
+{
+	while (Corpus2::Sentence::Ptr s = reader_.get_next_sentence()) {
+		size_t f = rand() % writers_test_.size();
+		if (conv_) {
+			s = conv_->convert_sentence(s);
 		}
-		writers[f]->write_sentence(*s);
-		for (int i = 0; i < folds; ++i) {
+		writers_train_[f]->write_sentence(*s);
+		tokens_train_[f] += s->size();
+		sentences_train_[f]++;
+		for (size_t i = 0; i < writers_test_.size(); ++i) {
 			if (i != f) {
-				writers2[i]->write_sentence(*s);
+				writers_test_[i]->write_sentence(*s);
+				tokens_test_[f] += s->size();
+				sentences_test_[f]++;
 			}
 		}
-		sentences[f]++;
-		tokens[f] += s->size();
 	}
-	std::cout << "Folds created:";
-	for (int i = 0; i < folds; ++i) {
-		std::cout << "Fold Sentences Tokens\n";
-		std::cout << std::setw(2) << std::setfill('0') << i << "   ";
-		std::cout << std::setfill(' ');
-		std::cout << std::setw(9) << sentences[i] << " ";
-		std::cout << std::setw(9) << tokens[i] << "\n";
+}
+
+void Folder::write_random_folds(double train_ratio)
+{
+	int threshold = static_cast<unsigned int>(train_ratio * RAND_MAX);
+	while (Corpus2::Sentence::Ptr s = reader_.get_next_sentence()) {
+		if (conv_) {
+			s = conv_->convert_sentence(s);
+		}
+		for (size_t i = 0; i < writers_test_.size(); ++i) {
+			if (rand() > threshold) {
+				writers_train_[i]->write_sentence(*s);
+				tokens_train_[i] += s->size();
+				sentences_train_[i]++;
+			} else {
+				writers_test_[i]->write_sentence(*s);
+				tokens_test_[i] += s->size();
+				sentences_test_[i]++;
+			}
+		}
 	}
+
 }
 
 int main(int argc, char** argv)
@@ -90,6 +161,8 @@ int main(int argc, char** argv)
 	bool progress = false;
 	int folds = 0;
 	std::string folds_file_prefix;
+	double random_folds = 0;
+	int seed = -1;
 	using boost::program_options::value;
 
 	std::string writers = boost::algorithm::join(Corpus2::TokenWriter::available_writer_types_help(), " ");
@@ -113,6 +186,10 @@ int main(int argc, char** argv)
 			 "Show progress info")
 			("folds,F", value(&folds),
 			 "Spread sentences across folds")
+			("random-folds,r", value(&random_folds),
+			 "Random spread across folds with train ratio")
+			("seed", value(&seed),
+			 "random seed, -1 to use time(0)")
 			("folds-file-name,f", value(&folds_file_prefix),
 			 "Prefix for fold filenames")
 			("quiet,q", value(&quiet)->zero_tokens(),
@@ -138,6 +215,11 @@ int main(int argc, char** argv)
 		return 1;
 	}
 	Maca::Path::Instance().set_verbose(!quiet);
+	if (seed == -1) {
+		seed = time(0);
+	}
+	srand(seed);
+
 
 	try {
 		if (!verify_tagset.empty()) {
@@ -158,7 +240,14 @@ int main(int argc, char** argv)
 					return 2;
 				}
 				if (folds > 0) {
-					write_folds(*reader, output_format, folds_file_prefix, folds);
+					Folder f(*reader, output_format, folds_file_prefix, NULL);
+					f.init_writers(folds);
+					if (random_folds > 0) {
+						f.write_random_folds(random_folds);
+					} else {
+						f.write_seq_folds();
+					}
+					f.stats();
 					return 0;
 				}
 				boost::scoped_ptr<Corpus2::TokenWriter> writer;
@@ -183,7 +272,14 @@ int main(int argc, char** argv)
 			Maca::Conversion::TagsetConverter conv(n);
 			Corpus2::XcesReader reader(conv.tagset_from(), std::cin, disamb);
 			if (folds > 0) {
-				write_folds(reader, output_format, folds_file_prefix, folds, &conv);
+				Folder f(reader, output_format, folds_file_prefix, &conv);
+				f.init_writers(folds);
+				if (random_folds > 0) {
+					f.write_random_folds(random_folds);
+				} else {
+					f.write_seq_folds();
+				}
+				f.stats();
 				return 0;
 			}
 			boost::scoped_ptr<Corpus2::TokenWriter> writer;
