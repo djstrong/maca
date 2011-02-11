@@ -227,43 +227,43 @@ int main(int argc, char** argv)
 			Corpus2::XcesValidator xv(tagset, std::cout);
 			xv.validate_stream(std::cin);
 		} else if (converter == "nop") {
-				const Corpus2::Tagset& tagset = Corpus2::get_named_tagset(force_tagset);
-				boost::scoped_ptr<Corpus2::TokenReader> reader;
-				if (input_format == "xces") {
-					reader.reset(new Corpus2::XcesReader(tagset, std::cin, disamb));
-				} else if (input_format == "xces-sh") {
-					reader.reset(new Corpus2::XcesReader(tagset, std::cin, disamb, true));
-				} else if (input_format == "rft") {
-					reader.reset(new Corpus2::RftReader(tagset, std::cin, disamb));
+			const Corpus2::Tagset& tagset = Corpus2::get_named_tagset(force_tagset);
+			boost::scoped_ptr<Corpus2::TokenReader> reader;
+			if (input_format == "xces") {
+				reader.reset(new Corpus2::XcesReader(tagset, std::cin, disamb));
+			} else if (input_format == "xces-sh") {
+				reader.reset(new Corpus2::XcesReader(tagset, std::cin, disamb, true));
+			} else if (input_format == "rft") {
+				reader.reset(new Corpus2::RftReader(tagset, std::cin, disamb));
+			} else {
+				std::cerr << "Unknown input format: " << input_format << "\n";
+				return 2;
+			}
+			if (folds > 0) {
+				Folder f(*reader, output_format, folds_file_prefix, NULL);
+				f.init_writers(folds);
+				if (random_folds > 0) {
+					f.write_random_folds(random_folds);
 				} else {
-					std::cerr << "Unknown input format: " << input_format << "\n";
-					return 2;
+					f.write_seq_folds();
 				}
-				if (folds > 0) {
-					Folder f(*reader, output_format, folds_file_prefix, NULL);
-					f.init_writers(folds);
-					if (random_folds > 0) {
-						f.write_random_folds(random_folds);
-					} else {
-						f.write_seq_folds();
-					}
-					f.stats();
-					return 0;
-				}
-				boost::scoped_ptr<Corpus2::TokenWriter> writer;
-				writer.reset(Corpus2::TokenWriter::create(output_format, std::cout, tagset));
-				Corpus2::TokenTimer& timer = Corpus2::global_timer();
-				timer.register_signal_handler();
-				while (boost::shared_ptr<Corpus2::Chunk> c = reader->get_next_chunk()) {
-					writer->write_chunk(*c);
-					timer.count_chunk(*c);
-					if (progress) {
-						timer.check_slice();
-					}
-				}
+				f.stats();
+				return 0;
+			}
+			boost::scoped_ptr<Corpus2::TokenWriter> writer;
+			writer.reset(Corpus2::TokenWriter::create(output_format, std::cout, tagset));
+			Corpus2::TokenTimer& timer = Corpus2::global_timer();
+			timer.register_signal_handler();
+			while (boost::shared_ptr<Corpus2::Chunk> c = reader->get_next_chunk()) {
+				writer->write_chunk(*c);
+				timer.count_chunk(*c);
 				if (progress) {
-					timer.stats();
+					timer.check_slice();
 				}
+			}
+			if (progress) {
+				timer.stats();
+			}
 		} else if (!converter.empty()) {
 			//const Corpus2::Tagset& tagset = Corpus2::get_named_tagset(converter);
 			std::string fn = Maca::Path::Instance().find_file_or_throw(
