@@ -53,7 +53,12 @@ do
 done
 
 for i in $PROJECTS; do
-	cd $BASEDIR/$i/$BUILDDIR || fail  "cd error"
+	cd $BASEDIR/$i || fail  "cd error"
+	if [[ ! -d $BUILDDIR ]]; then
+		echo "Creating $BUILDDIR subdirectory in $i"
+		mkdir $BUILDDIR
+	fi
+	cd $BUILDDIR
 	pwd
 	if [[ ! -z $OPT_PULL ]]; then
 		echo "--- Pulling $i..."
