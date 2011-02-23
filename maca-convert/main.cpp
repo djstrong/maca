@@ -42,7 +42,7 @@ public:
 	void init_writers(int folds);
 	void stats() const;
 	void write_seq_folds();
-	void write_random_folds(double train_ratio);
+	void write_random_folds(double train_ratio, double test_ratio = -1);
 
 private:
 	Corpus2::TokenReader& reader_;
@@ -56,6 +56,7 @@ private:
 	std::vector< boost::shared_ptr<Corpus2::TokenWriter> > writers_test_;
 	std::vector<int> sentences_train_, tokens_train_;
 	std::vector<int> sentences_test_, tokens_test_;
+	std::vector<int> sentences_total_, tokens_total_;
 };
 
 Folder::Folder(Corpus2::TokenReader &reader, const std::string &output_format,
@@ -85,6 +86,8 @@ void Folder::init_writers(int folds)
 		tokens_train_.push_back(0);
 		sentences_test_.push_back(0);
 		tokens_test_.push_back(0);
+		sentences_total_.push_back(0);
+		tokens_total_.push_back(0);
 	}
 }
 
@@ -95,17 +98,17 @@ void Folder::stats() const
 	for (size_t i = 0; i < writers_test_.size(); ++i) {
 		std::cout << " " << std::setw(2) << std::setfill('0') << (i+1) << " |";
 		std::cout << std::setfill(' ');
-		std::cout << std::setw(7) << sentences_test_[i] << " ";
 		std::cout << std::setw(7) << sentences_train_[i] << " ";
-		std::cout << std::setw(7) << 100 * static_cast<double>(sentences_train_[i]) / (sentences_test_[i] + sentences_train_[i]);
+		std::cout << std::setw(7) << sentences_test_[i] << " ";
+		std::cout << std::setw(7) << 100 * static_cast<double>(sentences_train_[i]) / (sentences_total_[i]);
 		std::cout << " ";
-		std::cout << std::setw(7) << 100 * static_cast<double>(sentences_test_[i]) / (sentences_test_[i] + sentences_train_[i]);
+		std::cout << std::setw(7) << 100 * static_cast<double>(sentences_test_[i]) / (sentences_total_[i]);
 		std::cout << "|";
-		std::cout << std::setw(9) << tokens_test_[i] << " ";
 		std::cout << std::setw(9) << tokens_train_[i] << " ";
-		std::cout << std::setw(7) << 100 * static_cast<double>(tokens_train_[i]) / (tokens_test_[i] + tokens_train_[i]);
+		std::cout << std::setw(9) << tokens_test_[i] << " ";
+		std::cout << std::setw(7) << 100 * static_cast<double>(tokens_train_[i]) / (tokens_total_[i]);
 		std::cout << " ";
-		std::cout << std::setw(7) << 100 * static_cast<double>(tokens_test_[i]) / (tokens_test_[i] + tokens_train_[i]);
+		std::cout << std::setw(7) << 100 * static_cast<double>(tokens_test_[i]) / (tokens_total_[i]);
 		std::cout << "|\n";
 	}
 }
@@ -130,23 +133,33 @@ void Folder::write_seq_folds()
 	}
 }
 
-void Folder::write_random_folds(double train_ratio)
+void Folder::write_random_folds(double train_ratio, double test_ratio /* = -1 */)
 {
-	int threshold = static_cast<unsigned int>(train_ratio * RAND_MAX);
+	int threshold = static_cast<int>((1-train_ratio) * RAND_MAX);
+	int discard_threshold = RAND_MAX;
+	if (test_ratio > 0) {
+		discard_threshold = static_cast<int>(test_ratio * RAND_MAX);
+	}
+	std::cerr << "Running random-folds with thresholds "
+		<< train_ratio << " "  << test_ratio << " -> "
+		<< discard_threshold << " " << threshold << " " << RAND_MAX << "\n";
 	while (Corpus2::Sentence::Ptr s = reader_.get_next_sentence()) {
 		if (conv_) {
 			s = conv_->convert_sentence(s);
 		}
 		for (size_t i = 0; i < writers_test_.size(); ++i) {
-			if (rand() > threshold) {
+			int r = rand();
+			if (r > threshold) {
 				writers_train_[i]->write_sentence(*s);
 				tokens_train_[i] += s->size();
 				sentences_train_[i]++;
-			} else {
+			} else if ( r < discard_threshold ) {
 				writers_test_[i]->write_sentence(*s);
 				tokens_test_[i] += s->size();
 				sentences_test_[i]++;
 			}
+			sentences_total_[i]++;
+			tokens_total_[i] += s->size();
 		}
 	}
 
@@ -161,7 +174,8 @@ int main(int argc, char** argv)
 	bool progress = false;
 	int folds = 0;
 	std::string folds_file_prefix;
-	double random_folds = 0;
+	double random_folds_train = 0;
+	double random_folds_test = 0;
 	int seed = -1;
 	using boost::program_options::value;
 
@@ -186,8 +200,10 @@ int main(int argc, char** argv)
 			 "Show progress info")
 			("folds,F", value(&folds),
 			 "Spread sentences across folds")
-			("random-folds,r", value(&random_folds),
+			("train-ratio,r", value(&random_folds_train),
 			 "Random spread across folds with train ratio")
+			("test-ratio,R", value(&random_folds_test),
+			 "Random spread across folds with train ratio, (1-r) by default")
 			("seed", value(&seed),
 			 "random seed, -1 to use time(0)")
 			("folds-file-name,f", value(&folds_file_prefix),
@@ -242,8 +258,8 @@ int main(int argc, char** argv)
 			if (folds > 0) {
 				Folder f(*reader, output_format, folds_file_prefix, NULL);
 				f.init_writers(folds);
-				if (random_folds > 0) {
-					f.write_random_folds(random_folds);
+				if (random_folds_train > 0) {
+					f.write_random_folds(random_folds_train, random_folds_test);
 				} else {
 					f.write_seq_folds();
 				}
@@ -274,8 +290,8 @@ int main(int argc, char** argv)
 			if (folds > 0) {
 				Folder f(reader, output_format, folds_file_prefix, &conv);
 				f.init_writers(folds);
-				if (random_folds > 0) {
-					f.write_random_folds(random_folds);
+				if (random_folds_train > 0) {
+					f.write_random_folds(random_folds_train, random_folds_test);
 				} else {
 					f.write_seq_folds();
 				}
