@@ -51,7 +51,7 @@ TwoSplitLayer::TwoSplitLayer(const Config::Node& cfg)
 			t2_lexeme_.set_lemma(UnicodeString::fromUTF8(v.second.data()));
 		} else if (v.first == "t2_tag") {
 			t2_lexeme_.set_tag(
-					tagset().parse_simple_tag(v.second.data(), true));
+					tagset().parse_simple_tag(v.second.data()));
 		}
 	}
 	if (t2_lexeme_.is_null()) {
@@ -200,7 +200,7 @@ ThreeSplitLayer::ThreeSplitLayer(const Config::Node &cfg)
 			t3_lexeme_.set_lemma(UnicodeString::fromUTF8(v.second.data()));
 		} else if (v.first == "t3_tag") {
 			t3_lexeme_.set_tag(
-					tagset().parse_simple_tag(v.second.data(), true));
+					tagset().parse_simple_tag(v.second.data()));
 		}
 	}
 	if (orth_matcher_->groupCount() < 3) {

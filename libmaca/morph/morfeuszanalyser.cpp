@@ -203,8 +203,7 @@ MorfeuszAnalyser::MorfeuszAnalyser(const Config::Node& cfg)
 	conv_ = c.release();
 
 	std::string ign_tag_string = cfg.get("ign_tag", "ign");
-	ign_tag_ = conv_->tagset_from().parse_simple_tag(
-			ign_tag_string, false);
+	ign_tag_ = conv_->tagset_from().parse_simple_tag(ign_tag_string);
 	warn_on_ign_ = cfg.get("warn_on_ign", false);
 	warn_on_fold_failure_ =  cfg.get("warn_on_fold_failure", true);
 

@@ -24,7 +24,7 @@ bool ConstAnalyser::registered =
 		MorphAnalyser::register_analyser<ConstAnalyser>();
 
 ConstAnalyser::ConstAnalyser(const Corpus2::Tagset *tagset, const std::string &tag)
-	: MorphAnalyser(tagset), tag_(tagset->parse_simple_tag(tag, false)), lower_lemma_(false)
+	: MorphAnalyser(tagset), tag_(tagset->parse_simple_tag(tag)), lower_lemma_(false)
 {
 }
 
@@ -40,7 +40,7 @@ ConstAnalyser::ConstAnalyser(const Config::Node& cfg)
 	if (tag_string.empty()) {
 		throw ConfigValueMissing("tag", "ConstAnalyser");
 	}
-	tag_ = tagset().parse_simple_tag(tag_string, false);
+	tag_ = tagset().parse_simple_tag(tag_string);
 	lower_lemma_ = cfg.get("lower_lemma", false);
 }
 

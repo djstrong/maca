@@ -63,7 +63,7 @@ struct Fxz {
 BOOST_FIXTURE_TEST_CASE(cast1, Fxz)
 {
 	char tag_string[] = "P1:a2:b1";
-	Corpus2::Tag t1 = tagset1->parse_simple_tag(tag_string, false);
+	Corpus2::Tag t1 = tagset1->parse_simple_tag(tag_string);
 	BOOST_REQUIRE_EQUAL(tagset1->tag_to_string(t1), tag_string);
 	Conversion::TagConverter cv(*tagset1, *tagset2);
 	Corpus2::Tag t2 = cv.cast(t1);
@@ -76,7 +76,7 @@ BOOST_FIXTURE_TEST_CASE(castlayer, Fxz)
 	Conversion::TagConverter tcv(*tagset1, *tagset2);
 	tc.add_layer(new Conversion::TagConvertLayer(tcv));
 	char tag_string[] = "P1:a2:b1";
-	Corpus2::Tag t1 = tagset1->parse_simple_tag(tag_string, false);
+	Corpus2::Tag t1 = tagset1->parse_simple_tag(tag_string);
 	Corpus2::Token* tok = new Corpus2::Token(UnicodeString::fromUTF8("abc"), PwrNlp::Whitespace::None);
 	tok->add_lexeme(Corpus2::Lexeme(UnicodeString::fromUTF8("aaa"), t1));
 	std::vector<Corpus2::Token*> tv, tv2;
@@ -95,22 +95,22 @@ BOOST_FIXTURE_TEST_CASE(tagpred, Fxz)
 	tr.add_precondition("a2");
 	tr.add_postcondition("b2");
 	Corpus2::Tag tag;
-	tag = tagset1->parse_simple_tag("P1:a2:b1", false);
+	tag = tagset1->parse_simple_tag("P1:a2:b1");
 	tr.apply(tag);
 	BOOST_CHECK_EQUAL(tagset1->tag_to_string(tag), "P1:a2:b2");
 
-	tag = tagset1->parse_simple_tag("P2:a2:b1:c2", false);
+	tag = tagset1->parse_simple_tag("P2:a2:b1:c2");
 	tr.apply(tag);
 	BOOST_CHECK_EQUAL(tagset1->tag_to_string(tag), "P2:a2:b1:c2");
 
 	BOOST_CHECK_THROW(
-		tag = tagset1->parse_simple_tag("P1::b1", false),
+		tag = tagset1->parse_simple_tag("P1::b1"),
 		Corpus2::TagParseError);
 
 	//tr.apply(tag);Tag(get_pos_mask(pos_idx), values
 	//BOOST_CHECK_EQUAL(tagset1->tag_to_string(tag), "P1::b1");
 
-	tag = tagset1->parse_simple_tag("P1:a2:b2", false);
+	tag = tagset1->parse_simple_tag("P1:a2:b2");
 	tr.apply(tag);
 	BOOST_CHECK_EQUAL(tagset1->tag_to_string(tag), "P1:a2:b2");
 }
@@ -126,7 +126,7 @@ BOOST_FIXTURE_TEST_CASE(tagpredlayer, Fxz)
 	trl->append_rule(tr);
 	tc.add_layer(trl);
 	char tag_string[] = "P1:a2:b1";
-	Corpus2::Tag t1 = tagset1->parse_simple_tag(tag_string, false);
+	Corpus2::Tag t1 = tagset1->parse_simple_tag(tag_string);
 	Corpus2::Token* tok = new Corpus2::Token(UnicodeString::fromUTF8("abc"), PwrNlp::Whitespace::None);
 	tok->add_lexeme(Corpus2::Lexeme(UnicodeString::fromUTF8("aaa"), t1));
 	std::vector<Corpus2::Token*> tv, tv2;
@@ -150,8 +150,8 @@ BOOST_FIXTURE_TEST_CASE(join, Fxz)
 	tv.push_back(new Corpus2::Token(UnicodeString::fromUTF8("abc"), PwrNlp::Whitespace::None));
 	tv.push_back(new Corpus2::Token(UnicodeString::fromUTF8("abcd"), PwrNlp::Whitespace::None));
 	tv.push_back(new Corpus2::Token(UnicodeString::fromUTF8("efg"), PwrNlp::Whitespace::None));
-	Corpus2::Tag tag1 = tagset1->parse_simple_tag("P1:a2:b1", false);
-	Corpus2::Tag tag2 = tagset1->parse_simple_tag("P2:a2:b1:c2", false);
+	Corpus2::Tag tag1 = tagset1->parse_simple_tag("P1:a2:b1");
+	Corpus2::Tag tag2 = tagset1->parse_simple_tag("P2:a2:b1:c2");
 	//std::cerr << tag2.raw_dump() << tagset1->tag_to_string(tag2);
 	tv[0]->add_lexeme(Corpus2::Lexeme(UnicodeString::fromUTF8("lex1"), tag1));
 	tv[1]->add_lexeme(Corpus2::Lexeme(UnicodeString::fromUTF8("lex2"), tag1));
