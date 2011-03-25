@@ -1,4 +1,27 @@
+DEPENDENCIES
 
+Maca reuiqres several development packages in order to be built, primarily:
+ * Corpus2
+ * Toki
+Other dependencies (some of them indirect via the two libraries above) are:
+ * ICU (libicu-dev)
+ * Boost libraries, 1.41 or later (libboost1.42-all-dev)
+ * Loki (libloki-dev)
+ * LibXML++ (libxml++2.6-dev)
+ * 
+
+Plugins require other libraries that are optional:
+ * The SFST plugin requires the libsfst1-dev package
+ * The Morfeusz plugin requires the Morfeusz library and header
+ * The Guesser plugin requires the Guesser package from TaKIPI / Corpus
+
+
+USAGE
+
+See the maca-analyse and maca-convert binaries.
+
+
+NOTES
 
 Spurious "array subscript is above array bounds" warnings originating in bits/stl_algo seem to be an artifact of gcc4.4's overly-eager correctness checking in conjunction with boost::algorithm::split and boost::is_any_of. Apparently, they are harmless.
 
