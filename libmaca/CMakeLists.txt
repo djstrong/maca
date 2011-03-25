@@ -77,8 +77,9 @@ SET(libmaca_STAT_SRC
 )
 
 if (UNIX)
-	set(MORFEUSZ_PLUGIN ON CACHE BOOL "Build Morfeusz analyser as a plugin")
 	set(SFST_PLUGIN ON CACHE BOOL "Build SFST analyser as a plugin")
+	set(MORFEUSZ_PLUGIN ON CACHE BOOL "Build Morfeusz analyser as a plugin")
+	set(GUESSER_PLUGIN ON CACHE BOOL "Build Guesser analyser as a plugin")
 endif(UNIX)
 
 find_package(SFST)
@@ -126,6 +127,27 @@ if (MORFEUSZ_FOUND)
 		SET(libmaca_STAT_SRC ${libmaca_STAT_SRC} morph/morfeuszanalyser.cpp)
 	endif(MORFEUSZ_PLUGIN)
 endif (MORFEUSZ_FOUND)
+
+find_package(Corpus)
+if (CORPUS_FOUND)
+	if(GUESSER_PLUGIN)
+		message(STATUS "Guesser support will be built as a plugin")
+		add_library(maca_guesser MODULE morph/guesser.cpp)
+		target_link_libraries ( maca_guesser maca ${CORPUS_LIBRARY} )
+		set_target_properties(maca_guesser PROPERTIES
+			VERSION "${maca_ver_major}.${maca_ver_minor}"
+			SOVERSION ${maca_ver_major})
+		set_target_properties(maca_guesser PROPERTIES
+			COMPILE_FLAGS "-DGUESSER_AS_PLUGIN"
+		)
+		install(TARGETS maca_guesser
+			LIBRARY DESTINATION lib)
+	else(GUESSER_PLUGIN)
+		set(LIBS ${LIBS} ${CORPUS_LIBRARY})
+		set(HAVE_CORPUS 1)
+		SET(libmaca_STAT_SRC ${libmaca_STAT_SRC} morph/guesser.cpp)
+	endif(GUESSER_PLUGIN)
+endif (CORPUS_FOUND)
 
 file(GLOB_RECURSE INCS "*.h")
 
