@@ -42,6 +42,8 @@ public:
 			const std::string& config_name,
 			const std::string& toki_config_override);
 
+	static std::string available_configurations();
+
 	Corpus2::Sentence::Ptr get_next_sentence();
 
 	typedef boost::function<void (const Corpus2::Sentence::Ptr&)> sentence_sink_t;

@@ -20,6 +20,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libmaca/morph/dispatchanalyser.h>
 #include <boost/scoped_ptr.hpp>
 #include <boost/make_shared.hpp>
+#include <boost/filesystem.hpp>
 
 namespace Maca {
 
@@ -65,6 +66,24 @@ SentenceAnalyser::create_from_named_config(
 	const Toki::Config::Node& toki_cfg = Toki::get_named_config(
 			toki_config_override);
 	return boost::make_shared<SentenceAnalyser>(cfg, toki_cfg);
+}
+
+std::string SentenceAnalyser::available_configurations()
+{
+	using boost::filesystem::directory_iterator;
+	std::string out;
+	foreach (const std::string& s, Path::Instance().get_search_path()) {
+		boost::filesystem::path p(s);
+		if (boost::filesystem::is_directory(s)) {
+			for (directory_iterator i(p); i != directory_iterator(); ++i) {
+				boost::filesystem::path in = i->path();
+				if (in.extension() == ".ini") {
+					out += in.stem() + " ";
+				}
+			}
+		}
+	}
+	return out;
 }
 
 Corpus2::Sentence::Ptr SentenceAnalyser::get_next_sentence()

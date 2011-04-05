@@ -113,9 +113,8 @@ int main(int argc, char** argv)
 
 	if (vm.count("help")) {
 		std::cout << desc << "\n";
-		std::cout << "Available analyser types: ";
-		std::cout << boost::algorithm::join(
-				Maca::MorphAnalyser::available_analyser_types(), " ") << "\n";
+		std::cout << "Available configurations: ";
+		std::cout << Maca::SentenceAnalyser::available_configurations() << "\n";
 		return 1;
 	}
 	Toki::Path::Instance().set_verbose(!quiet);
