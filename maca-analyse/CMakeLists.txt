@@ -3,8 +3,10 @@ PROJECT(maca-analyse)
 include_directories( ${CMAKE_SOURCE_DIR} )
 
 add_executable( maca-analyse main.cpp )
+add_executable( maca-analyse-batch batch.cpp )
 
 target_link_libraries ( maca-analyse maca ${Boost_LIBRARIES} ${LIBS})
+target_link_libraries ( maca-analyse-batch maca ${Boost_LIBRARIES} ${LIBS})
 
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
@@ -20,5 +22,7 @@ endif(OPENMP_FOUND)
 
 if(UNIX)
 	install(TARGETS maca-analyse
+		RUNTIME DESTINATION bin)
+	install(TARGETS maca-analyse-batch
 		RUNTIME DESTINATION bin)
 endif(UNIX)
