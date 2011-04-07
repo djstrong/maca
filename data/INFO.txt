@@ -17,6 +17,11 @@ Configurations:
 • sgjp.ini – assumes Morfeusz SGJP has been installed, outputs in its tagset,
 • morfeusz-nkjp.ini – assumes Morfeusz SGJP has been installed, outputs in NKJP format (simplified genders).
 
+Note about Morfeusz SGJP:
+Morfeusz SIAT and Morfeusz DGJP behave differently (they use different tagsets). Unfortunately, it is normally impossible to have the two Morfeusz libraries installed side-by-side, as they have the same internal name and version. 
+Maca configurations that use Morfeusz check which one is actually available and will issue an error if it is not the expected one. This version check is a simple string search in Morfeusz's "about" info.
+Maca allows specyfying the exact library name to load instead of just libmorfeusz.so.0, as it is technically possible to change the soname within the binary library. In case of trouble make sure that the appropriate Morfuesz library is installed normally and remove any custom morfeusz library name from the configuration file.
+
 TODO: intermediate tagset for nkjp.
 
 All these configuration use default Toki config (suited for processing Polish).
