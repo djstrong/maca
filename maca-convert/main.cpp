@@ -212,6 +212,11 @@ int main(int argc, char** argv)
 			 "Suppress startup info")
 			("help,h", "Show help")
 			;
+	boost::program_options::options_description script("Script help");
+	script.add_options()
+			("script-help", "Show help in a greppable format")
+			;
+	script.add(desc);
 	boost::program_options::variables_map vm;
 	boost::program_options::positional_options_description p;
 	p.add("converter", -1);
@@ -219,7 +224,7 @@ int main(int argc, char** argv)
 	try {
 		boost::program_options::store(
 			boost::program_options::command_line_parser(argc, argv)
-			.options(desc).positional(p).run(), vm);
+			.options(script).positional(p).run(), vm);
 	} catch (boost::program_options::error& e) {
 		std::cerr << e.what() << "\n";
 		return 2;
@@ -228,7 +233,17 @@ int main(int argc, char** argv)
 
 	if (vm.count("help")) {
 		std::cout << desc << "\n";
+		std::cout << "Available converters: nop ";
+		std::cout << boost::algorithm::join(
+				Maca::Path::Instance().list_files(".conv"), " ") << "\n";
+		std::cout << "Available tagsets: ";
+		std::cout << Corpus2::available_tagsets() << "\n";
 		return 1;
+	}
+	if (vm.count("script-help")) {
+		std::cout << "INPUT ";
+		std::cout << "xces xces-sh rft";
+		std::cout << "\n";
 	}
 	Maca::Path::Instance().set_verbose(!quiet);
 	if (seed == -1) {
@@ -281,7 +296,13 @@ int main(int argc, char** argv)
 				timer.stats();
 			}
 		} else if (!converter.empty()) {
-			//const Corpus2::Tagset& tagset = Corpus2::get_named_tagset(converter);
+			if (boost::algorithm::ends_with(converter, ".conv")) {
+				if (!quiet) {
+					std::cerr << "Note: .conv suffixes in converter names are deprecated\n";
+				}
+			} else {
+				converter += ".conv";
+			}
 			std::string fn = Maca::Path::Instance().find_file_or_throw(
 					converter, "converter");
 			Maca::Config::Node n = Maca::Config::from_file(fn);
