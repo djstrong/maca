@@ -185,15 +185,15 @@ int main(int argc, char** argv)
 	boost::program_options::options_description desc("Allowed options");
 	desc.add_options()
 			("converter,c", value(&converter),
-			 "Corpus2::Tagset converter configuration\n")
+			 "Tagset converter configuration")
 			("disamb-only,d", value(&disamb)->zero_tokens(),
-			 "Only read lexemes marked as disambiguated\n")
+			 "Only read lexemes marked as disambiguated")
 			("verify,v", value(&verify_tagset),
-			 "Verify tags within a tagset\n")
+			 "Verify tags within a tagset")
 			("tagset,t", value(&force_tagset),
-			 "Corpus2::Tagset override\n")
+			 "Tagset override (required in nop conversion)")
 			("input-format,i", value(&input_format)->default_value("xces"),
-			 "Input format [xces,rft,xces-sh]\n")
+			 "Input format [xces,rft,xces-sh]")
 			("output-format,o", value(&output_format)->default_value("xces"),
 			 writers_help.c_str())
 			("progress,p", value(&progress)->zero_tokens(),
@@ -209,7 +209,7 @@ int main(int argc, char** argv)
 			("folds-file-name,f", value(&folds_file_prefix),
 			 "Prefix for fold filenames")
 			("quiet,q", value(&quiet)->zero_tokens(),
-			 "Suppress startup info \n")
+			 "Suppress startup info")
 			("help,h", "Show help")
 			;
 	boost::program_options::variables_map vm;

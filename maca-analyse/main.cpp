@@ -52,18 +52,18 @@ int main(int argc, char** argv)
 	boost::program_options::options_description desc("Allowed options");
 	desc.add_options()
 			("config,c", value(&config),
-			 "Morphological analyser configuration file\n")
+			 "Morphological analyser configuration file")
 			("config-path,C", value(&config_path)->default_value(""),
 			 "Override config search path")
 			("toki-config,t", value(&toki_config),
 			 "Tokenizer configuration file. "
-			 "Overrides config value, only used in some input modes.\n")
+			 "Overrides config value, only used in some input modes.")
 			("toki-config-path", value(&toki_config_path)->default_value(""),
 			 "Override toki config search path")
 			("initial-wa-override", value(&initial_wa_override),
 			 "Initial whitespace (overrides toki config file)")
 			("input-format,i", value(&input_format)->default_value("text"),
-			 "Input format, any of: text premorph premorph-stream\n")
+			 "Input format, any of: text premorph premorph-stream")
 			("output-format,o", value(&output_format)->default_value("plain"),
 			 writers_help.c_str())
 			("split,s", value(&split_chunks)->zero_tokens(),
@@ -75,7 +75,7 @@ int main(int argc, char** argv)
 			("progress,p", value(&progress)->zero_tokens(),
 			 "Show progress info")
 			("quiet,q", value(&quiet)->zero_tokens(),
-			 "Suppress startup info when loading a tagset\n")
+			 "Suppress startup info when loading a tagset")
 			("help,h", "Show help")
 			;
 	boost::program_options::variables_map vm;

@@ -60,12 +60,12 @@ int main(int argc, char** argv)
 	boost::program_options::options_description desc("Allowed options");
 	desc.add_options()
 			("config,c", value(&config),
-			 "Morphological analyser configuration file\n")
+			 "Morphological analyser configuration file")
 			("config-path,C", value(&config_path)->default_value(""),
 			 "Override config search path")
 			("toki-config,t", value(&toki_config),
 			 "Tokenizer configuration file. "
-			 "Overrides config value, only used in some input modes.\n")
+			 "Overrides config value, only used in some input modes.")
 			("toki-config-path", value(&toki_config_path)->default_value(""),
 			 "Override toki config search path")
 			("split,s", value(&split_chunks)->zero_tokens(),
