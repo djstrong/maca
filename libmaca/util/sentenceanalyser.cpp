@@ -20,7 +20,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libmaca/morph/dispatchanalyser.h>
 #include <boost/scoped_ptr.hpp>
 #include <boost/make_shared.hpp>
-#include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 
 namespace Maca {
 
@@ -70,20 +70,7 @@ SentenceAnalyser::create_from_named_config(
 
 std::string SentenceAnalyser::available_configurations()
 {
-	using boost::filesystem::directory_iterator;
-	std::string out;
-	foreach (const std::string& s, Path::Instance().get_search_path()) {
-		boost::filesystem::path p(s);
-		if (boost::filesystem::is_directory(s)) {
-			for (directory_iterator i(p); i != directory_iterator(); ++i) {
-				boost::filesystem::path in = i->path();
-				if (in.extension() == ".ini") {
-					out += in.stem() + " ";
-				}
-			}
-		}
-	}
-	return out;
+	return boost::algorithm::join(Path::Instance().list_files(".ini"), " ");
 }
 
 Corpus2::Sentence::Ptr SentenceAnalyser::get_next_sentence()
