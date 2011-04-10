@@ -78,6 +78,12 @@ int main(int argc, char** argv)
 			 "Suppress startup info when loading a tagset")
 			("help,h", "Show help")
 			;
+
+	boost::program_options::options_description script("Script help");
+	script.add_options()
+			("script-help", "Show help in a greppable format")
+			;
+	script.add(desc);
 	boost::program_options::variables_map vm;
 	boost::program_options::positional_options_description p;
 	p.add("config", -1);
@@ -85,7 +91,7 @@ int main(int argc, char** argv)
 	try {
 		boost::program_options::store(
 			boost::program_options::command_line_parser(argc, argv)
-			.options(desc).positional(p).run(), vm);
+			.options(script).positional(p).run(), vm);
 	} catch (boost::program_options::error& e) {
 		std::cerr << e.what() << "\n";
 		return 2;
@@ -112,6 +118,18 @@ int main(int argc, char** argv)
 		std::cout << Maca::SentenceAnalyser::available_configurations() << "\n";
 		return 1;
 	}
+	if (vm.count("script-help")) {
+		std::cout << "INPUT ";
+		std::cout << "text premorph premorph-stream";
+		std::cout << "\n";
+		std::cout << "OUTPUT ";
+		std::cout << boost::algorithm::join(Corpus2::TokenWriter::available_writer_types(), " ");
+		std::cout << "\n";
+		std::cout << boost::algorithm::join(Corpus2::TokenWriter::available_writer_types_help(), "\n");
+		std::cout << "\n";
+		return 0;
+	}
+
 	Toki::Path::Instance().set_verbose(!quiet);
 	Maca::Path::Instance().set_verbose(!quiet);
 	Corpus2::Path::Instance().set_verbose(!quiet);
