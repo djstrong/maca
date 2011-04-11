@@ -54,3 +54,6 @@ add_subdirectory(maca-app)
 add_subdirectory(maca-convert)
 add_subdirectory(tests)
 
+if (UNIX)
+	install(FILES tools/bash_completion_maca DESTINATION /etc/bash_completion.d)
+endif(UNIX)
