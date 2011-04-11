@@ -179,6 +179,8 @@ int main(int argc, char** argv)
 	int seed = -1;
 	using boost::program_options::value;
 
+	std::string readers = boost::algorithm::join(Corpus2::TokenReader::available_reader_types_help(), " ");
+	std::string readers_help = "Input format, any of: " + readers + "\n";
 	std::string writers = boost::algorithm::join(Corpus2::TokenWriter::available_writer_types_help(), " ");
 	std::string writers_help = "Output format, any of: " + writers + "\n";
 
@@ -187,13 +189,14 @@ int main(int argc, char** argv)
 			("converter,c", value(&converter),
 			 "Tagset converter configuration")
 			("disamb-only,d", value(&disamb)->zero_tokens(),
-			 "Only read lexemes marked as disambiguated")
+			 "Only read lexemes marked as disambiguated "
+			 "(deprecated alias of ,disamb input option)")
 			("verify,v", value(&verify_tagset),
 			 "Verify tags within a tagset")
 			("tagset,t", value(&force_tagset),
 			 "Tagset override (required in nop conversion)")
 			("input-format,i", value(&input_format)->default_value("xces"),
-			 "Input format [xces,rft,xces-sh]")
+			 readers_help.c_str())
 			("output-format,o", value(&output_format)->default_value("xces"),
 			 writers_help.c_str())
 			("progress,p", value(&progress)->zero_tokens(),
@@ -242,8 +245,16 @@ int main(int argc, char** argv)
 	}
 	if (vm.count("script-help")) {
 		std::cout << "INPUT ";
-		std::cout << "xces xces-sh rft";
+		std::cout << boost::algorithm::join(Corpus2::TokenReader::available_reader_types(), " ");
 		std::cout << "\n";
+		std::cout << boost::algorithm::join(Corpus2::TokenReader::available_reader_types_help(), "\n");
+		std::cout << "\n";
+		std::cout << "OUTPUT ";
+		std::cout << boost::algorithm::join(Corpus2::TokenWriter::available_writer_types(), " ");
+		std::cout << "\n";
+		std::cout << boost::algorithm::join(Corpus2::TokenWriter::available_writer_types_help(), "\n");
+		std::cout << "\n";
+		return 0;
 	}
 	Maca::Path::Instance().set_verbose(!quiet);
 	if (seed == -1) {
@@ -251,6 +262,9 @@ int main(int argc, char** argv)
 	}
 	srand(seed);
 
+	if (disamb) {
+		input_format += ",disamb";
+	}
 
 	try {
 		if (!verify_tagset.empty()) {
@@ -259,17 +273,9 @@ int main(int argc, char** argv)
 			xv.validate_stream(std::cin);
 		} else if (converter == "nop") {
 			const Corpus2::Tagset& tagset = Corpus2::get_named_tagset(force_tagset);
-			boost::scoped_ptr<Corpus2::TokenReader> reader;
-			if (input_format == "xces") {
-				reader.reset(new Corpus2::XcesReader(tagset, std::cin, disamb));
-			} else if (input_format == "xces-sh") {
-				reader.reset(new Corpus2::XcesReader(tagset, std::cin, disamb, true));
-			} else if (input_format == "rft") {
-				reader.reset(new Corpus2::RftReader(tagset, std::cin, disamb));
-			} else {
-				std::cerr << "Unknown input format: " << input_format << "\n";
-				return 2;
-			}
+			boost::shared_ptr<Corpus2::TokenReader> reader;
+			reader = Corpus2::TokenReader::create_stream_reader(input_format, tagset, std::cin);
+
 			if (folds > 0) {
 				Folder f(*reader, output_format, folds_file_prefix, NULL);
 				f.init_writers(folds);
@@ -307,9 +313,11 @@ int main(int argc, char** argv)
 					converter, "converter");
 			Maca::Config::Node n = Maca::Config::from_file(fn);
 			Maca::Conversion::TagsetConverter conv(n);
-			Corpus2::XcesReader reader(conv.tagset_from(), std::cin, disamb);
+			boost::shared_ptr<Corpus2::TokenReader> reader;
+			reader = Corpus2::TokenReader::create_stream_reader(input_format, conv.tagset_from(), std::cin);
+
 			if (folds > 0) {
-				Folder f(reader, output_format, folds_file_prefix, &conv);
+				Folder f(*reader, output_format, folds_file_prefix, &conv);
 				f.init_writers(folds);
 				if (random_folds_train > 0) {
 					f.write_random_folds(random_folds_train, random_folds_test);
@@ -322,7 +330,7 @@ int main(int argc, char** argv)
 			boost::scoped_ptr<Corpus2::TokenWriter> writer;
 			writer.reset(Corpus2::TokenWriter::create(output_format, std::cout, conv.tagset_to()));
 			Corpus2::TokenTimer timer;
-			while (boost::shared_ptr<Corpus2::Chunk> c = reader.get_next_chunk()) {
+			while (boost::shared_ptr<Corpus2::Chunk> c = reader->get_next_chunk()) {
 				foreach (boost::shared_ptr<Corpus2::Sentence>& s, c->sentences()) {
 					s = conv.convert_sentence(s);
 					timer.count_sentence(*s);
