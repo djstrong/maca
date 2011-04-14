@@ -23,7 +23,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 struct F {
 	F() : tagset(), t(UnicodeString::fromUTF8("aaa"), "t", PwrNlp::Whitespace::ManySpaces)
 	{
-		const char tagset_string[] = "[ATTR]\nA a1 a2 a3\nB b1 b2 b3\n[POS]\n P1 A [B]\n P2 A\n";
+		const char tagset_string[] = "[ATTR]\nA a1 a2 a3\nB b1 b2 b3\n[POS]\nign\n P1 A [B]\n P2 A\n";
 		try {
 			tagset.reset(new Corpus2::Tagset);
 			*tagset = Corpus2::Tagset::from_data(tagset_string);

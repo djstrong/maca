@@ -37,7 +37,8 @@ struct Fxz {
 			"A a1 a2 \n"
 			"B b1 b2 b3 \n"
 			"C c1 c2 \n"
-			"[POS]\n "
+			"[POS]\n"
+			"ign\n"
 			"P1 A B \n"
 			"P2 A B C\n"
 			;
@@ -47,6 +48,7 @@ struct Fxz {
 			"C c1 c2 c3\n"
 			"D d1 d2 \n"
 			"[POS]\n "
+			"ign\n"
 			"P0 C [D] \n"
 			"P1 A B \n"
 			"P2 A B C\n"
