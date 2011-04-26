@@ -77,7 +77,7 @@ void test_one_item_actual(const compare_test& c)
 
 	boost::shared_ptr<Corpus2::TokenWriter> writer;
 	std::stringstream ss;
-	writer.reset(Corpus2::TokenWriter::create("xces,sorttags", ss, conv.tagset_to()));
+	writer = Corpus2::TokenWriter::create_stream_writer("xces,sorttags", ss, conv.tagset_to());
 	while (boost::shared_ptr<Corpus2::Chunk> c = reader.get_next_chunk()) {
 		foreach (Corpus2::Sentence::Ptr& s, c->sentences()) {
 			s = conv.convert_sentence(s);

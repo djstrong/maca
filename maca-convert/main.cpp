@@ -78,9 +78,9 @@ void Folder::init_writers(int folds)
 		streams_train_.push_back(boost::make_shared<std::ofstream>(strain.c_str()));
 		streams_test_.push_back(boost::make_shared<std::ofstream>(stest.c_str()));
 		boost::shared_ptr<Corpus2::TokenWriter> w;
-		w.reset(Corpus2::TokenWriter::create(output_format_, *streams_train_.back(), reader_.tagset()));
+		w = Corpus2::TokenWriter::create_stream_writer(output_format_, *streams_train_.back(), reader_.tagset());
 		writers_train_.push_back(w);
-		w.reset(Corpus2::TokenWriter::create(output_format_, *streams_test_.back(), reader_.tagset()));
+		w = Corpus2::TokenWriter::create_stream_writer(output_format_, *streams_test_.back(), reader_.tagset());
 		writers_test_.push_back(w);
 		sentences_train_.push_back(0);
 		tokens_train_.push_back(0);
@@ -169,6 +169,7 @@ int main(int argc, char** argv)
 {
 	std::string converter, verify_tagset, force_tagset;
 	std::string input_format, output_format;
+	std::string output_filename;
 	bool quiet = false;
 	bool disamb = false;
 	bool progress = false;
@@ -199,6 +200,8 @@ int main(int argc, char** argv)
 			 readers_help.c_str())
 			("output-format,o", value(&output_format)->default_value("xces"),
 			 writers_help.c_str())
+			("output-file", value(&output_filename),
+			 "Output filename (do not write to stdout)")
 			("progress,p", value(&progress)->zero_tokens(),
 			 "Show progress info")
 			("folds,F", value(&folds),
@@ -287,8 +290,12 @@ int main(int argc, char** argv)
 				f.stats();
 				return 0;
 			}
-			boost::scoped_ptr<Corpus2::TokenWriter> writer;
-			writer.reset(Corpus2::TokenWriter::create(output_format, std::cout, tagset));
+			boost::shared_ptr<Corpus2::TokenWriter> writer;
+			if (output_filename.empty()) {
+				writer = Corpus2::TokenWriter::create_stream_writer(output_format, std::cout, tagset);
+			} else {
+				writer = Corpus2::TokenWriter::create_path_writer(output_format, output_filename, tagset);
+			}
 			Corpus2::TokenTimer& timer = Corpus2::global_timer();
 			timer.register_signal_handler();
 			while (boost::shared_ptr<Corpus2::Chunk> c = reader->get_next_chunk()) {
@@ -327,8 +334,12 @@ int main(int argc, char** argv)
 				f.stats();
 				return 0;
 			}
-			boost::scoped_ptr<Corpus2::TokenWriter> writer;
-			writer.reset(Corpus2::TokenWriter::create(output_format, std::cout, conv.tagset_to()));
+			boost::shared_ptr<Corpus2::TokenWriter> writer;
+			if (output_filename.empty()) {
+				writer = Corpus2::TokenWriter::create_stream_writer(output_format, std::cout, conv.tagset_to());
+			} else {
+				writer = Corpus2::TokenWriter::create_path_writer(output_format, output_filename, conv.tagset_to());
+			}
 			Corpus2::TokenTimer timer;
 			while (boost::shared_ptr<Corpus2::Chunk> c = reader->get_next_chunk()) {
 				foreach (boost::shared_ptr<Corpus2::Sentence>& s, c->sentences()) {

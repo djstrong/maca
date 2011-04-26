@@ -39,6 +39,7 @@ int main(int argc, char** argv)
 {
 	std::string config, toki_config;
 	std::string input_format, output_format;
+	std::string output_filename;
 	std::vector<std::string> plugins;
 	std::string config_path, toki_config_path, initial_wa_override;
 	int threads = 0;
@@ -66,6 +67,8 @@ int main(int argc, char** argv)
 			 "Input format, any of: text premorph premorph-stream")
 			("output-format,o", value(&output_format)->default_value("plain"),
 			 writers_help.c_str())
+			("output-file", value(&output_filename),
+			 "Output filename (do not write to stdout)")
 			("split,s", value(&split_chunks)->zero_tokens(),
 			 "Split output into chunks on many-newline tokens")
 			("plugin,P", value(&plugins),
@@ -162,9 +165,12 @@ int main(int argc, char** argv)
 				pp.parse_stream(std::cin);
 				return 0;
 			}
-			boost::scoped_ptr<Corpus2::TokenWriter> writer;
-			writer.reset(Corpus2::TokenWriter::create(output_format, std::cout, sa->tagset()));
-
+			boost::shared_ptr<Corpus2::TokenWriter> writer;
+			if (output_filename.empty()) {
+				writer = Corpus2::TokenWriter::create_stream_writer(output_format, std::cout, sa->tagset());
+			} else {
+				writer = Corpus2::TokenWriter::create_path_writer(output_format, output_filename, sa->tagset());
+			}
 			boost::shared_ptr<Corpus2::TokenReader> tr;
 			if (input_format == "premorph") {
 				tr = boost::make_shared<Maca::PremorphReader>(boost::ref(std::cin), sa);

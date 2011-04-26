@@ -4,7 +4,7 @@ PROJECT(maca)
 
 set(maca_ver_major "1")
 set(maca_ver_minor "0")
-set(maca_ver_patch "1")
+set(maca_ver_patch "2")
 
 if(NOT LIBMACA_SRC_DATA_DIR)
 	message(FATAL_ERROR "There is no data for libmaca")
@@ -28,7 +28,7 @@ include_directories( ${CMAKE_CURRENT_BINARY_DIR}/include/ )
 find_package(Toki 1.0.0 REQUIRED)
 set(LIBS ${LIBS} ${Toki_LIBRARY})
 
-find_package(Corpus2 1.0.4 REQUIRED)
+find_package(Corpus2 1.0.8 REQUIRED)
 set(LIBS ${LIBS} ${Corpus2_LIBRARY})
 
 find_package(ICU REQUIRED QUIET)
