@@ -29,9 +29,9 @@ ConvertingAnalyser::ConvertingAnalyser(MorphAnalyser *ma,
 		Conversion::TagsetConverter *conv)
 	: MorphAnalyser(&conv->tagset_to()), wrapped_(ma), converter_(conv)
 {
-	require_matching_tagsets(converter_->tagset_from(), *wrapped_,
+	Corpus2::require_matching_tagsets(converter_->tagset_from(), *wrapped_,
 			"Converting analyser creation (from)");
-	require_matching_tagsets(converter_->tagset_to(), *this,
+	Corpus2::require_matching_tagsets(converter_->tagset_to(), *this,
 			"Converting analyser creation (to)");
 }
 
@@ -67,9 +67,9 @@ ConvertingAnalyser::ConvertingAnalyser(const Config::Node &cfg)
 	Config::Node conv_cfg = Config::from_stream(ifs);
 	converter_.reset(new Conversion::TagsetConverter(conv_cfg));
 
-	require_matching_tagsets(converter_->tagset_from(), *wrapped_,
+	Corpus2::require_matching_tagsets(converter_->tagset_from(), *wrapped_,
 			"Converting analyser creation (from)");
-	require_matching_tagsets(converter_->tagset_to(), *this,
+	Corpus2::require_matching_tagsets(converter_->tagset_to(), *this,
 			"Converting analyser creation (to)");
 }
 
