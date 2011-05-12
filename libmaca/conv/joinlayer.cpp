@@ -50,7 +50,7 @@ JoinLayer* JoinLayer::clone() const
 
 void JoinLayer::append_rule(const JoinRule &rule)
 {
-	require_matching_tagsets(rule, *this, "appending join rule");
+	Corpus2::require_matching_tagsets(rule, *this, "appending join rule");
 	rules_.push_back(rule);
 }
 

@@ -102,7 +102,7 @@ TagsetConverter* TagsetConverter::clone() const
 void TagsetConverter::add_layer(Layer* l)
 {
 	if (!layers_.empty()) {
-		require_matching_tagsets(l->tagset_from(), layers_.back()->tagset_to(),
+		Corpus2::require_matching_tagsets(l->tagset_from(), layers_.back()->tagset_to(),
 			"TagsetConverter::add_layer");
 		l->set_source(layers_.back());
 	}

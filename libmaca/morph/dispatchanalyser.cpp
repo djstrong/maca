@@ -131,7 +131,7 @@ MorphAnalyser* MaCreator::get_ma(const std::string &id, bool autoload)
 			}
 		}
 		std::auto_ptr<MorphAnalyser> aptr(ma);
-		require_matching_tagsets(*ma, tagset_,
+		Corpus2::require_matching_tagsets(*ma, tagset_,
 			"Morph analyser creation : " + id);
 		amap_.insert(std::make_pair(id, ma));
 		return aptr.release();
