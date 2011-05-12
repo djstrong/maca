@@ -34,6 +34,8 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 		set(CMAKE_CXX_FLAGS_DEBUG "-O0 -DDEBUG -ggdb3 -W -Wall -ansi ${STRICT_FLAGS} $ENV{CXXFLAGS}"
 			CACHE STRING "Flags used by the CXX compiler during debug builds."
 			FORCE)
+                set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g -fno-omit-frame-pointer" 
+                        CACHE STRING "Flags used by the CXX compiler during relwithdebiginfo builds" FORCE)
 	endif(NOT CONFIGURED)
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
