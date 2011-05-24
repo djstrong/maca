@@ -21,7 +21,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 			set(STRICT_FLAGS "")
 		endif(ENABLE_STRICT_COMPILATION)
 
-		set(CMAKE_C_FLAGS"-W -Wall -ansi $ENV{CFLAGS}" 
+		set(CMAKE_C_FLAGS "-W -Wall -ansi $ENV{CFLAGS}" 
 			CACHE STRING "Flags used by the C compiler during normal builds."
 			FORCE)
 		set(CMAKE_C_FLAGS_DEBUG "-O0 -DDEBUG -ggdb3 -W -Wall -ansi $ENV{CFLAGS}"
