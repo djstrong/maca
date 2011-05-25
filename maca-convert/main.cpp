@@ -165,6 +165,16 @@ void Folder::write_random_folds(double train_ratio, double test_ratio /* = -1 */
 
 }
 
+void usage(char* name)
+{
+	std::cerr << "This program reads a corpus from standard input, performs "
+		"tagset conversions and writes on standard output\n";
+	std::cerr << "Usage: " << name << " [OPTIONS] <converter>\n";
+	std::cerr << "See maca-convert --help for more info, including available converters\n";
+	std::cerr << "A `nop' converter is provided for no tagset conversion, "
+		"the tagset must be specified explicitly  using the -t option.\n";
+}
+
 int main(int argc, char** argv)
 {
 	std::string converter, verify_tagset, force_tagset;
@@ -205,13 +215,15 @@ int main(int argc, char** argv)
 			("progress,p", value(&progress)->zero_tokens(),
 			 "Show progress info")
 			("folds,F", value(&folds),
-			 "Spread sentences across folds")
+			 "Spread sentences across arg folds")
 			("train-ratio,r", value(&random_folds_train),
-			 "Random spread across folds with train ratio")
+			 "Random folds: relative size of each training corpus. "
+			 "this creates folds for a repeated random sub-sampling "
+			 "validation (RRSsV) experiment")
 			("test-ratio,R", value(&random_folds_test),
-			 "Random spread across folds with train ratio, (1-r) by default")
+			 "RRSsV: testing corpus size, (1-r) by default")
 			("seed", value(&seed),
-			 "random seed, -1 to use time(0)")
+			 "Random seed, -1 to use time(0)")
 			("folds-file-name,f", value(&folds_file_prefix),
 			 "Prefix for fold filenames")
 			("quiet,q", value(&quiet)->zero_tokens(),
@@ -355,8 +367,7 @@ int main(int argc, char** argv)
 				timer.stats();
 			}
 		} else {
-			std::cerr << "Usage: maca-convert [OPTIONS] <converter>\n";
-			std::cerr << "See maca-convert --help\n";
+			usage(argv[0]);
 			return 1;
 		}
 	} catch (PwrNlp::PwrNlpError& e) {
