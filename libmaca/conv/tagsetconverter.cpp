@@ -18,6 +18,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libmaca/conv/tagsetconverter.h>
 #include <libmaca/conv/layer.h>
 #include <libmaca/conv/joinlayer.h>
+#include <libmaca/conv/removedupes.h>
 #include <libmaca/conv/splitlayer.h>
 #include <libmaca/conv/tagrulelayer.h>
 #include <libmaca/conv/tagconvert.h>
@@ -75,6 +76,8 @@ TagsetConverter::TagsetConverter(const Config::Node& cfg)
 			add_layer(new TwoSplitLayer(v.second));
 		} else if (v.first == "3split") {
 			add_layer(new ThreeSplitLayer(v.second));
+		} else if (v.first == "remove_duplicates") {
+			add_layer(new RemoveDupesLayer(v.second));
 		} else {
 			std::cerr << "Unknown conversion layer type: "
 				<< v.first << "\n";

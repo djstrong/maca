@@ -56,6 +56,7 @@ SET(libmaca_STAT_SRC
 	conv/joinrule.cpp
 	conv/layer.cpp
 	conv/predicate.cpp
+	conv/removedupes.cpp
 	conv/splitlayer.cpp
 	conv/tagconvert.cpp
 	conv/tagrule.cpp
