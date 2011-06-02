@@ -180,6 +180,7 @@ int main(int argc, char** argv)
 	std::string converter, verify_tagset, force_tagset;
 	std::string input_format, output_format;
 	std::string output_filename;
+	std::string input_path;
 	bool quiet = false;
 	bool disamb = false;
 	bool progress = false;
@@ -208,10 +209,12 @@ int main(int argc, char** argv)
 			 "Tagset override (required in nop conversion)")
 			("input-format,i", value(&input_format)->default_value("xces"),
 			 readers_help.c_str())
+			("input-path,I", value(&input_path)->default_value("-"),
+			 "Input path, - for stdin")
 			("output-format,o", value(&output_format)->default_value("xces"),
 			 writers_help.c_str())
 			("output-file", value(&output_filename),
-			 "Output filename (do not write to stdout)")
+			 "Output file name (do not write to stdout)")
 			("progress,p", value(&progress)->zero_tokens(),
 			 "Show progress info")
 			("folds,F", value(&folds),
@@ -289,7 +292,11 @@ int main(int argc, char** argv)
 		} else if (converter == "nop") {
 			const Corpus2::Tagset& tagset = Corpus2::get_named_tagset(force_tagset);
 			boost::shared_ptr<Corpus2::TokenReader> reader;
-			reader = Corpus2::TokenReader::create_stream_reader(input_format, tagset, std::cin);
+			if (input_path == "-") {
+				reader = Corpus2::TokenReader::create_stream_reader(input_format, tagset, std::cin);
+			} else {
+				reader = Corpus2::TokenReader::create_path_reader(input_format, tagset, input_path);
+			}
 
 			if (folds > 0) {
 				Folder f(*reader, output_format, folds_file_prefix, NULL);
