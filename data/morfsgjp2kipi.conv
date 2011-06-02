@@ -38,3 +38,5 @@ post=qub
 ; (and m1 seems most likely for the adjc class)
 pre=adj:cas
 post=adj:sg:nom:m1:pos
+
+[remove_duplicates]
