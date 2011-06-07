@@ -145,10 +145,9 @@ public:
 	static std::vector<std::string> available_analyser_types();
 
 	/**
-	 * Convert a plugin name to a shared library name that is expected to
-	 * contain the plugin.
+	 * Function to check how many types of analysers are registered.
 	 */
-	static std::string get_plugin_soname(const std::string& name);
+	static size_t available_analyser_count();
 
 	/**
 	 * Load a plugin analyser module

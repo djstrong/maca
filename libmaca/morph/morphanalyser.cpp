@@ -23,8 +23,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <boost/bind.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/make_shared.hpp>
-#include <memory>
-#include <dlfcn.h>
+#include <libpwrutils/plugin.h>
 
 namespace Maca {
 
@@ -114,52 +113,16 @@ std::vector<std::string> MorphAnalyser::available_analyser_types()
 	return MorphAnalyserFactory::Instance().RegisteredIds();
 }
 
-std::string MorphAnalyser::get_plugin_soname(const std::string& name)
+size_t MorphAnalyser::available_analyser_count()
 {
-	if (name.size() > 1 && name.find('/') != name.npos) {
-		return name;
-	} else {
-		return "libmaca_" + name + ".so";
-	}
+	return MorphAnalyserFactory::Instance().RegisteredIds().size();
 }
 
 bool MorphAnalyser::load_plugin(const std::string& name, bool quiet)
 {
-	std::string soname = get_plugin_soname(name);
-	size_t count = available_analyser_types().size();
-	// first check if the plugin was already loaded
-	void* handle = dlopen(soname.c_str(), RTLD_NOW | RTLD_NOLOAD);
-	if (handle != NULL) {
-		if (!quiet) {
-			std::cerr << "Warning: " << soname
-					<< " has already been loaded\n";
-		}
-		return false;
-	}
-	// actually load the library
-	handle = dlopen(soname.c_str(), RTLD_NOW);
-	if (handle == NULL) {
-		const char* dle = dlerror();
-		if (!quiet) {
-			std::cerr << "Error: dlopen error while loading " << soname
-					<< ": ";
-			if (dle != NULL) {
-				std::cerr << dle << "\n";
-			}
-		}
-		return false;
-	} else if (count >= available_analyser_types().size()) {
-		if (!quiet) {
-			std::cerr << "Warning: Plugin '" << name
-					<< "' did not register any new analyser types\n";
-		}
-		return false;
-	} else {
-		if (!quiet && Path::Instance().get_verbose()) {
-			std::cerr << "Loaded plugin '" << name << "'\n";
-		}
-		return true;
-	}
+	return PwrNlp::Plugin::load_check("maca", name,
+			quiet || !Path::Instance().get_verbose(),
+		&MorphAnalyser::available_analyser_count, "morph analyser");
 }
 
 } /* end ns Maca */
