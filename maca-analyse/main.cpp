@@ -44,6 +44,7 @@ int main(int argc, char** argv)
 	std::string config_path, toki_config_path, initial_wa_override;
 	int threads = 0;
 	bool quiet = false, progress = false, split_chunks = false;
+	bool linewise = false;
 	using boost::program_options::value;
 
 	std::string writers = boost::algorithm::join(Corpus2::TokenWriter::available_writer_types_help(), " ");
@@ -67,6 +68,8 @@ int main(int argc, char** argv)
 			 "Input format, any of: text premorph premorph-stream")
 			("output-format,o", value(&output_format)->default_value("plain"),
 			 writers_help.c_str())
+			("linewise,l", value(&linewise)->default_value(false)->zero_tokens(),
+			 "``Interactive'' line-wise input processing (newlines force sentence breaks)")
 			("output-file", value(&output_filename),
 			 "Output filename (do not write to stdout)")
 			("split,s", value(&split_chunks)->zero_tokens(),
@@ -171,30 +174,44 @@ int main(int argc, char** argv)
 			} else {
 				writer = Corpus2::TokenWriter::create_path_writer(output_format, output_filename, sa->tagset());
 			}
-			boost::shared_ptr<Corpus2::TokenReader> tr;
-			if (input_format == "premorph") {
-				tr = boost::make_shared<Maca::PremorphReader>(boost::ref(std::cin), sa);
-			} else {
-				tr = boost::make_shared<Maca::TextReader>(boost::ref(std::cin), sa);
-			}
 			Corpus2::TokenTimer& timer = Corpus2::global_timer();
 			timer.register_signal_handler();
-			if (split_chunks) {
-				/// TODO empty chunks
-				while (boost::shared_ptr<Corpus2::Chunk> chunk = tr->get_next_chunk()) {
-					writer->write_chunk(*chunk);
-					timer.count_chunk(*chunk);
-					if (progress) {
-						timer.check_slice();
+			boost::shared_ptr<Corpus2::TokenReader> tr;
+			if (linewise) {
+				std::string line;
+				while (std::getline(std::cin, line)) {
+					sa->set_input_source(UnicodeString::fromUTF8(line));
+					while (Corpus2::Sentence::Ptr sentence = sa->get_next_sentence()) {
+						timer.count_sentence(*sentence);
+						writer->write_sentence(*sentence);
+						if (progress) {
+							timer.check_slice();
+						}
 					}
 				}
 			} else {
-				while (Corpus2::Sentence::Ptr sentence = tr->get_next_sentence()) {
-					assert(!sentence->empty());
-					timer.count_sentence(*sentence);
-					writer->write_sentence(*sentence);
-					if (progress) {
-						timer.check_slice();
+				if (input_format == "premorph") {
+					tr = boost::make_shared<Maca::PremorphReader>(boost::ref(std::cin), sa);
+				} else {
+					tr = boost::make_shared<Maca::TextReader>(boost::ref(std::cin), sa, 1);
+				}
+				if (split_chunks) {
+					/// TODO empty chunks
+					while (boost::shared_ptr<Corpus2::Chunk> chunk = tr->get_next_chunk()) {
+						writer->write_chunk(*chunk);
+						timer.count_chunk(*chunk);
+						if (progress) {
+							timer.check_slice();
+						}
+					}
+				} else {
+					while (Corpus2::Sentence::Ptr sentence = tr->get_next_sentence()) {
+						assert(!sentence->empty());
+						timer.count_sentence(*sentence);
+						writer->write_sentence(*sentence);
+						if (progress) {
+							timer.check_slice();
+						}
 					}
 				}
 			}
