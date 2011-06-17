@@ -20,10 +20,11 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 namespace Maca {
 
 TextReader::TextReader(std::istream &is,
-		const boost::shared_ptr<SentenceAnalyser>& sa)
+		const boost::shared_ptr<SentenceAnalyser>& sa,
+		int bufsize /* = 1000*/)
 	: Corpus2::BufferedSentenceReader(sa->tagset()), is_(is), sa_(sa)
 {
-	sa_->set_input_source(is);
+	sa_->set_input_source(is, bufsize);
 }
 
 Corpus2::Sentence::Ptr TextReader::actual_next_sentence()
