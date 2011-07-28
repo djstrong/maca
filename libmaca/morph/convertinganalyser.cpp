@@ -84,6 +84,7 @@ bool ConvertingAnalyser::process_functional(const Toki::Token &t,
 		boost::function<void (Corpus2::Token *)> sink)
 {
 	std::vector<Corpus2::Token*> tv = wrapped_->process(t);
+	if (tv.empty()) return false;
 	converter_->convert_simple(tv, sink);
 	return true;
 }

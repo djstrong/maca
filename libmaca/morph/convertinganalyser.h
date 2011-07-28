@@ -24,7 +24,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 namespace Maca {
 
 /**
- * A wrapper analyser that passes the output of some analyser thorugh a
+ * A wrapper analyser that passes the output of some analyser through a
  * converter.
  *
  * Configuration class key: \b wrap_convert
