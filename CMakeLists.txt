@@ -52,6 +52,7 @@ find_package(Boost 1.41 REQUIRED COMPONENTS program_options filesystem regex)
 
 add_subdirectory(libmaca)
 add_subdirectory(maca-analyse)
+add_subdirectory(maca-reanalyse)
 add_subdirectory(maca-app)
 add_subdirectory(maca-convert)
 add_subdirectory(tests)
