@@ -26,7 +26,7 @@ class TextReader : public Corpus2::BufferedSentenceReader
 {
 public:
 	TextReader(std::istream& is,
-			const boost::shared_ptr<SentenceAnalyser>& sa);
+			const boost::shared_ptr<SentenceAnalyser>& sa, int bufsize = 1000);
 
 	std::istream& is() {
 		return is_;
