@@ -43,6 +43,7 @@ bool GuesserAnalyser::process_functional(const Toki::Token &t,
 	std::vector<std::string> lines;
 	boost::algorithm::split(lines, gs, boost::is_any_of("\n"));
 	PwrNlp::Whitespace::Enum wa = t.preceeding_whitespace();
+	bool sunk = false;
 	foreach (const std::string& line, lines) {
 		if (line.empty()) continue;
 		std::vector<std::string> olt;
@@ -51,19 +52,24 @@ bool GuesserAnalyser::process_functional(const Toki::Token &t,
 			throw MacaError("Unexpected number of tokens returned by Guesser: " + line);
 		}
 		UnicodeString the_orth = UnicodeString::fromUTF8(olt[0]);
-		Corpus2::Token* tt = new Corpus2::Token(the_orth, wa);
+		std::auto_ptr<Corpus2::Token> tt(new Corpus2::Token(the_orth, wa));
 		wa = PwrNlp::Whitespace::None;
 		size_t lexeme_start_idx = 1;
 		while (lexeme_start_idx + 1 < olt.size()) {
-			UnicodeString the_lemma = UnicodeString::fromUTF8(olt[lexeme_start_idx]);
-			Corpus2::Tag the_tag = tagset().parse_simple_tag(olt[lexeme_start_idx + 1]);
-			Corpus2::Lexeme lex(the_lemma, the_tag);
-			tt->add_lexeme(lex);
+			if (olt[lexeme_start_idx + 1] != "ign") {
+				UnicodeString the_lemma = UnicodeString::fromUTF8(olt[lexeme_start_idx]);
+				Corpus2::Tag the_tag = tagset().parse_simple_tag(olt[lexeme_start_idx + 1]);
+				Corpus2::Lexeme lex(the_lemma, the_tag);
+				tt->add_lexeme(lex);
+			}
 			lexeme_start_idx += 2;
 		}
-		sink(tt);
+		if (sunk || !tt->lexemes().empty()) {
+			sink(tt.release());
+			sunk = true;
+		}
 	}
-	return true;
+	return sunk;
 }
 
 } /* end ns Maca */
