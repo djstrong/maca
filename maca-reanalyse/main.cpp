@@ -38,6 +38,54 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <fstream>
 #include <omp.h>
 
+void reanalyse_token(Corpus2::Token* token, boost::shared_ptr<Maca::MorphAnalyser> a, const Corpus2::Tag& ign_tag)
+{
+	bool has_ign = false;
+	std::set<Corpus2::Lexeme> nonign;
+	std::set<Corpus2::Tag> nonign_tags;
+	foreach (const Corpus2::Lexeme& lex, token->lexemes()) {
+		if (lex.tag() == ign_tag) {
+			has_ign = true;
+		} else if (lex.is_disamb()){
+			nonign.insert(lex);
+			nonign_tags.insert(lex.tag());
+		}
+	}
+	if (has_ign) {
+		boost::shared_ptr<Toki::Token> toki(new Toki::Token(token->orth(), "t", token->wa()));
+		std::vector<Corpus2::Token*> newtoks = a->process(*toki);
+		if (newtoks.size() == 1) {
+			Corpus2::Token* newtok = newtoks[0];
+			token->lexemes().clear();
+			bool had_disamb = false;
+			foreach (const Corpus2::Lexeme& lex, newtok->lexemes()) {
+				if (nonign_tags.find(lex.tag()) == nonign_tags.end()) {
+					token->add_lexeme(lex);
+				} else {
+					had_disamb = true;
+				}
+			}
+			if (had_disamb) {
+				foreach (const Corpus2::Lexeme& lex, nonign) {
+					token->add_lexeme(lex);
+				}
+			} else {
+				std::cerr << "Disamb tag not in analysis: ";
+				std::cerr << token->orth_utf8() << " ";
+				foreach (const Corpus2::Lexeme& lex, nonign) {
+					std::cerr << a->tagset().tag_to_string(lex.tag()) << " ";
+				}
+				std::cerr << "\n";
+			}
+		} else {
+			std::cerr << "ERROR: Newtoks size is " << newtoks.size()
+				<< " for input :" << token->orth_utf8() << "\n";
+			token->lexemes().clear();
+			token->add_lexeme(Corpus2::Lexeme(UnicodeString::fromUTF8("None"), ign_tag));
+		}
+	}
+}
+
 int main(int argc, char** argv)
 {
 	std::string config;
@@ -114,48 +162,7 @@ int main(int argc, char** argv)
 			while (boost::shared_ptr<Corpus2::Chunk> chunk = reader->get_next_chunk()) {
 				foreach (Corpus2::Sentence::Ptr sentence, chunk->sentences()) {
 					foreach (Corpus2::Token* token, sentence->tokens()) {
-						bool has_ign = false;
-						std::set<Corpus2::Lexeme> nonign;
-						std::set<Corpus2::Tag> nonign_tags;
-						foreach (const Corpus2::Lexeme& lex, token->lexemes()) {
-							if (lex.tag() == ign_tag) {
-								has_ign = true;
-							} else if (lex.is_disamb()){
-								nonign.insert(lex);
-								nonign_tags.insert(lex.tag());
-							}
-						}
-						if (has_ign) {
-							boost::shared_ptr<Toki::Token> toki(new Toki::Token(token->orth(), "t", token->wa()));
-							std::vector<Corpus2::Token*> newtoks = a->process(*toki);
-							if (newtoks.size() == 1) {
-								Corpus2::Token* newtok = newtoks[0];
-								token->lexemes().clear();
-								bool had_disamb = false;
-								foreach (const Corpus2::Lexeme& lex, newtok->lexemes()) {
-									if (nonign_tags.find(lex.tag()) == nonign_tags.end()) {
-										token->add_lexeme(lex);
-									} else {
-										had_disamb = true;
-									}
-								}
-								if (had_disamb) {
-									foreach (const Corpus2::Lexeme& lex, nonign) {
-										token->add_lexeme(lex);
-									}
-								} else {
-									std::cerr << "Disamb tag not in analysis: ";
-									std::cerr << token->orth_utf8() << " ";
-									foreach (const Corpus2::Lexeme& lex, nonign) {
-										std::cerr << a->tagset().tag_to_string(lex.tag()) << " ";
-									}
-									std::cerr << "\n";
-								}
-							} else {
-								std::cerr << "ERROR: Newtoks size is " << newtoks.size()
-									<< " for input :" << token->orth_utf8() << "\n";
-							}
-						}
+						reanalyse_token(token, a, ign_tag);
 					}
 				}
 				writer->write_chunk(*chunk);
