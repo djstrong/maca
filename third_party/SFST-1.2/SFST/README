@@ -1,6 +1,15 @@
 
                            SFST README
 
+Note on this version
+====================
+
+This is the 1.2 version taken from the original site but with modified Makefile.
+The modifications cause the buildprocess to automatically build and install the
+libsfst.so library with headers (this was not the case in the original version).
+The modifications were made quickly and may contain bugs. The modifications were
+made by Adam Radziszewski to make it easier to install the SFST plugin for the
+MACA system.
 
 Installation (Unix and Linux only)
 ============

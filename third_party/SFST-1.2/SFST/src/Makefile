@@ -51,7 +51,7 @@ OBJ = basic.o alphabet.o fst.o operators.o determinise.o utf8.o
 
 .PHONY: all clean maintainer-clean install maninstall remake
 
-all: $(ALLPROGRAMS)
+all: $(ALLPROGRAMS) libsfst.so
 	strip $(ALLPROGRAMS)
 
 fst-api.zip: testprogram.C alphabet.C alphabet.h basic.C basic.h compact.C \
@@ -124,9 +124,15 @@ clean:
 maintainer-clean: clean
 	-rm $(ALLPROGRAMS) testprogram 2>&- > /dev/null
 
-install: $(PROGRAMS)
+install: $(PROGRAMS) libsfst.so
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)bin
+	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)lib
+	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)include/sfst
 	for p in $(PROGRAMS); do $(INSTALL) $$p $(DESTDIR)$(PREFIX)bin/$$p; done
+	$(INSTALL) libsfst.so $(DESTDIR)$(PREFIX)lib/libsfst1-1.2.so.0.1
+	cd $(DESTDIR)$(PREFIX)lib && ln -sf libsfst1-1.2.so.0.1 libsfst1-1.2.so.0 && ln -sf libsfst1-1.2.so.0 libsfst1.so
+	$(INSTALL) *.h $(DESTDIR)$(PREFIX)include/sfst/
+	
 
 maninstall:
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)man/man1
