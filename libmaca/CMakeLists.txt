@@ -2,10 +2,6 @@
 
 PROJECT(maca)
 
-set(maca_ver_major "1")
-set(maca_ver_minor "0")
-set(maca_ver_patch "3")
-
 if(NOT LIBMACA_SRC_DATA_DIR)
 	message(FATAL_ERROR "There is no data for libmaca")
 endif(NOT LIBMACA_SRC_DATA_DIR)
@@ -13,7 +9,7 @@ endif(NOT LIBMACA_SRC_DATA_DIR)
 set(LIBMACA_PATH_SEPARATOR ";")
 set(LIBMACA_INSTALL_DATA_DIR share/maca)
 set(LIBMACA_DATA_DIR ".;${CMAKE_INSTALL_PREFIX}/${LIBMACA_INSTALL_DATA_DIR}")
-set(LIBMACA_VERSION "${maca_ver_major}.${maca_ver_minor}.${maca_ver_patch}")
+
 configure_file(config_d.in include/libmaca/config_d.h)
 configure_file(version.in include/libmaca/version.h)
 add_definitions(-DHAVE_CONFIG_D_H)

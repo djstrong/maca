@@ -1,6 +1,12 @@
 PROJECT(MorphAnalyser)
 cmake_minimum_required(VERSION 2.8.0)
 
+set(maca_ver_major "1")
+set(maca_ver_minor "0")
+set(maca_ver_patch "4")
+
+set(LIBMACA_VERSION "${maca_ver_major}.${maca_ver_minor}.${maca_ver_patch}")
+
 # use some of our own Find* scripts
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeScripts)
 

@@ -6,6 +6,7 @@ add_executable( maca-convert main.cpp )
 
 target_link_libraries ( maca-convert maca ${Boost_LIBRARIES} ${LIBS})
 
+include_directories(${maca_BINARY_DIR}/include})
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
