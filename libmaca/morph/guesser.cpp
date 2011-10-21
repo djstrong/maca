@@ -1,6 +1,7 @@
 #include <libmaca/morph/guesser.h>
 #include <boost/algorithm/string.hpp>
 #include <Corpus/guesser_api.h>
+#include <algorithm>
 
 namespace Maca {
 
@@ -35,6 +36,7 @@ bool GuesserAnalyser::process_functional(const Toki::Token &t,
 	boost::function<void (Corpus2::Token *)> sink)
 {
 	std::string orthu8 = t.orth_utf8();
+	// feed the orth through the guesser
 	const char* guesser_response = GuessForm(orthu8.c_str());
 	if (!guesser_response) {
 		throw MacaError("Guesser returned NULL");
@@ -44,12 +46,25 @@ bool GuesserAnalyser::process_functional(const Toki::Token &t,
 	boost::algorithm::split(lines, gs, boost::is_any_of("\n"));
 	PwrNlp::Whitespace::Enum wa = t.preceeding_whitespace();
 	bool sunk = false;
+	// NOTE: the Guesser API may also run Morfeusz.
+	// If the output is multi-token, it clearly comes from Morfeusz,
+	// so we immediately reject multi-line guesser responses.
+	// Also note that single-token output may be from the guesser,
+	// but it might also come from Morfeusz -- we can't check it via
+	// this simple API.
+	std::vector<std::string> nonempty_lines;
 	foreach (const std::string& line, lines) {
-		if (line.empty()) continue;
+		if (!line.empty()) {
+			nonempty_lines.push_back(line);
+		}
+	}
+	
+	if (nonempty_lines.size() == 1 ) {
+		const std::string line = nonempty_lines[0];
 		std::vector<std::string> olt;
 		boost::algorithm::split(olt, line, boost::is_any_of(" \t"));
 		if (((olt.size() - 1) % 2 != 0) || (olt.size() < 3)) {
-			throw MacaError("Unexpected number of tokens returned by Guesser: " + line);
+			throw MacaError("Unexpected orth-lemma-tag line returned by Guesser: " + line);
 		}
 		UnicodeString the_orth = UnicodeString::fromUTF8(olt[0]);
 		std::auto_ptr<Corpus2::Token> tt(new Corpus2::Token(the_orth, wa));
