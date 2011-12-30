@@ -31,6 +31,14 @@ class PremorphProcessorImpl;
 
 class SentenceAnalyser;
 
+/**
+ * Extracts pieces of text from pre_morph-like XML data, feeds them through
+ * the given morphological analyser and sends it to the output stream.
+ * NOTE: this implementation does not actually care about the input being
+ * valid pre_morph or XCES. It just replaces PCDATA strings with the analyser
+ * output (sentences and tokens), while retaining the XML structure.
+ *
+ */
 class PremorphProcessor
 {
 public:
@@ -59,6 +67,12 @@ protected:
 
 class PremorphReaderImpl;
 
+/**
+ * A convenient TokenReader interface for analysers. Allows to read pre_morph
+ * XCES files, have their paragraphs analysed with the given analyser and get
+ * output mimicking a regular ordinary TokenReader for already analysed
+ * corpora.
+ */
 class PremorphReader : public Corpus2::BufferedChunkReader
 {
 public:
