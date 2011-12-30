@@ -200,16 +200,19 @@ int main(int argc, char** argv)
 			} else {
 				if (input_format == "premorph") {
 					tr = boost::make_shared<Maca::PremorphReader>(boost::ref(std::cin), sa);
+					// whatever config says, premorph consists of chunks
+					split_chunks = true;
 				} else {
 					tr = boost::make_shared<Maca::TextReader>(boost::ref(std::cin), sa, 1);
 				}
 				if (split_chunks) {
-					/// TODO empty chunks
 					while (boost::shared_ptr<Corpus2::Chunk> chunk = tr->get_next_chunk()) {
-						writer->write_chunk(*chunk);
-						timer.count_chunk(*chunk);
-						if (progress) {
-							timer.check_slice();
+						if (!chunk->empty()) {
+							writer->write_chunk(*chunk);
+							timer.count_chunk(*chunk);
+							if (progress) {
+								timer.check_slice();
+							}
 						}
 					}
 				} else {
