@@ -68,7 +68,7 @@ int main(int argc, char** argv)
 			("initial-wa-override", value(&initial_wa_override),
 			 "Initial whitespace (overrides toki config file)")
 			("input-format,i", value(&input_format)->default_value("text"),
-			 "Input format, any of: text premorph premorph-stream")
+			 "Input format, any of: text premorph premorph-stream premorph-stream-nosent")
 			("output-format,o", value(&output_format)->default_value("plain"),
 			 writers_help.c_str())
 			("linewise,l", value(&linewise)->default_value(false)->zero_tokens(),
@@ -130,7 +130,7 @@ int main(int argc, char** argv)
 	}
 	if (vm.count("script-help")) {
 		std::cout << "INPUT ";
-		std::cout << "text premorph premorph-stream";
+		std::cout << "text premorph premorph-stream premorph-stream-nosent";
 		std::cout << "\n";
 		std::cout << "OUTPUT ";
 		std::cout << boost::algorithm::join(Corpus2::TokenWriter::available_writer_types(), " ");
@@ -170,9 +170,14 @@ int main(int argc, char** argv)
 				}
 			}
 
-			if (input_format == "premorph-stream") {
+			if (input_format == "premorph-stream" ||
+				input_format == "premorph-stream-nosent") {
 				Maca::PremorphProcessor pp(std::cout, sa);
 				pp.set_stats(progress);
+				if (input_format == "premorph-stream-nosent") {
+					// we don't want to mark sentences in output
+					pp.set_mark_sentences(false);
+				}
 				pp.parse_stream(std::cin);
 				return 0;
 			}

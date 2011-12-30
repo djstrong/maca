@@ -38,6 +38,10 @@ public:
 		stats_ = v;
 	}
 
+	void set_mark_sentences(bool v) {
+		mark_sents_ = v;
+	}
+
 protected:
 	void on_start_document();
 	void on_end_document();
@@ -51,6 +55,7 @@ private:
 	std::ostream& os_;
 	boost::shared_ptr<SentenceAnalyser> sa_;
 	bool stats_;
+	bool mark_sents_;
 	TokenTimer timer_;
 };
 
@@ -82,9 +87,15 @@ void PremorphProcessor::set_stats(bool v)
 	impl_->set_stats(v);
 }
 
+void PremorphProcessor::set_mark_sentences(bool shall_mark_sents)
+{
+	impl_->set_mark_sentences(shall_mark_sents);
+}
+
 PremorphProcessorImpl::PremorphProcessorImpl(std::ostream& os,
 		const boost::shared_ptr<SentenceAnalyser>& sa)
-	: Corpus2::BasicSaxParser(), os_(os), sa_(sa), stats_(false), timer_()
+	: Corpus2::BasicSaxParser(), os_(os), sa_(sa),
+	stats_(false), mark_sents_(true), timer_()
 {
 	grab_characters_ = true;
 }
@@ -128,11 +139,15 @@ void PremorphProcessorImpl::on_end_element(const Glib::ustring &name)
 void PremorphProcessorImpl::output_sentence(const Corpus2::Sentence::Ptr& s)
 {
 	if (!s->empty()) {
-		os_ << " <chunk type=\"s\">\n";
+		if (mark_sents_) {
+			os_ << " <chunk type=\"s\">\n";
+		}
 		foreach (Corpus2::Token* t, s->tokens()) {
 			token_as_xces_xml(os_, sa_->tagset(), *t, 1);
 		}
-		os_ << " </chunk>\n";
+		if (mark_sents_) {
+			os_ << " </chunk>\n";
+		}
 		timer_.count_sentence(*s);
 		if (stats_) {
 			timer_.check_slice();

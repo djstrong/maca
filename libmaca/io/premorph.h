@@ -37,6 +37,8 @@ class SentenceAnalyser;
  * NOTE: this implementation does not actually care about the input being
  * valid pre_morph or XCES. It just replaces PCDATA strings with the analyser
  * output (sentences and tokens), while retaining the XML structure.
+ * By default the processor outputs recognised sentence boundaries. This may be
+ * switched off by set_mark_sentences(false).
  *
  */
 class PremorphProcessor
@@ -56,6 +58,11 @@ public:
 	void parse_stream(std::istream& is);
 
 	void set_stats(bool v);
+
+	/** Sets whether sentence boundaries should be marked in output or not
+	  * (default: always mark).
+	  */
+	void set_mark_sentences(bool shall_mark_sents);
 
 protected:
 	boost::scoped_ptr<PremorphProcessorImpl> impl_;
