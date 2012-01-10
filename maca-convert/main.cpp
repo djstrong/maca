@@ -348,7 +348,11 @@ int main(int argc, char** argv)
 			Maca::Config::Node n = Maca::Config::from_file(fn);
 			Maca::Conversion::TagsetConverter conv(n);
 			boost::shared_ptr<Corpus2::TokenReader> reader;
-			reader = Corpus2::TokenReader::create_stream_reader(input_format, conv.tagset_from(), std::cin);
+			if (input_path == "-") {
+				reader = Corpus2::TokenReader::create_stream_reader(input_format, conv.tagset_from(), std::cin);
+			} else {
+				reader = Corpus2::TokenReader::create_path_reader(input_format, conv.tagset_from(), input_path);
+			}
 
 			if (folds > 0) {
 				Folder f(*reader, output_format, folds_file_prefix, &conv);
