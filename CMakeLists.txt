@@ -52,7 +52,7 @@ FIND_PATH(LIBMACA_SRC_DATA_DIR
 )
 MARK_AS_ADVANCED(LIBMACA_SRC_DATA_DIR)
 
-find_package(Boost 1.41 REQUIRED COMPONENTS program_options filesystem regex)
+find_package(Boost 1.41 REQUIRED COMPONENTS program_options filesystem system regex)
 
 add_subdirectory(libmaca)
 add_subdirectory(maca-analyse)
