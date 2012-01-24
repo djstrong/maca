@@ -143,11 +143,11 @@ int init_subdir(const path& dir, std::string ps, std::vector<compare_test>& test
 			subdirs.insert(itr->path());
 		} else {
 			if (itr->path().extension() == ".in") {
-				tests_in.insert(itr->path().stem());
+				tests_in.insert(itr->path().stem().c_str());
 			} else if (itr->path().extension() == ".out") {
-				tests_out.insert(itr->path().stem());
+				tests_out.insert(itr->path().stem().c_str());
 			} else if (itr->path().extension() == ".conv") {
-				configs.insert(itr->path().stem());
+				configs.insert(itr->path().stem().c_str());
 			}
 		}
 	}
