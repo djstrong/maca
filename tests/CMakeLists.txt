@@ -11,7 +11,13 @@ add_executable(tests
 	morph_basic.cpp
 )
 
-target_link_libraries ( tests maca ${Boost_LIBRARIES})
+find_package(Toki 1.0.0 REQUIRED)
+set(LIBS ${LIBS} ${Toki_LIBRARY})
+
+find_package(Corpus2 1.0.9 REQUIRED)
+set(LIBS ${LIBS} ${Corpus2_LIBRARIES})
+
+target_link_libraries ( tests maca ${Boost_LIBRARIES} ${LIBS})
 
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})

@@ -5,14 +5,18 @@ include_directories( ${CMAKE_SOURCE_DIR} )
 add_executable( maca-analyse main.cpp )
 add_executable( maca-analyse-batch batch.cpp )
 
+find_package(Toki 1.0.0 REQUIRED)
+set(LIBS ${LIBS} ${Toki_LIBRARY})
+
+find_package(Corpus2 1.0.9 REQUIRED)
+set(LIBS ${LIBS} ${Corpus2_LIBRARIES})
+
 target_link_libraries ( maca-analyse maca ${Boost_LIBRARIES} ${LIBS})
 target_link_libraries ( maca-analyse-batch maca ${Boost_LIBRARIES} ${LIBS})
 
 include_directories(${maca_BINARY_DIR}/include)
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
-
-
 
 
 find_package(OpenMP)

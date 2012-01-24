@@ -29,6 +29,9 @@ set(LIBS ${LIBS} ${Toki_LIBRARY})
 find_package(Corpus2 1.0.9 REQUIRED)
 set(LIBS ${LIBS} ${Corpus2_LIBRARIES})
 
+find_package(PwrUtils REQUIRED)
+set(LIBS ${PwrUtils_LIBRARY})
+
 find_package(ICU REQUIRED QUIET)
 include_directories(${ICU_INCLUDE_DIR})
 link_directories(${ICU_LIBRARY_DIRS})
