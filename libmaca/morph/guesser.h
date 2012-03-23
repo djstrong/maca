@@ -43,6 +43,9 @@ public:
 
 	/// Registered flag
 	static bool registered;
+private:
+	/// Set libcorpus1 flags necessary for guesser usage.
+	void setup_corpus1();
 };
 
 } /* end ns Maca */

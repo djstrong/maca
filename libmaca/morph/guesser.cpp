@@ -13,13 +13,22 @@ bool GuesserAnalyser::registered =
 GuesserAnalyser::GuesserAnalyser(const Config::Node &cfg)
 	: MorphAnalyser(cfg)
 {
-	SetCorpusEncoding(GUESSER_UTF8);
+	setup_corpus1();
 }
 
 GuesserAnalyser::GuesserAnalyser(const Corpus2::Tagset *tagset)
 	: MorphAnalyser(tagset)
 {
+	setup_corpus1();
+}
+
+void GuesserAnalyser::setup_corpus1()
+{
+	// we operate in UTF8
 	SetCorpusEncoding(GUESSER_UTF8);
+	// if unexpected tags come out of Guesser (or actually
+	// Morfeusz+Guesser system), just warn instead of halting
+	AllowMorfErrors();
 }
 
 GuesserAnalyser::~GuesserAnalyser()
