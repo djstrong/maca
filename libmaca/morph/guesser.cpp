@@ -70,13 +70,14 @@ bool GuesserAnalyser::process_functional(const Toki::Token &t,
 	
 	if (nonempty_lines.size() == 1 ) {
 		const std::string line = nonempty_lines[0];
-		std::vector<std::string> olt;
+		std::vector<std::string> olt; // orth-lemma-tag
 		boost::algorithm::split(olt, line, boost::is_any_of(" \t"));
 		if (((olt.size() - 1) % 2 != 0) || (olt.size() < 3)) {
 			throw MacaError("Unexpected orth-lemma-tag line returned by Guesser: " + line);
 		}
-		UnicodeString the_orth = UnicodeString::fromUTF8(olt[0]);
-		std::auto_ptr<Corpus2::Token> tt(new Corpus2::Token(the_orth, wa));
+		// UnicodeString the_orth = UnicodeString::fromUTF8(olt[0]);
+		// take orth from input unchanged
+		std::auto_ptr<Corpus2::Token> tt(new Corpus2::Token(t.orth(), wa));
 		wa = PwrNlp::Whitespace::None;
 		size_t lexeme_start_idx = 1;
 		while (lexeme_start_idx + 1 < olt.size()) {
