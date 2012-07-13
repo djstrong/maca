@@ -19,6 +19,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libcorpus2/io/reader.h>
 #include <libmaca/util/sentenceanalyser.h>
+#include <boost/shared_ptr.hpp>
 
 namespace Maca {
 
@@ -39,6 +40,20 @@ protected:
 	std::istream& is_;
 
 	boost::shared_ptr<SentenceAnalyser> sa_;
+};
+
+class TextFileReader : public TextReader
+{
+public:
+    TextFileReader(boost::shared_ptr<std::ifstream> inputStream, const boost::shared_ptr<SentenceAnalyser>& sa);
+    ~TextFileReader();
+
+    static boost::shared_ptr<Corpus2::TokenReader> create_reader(const std::string& filename, const std::string& config);
+
+private:
+
+    boost::shared_ptr<std::ifstream> inputFileStream;
+
 };
 
 } /* end ns Maca */

@@ -104,6 +104,21 @@ protected:
 	boost::scoped_ptr<PremorphReaderImpl> impl_;
 };
 
+class PremorphFileReader : public PremorphReader{
+
+public:
+    PremorphFileReader(boost::shared_ptr<std::ifstream> inputStream, const boost::shared_ptr<SentenceAnalyser>& sentenceAnalyser);
+    ~PremorphFileReader();
+
+    static boost::shared_ptr<Corpus2::TokenReader> create_reader(const std::string& filename, const std::string& config);
+
+private:
+
+    boost::shared_ptr<std::ifstream> inputFileStream;
+
+};
+
+
 } /* end ns Maca */
 
 #endif // LIBMACA_IO_PREMORPH_H

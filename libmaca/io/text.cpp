@@ -16,6 +16,11 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libmaca/io/text.h>
 #include <libpwrutils/foreach.h>
+#include <boost/make_shared.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/ref.hpp>
+#include <fstream>
+#include <iostream>
 
 namespace Maca {
 
@@ -32,5 +37,21 @@ Corpus2::Sentence::Ptr TextReader::actual_next_sentence()
 	return sa_->get_next_sentence();
 }
 
+boost::shared_ptr<Corpus2::TokenReader> TextFileReader::create_reader(const std::string& filename, const std::string& config)
+{
+    boost::shared_ptr<SentenceAnalyser> sentenceAnalyser = SentenceAnalyser::create_from_named_config(config);
+
+    boost::shared_ptr<std::ifstream> is_ = boost::make_shared<std::ifstream>();
+    is_->open(filename.c_str(), std::ios_base::in);
+
+    return boost::make_shared<TextFileReader>(is_, sentenceAnalyser);
+}
+
+TextFileReader::TextFileReader(boost::shared_ptr<std::ifstream> inputStream, const boost::shared_ptr<SentenceAnalyser>& sa) : TextReader(boost::ref(*inputStream), sa), inputFileStream(inputStream){
+}
+
+
+TextFileReader::~TextFileReader(){
+}
 
 } /* end ns Maca */

@@ -25,6 +25,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <vector>
 #include <boost/bind.hpp>
 #include <boost/make_shared.hpp>
+#include <fstream>
+#include <iostream>
 
 namespace Maca {
 
@@ -255,5 +257,21 @@ void PremorphReaderImpl::on_end_element(const Glib::ustring &name)
 		state_ = XS_NONE;
 	}
 }
+
+PremorphFileReader::PremorphFileReader(boost::shared_ptr<std::ifstream> inputStream, const boost::shared_ptr<SentenceAnalyser>& sentenceAnalyser) : PremorphReader(boost::ref(*inputStream), sentenceAnalyser), inputFileStream(inputStream){
+}
+PremorphFileReader::~PremorphFileReader(){
+
+}
+
+boost::shared_ptr<Corpus2::TokenReader> PremorphFileReader::create_reader(const std::string& filename, const std::string& config){
+    boost::shared_ptr<SentenceAnalyser> sentenceAnalyser = SentenceAnalyser::create_from_named_config(config);
+
+    boost::shared_ptr<std::ifstream> is_ = boost::make_shared<std::ifstream>();
+    is_->open(filename.c_str(), std::ios_base::in);
+
+    return boost::make_shared<PremorphFileReader>(is_, sentenceAnalyser);
+}
+
 
 } /* end ns Maca */
