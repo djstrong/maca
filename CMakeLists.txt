@@ -15,6 +15,7 @@ IF(NOT CMAKE_BUILD_TYPE)
 		FORCE)
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
+set(MACA_BUILD_SWIG True CACHE BOOL "Build SWIG Python wrappers" FORCE)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
 	# Set our own default flags at first run.
@@ -59,6 +60,18 @@ add_subdirectory(maca-analyse)
 add_subdirectory(maca-reanalyse)
 add_subdirectory(maca-convert)
 add_subdirectory(tests)
+
+if(MACA_BUILD_SWIG)
+	FIND_PACKAGE(SWIG)
+	if(SWIG_FOUND)
+		message(STATUS "SWIG found, Python wrappers will be built")
+		add_subdirectory(swig)
+	else()
+		message(STATUS "WARNING: SWIG not found, Python wrappers will not be built")
+	endif(SWIG_FOUND)
+else()
+	message(STATUS "Not building SWIG Python wrappers")
+endif(MACA_BUILD_SWIG)
 
 if (UNIX)
 	install(FILES tools/bash_completion_maca DESTINATION /etc/bash_completion.d)
