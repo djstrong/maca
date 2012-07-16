@@ -33,8 +33,8 @@ def chunks(reader):
 def maca_analyse():
 	parser = OptionParser(usage=descr)
 	parser.add_option('-i', '--input-format', type='string', action='store',
-		dest='input_format', default='plain',
-		help='set the input format; available formats: plain, premorph')
+		dest='input_format', default='txt',
+		help='set the input format; available formats: txt, premorph')
 	parser.add_option('-o', '--output-format', type='string', action='store',
 		dest='output_format', default='xces',
 		help='set the output format; default: xces')
@@ -49,10 +49,10 @@ def maca_analyse():
 	filepath = args[1]
 
 	reader = ''
-	if options.input_format == 'plain':
-		reader = maca.TextFileReader.create_reader(filepath, maca_config)
+	if options.input_format == 'txt':
+		reader = maca.PlainTextReader.create_file_reader(filepath, maca_config)
 	elif options.input_format == 'premorph':
-		reader = maca.PremorphFileReader.create_reader(filepath, maca_config)
+		reader = maca.PremorphTextReader.create_file_reader(filepath, maca_config)
 	else:
 		print "Unknown input format."
 		return

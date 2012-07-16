@@ -16,10 +16,11 @@
 
 namespace Maca{
 
-	class PremorphFileReader{
+	class PremorphTextReader{
 
 	public:
-	    static boost::shared_ptr<Corpus2::TokenReader> create_reader(const std::string& filename, const std::string& config);
+	    static boost::shared_ptr<Corpus2::TokenReader> create_file_reader(const std::string& filename, const std::string& config);
+	    static boost::shared_ptr<Corpus2::TokenReader> create_stream_reader(const std::string& config);
 
 	};
 }

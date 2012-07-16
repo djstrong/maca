@@ -37,21 +37,28 @@ Corpus2::Sentence::Ptr TextReader::actual_next_sentence()
 	return sa_->get_next_sentence();
 }
 
-boost::shared_ptr<Corpus2::TokenReader> TextFileReader::create_reader(const std::string& filename, const std::string& config)
+boost::shared_ptr<Corpus2::TokenReader> PlainTextReader::create_file_reader(const std::string& filename, const std::string& config)
 {
     boost::shared_ptr<SentenceAnalyser> sentenceAnalyser = SentenceAnalyser::create_from_named_config(config);
 
     boost::shared_ptr<std::ifstream> is_ = boost::make_shared<std::ifstream>();
     is_->open(filename.c_str(), std::ios_base::in);
 
-    return boost::make_shared<TextFileReader>(is_, sentenceAnalyser);
+    return boost::make_shared<PlainTextReader>(is_, sentenceAnalyser);
 }
 
-TextFileReader::TextFileReader(boost::shared_ptr<std::ifstream> inputStream, const boost::shared_ptr<SentenceAnalyser>& sa) : TextReader(boost::ref(*inputStream), sa), inputFileStream(inputStream){
+boost::shared_ptr<Corpus2::TokenReader> PlainTextReader::create_stream_reader(const std::string& config)
+{
+    boost::shared_ptr<SentenceAnalyser> sentenceAnalyser = SentenceAnalyser::create_from_named_config(config);
+
+    return boost::make_shared<TextReader>(boost::ref(std::cin), sentenceAnalyser);
+}
+
+PlainTextReader::PlainTextReader(boost::shared_ptr<std::ifstream> inputStream, const boost::shared_ptr<SentenceAnalyser>& sa) : TextReader(boost::ref(*inputStream), sa), inputFileStream(inputStream){
 }
 
 
-TextFileReader::~TextFileReader(){
+PlainTextReader::~PlainTextReader(){
 }
 
 } /* end ns Maca */

@@ -104,13 +104,14 @@ protected:
 	boost::scoped_ptr<PremorphReaderImpl> impl_;
 };
 
-class PremorphFileReader : public PremorphReader{
+class PremorphTextReader : public PremorphReader{
 
 public:
-    PremorphFileReader(boost::shared_ptr<std::ifstream> inputStream, const boost::shared_ptr<SentenceAnalyser>& sentenceAnalyser);
-    ~PremorphFileReader();
+    PremorphTextReader(boost::shared_ptr<std::ifstream> inputStream, const boost::shared_ptr<SentenceAnalyser>& sentenceAnalyser);
+    ~PremorphTextReader();
 
-    static boost::shared_ptr<Corpus2::TokenReader> create_reader(const std::string& filename, const std::string& config);
+    static boost::shared_ptr<Corpus2::TokenReader> create_file_reader(const std::string& filename, const std::string& config);
+    static boost::shared_ptr<Corpus2::TokenReader> create_stream_reader(const std::string& config);
 
 private:
 
