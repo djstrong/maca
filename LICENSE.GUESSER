@@ -1,3 +1,9 @@
+MACA is released under GNU LGPL license, unless it is compiled with additional libraries:
+TaKIPI Guesser	-	turns MACA's license into GNU GPL
+SFST		-	turns MACA's license into GNU GPL
+
+WITH any of these additional libraries MACA applies to GNU GPL license:
+
     Copyright (C) 2010 Tomasz Śniatowski, Adam Radziszewski
 
     This program is free software; you can redistribute it and/or modify it

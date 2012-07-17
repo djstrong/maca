@@ -5,7 +5,7 @@
 #    Part of the Maca project
 #
 #    This program is free software; you can redistribute it and/or modify it
-#    under the terms of the GNU General Public License as published by the Free
+#    under the terms of the GNU Lesser General Public License as published by the Free
 #    Software Foundation; either version 3 of the License, or (at your option)
 #    any later version.
 #
@@ -13,7 +13,7 @@
 #    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 #    or FITNESS FOR A PARTICULAR PURPOSE.
 #
-#    See the LICENSE and COPYING files for more details.
+#    See the LICENSE.MACA, LICENSE.SFST, LICENSE.GUESSER, COPYING.LESSER and COPYING files for more details.
 
 import sys, codecs
 from optparse import OptionParser
