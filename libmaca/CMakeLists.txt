@@ -85,27 +85,30 @@ if (UNIX)
 endif(UNIX)
 
 find_package(SFST)
-if (SFST_FOUND)
-	if(SFST_PLUGIN)
-		message(STATUS "SFST support will be built as a plugin")
-		add_library(maca_sfst MODULE morph/sfstanalyser.cpp)
-		target_link_libraries(maca_sfst maca ${SFST_LIBRARY} )
-		set_target_properties(maca_sfst PROPERTIES
-			VERSION "${maca_ver_major}.${maca_ver_minor}"
-			SOVERSION ${maca_ver_major})
-		set_target_properties(maca_sfst PROPERTIES
-			COMPILE_FLAGS "-DSFST_AS_PLUGIN -I${SFST_INCLUDE_DIR} -Wno-deprecated"
-		)
-		install(TARGETS maca_sfst
-			LIBRARY DESTINATION lib)
-	else(SFST_PLUGIN)
-		set(LIBS ${LIBS} ${SFST_LIBRARY})
-		include_directories(${SFST_INCLUDE_DIR})
-		link_directories(${SFST_LIBRARY_DIRS})
-		set(HAVE_SFST 1)
-		SET(libmaca_STAT_SRC ${libmaca_STAT_SRC} morph/sfstanalyser.cpp)
-	endif(SFST_PLUGIN)
-endif (SFST_FOUND)
+if(BUILD_GPL_PLUGINS)
+	if (SFST_FOUND)
+		set(SFST_COMPONENT_BUILD True CACHE INTERNAL "SFST MARKER" PARENT_SCOPE)
+		if(SFST_PLUGIN)
+			message(STATUS "SFST support will be built as a plugin")
+			add_library(maca_sfst MODULE morph/sfstanalyser.cpp)
+			target_link_libraries(maca_sfst maca ${SFST_LIBRARY} )
+			set_target_properties(maca_sfst PROPERTIES
+				VERSION "${maca_ver_major}.${maca_ver_minor}"
+				SOVERSION ${maca_ver_major})
+			set_target_properties(maca_sfst PROPERTIES
+				COMPILE_FLAGS "-DSFST_AS_PLUGIN -I${SFST_INCLUDE_DIR} -Wno-deprecated"
+			)
+			install(TARGETS maca_sfst
+				LIBRARY DESTINATION lib)
+		else(SFST_PLUGIN)
+			set(LIBS ${LIBS} ${SFST_LIBRARY})
+			include_directories(${SFST_INCLUDE_DIR})
+			link_directories(${SFST_LIBRARY_DIRS})
+			set(HAVE_SFST 1)
+			SET(libmaca_STAT_SRC ${libmaca_STAT_SRC} morph/sfstanalyser.cpp)
+		endif(SFST_PLUGIN)
+	endif (SFST_FOUND)
+endif(BUILD_GPL_PLUGINS)
 
 find_package(Morfeusz)
 if (MORFEUSZ_FOUND)
@@ -131,25 +134,28 @@ if (MORFEUSZ_FOUND)
 endif (MORFEUSZ_FOUND)
 
 find_package(Corpus)
-if (CORPUS_FOUND)
-	if(GUESSER_PLUGIN)
-		message(STATUS "Guesser support will be built as a plugin")
-		add_library(maca_guesser MODULE morph/guesser.cpp)
-		target_link_libraries ( maca_guesser maca ${CORPUS_LIBRARY} )
-		set_target_properties(maca_guesser PROPERTIES
-			VERSION "${maca_ver_major}.${maca_ver_minor}"
-			SOVERSION ${maca_ver_major})
-		set_target_properties(maca_guesser PROPERTIES
-			COMPILE_FLAGS "-DGUESSER_AS_PLUGIN"
-		)
-		install(TARGETS maca_guesser
-			LIBRARY DESTINATION lib)
-	else(GUESSER_PLUGIN)
-		set(LIBS ${LIBS} ${CORPUS_LIBRARY})
-		set(HAVE_CORPUS 1)
-		SET(libmaca_STAT_SRC ${libmaca_STAT_SRC} morph/guesser.cpp)
-	endif(GUESSER_PLUGIN)
-endif (CORPUS_FOUND)
+if(BUILD_GPL_PLUGINS)
+	if (CORPUS_FOUND)
+		set(GUESSER_COMPONENT_BUILD True CACHE INTERNAL "GUESSER MARKER" PARENT_SCOPE)
+		if(GUESSER_PLUGIN)
+			message(STATUS "Guesser support will be built as a plugin")
+			add_library(maca_guesser MODULE morph/guesser.cpp)
+			target_link_libraries ( maca_guesser maca ${CORPUS_LIBRARY} )
+			set_target_properties(maca_guesser PROPERTIES
+				VERSION "${maca_ver_major}.${maca_ver_minor}"
+				SOVERSION ${maca_ver_major})
+			set_target_properties(maca_guesser PROPERTIES
+				COMPILE_FLAGS "-DGUESSER_AS_PLUGIN"
+			)
+			install(TARGETS maca_guesser
+				LIBRARY DESTINATION lib)
+		else(GUESSER_PLUGIN)
+			set(LIBS ${LIBS} ${CORPUS_LIBRARY})
+			set(HAVE_CORPUS 1)
+			SET(libmaca_STAT_SRC ${libmaca_STAT_SRC} morph/guesser.cpp)
+		endif(GUESSER_PLUGIN)
+	endif (CORPUS_FOUND)
+endif(BUILD_GPL_PLUGINS)
 
 file(GLOB_RECURSE INCS "*.h")
 

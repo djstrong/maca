@@ -5,6 +5,8 @@ set(maca_ver_major "1")
 set(maca_ver_minor "0")
 set(maca_ver_patch "5")
 
+set(BUILD_GPL_PLUGINS OFF CACHE BOOL "Include GPL plugins into installation")
+
 # use some of our own Find* scripts
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeScripts)
 
@@ -76,3 +78,19 @@ endif(MACA_BUILD_SWIG)
 if (UNIX)
 	install(FILES tools/bash_completion_maca DESTINATION /etc/bash_completion.d)
 endif(UNIX)
+
+message(STATUS "*****************************************************")
+if(BUILD_GPL_PLUGINS)
+	message(STATUS "GPL components have been included into installtion:")
+	if(SFST_COMPONENT_BUILD)
+		message(STATUS "\tSFST")
+	endif(SFST_COMPONENT_BUILD)
+	if(GUESSER_COMPONENT_BUILD)
+		message(STATUS "\tGuesser")
+	endif(GUESSER_COMPONENT_BUILD)
+else(BUILD_GPL_PLUGINS)
+	message(STATUS "No GPL components have been included into installation.")
+endif(BUILD_GPL_PLUGINS)
+
+message(STATUS "Use cmake wizard mode: -i; to manage build configuration.")
+message(STATUS "*****************************************************")
