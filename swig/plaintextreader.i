@@ -21,6 +21,7 @@ namespace Maca{
 	public:
 	    static boost::shared_ptr<Corpus2::TokenReader> create_file_reader(const std::string& filename, const std::string& config);
 	    static boost::shared_ptr<Corpus2::TokenReader> create_stream_reader(const std::string& config);
+	    static boost::shared_ptr<Corpus2::TokenReader> create_string_reader(const std::string& inputText, const std::string& config);
 	};
 }
 

@@ -54,7 +54,16 @@ boost::shared_ptr<Corpus2::TokenReader> PlainTextReader::create_stream_reader(co
     return boost::make_shared<TextReader>(boost::ref(std::cin), sentenceAnalyser);
 }
 
-PlainTextReader::PlainTextReader(boost::shared_ptr<std::ifstream> inputStream, const boost::shared_ptr<SentenceAnalyser>& sa) : TextReader(boost::ref(*inputStream), sa), inputFileStream(inputStream){
+boost::shared_ptr<Corpus2::TokenReader> PlainTextReader::create_string_reader(const std::string& inputText, const std::string& config)
+{
+    boost::shared_ptr<std::stringstream> inputStream = boost::make_shared<std::stringstream>(inputText, std::stringstream::in);
+
+    boost::shared_ptr<SentenceAnalyser> sentenceAnalyser = SentenceAnalyser::create_from_named_config(config);
+
+    return boost::make_shared<PlainTextReader>(inputStream, sentenceAnalyser);
+}
+
+PlainTextReader::PlainTextReader(boost::shared_ptr<std::istream> inputStream, const boost::shared_ptr<SentenceAnalyser>& sa) : TextReader(boost::ref(*inputStream), sa), inputFileStream(inputStream){
 }
 
 
