@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libmaca/conv/joinrule.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <libcorpus2/tagsetmanager.h>
 #include <libmaca/conv/attributecopier.h>
 #include <boost/algorithm/string.hpp>
@@ -35,7 +35,7 @@ JoinRule::JoinRule(const Config::Node& cfg)
 {
 	std::string pos1, pos2;
 	UnicodeString orth1, orth2;
-	foreach (const Config::Node::value_type &v, cfg) {
+	BOOST_FOREACH(const Config::Node::value_type &v, cfg) {
 		if (v.first == "t1_pos") {
 			pos1 = v.second.data();
 		} else if (v.first == "t2_pos") {
@@ -98,7 +98,7 @@ void JoinRule::add_postcondition(const std::string& pred_string)
 	std::vector<std::string> srv;
 	boost::algorithm::split(srv, pred_string,
 			boost::is_any_of(std::string(": ")));
-	foreach (const std::string& sr, srv) {
+	BOOST_FOREACH(const std::string& sr, srv) {
 		if (!sr.empty()) {
 			post_.push_back(TagPredicate(sr, *tagset_));
 		}

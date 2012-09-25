@@ -2,7 +2,6 @@ PROJECT(maca-reanalyse)
 
 include_directories( ${CMAKE_SOURCE_DIR} )
 
-add_executable( maca-reanalyse main.cpp )
 
 find_package(Toki 1.0.0 REQUIRED)
 set(LIBS ${LIBS} ${Toki_LIBRARY})
@@ -10,10 +9,13 @@ set(LIBS ${LIBS} ${Toki_LIBRARY})
 find_package(Corpus2 1.0.9 REQUIRED)
 set(LIBS ${LIBS} ${Corpus2_LIBRARIES})
 
-target_link_libraries ( maca-reanalyse maca ${Boost_LIBRARIES} ${LIBS})
+find_package(ICU REQUIRED)
 
 include_directories(${maca_BINARY_DIR}/include)
 include_directories(${Boost_INCLUDE_DIR})
+include_directories(${Corpus2_INCLUDE_DIR})
+include_directories(${ICU_INCLUDE_DIR})
+
 link_directories(${Boost_LIBRARY_DIRS})
 
 find_package(OpenMP)
@@ -24,6 +26,8 @@ if (OPENMP_FOUND)
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${OpenMP_CXX_FLAGS}")
 endif(OPENMP_FOUND)
 
+add_executable( maca-reanalyse main.cpp )
+target_link_libraries ( maca-reanalyse maca ${Boost_LIBRARIES} ${LIBS})
 
 if(UNIX)
 	install(TARGETS maca-reanalyse

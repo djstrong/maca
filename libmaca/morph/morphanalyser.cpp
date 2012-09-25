@@ -18,7 +18,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libmaca/util/settings.h>
 #include <libcorpus2/tagsetmanager.h>
 
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 
 #include <boost/bind.hpp>
 #include <boost/algorithm/string.hpp>
@@ -57,7 +57,7 @@ std::vector<Corpus2::Token*> MorphAnalyser::process(const Toki::Token &t)
 Corpus2::Sentence::Ptr MorphAnalyser::process(const Toki::Sentence &s)
 {
 	Corpus2::Sentence::Ptr ss = boost::make_shared<Corpus2::Sentence>();
-	foreach (Toki::Token* t, s.tokens()) {
+	BOOST_FOREACH(Toki::Token* t, s.tokens()) {
 		process(*t, ss->tokens());
 	}
 	return ss;
@@ -74,7 +74,7 @@ std::vector<Corpus2::Token*> MorphAnalyser::process_dispose(
 void MorphAnalyser::process_dispose(const std::vector<Toki::Token*>& t,
 		std::vector<Corpus2::Token*>& v)
 {
-	foreach (Toki::Token* tt, t) {
+	BOOST_FOREACH(Toki::Token* tt, t) {
 		process(*tt, v);
 		delete tt;
 	}
@@ -89,7 +89,7 @@ Corpus2::Sentence::Ptr MorphAnalyser::process_dispose(Toki::Sentence* t)
 
 void MorphAnalyser::process_dispose(Toki::Sentence* t, Corpus2::Sentence::Ptr v)
 {
-	foreach (Toki::Token* tt, t->tokens()) {
+	BOOST_FOREACH(Toki::Token* tt, t->tokens()) {
 		process(*tt, v->tokens());
 		delete tt;
 	}

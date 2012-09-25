@@ -1,6 +1,6 @@
-FIND_PATH(LOKI_INCLUDE_DIR LokiExport.h /usr/include/loki /usr/local/include/loki)
+FIND_PATH(LOKI_INCLUDE_DIR loki/LokiExport.h /usr/include /usr/local/include)
 
-FIND_LIBRARY(LOKI_LIBRARY NAMES loki PATH /usr/lib /usr/local/lib) 
+FIND_LIBRARY(LOKI_LIBRARY NAMES loki PATHS /usr/lib /usr/local/lib) 
 
 MARK_AS_ADVANCED(LOKI_LIBRARY)
 MARK_AS_ADVANCED(LOKI_INCLUDE_DIR)
@@ -12,9 +12,9 @@ ENDIF (LOKI_INCLUDE_DIR AND LOKI_LIBRARY)
 
 
 IF (LOKI_FOUND)
-   IF (NOT Loki_FIND_QUIETLY)
+   IF (NOT LOKI_FIND_QUIETLY)
       MESSAGE(STATUS "Found LOKI: ${LOKI_LIBRARY}")
-   ENDIF (NOT Loki_FIND_QUIETLY)
+   ENDIF (NOT LOKI_FIND_QUIETLY)
 ELSE (LOKI_FOUND)
    IF (Loki_FIND_REQUIRED)
       MESSAGE(FATAL_ERROR "Could not find Loki-lib")

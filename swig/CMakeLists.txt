@@ -5,6 +5,7 @@ set(TOKI_LIBS ${Toki_LIBRARY})
 
 find_package(Corpus2 1.0.8 REQUIRED)
 set(CORPUS2_LIBS ${Corpus2_LIBRARY})
+include_directories(${Corpus2_INCLUDE_DIR})
 
 find_package(PwrUtils 1.0.1 REQUIRED)
 set(PWRUTILS_LIBS ${PwrUtils_LIBRARY})
@@ -33,6 +34,14 @@ message(STATUS "INFO: " "python lib: ${PYTHON_INSTDIR}" )
 
 INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+
+find_package(ICU REQUIRED)
+include_directories(${ICU_INCLUDE_DIR})
+link_directories(${ICU_LIBRARY_DIRS})
+
+link_directories(${Boost_LIBRARY_DIRS})
+
+include_directories(${Boost_INCLUDE_DIR})
 
 if(CMAKE_COMPILER_IS_GNUCXX)
         set(CMAKE_CXX_FLAGS "-ansi $ENV{CXXFLAGS}")

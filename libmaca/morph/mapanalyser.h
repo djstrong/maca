@@ -21,7 +21,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libmaca/util/settings.h>
 
 #include <libtoki/util/confignode.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 
 #include <boost/unordered_map.hpp>
 #include <fstream>
@@ -215,7 +215,7 @@ bool MapAnalyser<MapT>::process_functional(const Toki::Token &t,
 	if (i != map_.end()) {
 		Corpus2::Token* tt = create_from_toki(t);
 		typedef std::pair<std::string, std::string> sp;
-		foreach (const sp& o, i->second) {
+		BOOST_FOREACH(const sp& o, i->second) {
 			tagset().lexemes_into_token(*tt, o.first, o.second);
 		}
 		sink(tt);

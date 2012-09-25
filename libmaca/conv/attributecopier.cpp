@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libmaca/conv/attributecopier.h>
 #include <boost/algorithm/string.hpp>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <libmaca/typedefs.h>
 #include <libmaca/exception.h>
 
@@ -35,7 +35,7 @@ Corpus2::mask_t append_attributes_mask(Corpus2::mask_t& v,
 {
 	string_range_vector srv;
 	boost::algorithm::split(srv, str, boost::is_any_of(std::string(": ")));
-	foreach (const string_range& sr, srv) {
+	BOOST_FOREACH(const string_range& sr, srv) {
 		if (!sr.empty()) {
 			Corpus2::mask_t a = tagset.get_attribute_mask(sr);
 			if (a.any()) {
@@ -58,8 +58,8 @@ void copy_attributes(const Corpus2::Token& from,
 		const Corpus2::mask_t& alist, Corpus2::Token& to)
 {
 	std::vector<Corpus2::Lexeme> new_lexemes;
-	foreach (const Corpus2::Lexeme& lex1, to.lexemes()) {
-		foreach (const Corpus2::Lexeme& lex2, from.lexemes()) {
+	BOOST_FOREACH(const Corpus2::Lexeme& lex1, to.lexemes()) {
+		BOOST_FOREACH(const Corpus2::Lexeme& lex2, from.lexemes()) {
 			Corpus2::Tag tag = lex1.tag();
 			copy_attributes(lex2.tag(), alist, tag);
 			Corpus2::Lexeme lex3(lex1.lemma(), tag);

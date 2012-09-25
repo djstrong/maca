@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libmaca/conv/tagrulelayer.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <libcorpus2/tagsetmanager.h>
 
 namespace Maca {
@@ -46,7 +46,7 @@ void TagRuleLayer::append_rule(const TagRule &tr)
 void TagRuleLayer::append_rule(const Config::Node& cfg)
 {
 	TagRule tr(tagset_from());
-	foreach (const Config::Node::value_type &v, cfg) {
+	BOOST_FOREACH(const Config::Node::value_type &v, cfg) {
 		if (v.first == "pre") {
 			tr.add_precondition(v.second.data());
 		} else if (v.first == "post") {
@@ -67,9 +67,9 @@ Corpus2::Token* TagRuleLayer::get_next_token()
 
 void TagRuleLayer::process(Corpus2::Token* t)
 {
-	foreach (Corpus2::Lexeme& lex, t->lexemes()) {
+	BOOST_FOREACH(Corpus2::Lexeme& lex, t->lexemes()) {
 		Corpus2::Tag newtag = lex.tag();
-		foreach (const TagRule& tr, rules_) {
+		BOOST_FOREACH(const TagRule& tr, rules_) {
 			tr.apply(newtag);
 		}
 		lex.set_tag(newtag);
