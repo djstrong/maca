@@ -26,7 +26,14 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <boost/algorithm/string.hpp>
 #include <boost/thread/mutex.hpp>
 #include <memory>
+
+#ifndef __unix__
+#define LIBMACA_STATIC_MORFEUSZ
+#endif
+
+#ifndef LIBMACA_STATIC_MORFEUSZ
 #include <dlfcn.h>
+#endif
 
 namespace Maca {
 
@@ -124,6 +131,7 @@ MorfeuszAnalyser::MorfeuszAnalyser(const Corpus2::Tagset* tagset,
 
 void MorfeuszAnalyser::load_morfeusz_library()
 {
+#ifndef LIBMACA_STATIC_MORFEUSZ
 	morfeusz_lib_handle_ = dlmopen(LM_ID_NEWLM, morfeusz_library_.c_str(),
 			RTLD_NOW);
 	if (morfeusz_lib_handle_ == NULL) {
@@ -175,6 +183,14 @@ void MorfeuszAnalyser::load_morfeusz_library()
 	if (opt_func != NULL) {
 		opt_func(morfeusz_option_encoding, morfeusz_option_encoding_utf8);
 	}
+#else
+	std::string about = morfeusz_about();
+	if (about.find(require_version_) == about.npos) {
+		throw MorfeuszInitError("Invalid Morfeusz version. Requested " +
+			require_version_ + ", got ", about, morfeusz_library_);
+	}
+	morfeusz_set_option(morfeusz_option_encoding, morfeusz_option_encoding_utf8);
+#endif
 }
 
 MorfeuszAnalyser* MorfeuszAnalyser::clone() const
@@ -214,7 +230,9 @@ MorfeuszAnalyser::MorfeuszAnalyser(const Config::Node& cfg)
 
 MorfeuszAnalyser::~MorfeuszAnalyser()
 {
+#ifndef LIBMACA_STATIC_MORFEUSZ
 	dlclose(morfeusz_lib_handle_);
+#endif
 	delete conv_;
 }
 
@@ -223,8 +241,13 @@ bool MorfeuszAnalyser::process_functional(const Toki::Token &t,
 {
 	std::string s = PwrNlp::to_utf8(t.orth());
 	// Morfeusz demands a nonconst char*
+#ifndef LIBMACA_STATIC_MORFEUSZ
 	MorfeuszData *ppmorf = morfeusz_analyse_handle_(
 			const_cast<char*>(s.c_str()));
+#else
+	MorfeuszData *ppmorf = reinterpret_cast<MorfeuszData*>(morfeusz_analyse(
+			const_cast<char*>(s.c_str())));
+#endif
 	std::vector<MorfeuszEdge> pmorf = morfeusz_preprocess(ppmorf);
 	if (pmorf.empty()) { // no analyses
 		return false;
