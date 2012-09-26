@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libtoki/tokenizer/layertokenizer.h>
 #include <libtoki/sentencesplitter.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 
 #include <libmaca/morph/dispatchanalyser.h>
 #include <libmaca/util/settings.h>
@@ -42,10 +42,10 @@ int main(int argc, char** argv)
 		assert(!sentence->empty());
 		boost::scoped_ptr<Corpus2::Sentence> analysed_sentence(analyser.process_dispose(sentence.get()));
 		std::cout << "{\n";
-		foreach (Corpus2::Token *tok, analysed_sentence->tokens())
+		BOOST_FOREACH(Corpus2::Token *tok, analysed_sentence->tokens())
 		{
 			std::cout << "\t" << tok->orth_utf8();
-			foreach(const Corpus2::Lexeme &lex, tok->lexemes())
+			BOOST_FOREACH(const Corpus2::Lexeme &lex, tok->lexemes())
 			{
 				std::cout << "\n\t\t" << lex.lemma_utf8();
 			}

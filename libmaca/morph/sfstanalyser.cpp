@@ -21,7 +21,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <sfst/interface.h>
 #include <sfst/compact.h>
 #include <cstdio>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <sstream>
 #include <iostream>
 
@@ -102,7 +102,7 @@ bool SfstAnalyser::process_functional(const Toki::Token &t,
 		return false;
 	} else {
 		Corpus2::Token* tt = create_from_toki(t);
-		foreach (CAnalysis& ca, a) {
+		BOOST_FOREACH(CAnalysis& ca, a) {
 			//std::cout << s << "\t"
 			//	<<  unescape_analysis(ct_->print_analysis(ca)) << "\n";
 			std::string analysis = unescape_analysis(

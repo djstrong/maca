@@ -18,7 +18,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libmaca/morph/constanalyser.h>
 #include <libmaca/util/settings.h>
 
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/make_shared.hpp>
@@ -83,7 +83,7 @@ namespace {
 	{
 		if (!okay_) {
 			typedef std::map<std::string, MorphAnalyser*>::value_type vt;
-			foreach (vt& v, amap_) {
+			BOOST_FOREACH(vt& v, amap_) {
 				delete v.second;
 			}
 		}
@@ -160,7 +160,7 @@ DispatchAnalyser::DispatchAnalyser(const Config::Node &cfg)
 	} catch (boost::property_tree::ptree_error& e) {
 	}
 	if (dng != NULL) {
-		foreach (const Config::Node::value_type &v, *dng) {
+		BOOST_FOREACH(const Config::Node::value_type &v, *dng) {
 			if (v.first == "plugin") {
 				MorphAnalyser::load_plugin(v.second.data(), false);
 			}
@@ -171,17 +171,17 @@ DispatchAnalyser::DispatchAnalyser(const Config::Node &cfg)
 
 	MaCreator mc(tagset(), cfg);
 
-	foreach (const Config::Node::value_type &v, *dnp) {
+	BOOST_FOREACH(const Config::Node::value_type &v, *dnp) {
 		if (v.first == "ma") {
 			MorphAnalyser* ma = mc.get_ma(v.second.data(), autoload);
 			add_default_handler(ma);
 		}
 	}
 
-	foreach (const Config::Node::value_type &v, cfg) {
+	BOOST_FOREACH(const Config::Node::value_type &v, cfg) {
 		if (v.first == "rule") {
 			std::vector<std::string> ttv;
-			foreach (const Config::Node::value_type &vv, v.second) {
+			BOOST_FOREACH(const Config::Node::value_type &vv, v.second) {
 				if (vv.first == "toki_type") {
 					boost::algorithm::split(ttv, vv.second.data()
 							, boost::is_any_of(std::string(" ,")));
@@ -190,11 +190,11 @@ DispatchAnalyser::DispatchAnalyser(const Config::Node &cfg)
 			if (ttv.empty()) {
 				throw MacaError("No toki_type specified in rule");
 			}
-			foreach (const Config::Node::value_type &vv, v.second) {
+			BOOST_FOREACH(const Config::Node::value_type &vv, v.second) {
 				if (vv.first == "ma") {
 					MorphAnalyser* ma = mc.get_ma(vv.second.data(),
 							autoload);
-					foreach (const std::string& s, ttv) {
+					BOOST_FOREACH(const std::string& s, ttv) {
 						add_type_handler(s, ma);
 					}
 				}
@@ -207,7 +207,7 @@ DispatchAnalyser::DispatchAnalyser(const Config::Node &cfg)
 
 DispatchAnalyser::~DispatchAnalyser()
 {
-	foreach (MorphAnalyser* ma, analysers_) {
+	BOOST_FOREACH(MorphAnalyser* ma, analysers_) {
 		delete ma;
 	}
 	delete fallback_;
@@ -217,19 +217,19 @@ DispatchAnalyser* DispatchAnalyser::clone() const
 {
 	DispatchAnalyser* copy = new DispatchAnalyser(&tagset());
 	std::map<MorphAnalyser*, MorphAnalyser*> clones;
-	foreach (MorphAnalyser* m, analysers_) {
+	BOOST_FOREACH(MorphAnalyser* m, analysers_) {
 		clones[m] = m->clone();
 		copy->analysers_.insert(clones[m]);
 	}
 	copy->type_handlers_ = type_handlers_;
-	foreach (analyser_map_t::value_type& v, copy->type_handlers_) {
-		foreach (MorphAnalyser*& m, v.second) {
+	BOOST_FOREACH(analyser_map_t::value_type& v, copy->type_handlers_) {
+		BOOST_FOREACH(MorphAnalyser*& m, v.second) {
 			m = clones[m];
 			assert(m);
 		}
 	}
 	copy->default_ = default_;
-	foreach (MorphAnalyser*& m, copy->default_) {
+	BOOST_FOREACH(MorphAnalyser*& m, copy->default_) {
 		m = clones[m];
 		assert(m);
 	}
@@ -256,7 +256,7 @@ bool DispatchAnalyser::process_functional(const Toki::Token &t,
 	if (i != type_handlers_.end()) {
 		v = &i->second;
 	}
-	foreach (MorphAnalyser* ma, *v) {
+	BOOST_FOREACH(MorphAnalyser* ma, *v) {
 		if (ma->process_functional(t, sink)) {
 			return true;
 		}

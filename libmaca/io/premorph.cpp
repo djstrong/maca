@@ -20,7 +20,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libcorpus2/io/xcescommon.h>
 #include <libmaca/util/sentenceanalyser.h>
 #include <libmaca/util/tokentimer.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <libtoki/sentencesplitter.h>
 #include <vector>
 #include <boost/bind.hpp>
@@ -121,7 +121,7 @@ void PremorphProcessorImpl::on_start_element(const Glib::ustring &name,
 		const AttributeList &attributes)
 {
 	os_ << "<" << name;
-	foreach (const xmlpp::SaxParser::Attribute& a, attributes) {
+	BOOST_FOREACH(const xmlpp::SaxParser::Attribute& a, attributes) {
 		os_ << " " << a.name << "=\"";
 		Corpus2::encode_xml_entities_into(os_, a.value);
 		os_ << "\"";
@@ -145,7 +145,7 @@ void PremorphProcessorImpl::output_sentence(const Corpus2::Sentence::Ptr& s)
 		if (mark_sents_) {
 			os_ << " <chunk type=\"s\">\n";
 		}
-		foreach (Corpus2::Token* t, s->tokens()) {
+		BOOST_FOREACH(Corpus2::Token* t, s->tokens()) {
 			token_as_xces_xml(os_, sa_->tagset(), *t, 1);
 		}
 		if (mark_sents_) {
@@ -224,7 +224,7 @@ void PremorphReaderImpl::on_start_element(const Glib::ustring &name,
 {
 	if (name == "chunk") {
 		std::string type;
-		foreach (const Attribute& a, attributes) {
+		BOOST_FOREACH(const Attribute& a, attributes) {
 			if (a.name == "type") {
 				type = a.value;
 			}
@@ -235,7 +235,7 @@ void PremorphReaderImpl::on_start_element(const Glib::ustring &name,
 			}
 			state_ = XS_CHUNK;
 			chunk_ = boost::make_shared<Corpus2::Chunk>();
-			foreach (const Attribute& a, attributes) {
+			BOOST_FOREACH(const Attribute& a, attributes) {
 				chunk_->set_attribute(a.name, a.value);
 			}
 		} else if (state_ == XS_CHUNK) {

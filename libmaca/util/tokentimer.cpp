@@ -72,12 +72,14 @@ namespace {
 
 void TokenTimer::register_signal_handler()
 {
+#ifdef __unix__
 	struct sigaction s;
 	memset(&s, 0, sizeof(s));
 	s.sa_handler = &handler;
 	if (sigaction(SIGUSR1, &s, 0) != 0) {
 		std::cerr << "Signal handler registration error\n";
 	}
+#endif
 }
 
 } /* end ns Maca */

@@ -17,7 +17,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libmaca/morph/morfeuszanalyser.h>
 #include <libcorpus2/token.h>
 #include <libmaca/util/settings.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <libpwrutils/util.h>
 
 #include <morfeusz.h>
@@ -248,7 +248,7 @@ bool MorfeuszAnalyser::process_complex_analysis(const Toki::Token &t,
 {
 	int edge_count = pmorf.size();
 	int node_count = 0;
-	foreach (const MorfeuszEdge& mri, pmorf) {
+	BOOST_FOREACH(const MorfeuszEdge& mri, pmorf) {
 		node_count = std::max(node_count, mri.node_to);
 	}
 	// the numbering starts at 0 and we got the last valid node number
@@ -259,7 +259,7 @@ bool MorfeuszAnalyser::process_complex_analysis(const Toki::Token &t,
 	for (int i = 0; i < edge_count; ++i) {
 		MorfeuszEdge& edge = pmorf[i];
 		int actual_edge_i = -1;
-		foreach (int out_edge, succ[edge.node_from]) {
+		BOOST_FOREACH(int out_edge, succ[edge.node_from]) {
 			if (pmorf[out_edge].node_to == edge.node_to) {
 				actual_edge_i = out_edge;
 			}
@@ -287,7 +287,7 @@ bool MorfeuszAnalyser::process_complex_analysis(const Toki::Token &t,
 			int merge_node = -1;
 			std::vector< std::vector< Corpus2::Token* > > paths;
 			// follow all paths to the merge point
-			foreach (int tse, succ[current_node]) {
+			BOOST_FOREACH(int tse, succ[current_node]) {
 				paths.push_back(std::vector<Corpus2::Token*>());
 				paths.back().push_back(pmorf[tse].token);
 				int v = pmorf[tse].node_to;

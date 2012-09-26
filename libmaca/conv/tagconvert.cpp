@@ -17,7 +17,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libmaca/conv/tagconvert.h>
 #include <libcorpus2/token.h>
 #include <libcorpus2/tagsetmanager.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <bitset>
 
 namespace Maca {
@@ -37,7 +37,7 @@ TagConverter::TagConverter(const Corpus2::Tagset& from, const Corpus2::Tagset& t
 	from.attribute_dictionary().create_mapping_to(
 			to.attribute_dictionary(), attribute_mapping_);
 
-	foreach (Corpus2::mask_t from_mask, from.all_value_masks()) {
+	BOOST_FOREACH(Corpus2::mask_t from_mask, from.all_value_masks()) {
 		const std::string& name = from.get_value_name(from_mask);
 		if (name.empty()) {
 			//std::cerr << "WUT " << bs << "\n";
@@ -56,7 +56,7 @@ Corpus2::Tag TagConverter::cast(const Corpus2::Tag& from) const
 	Corpus2::Tag to(pi->second);
 
 	Corpus2::mask_t values_left = from.get_values();
-	foreach (const attribute_map_t::value_type& v, attribute_mapping_) {
+	BOOST_FOREACH(const attribute_map_t::value_type& v, attribute_mapping_) {
 		Corpus2::mask_t amask = tagset_from().get_attribute_mask(v.first);
 		Corpus2::mask_t value = from.get_values_for(amask);
 		if (value.any()) {
@@ -95,7 +95,7 @@ void TagConverter::add_override(const std::string& from,
 		if (vto.any()) {
 			Corpus2::idx_t aidx = tagset_from_.get_attribute_index(from);
 			if (aidx >= 0) {
-				foreach (Corpus2::mask_t vfrom,
+				BOOST_FOREACH(Corpus2::mask_t vfrom,
 						tagset_from_.get_attribute_values(aidx)) {
 					value_mapping_[vfrom] = vto;
 				}
@@ -200,7 +200,7 @@ TagConvertLayer::TagConvertLayer(const Config::Node& cfg)
 	: tc_(Corpus2::get_named_tagset(cfg.get<std::string>("tagset_from")),
 		Corpus2::get_named_tagset(cfg.get<std::string>("tagset_to")))
 {
-	foreach (const Config::Node::value_type &v, cfg) {
+	BOOST_FOREACH(const Config::Node::value_type &v, cfg) {
 		if (v.first == "override") {
 			std::string o = v.second.data();
 			size_t colon = o.find(':');
@@ -229,7 +229,7 @@ Corpus2::Token* TagConvertLayer::get_next_token()
 {
 	Corpus2::Token* t = source()->get_next_token();
 	if (t != NULL) {
-		foreach (Corpus2::Lexeme& lex, t->lexemes()) {
+		BOOST_FOREACH(Corpus2::Lexeme& lex, t->lexemes()) {
 			lex.set_tag(tc_.cast(lex.tag()));
 		}
 		t->remove_duplicate_lexemes();

@@ -22,7 +22,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libmaca/conv/splitlayer.h>
 #include <libmaca/conv/tagrulelayer.h>
 #include <libmaca/conv/tagconvert.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
 namespace Maca {
@@ -36,7 +36,7 @@ TagsetConverter::TagsetConverter()
 TagsetConverter::TagsetConverter(const Config::Node& cfg)
 	: layers_()
 {
-	foreach (Config::Node::value_type v, cfg) {
+	BOOST_FOREACH(Config::Node::value_type v, cfg) {
 		std::string tagset_string = v.second.get("tagset", "");
 		if (tagset_string.empty() && !layers_.empty()) {
 			v.second.put("tagset", layers_.back()->tagset_to().name());
@@ -88,7 +88,7 @@ TagsetConverter::TagsetConverter(const Config::Node& cfg)
 
 TagsetConverter::~TagsetConverter()
 {
-	foreach (Layer* l, layers_) {
+	BOOST_FOREACH(Layer* l, layers_) {
 		delete l;
 	}
 }
@@ -96,7 +96,7 @@ TagsetConverter::~TagsetConverter()
 TagsetConverter* TagsetConverter::clone() const
 {
 	TagsetConverter* copy = new TagsetConverter;
-	foreach (Layer* l, layers_) {
+	BOOST_FOREACH(Layer* l, layers_) {
 		copy->add_layer(l->clone());
 	}
 	return copy;
@@ -148,7 +148,7 @@ void TagsetConverter::convert_ambiguous(
 		boost::function<void(Corpus2::Token *)>sink, bool warn_on_failure /*=true*/)
 {
 	std::vector< std::vector<Corpus2::Token *> > conv_v;
-	foreach (const std::vector<Corpus2::Token*>& path, v) {
+	BOOST_FOREACH(const std::vector<Corpus2::Token*>& path, v) {
 		conv_v.push_back(std::vector<Corpus2::Token*>());
 		boost::function<void (Corpus2::Token*)> sink = boost::bind(
 				&std::vector<Corpus2::Token*>::push_back, boost::ref(conv_v.back()),
@@ -159,9 +159,9 @@ void TagsetConverter::convert_ambiguous(
 		if (warn_on_failure) {
 			std::cerr << "!!! Path folding failed,"
 				<< " returning shortest from: ";
-			foreach (const std::vector<Corpus2::Token*>& path, v) {
+			BOOST_FOREACH(const std::vector<Corpus2::Token*>& path, v) {
 				std::cerr << " >> ";
-				foreach (Corpus2::Token* t, path) {
+				BOOST_FOREACH(Corpus2::Token* t, path) {
 					std::cerr << t->orth_utf8() << " ";
 				}
 			}

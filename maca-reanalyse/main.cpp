@@ -31,7 +31,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libtoki/sentencesplitter.h>
 #include <libtoki/tokenizer/layertokenizer.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <libtoki/util/settings.h>
 
 #include <boost/algorithm/string.hpp>
@@ -46,7 +46,7 @@ void reanalyse_token(Corpus2::Token* token, boost::shared_ptr<Maca::MorphAnalyse
 	bool has_ign = false;
 	std::set<Corpus2::Lexeme> nonign;
 	std::set<Corpus2::Tag> nonign_tags;
-	foreach (const Corpus2::Lexeme& lex, token->lexemes()) {
+	BOOST_FOREACH(const Corpus2::Lexeme& lex, token->lexemes()) {
 		if (lex.tag() == ign_tag) {
 			has_ign = true;
 		} else if (lex.is_disamb()){
@@ -61,7 +61,7 @@ void reanalyse_token(Corpus2::Token* token, boost::shared_ptr<Maca::MorphAnalyse
 			Corpus2::Token* newtok = newtoks[0];
 			token->lexemes().clear();
 			bool had_disamb = false;
-			foreach (const Corpus2::Lexeme& lex, newtok->lexemes()) {
+			BOOST_FOREACH(const Corpus2::Lexeme& lex, newtok->lexemes()) {
 				if (nonign_tags.find(lex.tag()) == nonign_tags.end()) {
 					token->add_lexeme(lex);
 				} else {
@@ -69,13 +69,13 @@ void reanalyse_token(Corpus2::Token* token, boost::shared_ptr<Maca::MorphAnalyse
 				}
 			}
 			if (had_disamb) {
-				foreach (const Corpus2::Lexeme& lex, nonign) {
+				BOOST_FOREACH(const Corpus2::Lexeme& lex, nonign) {
 					token->add_lexeme(lex);
 				}
 			} else {
 				std::cerr << "Disamb tag not in analysis: ";
 				std::cerr << token->orth_utf8() << " ";
-				foreach (const Corpus2::Lexeme& lex, nonign) {
+				BOOST_FOREACH(const Corpus2::Lexeme& lex, nonign) {
 					std::cerr << a->tagset().tag_to_string(lex.tag()) << " ";
 				}
 				std::cerr << "\n";
@@ -134,7 +134,7 @@ int main(int argc, char** argv)
 	if (!config_path.empty()) {
 		Maca::Path::Instance().set_search_path(config_path);
 	}
-	foreach (const std::string& s, plugins) {
+	BOOST_FOREACH(const std::string& s, plugins) {
 		Maca::MorphAnalyser::load_plugin(s, false);
 	}
 
@@ -168,8 +168,8 @@ int main(int argc, char** argv)
 			Corpus2::Tag ign_tag = a->tagset().make_ign_tag();
 
 			while (boost::shared_ptr<Corpus2::Chunk> chunk = reader->get_next_chunk()) {
-				foreach (Corpus2::Sentence::Ptr sentence, chunk->sentences()) {
-					foreach (Corpus2::Token* token, sentence->tokens()) {
+				BOOST_FOREACH(Corpus2::Sentence::Ptr sentence, chunk->sentences()) {
+					BOOST_FOREACH(Corpus2::Token* token, sentence->tokens()) {
 						reanalyse_token(token, a, ign_tag);
 					}
 				}
