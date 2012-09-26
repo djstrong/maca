@@ -77,7 +77,7 @@ public:
 	/// If the index is not valid, an empty string is returned.
 	const std::string& get_string(IndexT id) const;
 
-	/// Plumbing allow BOOST_FOREACH() iteration through the dictionary objects
+	/// Plumbing allow foreach() iteration through the dictionary objects
 	typedef typename std::vector<std::string>::iterator iterator;
 	typedef typename std::vector<std::string>::const_iterator
 			const_iterator;

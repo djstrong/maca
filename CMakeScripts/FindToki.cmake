@@ -1,4 +1,4 @@
-FIND_PATH(Toki_INCLUDE_DIR libtoki/token.h /usr/include /usr/local/include )
+FIND_PATH(Toki_INCLUDE_DIR token.h /usr/include/libtoki /usr/local/include/libtoki )
 
 FIND_LIBRARY(Toki_LIBRARY NAMES toki PATH /usr/lib /usr/local/lib) 
 
@@ -13,7 +13,7 @@ ENDIF (Toki_INCLUDE_DIR AND Toki_LIBRARY)
 
 IF (Toki_FOUND)
    set(Toki_VERSION 0.0.0)
-   FIND_FILE(_Toki_VERSION_FILE libtoki/version.h ${Toki_INCLUDE_DIR})
+   FIND_FILE(_Toki_VERSION_FILE version.h ${Toki_INCLUDE_DIR})
    IF (_Toki_VERSION_FILE)
       FILE(READ ${_Toki_VERSION_FILE} _Toki_VERSION_CONENTS)
       STRING(REGEX REPLACE ".*#define LIBTOKI_VERSION \\\"([0-9.]+)\\\".*" "\\1" Toki_VERSION "${_Toki_VERSION_CONENTS}")

@@ -17,7 +17,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include "compareconv.h"
 
 #include <libpwrutils/util.h>
-#include <boost/foreach.hpp>
+#include <libpwrutils/foreach.h>
 #include <libpwrutils/pathsearch.h>
 #include <libcorpus2/util/settings.h>
 #include <libtoki/util/settings.h>
@@ -79,7 +79,7 @@ void test_one_item_actual(const compare_test& c)
 	std::stringstream ss;
 	writer = Corpus2::TokenWriter::create_stream_writer("xces,sorttags", ss, conv.tagset_to());
 	while (boost::shared_ptr<Corpus2::Chunk> c = reader.get_next_chunk()) {
-		BOOST_FOREACH(Corpus2::Sentence::Ptr& s, c->sentences()) {
+		foreach (Corpus2::Sentence::Ptr& s, c->sentences()) {
 			s = conv.convert_sentence(s);
 		}
 		writer->write_chunk(*c);
@@ -151,7 +151,7 @@ int init_subdir(const path& dir, std::string ps, std::vector<compare_test>& test
 			}
 		}
 	}
-	BOOST_FOREACH(const std::string& s, tests_out) {
+	foreach (const std::string& s, tests_out) {
 		compare_test c;
 		if (tests_in.find(s) == tests_in.end()) {
 			if (tests_in.find("main") == tests_in.end()) {
@@ -183,7 +183,7 @@ int init_subdir(const path& dir, std::string ps, std::vector<compare_test>& test
 		<< " in " << dir
 		<< " [" << ps << "]"
 		);
-	BOOST_FOREACH(const path& s, subdirs) {
+	foreach (const path& s, subdirs) {
 		count += init_subdir(s, ps, tests);
 	}
 	return count;
@@ -200,7 +200,7 @@ void init_compareconv_suite(boost::unit_test::test_suite *ts, const std::string&
 	}
 	std::vector<compare_test> compares;
 	init_subdir(subdir_name, "", compares);
-	BOOST_FOREACH(const compare_test& ci, compares) {
+	foreach (const compare_test& ci, compares) {
 		std::string rel_path = boost::algorithm::replace_first_copy(
 				ci.out_file.string(), subdir_name, "");
 		std::string name = "test_compare:" + rel_path;

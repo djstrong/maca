@@ -28,7 +28,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libtoki/sentencesplitter.h>
 #include <libtoki/tokenizer/layertokenizer.h>
-#include <boost/foreach.hpp>
+#include <libpwrutils/foreach.h>
 #include <libpwrutils/plural.h>
 #include <libtoki/util/settings.h>
 
@@ -111,7 +111,7 @@ int main(int argc, char** argv)
 		Toki::Path::Instance().set_search_path(config_path);
 	}
 
-	BOOST_FOREACH(const std::string& s, plugins) {
+	foreach (const std::string& s, plugins) {
 		Maca::MorphAnalyser::load_plugin(s, false);
 	}
 

@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libmaca/io/text.h>
-#include <boost/foreach.hpp>
+#include <libpwrutils/foreach.h>
 #include <boost/make_shared.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/ref.hpp>

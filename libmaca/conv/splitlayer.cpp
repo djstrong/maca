@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libmaca/conv/splitlayer.h>
 #include <libcorpus2/tagsetmanager.h>
-#include <boost/foreach.hpp>
+#include <libpwrutils/foreach.h>
 #include <libmaca/conv/attributecopier.h>
 #include <boost/algorithm/string.hpp>
 
@@ -40,7 +40,7 @@ TwoSplitLayer::TwoSplitLayer(const Config::Node& cfg)
 	std::string re = cfg.get<std::string>("regexp");
 	if (re.empty()) throw ConfigValueMissing("regexp", "split layer");
 	set_orth_regexp(re);
-	BOOST_FOREACH(const Config::Node::value_type &v, cfg) {
+	foreach (const Config::Node::value_type &v, cfg) {
 		if (v.first == "pre") {
 			add_precondition(v.second.data());
 		} else if (v.first == "t1_post") {
@@ -61,7 +61,7 @@ TwoSplitLayer::TwoSplitLayer(const Config::Node& cfg)
 
 TwoSplitLayer::~TwoSplitLayer()
 {
-	BOOST_FOREACH(const Corpus2::Token* t, queue_) {
+	foreach (const Corpus2::Token* t, queue_) {
 		delete t;
 	}
 }
@@ -84,7 +84,7 @@ void TwoSplitLayer::clone_helper(TwoSplitLayer* copy) const
 	copy->t1_post_ = t1_post_;
 	copy->copy_attrs_to_t2_ = copy_attrs_to_t2_;
 	copy->t2_lexeme_ = copy->t2_lexeme_;
-	BOOST_FOREACH(const Corpus2::Token* t, queue_) {
+	foreach (const Corpus2::Token* t, queue_) {
 		copy->queue_.push_back(t->clone());
 	}
 }
@@ -109,7 +109,7 @@ void TwoSplitLayer::add_precondition(const std::string& pred_string)
 	std::vector<std::string> srv;
 	boost::algorithm::split(srv, pred_string,
 			boost::is_any_of(std::string(": ")));
-	BOOST_FOREACH(const std::string& sr, srv) {
+	foreach (const std::string& sr, srv) {
 		if (!sr.empty()) {
 			pre_.push_back(TagPredicate(sr, tagset()));
 		}
@@ -126,7 +126,7 @@ void TwoSplitLayer::add_t1_postcondition(const std::string& pred_string)
 	std::vector<std::string> srv;
 	boost::algorithm::split(srv, pred_string,
 			boost::is_any_of(std::string(": ")));
-	BOOST_FOREACH(const std::string& sr, srv) {
+	foreach (const std::string& sr, srv) {
 		if (!sr.empty()) {
 			t1_post_.push_back(TagPredicate(sr, tagset()));
 		}
@@ -164,7 +164,7 @@ Corpus2::Token* TwoSplitLayer::get_next_token()
 	} else {
 		t = source()->get_next_token();
 		if (t != NULL) {
-			BOOST_FOREACH(const TagPredicate& tp, pre_) {
+			foreach (const TagPredicate& tp, pre_) {
 				if (!tp.token_match(*t)) return t;
 			}
 			orth_matcher_->reset(t->orth());
@@ -193,7 +193,7 @@ ThreeSplitLayer::ThreeSplitLayer(const Config::Node &cfg)
 	: TwoSplitLayer(cfg), copy_attrs_to_t3_(0)
 {
 	t3_lexeme_.set_disamb(true);
-	BOOST_FOREACH(const Config::Node::value_type &v, cfg) {
+	foreach (const Config::Node::value_type &v, cfg) {
 		if (v.first == "copy_attrs_to_t3") {
 			append_copy_attrs_to_t3(v.second.data());
 		} else if (v.first == "t3_lemma") {
@@ -244,7 +244,7 @@ Corpus2::Token* ThreeSplitLayer::get_next_token()
 	} else {
 		t = source()->get_next_token();
 		if (t != NULL) {
-			BOOST_FOREACH(const TagPredicate& tp, pre_) {
+			foreach (const TagPredicate& tp, pre_) {
 				if (!tp.token_match(*t)) return t;
 			}
 			orth_matcher_->reset(t->orth());

@@ -78,7 +78,7 @@ bool GuesserAnalyser::process_functional(const Toki::Token &t,
 	// but it might also come from Morfeusz -- we can't check it via
 	// this simple API.
 	std::vector<std::string> nonempty_lines;
-	BOOST_FOREACH(const std::string& line, lines) {
+	foreach (const std::string& line, lines) {
 		if (!line.empty()) {
 			nonempty_lines.push_back(line);
 		}

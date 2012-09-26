@@ -27,26 +27,24 @@ find_package(Toki 1.0.0 REQUIRED)
 set(LIBS ${LIBS} ${Toki_LIBRARY})
 
 find_package(Corpus2 1.0.9 REQUIRED)
-set(LIBS ${LIBS} ${Corpus2_LIBRARY})
-include_directories(${Corpus2_INCLUDE_DIR})
+set(LIBS ${LIBS} ${Corpus2_LIBRARIES})
 
 find_package(PwrUtils REQUIRED)
-set(LIBS ${LIBS} ${PwrUtils_LIBRARY})
-
+set(LIBS ${PwrUtils_LIBRARY})
 
 find_package(ICU REQUIRED QUIET)
 include_directories(${ICU_INCLUDE_DIR})
 link_directories(${ICU_LIBRARY_DIRS})
-set(LIBS ${LIBS} icuuc icuio icutu icuin)
+set(LIBS ${LIBS} icuuc icuio)
 
 find_package(Loki REQUIRED QUIET)
+set(LIBS ${LIBS} loki)
 
 find_package(LibXML++ REQUIRED QUIET)
 include_directories(${LibXML++_INCLUDE_DIRS})
 link_directories(${LibXML++_LIBRARY_DIRS})
 set(LIBS ${LIBS} ${LibXML++_LIBRARIES})
 
-include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 set(LIBS ${LIBS} ${Boost_LIBRARIES})
 

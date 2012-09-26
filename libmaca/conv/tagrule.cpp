@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libmaca/conv/tagrule.h>
-#include <boost/foreach.hpp>
+#include <libpwrutils/foreach.h>
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 
@@ -36,7 +36,7 @@ void TagRule::add_precondition(const std::string &pred_string)
 {
 	std::vector<std::string> srv;
 	boost::algorithm::split(srv, pred_string, boost::is_any_of(": "));
-	BOOST_FOREACH(const std::string& sr, srv) {
+	foreach (const std::string& sr, srv) {
 		if (!sr.empty()) {
 			pre_.push_back(TagPredicate(sr, *tagset_));
 		}
@@ -52,7 +52,7 @@ void TagRule::add_postcondition(const std::string &pred_string)
 {
 	std::vector<std::string> srv;
 	boost::algorithm::split(srv, pred_string, boost::is_any_of(": "));
-	BOOST_FOREACH(const std::string& sr, srv) {
+	foreach (const std::string& sr, srv) {
 		if (!sr.empty()) {
 			post_.push_back(TagPredicate(sr, *tagset_));
 		}
@@ -61,10 +61,10 @@ void TagRule::add_postcondition(const std::string &pred_string)
 
 void TagRule::apply(Corpus2::Tag &tag) const
 {
-	BOOST_FOREACH(const TagPredicate& tp, pre_) {
+	foreach (const TagPredicate& tp, pre_) {
 		if (!tp.check(tag)) return;
 	}
-	BOOST_FOREACH(const TagPredicate& tp, post_) {
+	foreach (const TagPredicate& tp, post_) {
 		tp.apply(tag);
 	}
 }

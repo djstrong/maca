@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libmaca/conv/joinlayer.h>
 #include <libcorpus2/tagsetmanager.h>
-#include <boost/foreach.hpp>
+#include <libpwrutils/foreach.h>
 
 namespace Maca {
 namespace Conversion {
@@ -67,7 +67,7 @@ Corpus2::Token* JoinLayer::get_next_token()
 	}
 	Corpus2::Token* t = source()->get_next_token();
 	if (t != NULL && t->wa() == PwrNlp::Whitespace::None) {
-		BOOST_FOREACH(JoinRule& rule, rules_) {
+		foreach (JoinRule& rule, rules_) {
 			Corpus2::Token* joined = rule.try_join(buf_, t);
 			if (joined != NULL) {
 				buf_ = joined;

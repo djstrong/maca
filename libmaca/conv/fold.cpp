@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libmaca/conv/fold.h>
-#include <boost/foreach.hpp>
+#include <libpwrutils/foreach.h>
 #include <libcorpus2/token.h>
 
 namespace Maca { namespace Conversion {
@@ -59,7 +59,7 @@ bool try_fold_paths(const std::vector< std::vector<Corpus2::Token*> >& v,
 	for (size_t ti = 0; ti < min_len; ++ti) {
 		Corpus2::Token* t = v[0][ti];
 		for (size_t pi = 1; pi < v.size(); ++pi) {
-			BOOST_FOREACH(const Corpus2::Lexeme& lex, v[pi][ti]->lexemes()) {
+			foreach (const Corpus2::Lexeme& lex, v[pi][ti]->lexemes()) {
 				t->add_lexeme(lex);
 			}
 			delete v[pi][ti];
@@ -76,7 +76,7 @@ std::vector<Corpus2::Token*> choose_path(
 	assert(n < v.size());
 	for (size_t i = 0; i < v.size(); ++i) {
 		if (i != n) {
-			BOOST_FOREACH(Corpus2::Token* t, v[i]) {
+			foreach (Corpus2::Token* t, v[i]) {
 				delete t;
 			}
 		}
@@ -90,12 +90,12 @@ void choose_path(const std::vector< std::vector<Corpus2::Token*> >& v, size_t n,
 	assert(n < v.size());
 	for (size_t i = 0; i < v.size(); ++i) {
 		if (i != n) {
-			BOOST_FOREACH(Corpus2::Token* t, v[i]) {
+			foreach (Corpus2::Token* t, v[i]) {
 				delete t;
 			}
 		}
 	}
-	BOOST_FOREACH(Corpus2::Token* t, v[n]) {
+	foreach (Corpus2::Token* t, v[n]) {
 		sink(t);
 	}
 }

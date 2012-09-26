@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libmaca/conv/predicate.h>
-#include <boost/foreach.hpp>
+#include <libpwrutils/foreach.h>
 #include <libmaca/exception.h>
 
 namespace Maca {
@@ -50,11 +50,11 @@ bool TagPredicate::check(const Corpus2::Tag &tag) const
 bool TagPredicate::token_match(const Corpus2::Token& t) const
 {
 	if (first.any()) {
-		BOOST_FOREACH(const Corpus2::Lexeme& lex, t.lexemes()) {
+		foreach (const Corpus2::Lexeme& lex, t.lexemes()) {
 			if (lex.tag().get_values_for(first) != second) return false;
 		}
 	} else {
-		BOOST_FOREACH(const Corpus2::Lexeme& lex, t.lexemes()) {
+		foreach (const Corpus2::Lexeme& lex, t.lexemes()) {
 			if (lex.tag().get_pos() != second) return false;
 		}
 	}
@@ -72,9 +72,9 @@ void TagPredicate::apply(Corpus2::Tag &tag) const
 
 void apply_predicates(const std::vector<TagPredicate>& v, Corpus2::Token& t)
 {
-	BOOST_FOREACH(Corpus2::Lexeme& lex, t.lexemes()) {
+	foreach (Corpus2::Lexeme& lex, t.lexemes()) {
 		Corpus2::Tag newtag = lex.tag();
-		BOOST_FOREACH(const TagPredicate& tp, v) {
+		foreach (const TagPredicate& tp, v) {
 			tp.apply(newtag);
 		}
 		lex.set_tag(newtag);
