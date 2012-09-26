@@ -37,7 +37,11 @@ set(LIBS ${LIBS} ${PwrUtils_LIBRARY})
 find_package(ICU REQUIRED QUIET)
 include_directories(${ICU_INCLUDE_DIR})
 link_directories(${ICU_LIBRARY_DIRS})
-set(LIBS ${LIBS} icuuc icuio icutu icuin)
+if(UNIX)
+	set(LIBS ${LIBS} icuuc icuio)
+else(UNIX)
+	set(LIBS ${LIBS} icuuc icuio icutu icuin)
+endif(UNIX)
 
 find_package(Loki REQUIRED QUIET)
 
