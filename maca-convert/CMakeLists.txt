@@ -21,7 +21,5 @@ link_directories(${Boost_LIBRARY_DIRS})
 add_executable( maca-convert main.cpp )
 target_link_libraries ( maca-convert maca ${Boost_LIBRARIES} ${LIBS})
 
-if(UNIX)
 	install(TARGETS maca-convert
 		RUNTIME DESTINATION bin)
-endif(UNIX)

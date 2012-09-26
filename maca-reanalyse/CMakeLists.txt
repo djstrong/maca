@@ -29,7 +29,5 @@ endif(OPENMP_FOUND)
 add_executable( maca-reanalyse main.cpp )
 target_link_libraries ( maca-reanalyse maca ${Boost_LIBRARIES} ${LIBS})
 
-if(UNIX)
 	install(TARGETS maca-reanalyse
 		RUNTIME DESTINATION bin)
-endif(UNIX)

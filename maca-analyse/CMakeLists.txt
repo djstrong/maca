@@ -35,9 +35,7 @@ target_link_libraries ( maca-analyse maca ${Boost_LIBRARIES} ${LIBS})
 target_link_libraries ( maca-analyse-batch maca ${Boost_LIBRARIES} ${LIBS})
 
 
-if(UNIX)
 	install(TARGETS maca-analyse
 		RUNTIME DESTINATION bin)
 	install(TARGETS maca-analyse-batch
 		RUNTIME DESTINATION bin)
-endif(UNIX)
