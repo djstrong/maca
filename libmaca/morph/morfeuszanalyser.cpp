@@ -121,7 +121,7 @@ std::string MorfeuszError::info() const
 MorfeuszAnalyser::MorfeuszAnalyser(const Corpus2::Tagset* tagset,
 		Conversion::TagsetConverter* conv, const std::string& libname,
 		const std::string& require_version)
-	: MorphAnalyser(tagset), conv_(conv), warn_on_fold_failure_(true)
+	: MorphAnalyser(tagset), conv_(conv), warn_on_fold_failure_(false)
 	, morfeusz_library_(libname), require_version_(require_version)
 {
 	require_matching_tagsets(conv_->tagset_to(), *tagset,
@@ -221,7 +221,7 @@ MorfeuszAnalyser::MorfeuszAnalyser(const Config::Node& cfg)
 	std::string ign_tag_string = cfg.get("ign_tag", "ign");
 	ign_tag_ = conv_->tagset_from().parse_simple_tag(ign_tag_string);
 	warn_on_ign_ = cfg.get("warn_on_ign", false);
-	warn_on_fold_failure_ =  cfg.get("warn_on_fold_failure", true);
+	warn_on_fold_failure_ =  cfg.get("warn_on_fold_failure", false);
 
 	morfeusz_library_ = cfg.get("library", "libmorfeusz.so");
 	require_version_ = cfg.get("require_version", "Morfeusz SIAT");

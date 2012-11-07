@@ -112,7 +112,7 @@ public:
 	 *             defaults to "ign"
 	 * - warn_on_ign - warn when using the ign tag, false by default
 	 * - warn_on_fold_failure - issue a warning when folding ambiguous paths
-	 *                          is unsuccesful after conversion (on by def.)
+	 *                          is unsuccesful after conversion (off by def.)
 	 * - library - the Morfeusz library to use, defaults to a "reasonable"
 	 *             name that should work. Pass a soname or full path.
 	 * - require_version - check for the presence of the version string in

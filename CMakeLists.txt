@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8.0)
 
 set(maca_ver_major "1")
 set(maca_ver_minor "0")
-set(maca_ver_patch "5")
+set(maca_ver_patch "6")
 
 set(BUILD_GPL_PLUGINS OFF CACHE BOOL "Include GPL plugins into installation")
 

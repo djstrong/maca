@@ -109,7 +109,7 @@ public:
 	 */
 	void convert_ambiguous(const std::vector< std::vector<Corpus2::Token*> >& v,
 			boost::function<void (Corpus2::Token*)> sink,
-			bool warn_on_failure = true);
+			bool warn_on_failure = false);
 
 	Corpus2::Sentence::Ptr convert_sentence(Corpus2::Sentence::Ptr s);
 

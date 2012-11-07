@@ -145,7 +145,7 @@ void TagsetConverter::convert_simple(const std::vector<Corpus2::Token *>& v,
 
 void TagsetConverter::convert_ambiguous(
 		const std::vector<std::vector<Corpus2::Token *> >& v,
-		boost::function<void(Corpus2::Token *)>sink, bool warn_on_failure /*=true*/)
+		boost::function<void(Corpus2::Token *)>sink, bool warn_on_failure /*=false*/)
 {
 	std::vector< std::vector<Corpus2::Token *> > conv_v;
 	BOOST_FOREACH(const std::vector<Corpus2::Token*>& path, v) {
