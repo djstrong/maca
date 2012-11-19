@@ -132,13 +132,16 @@ MorfeuszAnalyser::MorfeuszAnalyser(const Corpus2::Tagset* tagset,
 void MorfeuszAnalyser::load_morfeusz_library()
 {
 #ifndef LIBMACA_STATIC_MORFEUSZ
-	morfeusz_lib_handle_ = dlmopen(LM_ID_NEWLM, morfeusz_library_.c_str(),
-			RTLD_NOW);
-	if (morfeusz_lib_handle_ == NULL) {
-		const char* dle = dlerror();
-		if (dle != NULL) {
-			throw MorfeuszInitError("Error opening library (no handle)",
-					dle, morfeusz_library_);
+	morfeusz_lib_handle_ = dlopen(morfeusz_library_.c_str(), RTLD_NOLOAD);
+	if(morfeusz_lib_handle_ == NULL){
+		morfeusz_lib_handle_ = dlmopen(LM_ID_BASE, morfeusz_library_.c_str(),
+				RTLD_NOW);
+		if (morfeusz_lib_handle_ == NULL) {
+			const char* dle = dlerror();
+			if (dle != NULL) {
+				throw MorfeuszInitError("Error opening library (no handle)",
+						dle, morfeusz_library_);
+			}
 		}
 	}
 
