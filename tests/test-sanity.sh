@@ -9,7 +9,7 @@ else
 	EXIT=1
 fi
 
-for config in morfeusz morfeusz-ikipi; do
+for config in morfeusz-nkjp-official; do
 for i in $TEST_DATA/$1/*.txt; do
 	maca-analyse -C $TOKI_DATA $config -q -o orth,actual_ws,end_nl --initial none < $i > $i.tok
 	if diff $i $i.tok > /dev/null; then
