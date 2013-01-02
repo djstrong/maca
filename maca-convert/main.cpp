@@ -172,15 +172,15 @@ void Folder::write_random_folds(double train_ratio, double test_ratio /* = -1 */
 void usage(char* name)
 {
 	std::cerr << "This program reads a corpus from standard input, performs "
-		"tagset conversions and writes on standard output\n";
+				 "tagset conversions and writes on standard output\n";
 	std::cerr << "Usage: " << name << " [OPTIONS] <converter>\n";
 	std::cerr << "See maca-convert --help for more info, including available converters\n";
 	std::cerr << "A `nop' converter is provided for no tagset conversion, "
-		"the tagset must be specified explicitly  using the -t option.\n";
-    std::cerr << "Use -F to generate train/test folds for cross-validation. "
-              << "If train-ratio and test-ratio given, will perform random sub-sampling. "
-              << "Otherwise, will conform to standard N-fold scheme (no overlaps between "
-              << "test parts).\n";
+				 "the tagset must be specified explicitly  using the -t option.\n";
+	std::cerr << "Use -F to generate train/test folds for cross-validation. "
+				 "If train-ratio and test-ratio given, will perform random sub-sampling. "
+				 "Otherwise, will conform to standard N-fold scheme (no overlaps between "
+				 "test parts).\n";
 }
 
 int main(int argc, char** argv)
