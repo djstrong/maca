@@ -20,13 +20,6 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <algorithm>
 #include <morfeusz.h>
 
-#ifdef __GNUC__
-//library init function, set encoding to utf8
-void __attribute__((constructor)) init(void)
-{
-	morfeusz_set_option(MORFOPT_ENCODING,MORFEUSZ_UTF_8);
-}
-#endif
 
 namespace Maca {
 

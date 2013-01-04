@@ -134,7 +134,7 @@ void MorfeuszAnalyser::load_morfeusz_library()
 #ifndef LIBMACA_STATIC_MORFEUSZ
 	morfeusz_lib_handle_ = dlopen(morfeusz_library_.c_str(), RTLD_NOW | RTLD_NOLOAD);
 	if(morfeusz_lib_handle_ == NULL){
-		morfeusz_lib_handle_ = dlopen(morfeusz_library_.c_str(), RTLD_NOW | RTLD_GLOBAL);
+		morfeusz_lib_handle_ = dlopen(morfeusz_library_.c_str(), RTLD_NOW | RTLD_LOCAL);
 		if (morfeusz_lib_handle_ == NULL) {
 			const char* dle = dlerror();
 			if (dle != NULL) {
