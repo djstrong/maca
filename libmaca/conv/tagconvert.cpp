@@ -52,7 +52,7 @@ TagConverter::TagConverter(const Corpus2::Tagset& from, const Corpus2::Tagset& t
 Corpus2::Tag TagConverter::cast(const Corpus2::Tag& from) const
 {
 	pos_map_t::const_iterator pi = pos_mapping_.find(from.get_pos());
-	if (pi != pos_mapping_.end()) {
+	if (pi == pos_mapping_.end()) {
 		std::stringstream msg;
 		msg
 				<< "Don't know how to convert grammatical class '"
