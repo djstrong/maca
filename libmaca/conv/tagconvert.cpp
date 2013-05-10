@@ -52,7 +52,16 @@ TagConverter::TagConverter(const Corpus2::Tagset& from, const Corpus2::Tagset& t
 Corpus2::Tag TagConverter::cast(const Corpus2::Tag& from) const
 {
 	pos_map_t::const_iterator pi = pos_mapping_.find(from.get_pos());
-	assert(pi != pos_mapping_.end());
+	if (pi != pos_mapping_.end()) {
+		std::stringstream msg;
+		msg
+				<< "Don't know how to convert grammatical class '"
+				<< tagset_from().get_pos_name(from.get_pos())
+				<< "' from tagset "
+				<< tagset_from().name()
+				<< " (missing override rule in .conv file?)";
+		throw MacaError(msg.str());
+	}
 	Corpus2::Tag to(pi->second);
 
 	Corpus2::mask_t values_left = from.get_values();
