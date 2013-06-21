@@ -78,7 +78,14 @@ class PremorphReaderImpl;
  * A convenient TokenReader interface for analysers. Allows to read pre_morph
  * XCES files, have their paragraphs analysed with the given analyser and get
  * output mimicking a regular ordinary TokenReader for already analysed
- * corpora.
+ * corpora. This allows to use Maca in premorph analysis mode wherever
+ * a Corpus2 reader is expected. Premorph files contain division into
+ * paragraphs ("chunks") and subsequent paragraphs may be obtained by calling
+ * rdr.get_next_chunk.
+ *
+ * NOTE: for a more convenient interface please use the
+ * PremorphTextReader class, which provides convenience functions to create the
+ * reader from given std::istream, a file name or a string.
  */
 class PremorphReader : public Corpus2::BufferedChunkReader
 {
@@ -104,6 +111,15 @@ protected:
 	boost::scoped_ptr<PremorphReaderImpl> impl_;
 };
 
+/**
+ * Convenient class that allows to create a Maca analyser for premorph files
+ * using given Maca configuration name and input to be analysed (file name or
+ * input stream).
+ * The resulting analyser will wrapped as a Corpus2::TokenReader object, which
+ * allows for simple usage wherever a standard Corpus2 reader is expected.
+ * Premorph files contain division into paragraphs and this will be preserved.
+ * To get paragraphs, use the reader's get_next_chunk method.
+ */
 class PremorphTextReader : public PremorphReader{
 
 public:

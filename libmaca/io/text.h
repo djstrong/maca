@@ -24,6 +24,21 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 namespace Maca {
 
+/**
+ * Class that wraps Maca SentenceAnalyser into Corpus2::TokenReader
+ * interface. This allows to use Maca in plain text analysis mode wherever
+ * a Corpus2 reader is expected. If the underlying Maca configuration used
+ * is able to split input into paragraphs ("chunks"), the returned reader
+ * object will also be ablo to return them by calling rdr.get_next_chunk.
+ * Note that this behaviour is implemented in Corpus2::BufferedSentenceReader
+ * and a paragraph is split when a sentence-initial token is marked as preceded
+ * by many newline characters.
+ *
+ * NOTE: for a more convenient interface please use the below PlainTextReader
+ * class, which provides convenience functions to create the reader from
+ * given std::istream, a file name or a string. This version allows to create
+ * the analyser directly by giving its config name.
+ */
 class TextReader : public Corpus2::BufferedSentenceReader
 {
 public:
@@ -43,6 +58,18 @@ protected:
 	boost::shared_ptr<SentenceAnalyser> sa_;
 };
 
+/**
+ * Convenient class that allows to create a Maca analyser using given
+ * Maca configuration name and input to be analysed (file name, input stream
+ * or (discouraged unless you really want it) string with all the contents to
+ * be analysed. The resulting analyser will wrapped as a Corpus2::TokenReader
+ * object, which allows for simple usage wherever a standard Corpus2 reader
+ * is expected.
+ * If the given Maca config is splitting input into paragraphs ("chunks")
+ * (it should be), then you can call the reader's get_next_chunk method
+ * to obtain subsequent paragraphs (if it wasn't splitting, you would get
+ * a huge paragraphs containing all input sentences).
+ */
 class PlainTextReader : public TextReader
 {
 public:
