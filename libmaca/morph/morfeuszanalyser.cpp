@@ -71,8 +71,6 @@ std::vector<MorfeuszEdge> morfeusz_preprocess(MorfeuszData* pmorf)
 std::vector<MorfeuszEdge> morfeusz_safe_analyse(const UnicodeString& orth)
 {
 	std::string s = PwrNlp::to_utf8(orth);
-	//boost::mutex::scoped_lock lock(morfeusz_mutex_);
-	//InterpMorf *pmorf = morfeusz_analyse(const_cast<char*>(s.c_str()));
 	return morfeusz_preprocess(0);
 }
 
