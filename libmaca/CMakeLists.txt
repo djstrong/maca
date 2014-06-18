@@ -86,7 +86,7 @@ SET(libmaca_STAT_SRC
 
 if (UNIX)
 	set(SFST_PLUGIN ON CACHE BOOL "Build SFST analyser as a plugin")
-	set(MORFEUSZ_PLUGIN ON CACHE BOOL "Build Morfeusz analyser as a plugin")
+	set(MORFEUSZ_PLUGIN OFF CACHE BOOL "Build Morfeusz analyser as a plugin")
 	set(GUESSER_PLUGIN ON CACHE BOOL "Build Guesser analyser as a plugin")
 endif(UNIX)
 
