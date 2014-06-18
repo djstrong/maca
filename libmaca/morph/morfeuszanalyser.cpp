@@ -42,6 +42,8 @@ const char* MorfeuszAnalyser::identifier = "morfeusz";
 bool MorfeuszAnalyser::registered =
 		MorphAnalyser::register_analyser<MorfeuszAnalyser>();
 
+static boost::mutex morfeusz_tagger_mutex;
+
 namespace {
 	static const int morfeusz_option_encoding = 1;
 	static const int morfeusz_option_encoding_utf8 = 8;
@@ -242,15 +244,19 @@ bool MorfeuszAnalyser::process_functional(const Toki::Token &t,
 		boost::function<void(Corpus2::Token *)>sink)
 {
 	std::string s = PwrNlp::to_utf8(t.orth());
-	// Morfeusz demands a nonconst char*
-#ifndef LIBMACA_STATIC_MORFEUSZ
-	MorfeuszData *ppmorf = morfeusz_analyse_handle_(
-			const_cast<char*>(s.c_str()));
-#else
-	MorfeuszData *ppmorf = reinterpret_cast<MorfeuszData*>(morfeusz_analyse(
-			const_cast<char*>(s.c_str())));
-#endif
-	std::vector<MorfeuszEdge> pmorf = morfeusz_preprocess(ppmorf);
+	std::vector<MorfeuszEdge> pmorf;
+	{
+		boost::mutex::scoped_lock lock(morfeusz_tagger_mutex);
+		// Morfeusz demands a nonconst char*
+	#ifndef LIBMACA_STATIC_MORFEUSZ
+		MorfeuszData *ppmorf = morfeusz_analyse_handle_(
+				const_cast<char*>(s.c_str()));
+	#else
+		MorfeuszData *ppmorf = reinterpret_cast<MorfeuszData*>(morfeusz_analyse(
+				const_cast<char*>(s.c_str())));
+	#endif
+	 	pmorf = morfeusz_preprocess(ppmorf);
+	}
 	if (pmorf.empty()) { // no analyses
 		return false;
 	} else if (pmorf.size() == 1) { // only one analysis
