@@ -23,10 +23,33 @@ MorfeuszAnalyser::~MorfeuszAnalyser()
 {}
 
 bool MorfeuszAnalyser::process_functional(const Toki::Token &t,
-		boost::function<void(Corpus2::Token *)> sink)
+					boost::function<void(Corpus2::Token *)> sink)
 {
-	throw new std::error("Not implemented");
-	return false;
+	using namespace morfeusz;
+
+	std::string s = PwrNlp::to_utf8(t.orth());
+	std::vector<details::MorfeuszEdge> pmorf;
+
+	Morfeusz morf = Morfeusz::createInstance();
+	morf.setCharset(UTF8); // TODO: Czy potrzebujemy ustawić coś więcej?
+	ResultsIterator *res_iter = morf.analyze(s);
+
+	while(res_iter->hasNext())
+		pmorf.push_back(MorfeuszEdge(res_iter->next()));
+
+	if (pmorf.empty()) // no analyses
+		return false;
+	else if (pmorf.size() == 1) // only one analysis
+		if (pmorf[0].lemma.length() > 0) {
+			Corpus2::Token *tok = make_token(t, pmorf[0])
+			std::vector<Corpus2::Token*> vec(1, tok);
+			flush_convert(vec, sink);
+			return true;
+		} else {
+			return false;
+		}
+	else // token was split, or there are multiple analyses (lemmas)
+		return process_complex_analysis(t, pmorf, sink);
 }
 
 void MorfeuszAnalyser::flush_convert(std::vector<Corpus2::Token*>& vec,
@@ -79,7 +102,7 @@ namespace details {
 	: node_from(morf.getStartNode()), node_to(morf.getEndNode())
 	, orth(UnicodeString::fromUTF8(morf.getOrth()))
 	, lemma(UnicodeString::fromUTF8(morf.getLemma()))
-	, token(NULL)//, tag_string(???)
+	, token(NULL)//, tag_string(???) TODO: jak skonstruować tag_string
 	{
 	}
 }
