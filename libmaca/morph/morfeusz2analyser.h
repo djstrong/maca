@@ -70,6 +70,8 @@ public:
 	static bool registered;
 
 private:
+	static const morfeusz::Charset charset;
+
 	bool process_complex_analysis(const Toki::Token &t,
 			std::vector<details::MorfeuszEdge>& pmorf,
 			boost::function<void(Corpus2::Token *)>sink);
@@ -104,7 +106,7 @@ struct MorfeuszEdge
 	Corpus2::Token* token;
 };
 
-}
+} /* end ns details */
 
 } /* end ns Maca */
 
