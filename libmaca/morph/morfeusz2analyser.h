@@ -17,20 +17,28 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #ifndef LIBMACA_MORFEUSZ2ANALYSER_H
 #define LIBMACA_MORFEUSZ2ANALYSER_H
 
+#include <libcorpus2/tagset.h>
+#include <libcorpus2/token.h>
+
+#include <morfeusz2.h>
+
+#include <libmaca/conv/tagsetconverter.h>
+#include "morphanalyser.h"
+
 namespace Maca {
 
 namespace details {
-	struct MorfeuszEdge;
+	struct Morfeusz2Edge;
 }
 
-class MorfeuszAnalyser : public MorphAnalyser
+class Morfeusz2Analyser : public MorphAnalyser
 {
 public:
 	/**
 	 * Constructor for a Morfeusz analyser with a given tagset and converter.
 	 * The tagset should be the output tagset of the converter.
 	 */
-	MorfeuszAnalyser(const Corpus2::Tagset* tagset,
+	Morfeusz2Analyser(const Corpus2::Tagset* tagset,
 			Conversion::TagsetConverter* conv);
 
 	/**
@@ -42,13 +50,13 @@ public:
 	 * - warn_on_fold_failure - issue a warning when folding ambiguous paths
 	 *                          is unsuccesful after conversion (off by def.)
 	 */
-	MorfeuszAnalyser(const Config::Node& cfg);
+	Morfeusz2Analyser(const Config::Node& cfg);
 
 	/// Cloning
-	MorfeuszAnalyser* clone() const;
+	Morfeusz2Analyser* clone() const;
 
 	/// Destructor
-	~MorfeuszAnalyser();
+	~Morfeusz2Analyser();
 
 	/// MorphAnalyser override
 	bool process_functional(const Toki::Token &t,
@@ -73,15 +81,15 @@ private:
 	static const morfeusz::Charset charset;
 
 	bool process_complex_analysis(const Toki::Token &t,
-			std::vector<details::MorfeuszEdge>& pmorf,
+			std::vector<details::Morfeusz2Edge>& pmorf,
 			boost::function<void(Corpus2::Token *)>sink);
 
 	/// helper to create a token from a Morfeusz interpretation struct
 	Corpus2::Token* make_token(const Toki::Token& t,
-			const details::MorfeuszEdge& m) const;
+			const details::Morfeusz2Edge& m) const;
 
 	/// helper to add lexemes from a Morfeusz interp struct into a token
-	void morfeusz_into_token(Corpus2::Token* tt, const details::MorfeuszEdge& m) const;
+	void morfeusz_into_token(Corpus2::Token* tt, const details::Morfeusz2Edge& m) const;
 
 	/// the tagset converter
 	Conversion::TagsetConverter* conv_;
@@ -95,9 +103,9 @@ private:
 namespace details {
 
 /// Helper struct for holding preprocessed Morfeusz results
-struct MorfeuszEdge
+struct Morfeusz2Edge
 {
-	explicit MorfeuszEdge(const morfeusz::MorphInterpretation& morf);
+	explicit Morfeusz2Edge(const morfeusz::MorphInterpretation& morf);
 
 	int node_from, node_to;
 	UnicodeString orth;

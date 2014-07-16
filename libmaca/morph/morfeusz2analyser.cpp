@@ -1,19 +1,23 @@
+#include <fstream>
+
 #include <libpwrutils/util.h>
+
+#include <libmaca/util/settings.h>
 
 #include "morfeusz2analyser.h"
 
 namespace Maca {
 
 // statics
-const char* MorfeuszAnalyser::identifier = "morfeusz2";
+const char* Morfeusz2Analyser::identifier = "morfeusz2";
 
-bool MorfeuszAnalyser::registered =
-		MorphAnalyser::register_analyser<MorfeuszAnalyser>();
+bool Morfeusz2Analyser::registered =
+		MorphAnalyser::register_analyser<Morfeusz2Analyser>();
 
-const morfeusz::Charset MorfeuszAnalyser::charset = morfeusz::UTF8;
+const morfeusz::Charset Morfeusz2Analyser::charset = morfeusz::UTF8;
 
 // construct, copy, destruct
-MorfeuszAnalyser::MorfeuszAnalyser(const Corpus2::Tagset* tagset,
+Morfeusz2Analyser::Morfeusz2Analyser(const Corpus2::Tagset* tagset,
 								Conversion::TagsetConverter* conv)
 : MorphAnalyser(tagset), conv_(conv), warn_on_fold_failure_(false)
 {
@@ -21,7 +25,7 @@ MorfeuszAnalyser::MorfeuszAnalyser(const Corpus2::Tagset* tagset,
 							"Morfeusz analyser creation");
 }
 
-MorfeuszAnalyser::MorfeuszAnalyser(const Config::Node& cfg)
+Morfeusz2Analyser::Morfeusz2Analyser(const Config::Node& cfg)
 : MorphAnalyser(cfg), conv_(NULL), ign_tag_(), warn_on_ign_(false)
 {
 	std::string fn = cfg.get("converter", "");
@@ -42,74 +46,72 @@ MorfeuszAnalyser::MorfeuszAnalyser(const Config::Node& cfg)
 	warn_on_fold_failure_ =  cfg.get("warn_on_fold_failure", false);
 }
 
-MorfeuszAnalyser::MorfeuszAnalyser* clone() const
+Morfeusz2Analyser* Morfeusz2Analyser::clone() const
 {
-	MorfeuszAnalyser* copy = new MorfeuszAnalyser(&tagset(), conv_->clone());
+	Morfeusz2Analyser* copy = new Morfeusz2Analyser(&tagset(), conv_->clone());
 	copy->ign_tag_ = ign_tag_;
 	copy->warn_on_ign_ = warn_on_ign_;
 	copy->warn_on_fold_failure_ = warn_on_fold_failure_;
 	return copy;
 }
 
-MorfeuszAnalyser::~MorfeuszAnalyser()
+Morfeusz2Analyser::~Morfeusz2Analyser()
 {
 	delete conv_;
 }
 
 // public methods
-bool MorfeuszAnalyser::process_functional(const Toki::Token &t,
+bool Morfeusz2Analyser::process_functional(const Toki::Token &t,
 					boost::function<void(Corpus2::Token *)> sink)
 {
 	using namespace morfeusz;
 
 	std::string s = PwrNlp::to_utf8(t.orth());
-	std::vector<details::MorfeuszEdge> pmorf;
+	std::vector<details::Morfeusz2Edge> pmorf;
 
 	Morfeusz morf = Morfeusz::createInstance();
 	morf.setCharset(charset); // TODO: Czy potrzebujemy ustawić coś więcej? w szczególności analyzerDictionary?
 	ResultsIterator *res_iter = morf.analyze(s);
 
 	while(res_iter->hasNext())
-		pmorf.push_back(MorfeuszEdge(res_iter->next()));
+		pmorf.push_back(details::Morfeusz2Edge(res_iter->next()));
 
-	if (pmorf.empty()) // no analyses
-		return false;
-	else if (pmorf.size() == 1) // only one analysis
-		if (pmorf[0].lemma.length() > 0) {
-			Corpus2::Token *tok = make_token(t, pmorf[0])
-			std::vector<Corpus2::Token*> vec(1, tok);
-			flush_convert(vec, sink);
-			return true;
-		} else {
-			return false;
-		}
-	else // token was split, or there are multiple analyses (lemmas)
+	if(pmorf.size() == 1 && pmorf[0].lemma.length() > 0) { // only one analysis
+		Corpus2::Token *tok = make_token(t, pmorf[0]);
+		std::vector<Corpus2::Token*> vec(1, tok);
+		flush_convert(vec, sink);
+		return true;
+	} else if(pmorf.size() > 1)
 		return process_complex_analysis(t, pmorf, sink);
+// TODO
+	return false;
 }
 
-void MorfeuszAnalyser::flush_convert(std::vector<Corpus2::Token*>& vec,
+void Morfeusz2Analyser::flush_convert(std::vector<Corpus2::Token*>& vec,
 							boost::function<void(Corpus2::Token *)> sink)
 {
 	conv_->convert_simple(vec, sink);
 }
 
-void MorfeuszAnalyser::flush_convert(std::vector< std::vector<Corpus2::Token*> >& vec,
+void Morfeusz2Analyser::flush_convert(std::vector< std::vector<Corpus2::Token*> >& vec,
 										boost::function<void(Corpus2::Token *)> sink)
 {
 	conv_->convert_ambiguous(vec, sink, warn_on_fold_failure_);
 }
 
 // private methods
-bool MorfeuszAnalyser::process_complex_analysis(const Toki::Token &t,
-							std::vector<details::MorfeuszEdge>& pmorf,
+bool Morfeusz2Analyser::process_complex_analysis(const Toki::Token &t,
+							std::vector<details::Morfeusz2Edge>& pmorf,
 							boost::function<void(Corpus2::Token *)>sink)
 {
-	throw new std::error("Not implemented");
+	
+	
+	//throw new std::error("Not implemented");
 	return false;
 }
 
-Corpus2::Token* make_token(const Toki::Token& t,
-						   const details::MorfeuszEdge& m) const
+Corpus2::Token* Morfeusz2Analyser::make_token(const Toki::Token& t,
+						   const details::Morfeusz2Edge& m) const
 {
 	Corpus2::Token* tt = new Corpus2::Token();
 	if (m.node_from == 0) {
@@ -121,7 +123,7 @@ Corpus2::Token* make_token(const Toki::Token& t,
 	return tt;
 }
 
-void morfeusz_into_token(Corpus2::Token* tt, const details::MorfeuszEdge& m) const
+void Morfeusz2Analyser::morfeusz_into_token(Corpus2::Token* tt, const details::Morfeusz2Edge& m) const
 {
 	tt->set_orth(m.orth);
 	if (!m.tag_string.empty()) {
@@ -138,7 +140,7 @@ void morfeusz_into_token(Corpus2::Token* tt, const details::MorfeuszEdge& m) con
 }
 
 namespace details {
-	MorfeuszEdge::MorfeuszEdge(const morfeusz::MorphInterpretation& morf)
+	Morfeusz2Edge::Morfeusz2Edge(const morfeusz::MorphInterpretation& morf)
 	: node_from(morf.getStartNode()), node_to(morf.getEndNode())
 	, orth(UnicodeString::fromUTF8(morf.getOrth()))
 	, lemma(UnicodeString::fromUTF8(morf.getLemma()))
