@@ -4,24 +4,59 @@
 
 namespace Maca {
 
+// statics
 const char* MorfeuszAnalyser::identifier = "morfeusz2";
 
 bool MorfeuszAnalyser::registered =
 		MorphAnalyser::register_analyser<MorfeuszAnalyser>();
 
+const morfeusz::Charset MorfeuszAnalyser::charset = morfeusz::UTF8;
+
+// construct, copy, destruct
 MorfeuszAnalyser::MorfeuszAnalyser(const Corpus2::Tagset* tagset,
-				Conversion::TagsetConverter* conv)
-{}
+								Conversion::TagsetConverter* conv)
+: MorphAnalyser(tagset), conv_(conv), warn_on_fold_failure_(false)
+{
+	require_matching_tagsets(conv_->tagset_to(), *tagset,
+							"Morfeusz analyser creation");
+}
 
 MorfeuszAnalyser::MorfeuszAnalyser(const Config::Node& cfg)
-{}
+: MorphAnalyser(cfg), conv_(NULL), ign_tag_(), warn_on_ign_(false)
+{
+	std::string fn = cfg.get("converter", "");
+	std::ifstream ifs;
+	Path::Instance().open_stream_or_throw(fn, ifs, "converter");
+
+	Config::Node conv_cfg = Config::from_stream(ifs);
+	std::auto_ptr<Conversion::TagsetConverter> c(
+			new Conversion::TagsetConverter(conv_cfg));
+
+	require_matching_tagsets(c->tagset_to(), *this,
+			"Morfeusz analyser creation");
+	conv_ = c.release();
+
+	std::string ign_tag_string = cfg.get("ign_tag", "ign");
+	ign_tag_ = conv_->tagset_from().parse_simple_tag(ign_tag_string);
+	warn_on_ign_ = cfg.get("warn_on_ign", false);
+	warn_on_fold_failure_ =  cfg.get("warn_on_fold_failure", false);
+}
 
 MorfeuszAnalyser::MorfeuszAnalyser* clone() const
-{}
+{
+	MorfeuszAnalyser* copy = new MorfeuszAnalyser(&tagset(), conv_->clone());
+	copy->ign_tag_ = ign_tag_;
+	copy->warn_on_ign_ = warn_on_ign_;
+	copy->warn_on_fold_failure_ = warn_on_fold_failure_;
+	return copy;
+}
 
 MorfeuszAnalyser::~MorfeuszAnalyser()
-{}
+{
+	delete conv_;
+}
 
+// public methods
 bool MorfeuszAnalyser::process_functional(const Toki::Token &t,
 					boost::function<void(Corpus2::Token *)> sink)
 {
@@ -31,7 +66,7 @@ bool MorfeuszAnalyser::process_functional(const Toki::Token &t,
 	std::vector<details::MorfeuszEdge> pmorf;
 
 	Morfeusz morf = Morfeusz::createInstance();
-	morf.setCharset(UTF8); // TODO: Czy potrzebujemy ustawić coś więcej?
+	morf.setCharset(charset); // TODO: Czy potrzebujemy ustawić coś więcej? w szczególności analyzerDictionary?
 	ResultsIterator *res_iter = morf.analyze(s);
 
 	while(res_iter->hasNext())
@@ -53,13 +88,18 @@ bool MorfeuszAnalyser::process_functional(const Toki::Token &t,
 }
 
 void MorfeuszAnalyser::flush_convert(std::vector<Corpus2::Token*>& vec,
-		boost::function<void(Corpus2::Token *)> sink)
-{}
+							boost::function<void(Corpus2::Token *)> sink)
+{
+	conv_->convert_simple(vec, sink);
+}
 
 void MorfeuszAnalyser::flush_convert(std::vector< std::vector<Corpus2::Token*> >& vec,
-		boost::function<void(Corpus2::Token *)> sink)
-{}
+										boost::function<void(Corpus2::Token *)> sink)
+{
+	conv_->convert_ambiguous(vec, sink, warn_on_fold_failure_);
+}
 
+// private methods
 bool MorfeuszAnalyser::process_complex_analysis(const Toki::Token &t,
 							std::vector<details::MorfeuszEdge>& pmorf,
 							boost::function<void(Corpus2::Token *)>sink)
