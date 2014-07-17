@@ -1,7 +1,21 @@
+/*
+    Copyright (C) 2014 Radosław Warzocha, Adam Radziszewski
+    Part of the libmaca project
+
+    This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License as published by the Free
+Software Foundation; either version 3 of the License, or (at your option)
+any later version.
+
+    This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE. 
+
+    See the LICENSE.MACA, LICENSE.SFST, LICENSE.GUESSER, COPYING.LESSER and COPYING files for more details.
+*/
+
 #include <fstream>
-
 #include <libpwrutils/util.h>
-
 #include <libmaca/util/settings.h>
 
 #include "morfeusz2analyser.h"
@@ -69,9 +83,9 @@ bool Morfeusz2Analyser::process_functional(const Toki::Token &t,
 	std::string s = PwrNlp::to_utf8(t.orth());
 	std::vector<details::Morfeusz2Edge> pmorf;
 
-	Morfeusz morf = Morfeusz::createInstance();
-	morf.setCharset(charset); // TODO: Czy potrzebujemy ustawić coś więcej? w szczególności analyzerDictionary?
-	ResultsIterator *res_iter = morf.analyze(s);
+	Morfeusz *morf = Morfeusz::createInstance();
+	morf->setCharset(charset); // TODO: Czy potrzebujemy ustawić coś więcej? w szczególności analyzerDictionary?
+	ResultsIterator *res_iter = morf->analyze(s);
 
 	while(res_iter->hasNext())
 		pmorf.push_back(details::Morfeusz2Edge(res_iter->next()));
@@ -83,8 +97,8 @@ bool Morfeusz2Analyser::process_functional(const Toki::Token &t,
 		return true;
 	} else if(pmorf.size() > 1)
 		return process_complex_analysis(t, pmorf, sink);
-// TODO
-	return false;
+	else
+		return false;
 }
 
 void Morfeusz2Analyser::flush_convert(std::vector<Corpus2::Token*>& vec,
@@ -104,10 +118,85 @@ bool Morfeusz2Analyser::process_complex_analysis(const Toki::Token &t,
 							std::vector<details::Morfeusz2Edge>& pmorf,
 							boost::function<void(Corpus2::Token *)>sink)
 {
-	
-	
-	//throw new std::error("Not implemented");
-	return false;
+	int node_count = 0;
+	BOOST_FOREACH(const details::Morfeusz2Edge& mri, pmorf) {
+		node_count = std::max(node_count, mri.node_to);
+	}
+	++node_count; // the numbering starts at 0 and we got the last valid node number
+	// build adjacency lists, folding lemma ambiguities
+	std::vector< std::vector< int > > succ(node_count);
+	std::vector< std::vector< int > > prec(node_count);
+	for (unsigned int i = 0; i < pmorf.size(); ++i) {
+		details::Morfeusz2Edge& edge = pmorf[i];
+		int actual_edge_i = -1;
+		BOOST_FOREACH(int out_edge, succ[edge.node_from]) {
+			if (pmorf[out_edge].node_to == edge.node_to) {
+				actual_edge_i = out_edge;
+			}
+		}
+		if (actual_edge_i >= 0) { // duplicate edge -- simple lemma ambiguity
+			morfeusz_into_token(pmorf[actual_edge_i].token, edge);
+		} else {
+			edge.token = make_token(t, edge);
+			succ[edge.node_from].push_back(i);
+			prec[edge.node_to].push_back(i);
+		}
+	}
+
+	std::vector<Corpus2::Token*> unambiguous;
+	int current_node = 0;
+	while (current_node < node_count) {
+		if (succ[current_node].size() > 1) { // complex case, segmentation ambiguity
+			if (!unambiguous.empty()) {
+				flush_convert(unambiguous, sink);
+				unambiguous.clear();
+			}
+
+			int merge_node = -1;
+			std::vector< std::vector< Corpus2::Token* > > paths;
+			// follow all paths to the merge point
+			BOOST_FOREACH(int tse, succ[current_node]) {
+				paths.push_back(std::vector<Corpus2::Token*>());
+				paths.back().push_back(pmorf[tse].token);
+				int v = pmorf[tse].node_to;
+				while (prec[v].size() == 1) {
+					if (succ[v].size() != 1) {
+						throw Morfeusz2Error("path splits twice",
+											t.orth_utf8(), pmorf);
+					}
+					tse = *succ[v].begin();
+					paths.back().push_back(pmorf[tse].token);
+					v = pmorf[tse].node_to;
+				}
+				//assume this is the merge node, check for consistency
+				if (merge_node != -1 && merge_node != v) {
+					throw Morfeusz2Error("path merge node ambiguity",
+										t.orth_utf8(), pmorf);
+				}
+				merge_node = v;
+			}
+
+			flush_convert(paths, sink);
+			current_node = merge_node;
+		} else if (!succ[current_node].empty()) { //simple case, only one interp
+			int edge = *succ[current_node].begin();
+			unambiguous.push_back(pmorf[edge].token);
+			if (pmorf[edge].node_to != current_node + 1)
+				throw Morfeusz2Error("simple path has non-consecutive nodes",
+									t.orth_utf8(), pmorf);
+			++current_node;
+		} else { //only the last node should have no successors
+			if (current_node != node_count - 1)
+				throw Morfeusz2Error("node without successors is not the last node",
+									t.orth_utf8(), pmorf);
+			++current_node;
+		}
+	}
+
+	if (!unambiguous.empty()) {
+		flush_convert(unambiguous, sink);
+	}
+	return true;
 }
 
 Corpus2::Token* Morfeusz2Analyser::make_token(const Toki::Token& t,
@@ -137,6 +226,28 @@ void Morfeusz2Analyser::morfeusz_into_token(Corpus2::Token* tt, const details::M
 					<< ign_lex.lemma_utf8() << "\n";
 		}
 	}
+}
+
+Morfeusz2Error::Morfeusz2Error(const std::string& error,
+		const std::string input,
+		const std::vector<details::Morfeusz2Edge>& interp)
+	: MacaError("Morfeusz2 error: " + error), error(error), input(input)
+	, interp(interp)
+{
+}
+
+Morfeusz2Error::~Morfeusz2Error() throw()
+{
+}
+
+std::string Morfeusz2Error::info() const
+{
+	std::stringstream ss;
+	ss << what();
+	if (!input.empty()) {
+		ss << " for input '" << input << "'";
+	}
+	return ss.str();
 }
 
 namespace details {

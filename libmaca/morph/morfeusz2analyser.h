@@ -17,6 +17,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #ifndef LIBMACA_MORFEUSZ2ANALYSER_H
 #define LIBMACA_MORFEUSZ2ANALYSER_H
 
+#include <utility>
+
 #include <libcorpus2/tagset.h>
 #include <libcorpus2/token.h>
 
@@ -69,7 +71,7 @@ public:
 	/// convert gethered tokens (ambiguously segmented), try folding and
 	/// pass the resulting tokens to the sink
 	void flush_convert(std::vector< std::vector<Corpus2::Token*> >& vec,
-			boost::function<void(Corpus2::Token *)> sink);
+						boost::function<void(Corpus2::Token *)> sink);
 
 	/// Class identifier
 	static const char* identifier;
@@ -89,7 +91,8 @@ private:
 			const details::Morfeusz2Edge& m) const;
 
 	/// helper to add lexemes from a Morfeusz interp struct into a token
-	void morfeusz_into_token(Corpus2::Token* tt, const details::Morfeusz2Edge& m) const;
+	void morfeusz_into_token(Corpus2::Token* tt,
+							const details::Morfeusz2Edge& m) const;
 
 	/// the tagset converter
 	Conversion::TagsetConverter* conv_;
@@ -98,6 +101,29 @@ private:
 
 	bool warn_on_ign_;
 	bool warn_on_fold_failure_;
+};
+
+/**
+ * Exception class for signalling Morfeusz-related analysis errors
+ */
+class Morfeusz2Error : public MacaError
+{
+public:
+	/// Constructor
+	Morfeusz2Error(const std::string& error, const std::string input,
+		const std::vector<details::Morfeusz2Edge>& interp);
+
+	/// Destructor
+	~Morfeusz2Error() throw();
+
+	/// Info accessor
+	std::string info() const;
+
+	/// The error info and Morfeusz input during the error, if available
+	std::string error, input;
+
+	/// The structure returned by Morfeusz during the error, if available
+	std::vector<details::Morfeusz2Edge> interp;
 };
 
 namespace details {
