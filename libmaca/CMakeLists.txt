@@ -142,6 +142,11 @@ if (MORFEUSZ_FOUND)
 	endif(MORFEUSZ_PLUGIN)
 endif (MORFEUSZ_FOUND)
 
+find_package(Morfeusz2)
+set(LIBS ${LIBS} ${MORFEUSZ2_LIBRARY})
+include_directories(${MORFEUSZ2_INCLUDE_DIR})
+link_directories(${MORFEUSZ2_LIBRARY_DIRS})
+
 find_package(Corpus)
 if(BUILD_GPL_PLUGINS)
 	if (CORPUS_FOUND)
