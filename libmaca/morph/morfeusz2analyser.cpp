@@ -84,7 +84,7 @@ bool Morfeusz2Analyser::process_functional(const Toki::Token &t,
 	std::vector<details::Morfeusz2Edge> pmorf;
 
 	Morfeusz *morf = Morfeusz::createInstance();
-	morf->setCharset(charset); // TODO: Czy potrzebujemy ustawić coś więcej? w szczególności analyzerDictionary?
+	morf->setCharset(charset);
 	ResultsIterator *res_iter = morf->analyze(s);
 
 	while(res_iter->hasNext())
@@ -255,7 +255,7 @@ namespace details {
 	: node_from(morf.getStartNode()), node_to(morf.getEndNode())
 	, orth(UnicodeString::fromUTF8(morf.getOrth()))
 	, lemma(UnicodeString::fromUTF8(morf.getLemma()))
-	, token(NULL)//, tag_string(???) TODO: jak skonstruować tag_string
+	, tag_string(morf.getTag()), token(NULL)
 	{
 	}
 }
