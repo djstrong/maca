@@ -64,15 +64,6 @@ public:
 	bool process_functional(const Toki::Token &t,
 			boost::function<void(Corpus2::Token *)> sink);
 
-	/// convert gathered tokens and pass them to the sink
-	void flush_convert(std::vector<Corpus2::Token*>& vec,
-			boost::function<void(Corpus2::Token *)> sink);
-
-	/// convert gethered tokens (ambiguously segmented), try folding and
-	/// pass the resulting tokens to the sink
-	void flush_convert(std::vector< std::vector<Corpus2::Token*> >& vec,
-						boost::function<void(Corpus2::Token *)> sink);
-
 	/// Class identifier
 	static const char* identifier;
 
@@ -85,6 +76,21 @@ private:
 	bool process_complex_analysis(const Toki::Token &t,
 			std::vector<details::Morfeusz2Edge>& pmorf,
 			boost::function<void(Corpus2::Token *)>sink);
+
+	typedef std::vector< std::vector<int> > adj_list;
+	typedef std::pair<adj_list, adj_list> adjacency_lists;
+
+	adjacency_lists build_adjacency_lists(const Toki::Token &t,
+					std::vector<details::Morfeusz2Edge>& pmorf);
+
+	/// convert gathered tokens and pass them to the sink
+	void flush_convert(std::vector<Corpus2::Token*>& vec,
+			boost::function<void(Corpus2::Token *)> sink);
+
+	/// convert gethered tokens (ambiguously segmented), try folding and
+	/// pass the resulting tokens to the sink
+	void flush_convert(std::vector< std::vector<Corpus2::Token*> >& vec,
+						boost::function<void(Corpus2::Token *)> sink);
 
 	/// helper to create a token from a Morfeusz interpretation struct
 	Corpus2::Token* make_token(const Toki::Token& t,

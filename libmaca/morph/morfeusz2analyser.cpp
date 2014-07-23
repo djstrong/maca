@@ -101,50 +101,16 @@ bool Morfeusz2Analyser::process_functional(const Toki::Token &t,
 		return false;
 }
 
-void Morfeusz2Analyser::flush_convert(std::vector<Corpus2::Token*>& vec,
-							boost::function<void(Corpus2::Token *)> sink)
-{
-	conv_->convert_simple(vec, sink);
-}
-
-void Morfeusz2Analyser::flush_convert(std::vector< std::vector<Corpus2::Token*> >& vec,
-										boost::function<void(Corpus2::Token *)> sink)
-{
-	conv_->convert_ambiguous(vec, sink, warn_on_fold_failure_);
-}
-
 // private methods
 bool Morfeusz2Analyser::process_complex_analysis(const Toki::Token &t,
 							std::vector<details::Morfeusz2Edge>& pmorf,
 							boost::function<void(Corpus2::Token *)>sink)
 {
-	int node_count = 0;
-	BOOST_FOREACH(const details::Morfeusz2Edge& mri, pmorf) {
-		node_count = std::max(node_count, mri.node_to);
-	}
-	++node_count; // the numbering starts at 0 and we got the last valid node number
-	// build adjacency lists, folding lemma ambiguities
-	std::vector< std::vector< int > > succ(node_count);
-	std::vector< std::vector< int > > prec(node_count);
-	for (unsigned int i = 0; i < pmorf.size(); ++i) {
-		details::Morfeusz2Edge& edge = pmorf[i];
-		int actual_edge_i = -1;
-		BOOST_FOREACH(int out_edge, succ[edge.node_from]) {
-			if (pmorf[out_edge].node_to == edge.node_to) {
-				actual_edge_i = out_edge;
-			}
-		}
-		if (actual_edge_i >= 0) { // duplicate edge -- simple lemma ambiguity
-			morfeusz_into_token(pmorf[actual_edge_i].token, edge);
-		} else {
-			edge.token = make_token(t, edge);
-			succ[edge.node_from].push_back(i);
-			prec[edge.node_to].push_back(i);
-		}
-	}
+	adjacency_lists alists = build_adjacency_lists(t, pmorf);
+	adj_list &succ = alists.first, &prec = alists.second;
 
 	std::vector<Corpus2::Token*> unambiguous;
-	int current_node = 0;
+	int current_node = 0, node_count = succ.size();
 	while (current_node < node_count) {
 		if (succ[current_node].size() > 1) { // complex case, segmentation ambiguity
 			if (!unambiguous.empty()) {
@@ -197,6 +163,50 @@ bool Morfeusz2Analyser::process_complex_analysis(const Toki::Token &t,
 		flush_convert(unambiguous, sink);
 	}
 	return true;
+}
+
+Morfeusz2Analyser::adjacency_lists
+		Morfeusz2Analyser::build_adjacency_lists(const Toki::Token &t,
+							std::vector<details::Morfeusz2Edge>& pmorf)
+{
+	int node_count = 0;
+	BOOST_FOREACH(const details::Morfeusz2Edge& mri, pmorf) {
+		node_count = std::max(node_count, mri.node_to);
+	}
+	++node_count; // the numbering starts at 0 and we got the last valid node number
+
+	std::vector< std::vector< int > > succ(node_count), prec(node_count);
+
+	for (unsigned int i = 0; i < pmorf.size(); ++i) {
+		details::Morfeusz2Edge& edge = pmorf[i];
+		int actual_edge_i = -1;
+
+		BOOST_FOREACH(int out_edge, succ[edge.node_from]) {
+			if (pmorf[out_edge].node_to == edge.node_to)
+				actual_edge_i = out_edge;
+		}
+		if (actual_edge_i >= 0) // duplicate edge -- simple lemma ambiguity
+			morfeusz_into_token(pmorf[actual_edge_i].token, edge);
+		else {
+			edge.token = make_token(t, edge);
+			succ[edge.node_from].push_back(i);
+			prec[edge.node_to].push_back(i);
+		}
+	}
+
+	return make_pair(succ, prec);
+}
+
+void Morfeusz2Analyser::flush_convert(std::vector<Corpus2::Token*>& vec,
+							boost::function<void(Corpus2::Token *)> sink)
+{
+	conv_->convert_simple(vec, sink);
+}
+
+void Morfeusz2Analyser::flush_convert(std::vector< std::vector<Corpus2::Token*> >& vec,
+										boost::function<void(Corpus2::Token *)> sink)
+{
+	conv_->convert_ambiguous(vec, sink, warn_on_fold_failure_);
 }
 
 Corpus2::Token* Morfeusz2Analyser::make_token(const Toki::Token& t,
