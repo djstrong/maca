@@ -137,7 +137,8 @@ namespace details {
 /// Helper struct for holding preprocessed Morfeusz results
 struct Morfeusz2Edge
 {
-	explicit Morfeusz2Edge(const morfeusz::MorphInterpretation& morf);
+	explicit Morfeusz2Edge(const morfeusz::MorphInterpretation interp,
+							const morfeusz::Morfeusz * morf);
 
 	int node_from, node_to;
 	UnicodeString orth;

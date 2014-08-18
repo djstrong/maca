@@ -51,7 +51,7 @@ Morfeusz2Analyser::Morfeusz2Analyser(const Config::Node& cfg)
 			new Conversion::TagsetConverter(conv_cfg));
 
 	require_matching_tagsets(c->tagset_to(), *this,
-			"Morfeusz analyser creation");
+							"Morfeusz analyser creation");
 	conv_ = c.release();
 
 	std::string ign_tag_string = cfg.get("ign_tag", "ign");
@@ -83,12 +83,12 @@ bool Morfeusz2Analyser::process_functional(const Toki::Token &t,
 	std::string s = PwrNlp::to_utf8(t.orth());
 	std::vector<details::Morfeusz2Edge> pmorf;
 
-	Morfeusz *morf = Morfeusz::createInstance();
+	Morfeusz *morf = Morfeusz::createInstance(ANALYSE_ONLY);
 	morf->setCharset(charset);
-	ResultsIterator *res_iter = morf->analyze(s);
+	ResultsIterator *res_iter = morf->analyse(s);
 
 	while(res_iter->hasNext())
-		pmorf.push_back(details::Morfeusz2Edge(res_iter->next()));
+		pmorf.push_back(details::Morfeusz2Edge(res_iter->next(), morf));
 
 	if(pmorf.size() == 1 && pmorf[0].lemma.length() > 0) { // only one analysis
 		Corpus2::Token *tok = make_token(t, pmorf[0]);
@@ -261,11 +261,12 @@ std::string Morfeusz2Error::info() const
 }
 
 namespace details {
-	Morfeusz2Edge::Morfeusz2Edge(const morfeusz::MorphInterpretation& morf)
-	: node_from(morf.getStartNode()), node_to(morf.getEndNode())
-	, orth(UnicodeString::fromUTF8(morf.getOrth()))
-	, lemma(UnicodeString::fromUTF8(morf.getLemma()))
-	, tag_string(morf.getTag()), token(NULL)
+	Morfeusz2Edge::Morfeusz2Edge(const morfeusz::MorphInterpretation interp,
+								const morfeusz::Morfeusz * morf)
+	: node_from(interp.startNode), node_to(interp.endNode)
+	, orth(UnicodeString::fromUTF8(interp.orth))
+	, lemma(UnicodeString::fromUTF8(interp.lemma))
+	, tag_string(morf->getIdResolver().getTag(interp.tagId)), token(NULL)
 	{
 	}
 }
