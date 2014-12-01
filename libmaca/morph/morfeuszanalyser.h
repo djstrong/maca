@@ -17,12 +17,6 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #ifndef LIBMACA_MORFEUSZANALYSER_H
 #define LIBMACA_MORFEUSZANALYSER_H
 
-/*
- * NOTE: IMPORTANT REMARK: This is analyser for Morfeusz SGJP v1.0. If you need analyser for
- * Morfeusz v2.0 (which, at the time of writing this words, isn't officialy out yet)
- * contact radoslaw.warzocha[at]gmail.com.
- */
-
 #include <libmaca/morph/morphanalyser.h>
 #include <libmaca/conv/tagsetconverter.h>
 
