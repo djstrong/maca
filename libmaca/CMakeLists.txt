@@ -76,7 +76,6 @@ SET(libmaca_STAT_SRC
 	morph/dispatchanalyser.cpp
 	morph/mapanalyser.cpp
 	morph/morphanalyser.cpp
-	morph/morfeusz2analyser.cpp
 	util/confignode.cpp
 	util/debug.cpp
 	util/sentenceanalyser.cpp
@@ -87,7 +86,7 @@ SET(libmaca_STAT_SRC
 
 if (UNIX)
 	set(SFST_PLUGIN ON CACHE BOOL "Build SFST analyser as a plugin")
-	set(MORFEUSZ_PLUGIN OFF CACHE BOOL "Build Morfeusz analyser as a plugin")
+	set(MORFEUSZ_PLUGIN ON CACHE BOOL "Build Morfeusz analyser as a plugin")
 	set(GUESSER_PLUGIN ON CACHE BOOL "Build Guesser analyser as a plugin")
 endif(UNIX)
 
@@ -143,9 +142,13 @@ if (MORFEUSZ_FOUND)
 endif (MORFEUSZ_FOUND)
 
 find_package(Morfeusz2)
-set(LIBS ${LIBS} ${MORFEUSZ2_LIBRARY})
-include_directories(${MORFEUSZ2_INCLUDE_DIR})
-link_directories(${MORFEUSZ2_LIBRARY_DIRS})
+if (MORFEUSZ2_FOUND)
+	set(LIBS ${LIBS} ${MORFEUSZ2_LIBRARY})
+	include_directories(${MORFEUSZ2_INCLUDE_DIR})
+	link_directories(${MORFEUSZ2_LIBRARY_DIRS})
+
+	set(libmaca_STAT_SRC ${libmaca_STAT_SRC} morph/morfeusz2analyser.cpp)
+endif (MORFEUSZ2_FOUND)
 
 find_package(Corpus)
 if(BUILD_GPL_PLUGINS)
