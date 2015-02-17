@@ -72,6 +72,8 @@ public:
 
 private:
 	static const morfeusz::Charset charset;
+	static morfeusz::Morfeusz *morfeusz_instance;
+	static unsigned int analyser_count;		// needed for proper morfeusz_instance destruction
 
 	bool process_complex_analysis(const Toki::Token &t,
 			std::vector<details::Morfeusz2Edge>& pmorf,
