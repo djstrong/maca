@@ -28,8 +28,6 @@ const char* Morfeusz2Analyser::identifier = "morfeusz2";
 bool Morfeusz2Analyser::registered =
 		MorphAnalyser::register_analyser<Morfeusz2Analyser>();
 
-morfeusz::Morfeusz* Morfeusz2Analyser::morfeusz_instance = NULL;
-unsigned int Morfeusz2Analyser::analyser_count = 0;	// needed for proper morfeusz_instance destruction
 const morfeusz::Charset Morfeusz2Analyser::charset = morfeusz::UTF8;
 
 // construct, copy, destruct
@@ -40,10 +38,8 @@ Morfeusz2Analyser::Morfeusz2Analyser(const Corpus2::Tagset* tagset,
 	require_matching_tagsets(conv_->tagset_to(), *tagset,
 							"Morfeusz analyser creation");
 
-	if(analyser_count++ == 0) {
-		morfeusz_instance = morfeusz::Morfeusz::createInstance(morfeusz::ANALYSE_ONLY);
-		morfeusz_instance->setCharset(charset);
-	}
+	morfeusz_instance = morfeusz::Morfeusz::createInstance(morfeusz::ANALYSE_ONLY);
+	morfeusz_instance->setCharset(charset);
 }
 
 Morfeusz2Analyser::Morfeusz2Analyser(const Config::Node& cfg)
@@ -66,10 +62,8 @@ Morfeusz2Analyser::Morfeusz2Analyser(const Config::Node& cfg)
 	warn_on_ign_ = cfg.get("warn_on_ign", false);
 	warn_on_fold_failure_ =  cfg.get("warn_on_fold_failure", false);
 
-	if(analyser_count++ == 0) {
-		morfeusz_instance = morfeusz::Morfeusz::createInstance(morfeusz::ANALYSE_ONLY);
-		morfeusz_instance->setCharset(charset);
-	}
+	morfeusz_instance = morfeusz::Morfeusz::createInstance(morfeusz::ANALYSE_ONLY);
+	morfeusz_instance->setCharset(charset);
 }
 
 Morfeusz2Analyser* Morfeusz2Analyser::clone() const
@@ -83,8 +77,7 @@ Morfeusz2Analyser* Morfeusz2Analyser::clone() const
 
 Morfeusz2Analyser::~Morfeusz2Analyser()
 {
-	if(--analyser_count == 0)
-		delete morfeusz_instance;
+	delete morfeusz_instance;
 	delete conv_;
 }
 

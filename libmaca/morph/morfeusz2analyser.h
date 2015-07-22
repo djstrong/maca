@@ -61,6 +61,10 @@ public:
 	~Morfeusz2Analyser();
 
 	/// MorphAnalyser override
+	/* ATTENTION: This is NOT THREAD-SAFE. If you're using different instance,
+	*	no problems should occur, but if using same instance in multiple threads
+	*	You may encounter memory management errors.
+	*/
 	bool process_functional(const Toki::Token &t,
 			boost::function<void(Corpus2::Token *)> sink);
 
@@ -72,8 +76,7 @@ public:
 
 private:
 	static const morfeusz::Charset charset;
-	static morfeusz::Morfeusz *morfeusz_instance;
-	static unsigned int analyser_count;		// needed for proper morfeusz_instance destruction
+	morfeusz::Morfeusz *morfeusz_instance;
 
 	bool process_complex_analysis(const Toki::Token &t,
 			std::vector<details::Morfeusz2Edge>& pmorf,
