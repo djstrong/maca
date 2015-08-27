@@ -15,6 +15,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <fstream>
+#include <boost/thread/locks.hpp>
+
 #include <libpwrutils/util.h>
 #include <libmaca/util/settings.h>
 
@@ -86,11 +88,16 @@ bool Morfeusz2Analyser::process_functional(const Toki::Token &t,
 					boost::function<void(Corpus2::Token *)> sink)
 {
 	using namespace morfeusz;
+	using namespace boost;
 
 	std::string s = PwrNlp::to_utf8(t.orth());
 	std::vector<details::Morfeusz2Edge> pmorf;
 
+	// locks are here because Morfeusz2 is not thread-safe
+	// those are boost locks
+	lock_guard<mutex> *morfeusz_lock = new lock_guard<mutex>(morfeusz_mutex);
 	ResultsIterator *res_iter = morfeusz_instance->analyse(s.c_str());
+	delete morfeusz_lock;
 
 	while(res_iter->hasNext())
 		pmorf.push_back(details::Morfeusz2Edge(res_iter->next(), morfeusz_instance));

@@ -18,6 +18,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #define LIBMACA_MORFEUSZ2ANALYSER_H
 
 #include <utility>
+#include <boost/thread/mutex.hpp>
 
 #include <libcorpus2/tagset.h>
 #include <libcorpus2/token.h>
@@ -61,10 +62,6 @@ public:
 	~Morfeusz2Analyser();
 
 	/// MorphAnalyser override
-	/* ATTENTION: This is NOT THREAD-SAFE. If you're using different instance,
-	*	no problems should occur, but if using same instance in multiple threads
-	*	You may encounter memory management errors.
-	*/
 	bool process_functional(const Toki::Token &t,
 			boost::function<void(Corpus2::Token *)> sink);
 
@@ -76,7 +73,6 @@ public:
 
 private:
 	static const morfeusz::Charset charset;
-	morfeusz::Morfeusz *morfeusz_instance;
 
 	bool process_complex_analysis(const Toki::Token &t,
 			std::vector<details::Morfeusz2Edge>& pmorf,
@@ -104,6 +100,9 @@ private:
 	/// helper to add lexemes from a Morfeusz interp struct into a token
 	void morfeusz_into_token(Corpus2::Token* tt,
 							const details::Morfeusz2Edge& m) const;
+
+	morfeusz::Morfeusz *morfeusz_instance;
+	boost::mutex morfeusz_mutex;
 
 	/// the tagset converter
 	Conversion::TagsetConverter* conv_;
