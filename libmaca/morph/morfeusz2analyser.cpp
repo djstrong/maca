@@ -101,6 +101,7 @@ bool Morfeusz2Analyser::process_functional(const Toki::Token &t,
 
 	while(res_iter->hasNext())
 		pmorf.push_back(details::Morfeusz2Edge(res_iter->next(), morfeusz_instance));
+	delete res_iter;
 
 	if(pmorf.size() == 1 && pmorf[0].lemma.length() > 0) { // only one analysis
 		Corpus2::Token *tok = make_token(t, pmorf[0]);
