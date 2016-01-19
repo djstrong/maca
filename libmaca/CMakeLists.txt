@@ -76,6 +76,7 @@ SET(libmaca_STAT_SRC
 	morph/dispatchanalyser.cpp
 	morph/mapanalyser.cpp
 	morph/morphanalyser.cpp
+	morph/guesser2.cpp
 	util/confignode.cpp
 	util/debug.cpp
 	util/sentenceanalyser.cpp
