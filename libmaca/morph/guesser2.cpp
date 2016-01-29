@@ -58,10 +58,15 @@ bool Guesser2Analyser::process_functional(const Toki::Token &t,
 	const PwrNlp::Whitespace::Enum wa = t.preceeding_whitespace();
 	std::vector<Corpus2::Lexeme> lexemes = guesser.guess(orth);
 	
-	Corpus2::Token * token = new Corpus2::Token(orth, wa);
-	token->replace_lexemes(lexemes);
-	sink(token);
-	return true;
+	if (!lexemes.empty())
+	{
+		Corpus2::Token * token = new Corpus2::Token(orth, wa);
+		token->replace_lexemes(lexemes);
+		sink(token);
+		return true;
+	}
+	
+	return false;
 }
 
 } /* end ns Maca */
