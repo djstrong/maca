@@ -151,7 +151,8 @@ void TagsetConverter::convert_ambiguous(
 	BOOST_FOREACH(const std::vector<Corpus2::Token*>& path, v) {
 		conv_v.push_back(std::vector<Corpus2::Token*>());
 		boost::function<void (Corpus2::Token*)> sink = boost::bind(
-				&std::vector<Corpus2::Token*>::push_back, boost::ref(conv_v.back()),
+				static_cast<void (std::vector<Corpus2::Token*>::*)(Corpus2::Token* const&)>(&std::vector<Corpus2::Token*>::push_back),
+				boost::ref(conv_v.back()),
 				_1);
 		convert_container(path, sink);
 	}

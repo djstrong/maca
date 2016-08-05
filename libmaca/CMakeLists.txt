@@ -187,6 +187,11 @@ if(UNIX)
 	set_target_properties(maca PROPERTIES
 		LINK_FLAGS -Wl,-e,LIBMACA_entry_)
 endif(UNIX)
+# Newer LibXML requires C++11
+if(NOT ${LibXML++_PKGCONF_VERSION} VERSION_LESS 2.40)
+	set_target_properties(maca PROPERTIES
+		CXX_STANDARD 11)
+endif(NOT ${LibXML++_PKGCONF_VERSION} VERSION_LESS 2.40)
 
 
 	install(TARGETS maca

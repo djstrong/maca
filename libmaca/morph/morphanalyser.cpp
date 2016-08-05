@@ -44,7 +44,10 @@ MorphAnalyser::~MorphAnalyser()
 void MorphAnalyser::process(const Toki::Token &t, std::vector<Corpus2::Token*>& vec)
 {
 	process_functional(t,
-			boost::bind(&std::vector<Corpus2::Token*>::push_back, &vec, _1));
+			boost::bind(
+				static_cast<void (std::vector<Corpus2::Token*>::*)(Corpus2::Token* const&)>(&std::vector<Corpus2::Token*>::push_back),
+				&vec,
+				_1));
 }
 
 std::vector<Corpus2::Token*> MorphAnalyser::process(const Toki::Token &t)

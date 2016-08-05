@@ -20,7 +20,7 @@ INCLUDE(${SWIG_USE_FILE})
 include_directories(${Libmaca_SOURCE_DIR} "../libmaca")
 link_directories(${Libmaca_BINARY_DIR})
 
-find_package(PythonLibs)
+find_package(PythonLibs 2)
 find_package(PythonInterp)
 
 # idea taken from pyplot build system 
