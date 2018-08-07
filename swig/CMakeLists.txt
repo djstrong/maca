@@ -1,7 +1,14 @@
 PROJECT(MacaSwigWrap)
 
+set (CMAKE_CXX_STANDARD 11)
+
 find_package(Toki REQUIRED)
 set(TOKI_LIBS ${Toki_LIBRARY})
+
+find_package(LibXML++ REQUIRED QUIET)
+include_directories(${LibXML++_INCLUDE_DIRS})
+link_directories(${LibXML++_LIBRARY_DIRS})
+set(LIBS ${LIBS} ${LibXML++_LIBRARIES})
 
 find_package(Corpus2 1.0.8 REQUIRED)
 set(CORPUS2_LIBS ${Corpus2_LIBRARY})
