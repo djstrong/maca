@@ -3,10 +3,12 @@
 
 %module maca
 %{
-  //
+  #include <libxml++/libxml++.h>
 %}
 
 %include <libcorpus2/unicodestring.i>
+%include <libcorpus2/unicodestring.i>
+//%include <libcorpus2/corpus2exception.i>
 %include "plaintextreader.i"
 %include "premorphtextreader.i"
 

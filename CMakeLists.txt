@@ -62,9 +62,9 @@ add_subdirectory(maca-analyse)
 add_subdirectory(maca-reanalyse)
 add_subdirectory(maca-convert)
 
-if(UNIX)
-add_subdirectory(tests)
-endif()
+# if(UNIX)
+# add_subdirectory(tests)
+# endif()
 
 if(MACA_BUILD_SWIG)
 	FIND_PACKAGE(SWIG)

@@ -6,6 +6,7 @@ tests/tests
 #*#
 *~
 /tmp/
+/build
 CMakeCache.txt
 CMakeFiles
 CMakeLists.txt.user*
