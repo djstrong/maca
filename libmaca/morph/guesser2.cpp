@@ -17,7 +17,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libmaca/morph/guesser2.h>
 #include <boost/algorithm/string.hpp>
 #include <algorithm>
-#include <morfeusz.h>
+#include <morfeusz2.h>
 
 
 namespace Maca {
