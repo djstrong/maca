@@ -112,7 +112,7 @@ int main(int argc, char** argv)
 		Maca::Path::Instance().set_search_path(config_path);
 	}
 	if (!toki_config_path.empty()) {
-		Toki::Path::Instance().set_search_path(config_path);
+		Toki::Path::Instance().set_search_path(toki_config_path);
 	}
 
 	BOOST_FOREACH(const std::string& s, plugins) {
