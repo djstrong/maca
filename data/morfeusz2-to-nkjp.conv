@@ -27,6 +27,8 @@ override=nie:conj
 override=naj:ign
 override=cond:ign
 override=substa:ign
+override=part:qub
+override=frag:burk
 late-check=true
 
 [tag]
