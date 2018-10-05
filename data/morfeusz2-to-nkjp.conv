@@ -2,9 +2,9 @@
 tagset_from=morfeusz2
 tagset_to=morfeusz2
 
-[tag]
-pre=adv
-post=adv:pos
+;[tag]
+;pre=adv
+;post=adv:pos
 
 [convert]
 tagset_from=morfeusz2
