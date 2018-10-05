@@ -31,9 +31,9 @@ override=part:qub
 override=frag:burk
 late-check=true
 
-[tag]
-pre=num:::
-post=num:pl:nom:m1:rec
+;[tag]
+;pre=num:::
+;post=num:pl:nom:m1:rec
 
 [tag]
 pre=adjp:
